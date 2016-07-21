@@ -38,9 +38,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by l-avaratha on 19/07/2016.
  */
 public class BleRangingHelper implements SensorEventListener {
-    private static final int START_POSITION_TIMEOUT = 400;
-    private static final int WELCOME_POSITION_TIMEOUT = 400;
-    private static final int LOCK_STATUS_CHANGED_TIMEOUT = 3000;
     public final static int RSSI_LOCK_DEFAULT_VALUE = -120;
     public final static int RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE = -50;
     public final static int RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE = -30;
@@ -55,13 +52,11 @@ public class BleRangingHelper implements SensorEventListener {
     public final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
     public final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
     public final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
+    private static final int START_POSITION_TIMEOUT = 400;
+    private static final int WELCOME_POSITION_TIMEOUT = 400;
+    private static final int LOCK_STATUS_CHANGED_TIMEOUT = 3000;
     private final Context mContext;
     private final BluetoothManagement mBluetoothManager;
-    private boolean isLockStrategyValid = false;
-    private int isUnlockStrategyValid = 0;
-    private boolean isStartStrategyValid = false;
-    private boolean isWelcomeStrategyValid = false;
-    private boolean isLightCaptorEnabled = SdkPreferencesHelper.getInstance().isLightCaptorEnabled();
     private final int welcomeThreshold = SdkPreferencesHelper.getInstance().getWelcomeThreshold();
     private final int lockThreshold = SdkPreferencesHelper.getInstance().getLockThreshold();
     private final int unlockThreshold = SdkPreferencesHelper.getInstance().getUnlockThreshold();
@@ -90,6 +85,13 @@ public class BleRangingHelper implements SensorEventListener {
     private final String trxAddressMiddle = SdkPreferencesHelper.getInstance().getTrxAddressMiddle();
     private final String trxAddressRight = SdkPreferencesHelper.getInstance().getTrxAddressRight();
     private final String trxAddressBack = SdkPreferencesHelper.getInstance().getTrxAddressBack();
+    public boolean smartphoneIsInPocket = false;
+    public boolean smartphoneIsLaidDownLAcc = false;
+    private boolean isLockStrategyValid = false;
+    private int isUnlockStrategyValid = 0;
+    private boolean isStartStrategyValid = false;
+    private boolean isWelcomeStrategyValid = false;
+    private boolean isLightCaptorEnabled = SdkPreferencesHelper.getInstance().isLightCaptorEnabled();
     private boolean checkNewPacketOnlyOneLaunch = true;
     private byte[] bytesToSend;
     private byte[] bytesReceived;
@@ -99,14 +101,39 @@ public class BleRangingHelper implements SensorEventListener {
     private boolean isAbortRunning = false;
     private boolean isFirstConnection = true;
     private AtomicBoolean isOnStartPostionTimerExpired = new AtomicBoolean(true);
+    /**
+     * Create a handler to detect if the vehicle can do a start
+     */
+    private final Runnable mManageStartPositionPeriodicTimer = new Runnable() {
+        @Override
+        public void run() {
+            isOnStartPostionTimerExpired.set(true);
+        }
+    };
     private AtomicBoolean isLockStatusChangedTimerExpired = new AtomicBoolean(true);
+    /**
+     * Create a handler to detect if the vehicle can do a unlock
+     */
+    private final Runnable mManageIsLockStatusChangedPeriodicTimer = new Runnable() {
+        @Override
+        public void run() {
+            isLockStatusChangedTimerExpired.set(true);
+        }
+    };
     private AtomicBoolean isOnWelcomePostionTimerExpired = new AtomicBoolean(true);
+    /**
+     * Create a handler to detect if the vehicle can do a welcome
+     */
+    private final Runnable mManageWelcomePositionPeriodicTimer = new Runnable() {
+        @Override
+        public void run() {
+            isOnWelcomePostionTimerExpired.set(true);
+        }
+    };
     private AtomicBoolean rearmWelcome = new AtomicBoolean(true);
     private AtomicBoolean rearmLock = new AtomicBoolean(true);
     private AtomicBoolean rearmUnlock = new AtomicBoolean(true);
     private AtomicBoolean isPassiveEntryAction = new AtomicBoolean(false);
-    public boolean smartphoneIsInPocket = false;
-    public boolean smartphoneIsLaidDownLAcc = false;
     private Antenna.BLEChannel bleChannel = Antenna.BLEChannel.BLE_CHANNEL_37;
     private Handler mMainHandler;
     private Handler mWelcomeHandler;
@@ -123,7 +150,42 @@ public class BleRangingHelper implements SensorEventListener {
     private ArrayList<Double> lAccHistoric = new ArrayList<>(linAccSize);
     private double deltaLinAcc = 0;
     private boolean isLaidRunnableAlreadyLaunched = false;
-
+    private Runnable checkNewPacketsRunner = new Runnable() {
+        @Override
+        public void run() {
+            Log.d("NIH", "checkNewPacketsRunner " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
+            if((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
+                mBluetoothManager.disconnect();
+            } else {
+                lastPacketIdNumber[0] = bytesReceived[0];
+                lastPacketIdNumber[1] = bytesReceived[1];
+            }
+            if(mBluetoothManager.isFullyConnected() && mMainHandler != null) {
+                mMainHandler.postDelayed(this, 1000);
+            }
+        }
+    };
+    private Runnable checkAntennaRunner = new Runnable() {
+        @Override
+        public void run() {
+            Log.w(Thread.currentThread().getName() + " rssiHistorics", "************************************** CHECK ANTENNAS ************************************************");
+            checkAllAntennas();
+            if (mMainHandler != null) {
+                mMainHandler.postDelayed(this, 2500);
+            }
+        }
+    };
+    private Runnable abortCommandRunner = new Runnable() {
+        @Override
+        public void run() {
+            Log.d("NIH rearm", "abortCommandRunner");
+            if(mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) {
+                mProtocolManager.setIsLockedToSend(mProtocolManager.isLockedFromTrx());
+                rearmLock.set(false);
+            }
+            isAbortRunning = false;
+        }
+    };
     private Runnable printRunner = new Runnable() {
         @Override
         public void run() {
@@ -141,96 +203,17 @@ public class BleRangingHelper implements SensorEventListener {
             }
         }
     };
-
-    private Runnable checkNewPacketsRunner = new Runnable() {
-        @Override
-        public void run() {
-            Log.d("NIH", "checkNewPacketsRunner " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
-            if((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
-                mBluetoothManager.disconnect();
-            } else {
-                lastPacketIdNumber[0] = bytesReceived[0];
-                lastPacketIdNumber[1] = bytesReceived[1];
-            }
-            if(mBluetoothManager.isFullyConnected() && mMainHandler != null) {
-                mMainHandler.postDelayed(this, 1000);
-            }
-        }
-    };
-
-    private Runnable checkAntennaRunner = new Runnable() {
-        @Override
-        public void run() {
-            Log.w(Thread.currentThread().getName() + " rssiHistorics", "************************************** CHECK ANTENNAS ************************************************");
-            checkAllAntennas();
-            if (mMainHandler != null) {
-                mMainHandler.postDelayed(this, 2500);
-            }
-        }
-    };
-
-    private Runnable abortCommandRunner = new Runnable() {
-        @Override
-        public void run() {
-            Log.d("NIH rearm", "abortCommandRunner");
-            if(mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) {
-                mProtocolManager.setIsLockedToSend(mProtocolManager.isLockedFromTrx());
-                rearmLock.set(false);
-            }
-            isAbortRunning = false;
-        }
-    };
-
     private Runnable sendPacketRunner = new Runnable() {
         @Override
         public void run() {
             Log.d("NIH", "getPacketOnePayload then sendPackets");
             bytesToSend = mProtocolManager.getPacketOnePayload();
             mBluetoothManager.sendPackets(new byte[][]{bytesToSend});
-            if(mBluetoothManager.isFullyConnected() && mMainHandler != null) {
+            if (mBluetoothManager.isFullyConnected() && mMainHandler != null) {
                 mMainHandler.postDelayed(this, 200);
             }
         }
     };
-
-    private Runnable isLaidRunnable = new Runnable() {
-        @Override
-        public void run() {
-            smartphoneIsLaidDownLAcc = true; // smartphone is staying still
-            mIsLaidTimeOutHandler.removeCallbacks(this);
-        }
-    };
-
-    /**
-     * Create a handler to detect if the vehicle can do a start
-     */
-    private final Runnable mManageStartPositionPeriodicTimer = new Runnable() {
-        @Override
-        public void run() {
-            isOnStartPostionTimerExpired.set(true);
-        }
-    };
-
-    /**
-     * Create a handler to detect if the vehicle can do a unlock
-     */
-    private final Runnable mManageIsLockStatusChangedPeriodicTimer = new Runnable() {
-        @Override
-        public void run() {
-            isLockStatusChangedTimerExpired.set(true);
-        }
-    };
-
-    /**
-     * Create a handler to detect if the vehicle can do a welcome
-     */
-    private final Runnable mManageWelcomePositionPeriodicTimer = new Runnable() {
-        @Override
-        public void run() {
-            isOnWelcomePostionTimerExpired.set(true);
-        }
-    };
-
     /**
      * Handles various events fired by the Service.
      * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
@@ -245,8 +228,8 @@ public class BleRangingHelper implements SensorEventListener {
                 bytesReceived = mBluetoothManager.getBytesReceived();
                 Log.d("NIH", "TRX ACTION_DATA_AVAILABLE");
                 boolean oldLockStatus = newLockStatus;
-                newLockStatus = (bytesReceived[5] & 0x01)!=0;
-                if(isPassiveEntryAction.get() && oldLockStatus != newLockStatus) {
+                newLockStatus = (bytesReceived[5] & 0x01) != 0;
+                if (isPassiveEntryAction.get() && oldLockStatus != newLockStatus) {
                     if (!newLockStatus) { // just perform an unlock
                         switch (isUnlockStrategyValid) {
                             case Trx.NUMBER_TRX_LEFT:
@@ -279,11 +262,11 @@ public class BleRangingHelper implements SensorEventListener {
                     }
                 }
                 mProtocolManager.setIsLockedFromTrx(newLockStatus);
-                if(checkNewPacketOnlyOneLaunch) {
+                if (checkNewPacketOnlyOneLaunch) {
                     checkNewPacketOnlyOneLaunch = false;
                     mMainHandler.postDelayed(checkNewPacketsRunner, 1000);
                 }
-            } else if(BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED.equals(action)){
+            } else if (BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED.equals(action)) {
                 Log.d("NIH", "TRX ACTION_GATT_CHARACTERISTIC_SUBSCRIBED");
                 if (mMainHandler != null) {
                     mMainHandler.post(sendPacketRunner); // send works only after subcribed
@@ -291,19 +274,26 @@ public class BleRangingHelper implements SensorEventListener {
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 Log.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
                 restartConnection();
-            } else if(BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
+            } else if (BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
                 Log.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
-                if(isFullyConnected()) {
+                if (isFullyConnected()) {
                     Log.d("NIH", "ACTION_GATT_CONNECTION_LOSS disconnect()");
                     mBluetoothManager.disconnect();
                 }
-            }  else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
                 Log.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
-            }  else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 Log.d("NIH", "TRX ACTION_GATT_SERVICES_DISCOVERED");
-            }  else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+            } else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 Log.d("NIH", "TRX ACTION_GATT_CONNECTED");
             }
+        }
+    };
+    private Runnable isLaidRunnable = new Runnable() {
+        @Override
+        public void run() {
+            smartphoneIsLaidDownLAcc = true; // smartphone is staying still
+            mIsLaidTimeOutHandler.removeCallbacks(this);
         }
     };
 
@@ -969,6 +959,8 @@ public class BleRangingHelper implements SensorEventListener {
     }
 
     public void closeApp() {
+        // increase the file number use for logs files name
+        SdkPreferencesHelper.getInstance().setRssiLogNumber(SdkPreferencesHelper.getInstance().getRssiLogNumber() + 1);
         if(mStartPositionHandler != null)
             mStartPositionHandler.removeCallbacks(mManageStartPositionPeriodicTimer);
         if(mLockStatusChangedHandler != null)

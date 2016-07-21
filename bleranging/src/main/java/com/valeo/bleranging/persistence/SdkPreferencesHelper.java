@@ -20,7 +20,7 @@ public final class SdkPreferencesHelper {
     public final static int NEXT_TO_BACKDOOR_RATIO_THRESHOLD_MAX = 5;
     public final static int NEXT_TO_DOOR_RATIO_THRESHOLD_ML_MR_MAX = 12;
     public final static int NEXT_TO_DOOR_RATIO_THRESHOLD_ML_MR_MIN = 2;
-    public final static int ECART_TYPE_THRESHOLD = 60;
+    public final static int RSSI_LOG_NUMBER = 0;
     public final static int AVERAGE_DELTA_UNLOCK_THRESHOLD = 10;
     public final static int AVERAGE_DELTA_LOCK_THRESHOLD = -10;
     public final static int ROLLING_AVERAGE_ELEMENTS = 50;
@@ -72,7 +72,7 @@ public final class SdkPreferencesHelper {
     private static final String NEXT_TO_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_BACKDOOR_RATIO_THR_MAX";
     private static final String NEXT_TO_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_DOOR_RATIO_THR_ML_MR_MAX";
     private static final String NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN";
-    private static final String ECART_TYPE_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECART_TYPE_THRESHOLD";
+    private static final String RSSI_LOG_NUMBER_PREFERENCES_NAME = "com.inblue.PREFERENCE_RSSI_LOG_NUMBER";
     private static final String AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_LOCK_THRESHOLD";
     private static final String AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD";
     private static final String ROLLING_AV_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_ROLLING_AV_ELEMENT";
@@ -131,148 +131,12 @@ public final class SdkPreferencesHelper {
         return sSingleInstance;
     }
 
-    public void setOffsetPocketForStart(int offsetPocket) {
-        saveInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_START_PREFERENCES_NAME, offsetPocket);
-    }
-
-    public void setOffsetPocketForLock(int offsetPocket) {
-        saveInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME, offsetPocket);
-    }
-
-    public void setOffsetPocketForUnlock(int offsetPocket) {
-        saveInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME, offsetPocket);
-    }
-
-    public void setStartThreshold(int startThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, START_THR_PREFERENCES_NAME, startThreshold);
-    }
-
-    public void setUnlockThreshold(int unlockThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, UNLOCK_THR_PREFERENCES_NAME, unlockThreshold);
-    }
-
-    public void setLockThreshold(int lockThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, LOCK_THR_PREFERENCES_NAME, lockThreshold);
-    }
-
-    public void setWelcomeThreshold(int welcomeThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, WELCOME_THR_PREFERENCES_NAME, welcomeThreshold);
-    }
-
-    public void setNextToDoorRatioThreshold(int nextToDoorRatioThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, NEXT_TO_DOOR_RATIO_THR_PREFERENCES_NAME, nextToDoorRatioThreshold);
-    }
-
-    public void setNextToBackDoorRatioThresholdMin(int nextToBackDoorRatioThresholdMin) {
-        saveInt(SAVED_SELECTED_LOCATION, NEXT_TO_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME, nextToBackDoorRatioThresholdMin);
-    }
-
-    public void setNextToBackDoorRatioThresholdMax(int nextToBackDoorRatioThresholdMax) {
-        saveInt(SAVED_SELECTED_LOCATION, NEXT_TO_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME, nextToBackDoorRatioThresholdMax);
-    }
-
     public void setNextToDoorThresholdLMorMRMax(int nextToDoorRatioThreshold) {
         saveInt(SAVED_SELECTED_LOCATION, NEXT_TO_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME, nextToDoorRatioThreshold);
     }
 
     public void setNextToDoorThresholdLMorMRMin(int nextToDoorRatioThreshold) {
         saveInt(SAVED_SELECTED_LOCATION, NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME, nextToDoorRatioThreshold);
-    }
-
-    public void setEcartTypeThreshold(int ecartTypeThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, ECART_TYPE_THRESHOLD_PREFERENCES_NAME, ecartTypeThreshold);
-    }
-
-    public void setAverageDeltaUnlockThreshold(int averageDeltaThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
-    }
-
-    public void setAverageDeltaLockThreshold(int averageDeltaThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
-    }
-
-    public void setRollingAvElement(int rollingAvElement) {
-        saveInt(SAVED_SELECTED_LOCATION, ROLLING_AV_ELEMENT_PREFERENCES_NAME, rollingAvElement);
-    }
-
-    public void setStartNbElement(int startNbElement) {
-        saveInt(SAVED_SELECTED_LOCATION, START_NB_ELEMENT_PREFERENCES_NAME, startNbElement);
-    }
-
-    public void setLockNbElement(int lockNbElement) {
-        saveInt(SAVED_SELECTED_LOCATION, LOCK_NB_ELEMENT_PREFERENCES_NAME, lockNbElement);
-    }
-
-    public void setUnlockNbElement(int unlockNbElement) {
-        saveInt(SAVED_SELECTED_LOCATION, UNLOCK_NB_ELEMENT_PREFERENCES_NAME, unlockNbElement);
-    }
-
-    public void setWelcomeNbElement(int welcomeNbElement) {
-        saveInt(SAVED_SELECTED_LOCATION, WELCOME_NB_ELEMENT_PREFERENCES_NAME, welcomeNbElement);
-    }
-
-    public void setLongNbElement(int longNbElement) {
-        saveInt(SAVED_SELECTED_LOCATION, LONG_NB_ELEMENT_PREFERENCES_NAME, longNbElement);
-    }
-
-    public void setShortNbElement(int shortNbElement) {
-        saveInt(SAVED_SELECTED_LOCATION, SHORT_NB_ELEMENT_PREFERENCES_NAME, shortNbElement);
-    }
-
-    public void setUnlockMode(int unlockMode) {
-        saveInt(SAVED_SELECTED_LOCATION, UNLOCK_MODE_PREFERENCES_NAME, unlockMode);
-    }
-
-    public void setLockMode(int lockMode) {
-        saveInt(SAVED_SELECTED_LOCATION, LOCK_MODE_PREFERENCES_NAME, lockMode);
-    }
-
-    public void setStartMode(int startMode) {
-        saveInt(SAVED_SELECTED_LOCATION, START_MODE_PREFERENCES_NAME, startMode);
-    }
-
-    public void setEcretage70_100(float ecretage) {
-        saveFloat(SAVED_SELECTED_LOCATION, ECRETAGE_70_100_PREFERENCES_NAME, ecretage);
-    }
-
-    public void setEcretage50_70(float ecretage) {
-        saveFloat(SAVED_SELECTED_LOCATION, ECRETAGE_50_70_PREFERENCES_NAME, ecretage);
-    }
-
-    public void setEcretage30_50(float ecretage) {
-        saveFloat(SAVED_SELECTED_LOCATION, ECRETAGE_30_50_PREFERENCES_NAME, ecretage);
-    }
-
-    public void setEcretage30_30(float ecretage) {
-        saveFloat(SAVED_SELECTED_LOCATION, ECRETAGE_30_30_PREFERENCES_NAME, ecretage);
-    }
-
-    public void setTrxAddressConnectable(String address) {
-        saveString(SAVED_SELECTED_LOCATION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, address);
-    }
-
-    public void setTrxAddressLeft(String address) {
-        saveString(SAVED_SELECTED_LOCATION, ADDRESS_LEFT_PREFERENCE_NAME, address);
-    }
-
-    public void setTrxAddressMiddle(String address) {
-        saveString(SAVED_SELECTED_LOCATION, ADDRESS_MIDDLE_PREFERENCE_NAME, address);
-    }
-
-    public void setTrxAddressRight(String address) {
-        saveString(SAVED_SELECTED_LOCATION, ADDRESS_RIGHT_PREFERENCE_NAME, address);
-    }
-
-    public void setTrxAddressBack(String address) {
-        saveString(SAVED_SELECTED_LOCATION, ADDRESS_BACK_PREFERENCE_NAME, address);
-    }
-
-    public void setLinAccSize(int linAccSize) {
-        saveInt(SAVED_SELECTED_LOCATION, LIN_ACC_SIZE_PREFERENCES_NAME, linAccSize);
-    }
-
-    public void setCorrectionLinAcc(float correctionLinAcc) {
-        saveFloat(SAVED_SELECTED_LOCATION, CORRECTION_LIN_ACC_PREFERENCES_NAME, correctionLinAcc);
     }
 
     public void setEqualizerLeft(int equalizer) {
@@ -311,40 +175,80 @@ public final class SdkPreferencesHelper {
         return readInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_START_PREFERENCES_NAME, OFFSET_POCKET_FOR_START);
     }
 
+    public void setOffsetPocketForStart(int offsetPocket) {
+        saveInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_START_PREFERENCES_NAME, offsetPocket);
+    }
+
     public int getOffsetPocketForLock() {
         return readInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME, OFFSET_POCKET_FOR_LOCK);
+    }
+
+    public void setOffsetPocketForLock(int offsetPocket) {
+        saveInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME, offsetPocket);
     }
 
     public int getOffsetPocketForUnlock() {
         return readInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME, OFFSET_POCKET_FOR_UNLOCK);
     }
 
+    public void setOffsetPocketForUnlock(int offsetPocket) {
+        saveInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME, offsetPocket);
+    }
+
     public int getStartThreshold() {
         return readInt(SAVED_SELECTED_LOCATION, START_THR_PREFERENCES_NAME, START_THRESHOLD);
+    }
+
+    public void setStartThreshold(int startThreshold) {
+        saveInt(SAVED_SELECTED_LOCATION, START_THR_PREFERENCES_NAME, startThreshold);
     }
 
     public int getUnlockThreshold() {
         return readInt(SAVED_SELECTED_LOCATION, UNLOCK_THR_PREFERENCES_NAME, UNLOCK_IN_THE_RUN_THRESHOLD);
     }
 
+    public void setUnlockThreshold(int unlockThreshold) {
+        saveInt(SAVED_SELECTED_LOCATION, UNLOCK_THR_PREFERENCES_NAME, unlockThreshold);
+    }
+
     public int getLockThreshold() {
         return readInt(SAVED_SELECTED_LOCATION, LOCK_THR_PREFERENCES_NAME, WALK_AWAY_LOCKING_THRESHOLD);
     }
 
+    public void setLockThreshold(int lockThreshold) {
+        saveInt(SAVED_SELECTED_LOCATION, LOCK_THR_PREFERENCES_NAME, lockThreshold);
+    }
+
     public int getWelcomeThreshold() {
-        return readInt(SAVED_SELECTED_LOCATION,WELCOME_THR_PREFERENCES_NAME, WELCOME_THRESHOLD);
+        return readInt(SAVED_SELECTED_LOCATION, WELCOME_THR_PREFERENCES_NAME, WELCOME_THRESHOLD);
+    }
+
+    public void setWelcomeThreshold(int welcomeThreshold) {
+        saveInt(SAVED_SELECTED_LOCATION, WELCOME_THR_PREFERENCES_NAME, welcomeThreshold);
     }
 
     public int getNextToDoorRatioThreshold() {
         return readInt(SAVED_SELECTED_LOCATION, NEXT_TO_DOOR_RATIO_THR_PREFERENCES_NAME, NEXT_TO_DOOR_RATIO_THRESHOLD);
     }
 
+    public void setNextToDoorRatioThreshold(int nextToDoorRatioThreshold) {
+        saveInt(SAVED_SELECTED_LOCATION, NEXT_TO_DOOR_RATIO_THR_PREFERENCES_NAME, nextToDoorRatioThreshold);
+    }
+
     public int getNextToBackDoorRatioThresholdMin() {
         return readInt(SAVED_SELECTED_LOCATION, NEXT_TO_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME, NEXT_TO_BACKDOOR_RATIO_THRESHOLD_MIN);
     }
 
+    public void setNextToBackDoorRatioThresholdMin(int nextToBackDoorRatioThresholdMin) {
+        saveInt(SAVED_SELECTED_LOCATION, NEXT_TO_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME, nextToBackDoorRatioThresholdMin);
+    }
+
     public int getNextToBackDoorRatioThresholdMax() {
         return readInt(SAVED_SELECTED_LOCATION, NEXT_TO_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME, NEXT_TO_BACKDOOR_RATIO_THRESHOLD_MAX);
+    }
+
+    public void setNextToBackDoorRatioThresholdMax(int nextToBackDoorRatioThresholdMax) {
+        saveInt(SAVED_SELECTED_LOCATION, NEXT_TO_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME, nextToBackDoorRatioThresholdMax);
     }
 
     public int getNextToDoorThresholdMLorMRMax() {
@@ -355,100 +259,196 @@ public final class SdkPreferencesHelper {
         return readInt(SAVED_SELECTED_LOCATION, NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME, NEXT_TO_DOOR_RATIO_THRESHOLD_ML_MR_MIN);
     }
 
-    public int getEcartTypeThreshold() {
-        return readInt(SAVED_SELECTED_LOCATION, ECART_TYPE_THRESHOLD_PREFERENCES_NAME, ECART_TYPE_THRESHOLD);
+    public int getRssiLogNumber() {
+        return readInt(SAVED_SELECTED_LOCATION, RSSI_LOG_NUMBER_PREFERENCES_NAME, RSSI_LOG_NUMBER);
+    }
+
+    public void setRssiLogNumber(int rssiLogNumber) {
+        saveInt(SAVED_SELECTED_LOCATION, RSSI_LOG_NUMBER_PREFERENCES_NAME, rssiLogNumber);
     }
 
     public int getAverageDeltaUnlockThreshold() {
         return readInt(SAVED_SELECTED_LOCATION, AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME, AVERAGE_DELTA_UNLOCK_THRESHOLD);
     }
 
+    public void setAverageDeltaUnlockThreshold(int averageDeltaThreshold) {
+        saveInt(SAVED_SELECTED_LOCATION, AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
+    }
+
     public int getAverageDeltaLockThreshold() {
         return readInt(SAVED_SELECTED_LOCATION, AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME, AVERAGE_DELTA_LOCK_THRESHOLD);
+    }
+
+    public void setAverageDeltaLockThreshold(int averageDeltaThreshold) {
+        saveInt(SAVED_SELECTED_LOCATION, AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
     }
 
     public int getRollingAvElement() {
         return readInt(SAVED_SELECTED_LOCATION, ROLLING_AV_ELEMENT_PREFERENCES_NAME, ROLLING_AVERAGE_ELEMENTS);
     }
 
+    public void setRollingAvElement(int rollingAvElement) {
+        saveInt(SAVED_SELECTED_LOCATION, ROLLING_AV_ELEMENT_PREFERENCES_NAME, rollingAvElement);
+    }
+
     public int getStartNbElement() {
         return readInt(SAVED_SELECTED_LOCATION, START_NB_ELEMENT_PREFERENCES_NAME, START_NB_ELEMENT);
+    }
+
+    public void setStartNbElement(int startNbElement) {
+        saveInt(SAVED_SELECTED_LOCATION, START_NB_ELEMENT_PREFERENCES_NAME, startNbElement);
     }
 
     public int getLockNbElement() {
         return readInt(SAVED_SELECTED_LOCATION, LOCK_NB_ELEMENT_PREFERENCES_NAME, LOCK_NB_ELEMENT);
     }
 
+    public void setLockNbElement(int lockNbElement) {
+        saveInt(SAVED_SELECTED_LOCATION, LOCK_NB_ELEMENT_PREFERENCES_NAME, lockNbElement);
+    }
+
     public int getUnlockNbElement() {
         return readInt(SAVED_SELECTED_LOCATION, UNLOCK_NB_ELEMENT_PREFERENCES_NAME, UNLOCK_NB_ELEMENT);
+    }
+
+    public void setUnlockNbElement(int unlockNbElement) {
+        saveInt(SAVED_SELECTED_LOCATION, UNLOCK_NB_ELEMENT_PREFERENCES_NAME, unlockNbElement);
     }
 
     public int getWelcomeNbElement() {
         return readInt(SAVED_SELECTED_LOCATION, WELCOME_NB_ELEMENT_PREFERENCES_NAME, WELCOME_NB_ELEMENT);
     }
 
+    public void setWelcomeNbElement(int welcomeNbElement) {
+        saveInt(SAVED_SELECTED_LOCATION, WELCOME_NB_ELEMENT_PREFERENCES_NAME, welcomeNbElement);
+    }
+
     public int getLongNbElement() {
         return readInt(SAVED_SELECTED_LOCATION, LONG_NB_ELEMENT_PREFERENCES_NAME, LONG_NB_ELEMENT);
+    }
+
+    public void setLongNbElement(int longNbElement) {
+        saveInt(SAVED_SELECTED_LOCATION, LONG_NB_ELEMENT_PREFERENCES_NAME, longNbElement);
     }
 
     public int getShortNbElement() {
         return readInt(SAVED_SELECTED_LOCATION, SHORT_NB_ELEMENT_PREFERENCES_NAME, SHORT_NB_ELEMENT);
     }
 
+    public void setShortNbElement(int shortNbElement) {
+        saveInt(SAVED_SELECTED_LOCATION, SHORT_NB_ELEMENT_PREFERENCES_NAME, shortNbElement);
+    }
+
     public int getUnlockMode() {
         return readInt(SAVED_SELECTED_LOCATION, UNLOCK_MODE_PREFERENCES_NAME, UNLOCK_MODE);
+    }
+
+    public void setUnlockMode(int unlockMode) {
+        saveInt(SAVED_SELECTED_LOCATION, UNLOCK_MODE_PREFERENCES_NAME, unlockMode);
     }
 
     public int getLockMode() {
         return readInt(SAVED_SELECTED_LOCATION, LOCK_MODE_PREFERENCES_NAME, LOCK_MODE);
     }
 
+    public void setLockMode(int lockMode) {
+        saveInt(SAVED_SELECTED_LOCATION, LOCK_MODE_PREFERENCES_NAME, lockMode);
+    }
+
     public int getStartMode() {
         return readInt(SAVED_SELECTED_LOCATION, START_MODE_PREFERENCES_NAME, START_MODE);
+    }
+
+    public void setStartMode(int startMode) {
+        saveInt(SAVED_SELECTED_LOCATION, START_MODE_PREFERENCES_NAME, startMode);
     }
 
     public float getEcretage70_100() {
         return readFloat(SAVED_SELECTED_LOCATION, ECRETAGE_70_100_PREFERENCES_NAME, ECRETAGE_70_100);
     }
 
+    public void setEcretage70_100(float ecretage) {
+        saveFloat(SAVED_SELECTED_LOCATION, ECRETAGE_70_100_PREFERENCES_NAME, ecretage);
+    }
+
     public float getEcretage50_70() {
         return readFloat(SAVED_SELECTED_LOCATION, ECRETAGE_50_70_PREFERENCES_NAME, ECRETAGE_50_70);
+    }
+
+    public void setEcretage50_70(float ecretage) {
+        saveFloat(SAVED_SELECTED_LOCATION, ECRETAGE_50_70_PREFERENCES_NAME, ecretage);
     }
 
     public float getEcretage30_50() {
         return readFloat(SAVED_SELECTED_LOCATION, ECRETAGE_30_50_PREFERENCES_NAME, ECRETAGE_30_50);
     }
 
+    public void setEcretage30_50(float ecretage) {
+        saveFloat(SAVED_SELECTED_LOCATION, ECRETAGE_30_50_PREFERENCES_NAME, ecretage);
+    }
+
     public float getEcretage30_30() {
         return readFloat(SAVED_SELECTED_LOCATION, ECRETAGE_30_30_PREFERENCES_NAME, ECRETAGE_30_30);
+    }
+
+    public void setEcretage30_30(float ecretage) {
+        saveFloat(SAVED_SELECTED_LOCATION, ECRETAGE_30_30_PREFERENCES_NAME, ecretage);
     }
 
     public String getTrxAddressConnectable() {
         return readString(SAVED_SELECTED_LOCATION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, BLE_ADDRESS_CONNECTABLE);
     }
 
+    public void setTrxAddressConnectable(String address) {
+        saveString(SAVED_SELECTED_LOCATION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, address);
+    }
+
     public String getTrxAddressLeft() {
         return readString(SAVED_SELECTED_LOCATION, ADDRESS_LEFT_PREFERENCE_NAME, BLE_ADDRESS_LEFT);
+    }
+
+    public void setTrxAddressLeft(String address) {
+        saveString(SAVED_SELECTED_LOCATION, ADDRESS_LEFT_PREFERENCE_NAME, address);
     }
 
     public String getTrxAddressMiddle() {
         return readString(SAVED_SELECTED_LOCATION, ADDRESS_MIDDLE_PREFERENCE_NAME, BLE_ADDRESS_MIDDLE);
     }
 
+    public void setTrxAddressMiddle(String address) {
+        saveString(SAVED_SELECTED_LOCATION, ADDRESS_MIDDLE_PREFERENCE_NAME, address);
+    }
+
     public String getTrxAddressRight() {
         return readString(SAVED_SELECTED_LOCATION, ADDRESS_RIGHT_PREFERENCE_NAME, BLE_ADDRESS_RIGHT);
+    }
+
+    public void setTrxAddressRight(String address) {
+        saveString(SAVED_SELECTED_LOCATION, ADDRESS_RIGHT_PREFERENCE_NAME, address);
     }
 
     public String getTrxAddressBack() {
         return readString(SAVED_SELECTED_LOCATION, ADDRESS_BACK_PREFERENCE_NAME, BLE_ADDRESS_BACK);
     }
 
+    public void setTrxAddressBack(String address) {
+        saveString(SAVED_SELECTED_LOCATION, ADDRESS_BACK_PREFERENCE_NAME, address);
+    }
+
     public int getLinAccSize() {
         return readInt(SAVED_SELECTED_LOCATION, LIN_ACC_SIZE_PREFERENCES_NAME, LIN_ACC_SIZE);
     }
 
+    public void setLinAccSize(int linAccSize) {
+        saveInt(SAVED_SELECTED_LOCATION, LIN_ACC_SIZE_PREFERENCES_NAME, linAccSize);
+    }
+
     public float getCorrectionLinAcc() {
         return readFloat(SAVED_SELECTED_LOCATION, CORRECTION_LIN_ACC_PREFERENCES_NAME, CORRECTION_LIN_ACC);
+    }
+
+    public void setCorrectionLinAcc(float correctionLinAcc) {
+        saveFloat(SAVED_SELECTED_LOCATION, CORRECTION_LIN_ACC_PREFERENCES_NAME, correctionLinAcc);
     }
 
     public int getTrxRssiEqualizerLeft() {

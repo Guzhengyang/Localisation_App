@@ -17,7 +17,6 @@ import java.util.Locale;
  */
 public class TrxUtils {
 
-    public static int RSSI_LOG_NUMBER = 0;
     private static final int MODE_ONE_OF_FOUR = 1;
     private static final int MODE_TWO_OF_FOUR = 2;
     private static final int MODE_ALL_FOUR = 3;
@@ -129,11 +128,7 @@ public class TrxUtils {
      * @return true if the difference of the two average rssi is greater than the threshold, false otherwise
      */
     public static boolean getAverageLSDeltaGreaterThanThreshold(Trx trxLeft, Trx trxMiddle, Trx trxRight, Trx trxBack, int threshold) {
-        if(getAverageLSDelta(Antenna.AVERAGE_LONG, Antenna.AVERAGE_SHORT, trxLeft, trxMiddle, trxRight, trxBack) > threshold) {
-            return true;
-        } else {
-            return false;
-        }
+        return getAverageLSDelta(Antenna.AVERAGE_LONG, Antenna.AVERAGE_SHORT, trxLeft, trxMiddle, trxRight, trxBack) > threshold;
     }
 
     /**
@@ -146,11 +141,7 @@ public class TrxUtils {
      * @return true if the difference of the two average rssi is lower than the threshold, false otherwise
      */
     public static boolean getAverageLSDeltaLowerThanThreshold(Trx trxLeft, Trx trxMiddle, Trx trxRight, Trx trxBack, int threshold) {
-        if( getAverageLSDelta(Antenna.AVERAGE_LONG, Antenna.AVERAGE_SHORT, trxLeft, trxMiddle, trxRight, trxBack) < threshold) {
-            return true;
-        } else {
-            return false;
-        }
+        return getAverageLSDelta(Antenna.AVERAGE_LONG, Antenna.AVERAGE_SHORT, trxLeft, trxMiddle, trxRight, trxBack) < threshold;
     }
 //    public static boolean getEcartTypeLowerThanThreshold(Trx trx, int threshold) {
 //        boolean antenna1 = (trx.getAntenna1().getEcartType() < threshold);
@@ -464,7 +455,7 @@ public class TrxUtils {
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_kk", Locale.FRANCE);
         String timestampLog = sdf.format(new Date());
-        File logFile = new File("sdcard/InBlueRssi/allRssi_" + RSSI_LOG_NUMBER + "_" + timestampLog +".csv");
+        File logFile = new File("sdcard/InBlueRssi/allRssi_" + SdkPreferencesHelper.getInstance().getRssiLogNumber() + "_" + timestampLog + ".csv");
         if (!logFile.exists()) {
             try {
                 //Create file
