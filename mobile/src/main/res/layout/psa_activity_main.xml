@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.MainActivity">
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/main_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/main_scroll_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <include
+                    android:id="@+id/content_car_model_selection_header"
+                    layout="@layout/psa_content_car_model_selection_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/app_bar_height"
+                    android:minHeight="200dp" />
+
+                <include
+                    android:id="@+id/content_main"
+                    layout="@layout/psa_content_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/content_car_model_selection_header" />
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/blur_on_touch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:contentDescription="@string/blur_on_touch"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:visibility="gone" />
+        </FrameLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <TextView
+        android:id="@+id/ble_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:drawableLeft="@mipmap/bluetooth_icon"
+        android:drawablePadding="@dimen/imageview_padding"
+        android:drawableStart="@mipmap/bluetooth_icon"
+        android:gravity="center_vertical"
+        android:padding="@dimen/imageview_padding"
+        android:text="@string/not_connected_over_ble"
+        android:textColor="@color/ble_status"
+        android:textSize="@dimen/psa_40_px" />
+
+    <include
+        android:id="@+id/content_start_car_dialog"
+        layout="@layout/psa_content_start_car_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/toolbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@mipmap/header_backgrd"
+        app:popupTheme="@style/AppTheme.PopupOverlay">
+
+        <include layout="@layout/psa_main_toolbar" />
+
+        <include layout="@layout/psa_unlock_trunk_toolbar" />
+
+        <include layout="@layout/psa_lock_trunk_toolbar" />
+
+        <include layout="@layout/psa_close_all_windows_toolbar" />
+    </android.support.v7.widget.Toolbar>
+</RelativeLayout>

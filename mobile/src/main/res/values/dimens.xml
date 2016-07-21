@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="app_bar_height">220dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="imageview_padding">4dp</dimen>
+    <dimen name="imageview_vertical_padding">16dp</dimen>
+    <dimen name="control_row_imageview_vertical_padding">8dp</dimen>
+    <dimen name="control_row_imageview_size">70dp</dimen>
+    <dimen name="tips_vertical_padding">16dp</dimen>
+    <dimen name="vertical_padding">8dp</dimen>
+    <dimen name="start_button_vertical_padding">28dp</dimen>
+
+    <dimen name="psa_40_px">40px</dimen>
+    <dimen name="psa_47_px">47px</dimen>
+    <dimen name="psa_56_px">56px</dimen>
+    <dimen name="psa_70_px">70px</dimen>
+    <dimen name="psa_header_padding">60dp</dimen>
+    <dimen name="psa_header_ble_padding">80dp</dimen>
+    <dimen name="psa_header_ble_model_padding">130dp</dimen>
+    <dimen name="psa_header_icon_right_padding">10dp</dimen>
+    <dimen name="status_bar_height">24dp</dimen>
+    <dimen name="car_model_type_margin">24dp</dimen>
+</resources>

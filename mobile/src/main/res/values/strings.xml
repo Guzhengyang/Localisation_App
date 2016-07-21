@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">PSAnoSDK</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main">Remote key</string>
+    <string name="cancel_start_car">Cancel</string>
+    <string name="you_can_start_tv">You can start your car !</string>
+    <string name="car_start_countdown_min_sec">%1$02d : %2$02d</string>
+    <string name="unlock_trunk_title">Unlocking trunk</string>
+    <string name="lock_trunk_title">Locking trunk</string>
+    <string name="close_all_windows_title">Closing windows</string>
+    <string name="header_back_button">header back button</string>
+    <string name="connected_over_ble">connected over Bluetooth</string>
+    <string name="not_connected_over_ble">not connected over Bluetooth</string>
+    <string name="car_model_type">Car Model Type</string>
+    <string name="peugeot_208">Peugeot 208</string>
+    <string name="peugeot_209">Peugeot 209</string>
+    <string name="slider_and_start_button">Slider and Start button</string>
+    <string name="door_status_bg">door status bg</string>
+    <string name="vehicle_locked">Vehicle locked</string>
+    <string name="driver_s_door_unlocked">Driver\'s door unlocked</string>
+    <string name="vehicle_unlocked">Vehicle unlocked</string>
+    <string name="start_button">Start button</string>
+    <string name="rssi_localization">Rssi localization</string>
+    <string name="unlock_trunk">Unlock trunk</string>
+    <string name="lock_trunk">Lock trunk</string>
+    <string name="close_all_windows">Close all windows</string>
+    <string name="flash_lights">Flash lights</string>
+    <string name="tips">\nTIPS</string>
+    <string name="icon">icon</string>
+    <string name="drag_icon">drag icon</string>
+    <string name="control_action">Control action</string>
+    <string name="nfc_logo">NFC Logo</string>
+    <string name="nfc_disclaimer">You can also access and start your Peugeot by presenting
+        this phone to the door\'s handle and next to the start button.</string>
+    <string name="blur_on_touch">Blurred View on icon touch</string>
+    <string name="dummy_space_view">dummy space view</string>
+    <string name="VIN">VF3ATTENTDS180704</string>
+    <string name="VIN2">VF3ATTENTDS180705</string>
+</resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lock_trunk_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/lock_trunk_icon"
+        android:layout_width="@dimen/psa_header_padding"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="@dimen/psa_header_icon_right_padding"
+        android:layout_marginRight="@dimen/psa_header_icon_right_padding"
+        android:contentDescription="@string/lock_trunk"
+        android:src="@mipmap/open_trunk_button" />
+
+    <TextView
+        android:id="@+id/lock_trunk_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/lock_trunk_icon"
+        android:layout_toRightOf="@id/lock_trunk_icon"
+        android:gravity="center_vertical"
+        android:paddingTop="@dimen/status_bar_height"
+        android:text="@string/lock_trunk_title"
+        android:textColor="@color/white"
+        android:textSize="@dimen/psa_56_px" />
+
+    <ProgressBar
+        android:id="@+id/little_round_progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/lock_trunk_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/lock_trunk_title"
+        android:layout_toEndOf="@id/lock_trunk_icon"
+        android:layout_toRightOf="@id/lock_trunk_icon"
+        android:indeterminate="false"
+        android:maxHeight="10dip"
+        android:minHeight="10dip"
+        android:progress="100" />
+</RelativeLayout>

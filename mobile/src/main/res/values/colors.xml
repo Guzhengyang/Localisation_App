@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#322848</color>
+    <color name="colorPrimaryDark">#2F2B38</color>
+    <color name="colorAccent">#4f4861</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="psa_car_model">#120F0E</color>
+    <color name="ble_status">#595766</color>
+    <color name="tips">#FF9E9E9E</color>
+    <color name="car_not_selected_button">#8f929b</color>
+    <color name="car_slider_inactive_bg">#f3f3f1</color>
+    <color name="content_start_car_dialog">#FA333333</color>
+    <color name="countdown_past">#258f929b</color>
+</resources>
