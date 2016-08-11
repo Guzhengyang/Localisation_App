@@ -9,5 +9,5 @@ import java.util.EventListener;
  * @version 1.5
  */
 public interface BluetoothManagementListener extends EventListener {
-    void onPassiveEntryTry(BluetoothDevice device, int rssi, ScanResponse scanResponse);
+    void onPassiveEntryTry(BluetoothDevice device, int rssi, ScanResponse scanResponse, byte[] advertisedData);
 }

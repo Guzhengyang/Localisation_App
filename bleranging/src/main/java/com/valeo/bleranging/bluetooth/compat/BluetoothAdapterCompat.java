@@ -9,6 +9,7 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.os.Build;
+import android.os.ParcelUuid;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
 
@@ -24,12 +25,12 @@ import java.util.Map;
 public final class BluetoothAdapterCompat {
     /** Log tag. */
     private static final String TAG = BluetoothAdapterCompat.class.getName();
-
-    /** Bluetooth adapter. */
-    private BluetoothAdapter mBluetoothAdapter;
-
     /** Running detection tasks map. */
     private final Map<ScanCallbackCompat, ScanTask> mRunningDetections = new ArrayMap<>();
+    /**
+     * Bluetooth adapter.
+     */
+    private BluetoothAdapter mBluetoothAdapter;
 
 
     /**
@@ -40,6 +41,38 @@ public final class BluetoothAdapterCompat {
     public BluetoothAdapterCompat(final Context context) {
         BluetoothManager bluetoothManager = ((BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE));
         mBluetoothAdapter = bluetoothManager.getAdapter();
+    }
+
+    /**
+     * Pre-Lollipop.
+     *
+     * @param scanCallbackCompat the "compat" callback.
+     * @return the real callback to pass to the start / stop LE scan method, null when no "compat" callback is provided.
+     */
+    private static BluetoothAdapter.LeScanCallback getPreLollipopScanCallback(final ScanCallbackCompat scanCallbackCompat) {
+        BluetoothAdapter.LeScanCallback scanCallback = null;
+
+        if (scanCallbackCompat != null) {
+            scanCallback = scanCallbackCompat.getPreLollipopScanCallback();
+        }
+
+        return scanCallback;
+    }
+
+    /**
+     * Post-Lollipop.
+     *
+     * @param scanCallbackCompat the "compat" callback.
+     * @return the real callback to pass to the start / stop LE scan method, null when no "compat" callback is provided.
+     */
+    private static ScanCallback getPostLollipopScanCallback(final ScanCallbackCompat scanCallbackCompat) {
+        ScanCallback scanCallback = null;
+
+        if (scanCallbackCompat != null) {
+            scanCallback = scanCallbackCompat.getPostLollipopScanCallback();
+        }
+
+        return scanCallback;
     }
 
     /**
@@ -92,6 +125,8 @@ public final class BluetoothAdapterCompat {
         }
     }
 
+    // region Pre-Lollipop
+
     /**
      * This function suspends the start/stop scanning mechanism. Primary use is to avoid stopping
      * the scanning in the middle of the connection as this interferes with the Android bluetooth
@@ -115,7 +150,9 @@ public final class BluetoothAdapterCompat {
         scanTask.resume();
     }
 
-    // region Pre-Lollipop
+    // endregion
+
+    // region Post-Lollipop
 
     /**
      * Starts a scan for Bluetooth LE devices. Results of the scan are reported using the <code>scanCallbackCompat</code> callback.
@@ -138,26 +175,6 @@ public final class BluetoothAdapterCompat {
     }
 
     /**
-     * Pre-Lollipop.
-     *
-     * @param scanCallbackCompat the "compat" callback.
-     * @return the real callback to pass to the start / stop LE scan method, null when no "compat" callback is provided.
-     */
-    private static BluetoothAdapter.LeScanCallback getPreLollipopScanCallback(final ScanCallbackCompat scanCallbackCompat) {
-        BluetoothAdapter.LeScanCallback scanCallback = null;
-
-        if (scanCallbackCompat != null) {
-            scanCallback = scanCallbackCompat.getPreLollipopScanCallback();
-        }
-
-        return scanCallback;
-    }
-
-    // endregion
-
-    // region Post-Lollipop
-
-    /**
      * Post Lollipop code: starts a scan for Bluetooth LE devices. Results of the scan are reported using the <code>scanCallbackCompat</code> callback.
      * Requires BLUETOOTH_ADMIN permission.
      *
@@ -178,9 +195,9 @@ public final class BluetoothAdapterCompat {
                     .setReportDelay(0)
                     .build();
             ScanTask runningScanTask = mRunningDetections.get(scanCallbackCompat);
-            if (runningScanTask != null){
-                Log.w(TAG,"Scanning task is not Started, Already Running one found");
-            }else {
+            if (runningScanTask != null) {
+                Log.w(TAG, "Scanning task is not Started, Already Running one found");
+            } else {
                 PostLollipopScanTask scanTask = new PostLollipopScanTask(mBluetoothAdapter, scanFilters, setting, getPostLollipopScanCallback(scanCallbackCompat));
                 scanTask.setScanPeriods(3000, 200);
                 mRunningDetections.put(scanCallbackCompat, scanTask);
@@ -220,6 +237,10 @@ public final class BluetoothAdapterCompat {
                 .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressBack())
                 .build();
         scanFilters.add(scanFilterBack);
+        ScanFilter scanFilterLogger = new ScanFilter.Builder()
+                .setServiceUuid(ParcelUuid.fromString("f000ff12-0451-4000-b000-000000000000"))
+                .build();
+        scanFilters.add(scanFilterLogger);
         ScanFilter scanFilter37 = new ScanFilter.Builder()
                 .setDeviceAddress(SdkPreferencesHelper.BLE_ADDRESS_37)
                 .build();
@@ -233,22 +254,6 @@ public final class BluetoothAdapterCompat {
                 .build();
         scanFilters.add(scanFilter39);
         return scanFilters;
-    }
-
-    /**
-     * Post-Lollipop.
-     *
-     * @param scanCallbackCompat the "compat" callback.
-     * @return the real callback to pass to the start / stop LE scan method, null when no "compat" callback is provided.
-     */
-    private static ScanCallback getPostLollipopScanCallback(final ScanCallbackCompat scanCallbackCompat) {
-        ScanCallback scanCallback = null;
-
-        if (scanCallbackCompat != null) {
-            scanCallback = scanCallbackCompat.getPostLollipopScanCallback();
-        }
-
-        return scanCallback;
     }
 
     public boolean enable() {

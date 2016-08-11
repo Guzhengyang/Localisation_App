@@ -28,26 +28,13 @@ import java.util.ArrayList;
  * - Handle notification action
  */
 public class BluetoothManagement {
-    private static final String TAG = BluetoothManagement.class.getSimpleName();
     public static final int MESSAGE_COMMAND_SENT_SUCCESS = 27;
+    private static final String TAG = BluetoothManagement.class.getSimpleName();
+    public static BluetoothAdapterCompat mBluetoothAdapterCompat;
+    private final Context mContext;
     private ArrayList<BluetoothManagementListener> mBluetoothManagementListeners;
     private BluetoothLeService mBluetoothLeService;
     private String mConnectableDeviceAddress;
-    private final Context mContext;
-    public static BluetoothAdapterCompat mBluetoothAdapterCompat;
-
-    private IntentFilter makeTrxUpdateIntentFilter() {
-        final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
-        intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
-        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED);
-        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTION_LOSS);
-        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
-        intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
-        intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_FAILED);
-        return intentFilter;
-    }
-
     private IBluetoothLeServiceListener mBLEServiceListener = new IBluetoothLeServiceListener(){
         private Handler mHandler = new Handler();
         @Override
@@ -57,7 +44,6 @@ public class BluetoothManagement {
             mHandler.sendMessage(msg);
         }
     };
-
     /**
      * Code to manage Service lifecycle.
      */
@@ -81,8 +67,23 @@ public class BluetoothManagement {
             mBluetoothLeService = null;
         }
     };
-
     private BroadcastReceiver mTrxUpdateReceiver;
+    /**
+     * - Increase counters
+     * - Update current devices list
+     * - Detect PEPS
+     * - Handle connection to last saved device
+     */
+    private ScanCallbackCompat mLeScanCallbackMain =
+            new ScanCallbackCompat() {
+                @Override
+                public void onScanResult(final BluetoothDevice device, final int rssi, final byte[] scanRecord, final byte[] advertisedData) {
+                    if (scanRecord != null) {
+                        // Check if the passive entry service is available
+                        onScanRecordsGet(device, rssi, scanRecord, advertisedData);
+                    }
+                }
+            };
 
     /**
      * Class constructor
@@ -95,11 +96,23 @@ public class BluetoothManagement {
         mBluetoothManagementListeners = new ArrayList<>();
     }
 
+    private IntentFilter makeTrxUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTION_LOSS);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_FAILED);
+        return intentFilter;
+    }
+
     /**
      * Close the connection between the phone and the current device
      */
     public void disconnect() {
-        if(isFullyConnected()) {
+        if (isFullyConnected()) {
             try {
                 mBluetoothLeService.disconnect();
                 mContext.unbindService(mServiceConnection);
@@ -115,7 +128,7 @@ public class BluetoothManagement {
      * Open the connection between the phone and the current device
      */
     public void connect(BroadcastReceiver mTrxUpdateReceiver) {
-        if(!isFullyConnected()) {
+        if (!isFullyConnected()) {
             Log.i("NIH bind", "BluetoothManagement bindService()");
             this.mTrxUpdateReceiver = mTrxUpdateReceiver;
             mContext.registerReceiver(this.mTrxUpdateReceiver, makeTrxUpdateIntentFilter());
@@ -161,7 +174,7 @@ public class BluetoothManagement {
      * the scanning in the middle of the connection as this interferes with the Android bluetooth
      * stack
      */
-    public void suspendLeScan(){
+    public void suspendLeScan() {
         scanLeDevice(false);
     }
 
@@ -171,26 +184,9 @@ public class BluetoothManagement {
      * stack. So before the connection,the mechanism is suspended, and after the connection, the
      * mecanism is resumed.
      */
-    public void resumeLeScan(){
+    public void resumeLeScan() {
         scanLeDevice(true);
     }
-
-    /**
-     * - Increase counters
-     * - Update current devices list
-     * - Detect PEPS
-     * - Handle connection to last saved device
-     */
-    private ScanCallbackCompat mLeScanCallbackMain =
-            new ScanCallbackCompat() {
-                @Override
-                public void onScanResult(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
-                    if (scanRecord != null) {
-                        // Check if the passive entry service is available
-                        onScanRecordsGet(device, rssi, scanRecord);
-                    }
-                }
-            };
 
     /**
      * Callback called when a scan record is available. Try to parse the byte[] response and turn
@@ -200,7 +196,7 @@ public class BluetoothManagement {
      * @param rssi:       RSSI adapter
      * @param scanRecord: bytes array. Raw data from adapter
      */
-    private void onScanRecordsGet(BluetoothDevice device, int rssi, byte[] scanRecord) {
+    private void onScanRecordsGet(BluetoothDevice device, int rssi, byte[] scanRecord, byte[] advertisedData) {
         //Get profile version
         byte profileVersion = checkProfileVersion(scanRecord);
         //Check BTLE profile version
@@ -210,10 +206,14 @@ public class BluetoothManagement {
                 //Parse content of advertising data
                 ScanResponse scanResponse = parseResponseProfileV1(scanRecord);
                 //Process the content
-                processResponseProfileV1(scanResponse, device, rssi);
+                processResponseProfileV1(scanResponse, device, rssi, advertisedData);
                 break;
             default:
                 //The protocol is unknown. do nothing
+                //Parse content of advertising data
+                ScanResponse scanResponse2 = parseResponseProfileV1(scanRecord);
+                //Process the content
+                processResponseProfileV1(scanResponse2, device, rssi, advertisedData);
                 break;
         }
     }
@@ -357,9 +357,10 @@ public class BluetoothManagement {
      * @param scanResponse Structured content from the advertising data and scan response
      * @param device bluetooth device detected
      * @param rssi the signal strength of the scan response
+     * @param advertisedData the data advertised
      */
-    private void processResponseProfileV1(ScanResponse scanResponse, BluetoothDevice device, int rssi) {
-        firePassiveEntryTry(device, rssi, scanResponse);
+    private void processResponseProfileV1(ScanResponse scanResponse, BluetoothDevice device, int rssi, byte[] advertisedData) {
+        firePassiveEntryTry(device, rssi, scanResponse, advertisedData);
     }
 
     public void sendPackets(byte[][] value) {
@@ -378,9 +379,9 @@ public class BluetoothManagement {
         }
     }
 
-    public void firePassiveEntryTry(BluetoothDevice device, int rssi, ScanResponse scanResponse) {
+    public void firePassiveEntryTry(BluetoothDevice device, int rssi, ScanResponse scanResponse, byte[] advertisedData) {
         for(BluetoothManagementListener listener : mBluetoothManagementListeners) {
-            listener.onPassiveEntryTry(device, rssi, scanResponse);
+            listener.onPassiveEntryTry(device, rssi, scanResponse, advertisedData);
         }
     }
 

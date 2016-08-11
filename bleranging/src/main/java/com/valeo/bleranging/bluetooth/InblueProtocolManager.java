@@ -6,19 +6,20 @@ package com.valeo.bleranging.bluetooth;
  */
 public class InblueProtocolManager {
 
-    public InblueProtocolManager(){}
-
     private int packetOneCounter;
     private boolean isStartRequested;
     private boolean isLockedFromTrx;
     private boolean isLockedToSend;
 
+    public InblueProtocolManager() {
+    }
+
     public void setIsStartRequested(boolean isStartRequested) {
         this.isStartRequested = isStartRequested;
     }
 
-    public void setIsLockedFromTrx(boolean isLockedFromTrx) {
-        this.isLockedFromTrx = isLockedFromTrx;
+    public boolean isStartRequested() {
+        return isStartRequested;
     }
 
     public boolean isLockedToSend() {
@@ -27,6 +28,10 @@ public class InblueProtocolManager {
 
     public boolean isLockedFromTrx() {
         return isLockedFromTrx;
+    }
+
+    public void setIsLockedFromTrx(boolean isLockedFromTrx) {
+        this.isLockedFromTrx = isLockedFromTrx;
     }
 
     public void setIsLockedToSend(boolean isLockedToSend) {

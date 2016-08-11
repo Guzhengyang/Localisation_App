@@ -7,6 +7,7 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.os.Build;
+import android.os.ParcelUuid;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -53,7 +54,7 @@ public abstract class ScanCallbackCompat {
         mPreLollipopLeScanCallback = new BluetoothAdapter.LeScanCallback() {
             @Override
             public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
-                ScanCallbackCompat.this.onScanResult(device, rssi, scanRecord);
+                ScanCallbackCompat.this.onScanResult(device, rssi, scanRecord, null);
             }
         };
     }
@@ -88,12 +89,14 @@ public abstract class ScanCallbackCompat {
                 BluetoothDevice device = scanResult.getDevice();
                 ScanRecord scanRecord = scanResult.getScanRecord();
                 byte[] scanRecordAsBytes = null;
+                byte[] advertisedData = null;
 
                 if (scanRecord != null) {
                     scanRecordAsBytes = scanRecord.getBytes();
+                    advertisedData = scanRecord.getServiceData(ParcelUuid.fromString("0000ff12-0000-1000-8000-00805f9b34fb"));
                 }
 
-                ScanCallbackCompat.this.onScanResult(device, scanResult.getRssi(), scanRecordAsBytes);
+                ScanCallbackCompat.this.onScanResult(device, scanResult.getRssi(), scanRecordAsBytes, advertisedData);
             }
 
             public void onScanFailed(int errorCode) {
@@ -110,6 +113,7 @@ public abstract class ScanCallbackCompat {
      * @param device     identifies the remote device.
      * @param rssi       the RSSI value for the remote device as reported by theBluetooth hardware. 0 if no RSSI value is available.
      * @param scanRecord the content of the advertisement record offered by the remote device.
+     * @param advertisedData the content of the advertisement record offered by the remote device.
      */
-    protected abstract void onScanResult(BluetoothDevice device, int rssi, @Nullable byte[] scanRecord);
+    protected abstract void onScanResult(BluetoothDevice device, int rssi, @Nullable byte[] scanRecord, @Nullable byte[] advertisedData);
 }

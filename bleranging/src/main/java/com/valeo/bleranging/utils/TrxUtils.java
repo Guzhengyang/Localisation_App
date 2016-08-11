@@ -436,11 +436,22 @@ public class TrxUtils {
      */
     public static void appendRssiLogs(int rssiLeft, int rssiMiddle1, int rssiMiddle2, int rssiRight, int rssiBack,
                                       boolean isSmartphoneInPocket, boolean isSmartphoneLaid, boolean isPassiveEntryAction,
-                                      boolean rearmLock, boolean rearmUnlock, boolean rearmWelcome) {
+                                      boolean rearmLock, boolean rearmUnlock, boolean rearmWelcome,
+                                      byte welcomeByte, byte lockByte, byte startByte,
+                                      byte leftAreaByte, byte rightAreaByte, byte backAreaByte,
+                                      byte walkAwayByte, byte steadyByte, byte approachByte,
+                                      byte leftTurnByte, byte fullTurnByte, byte rightTurnByte, byte recordByte,
+                                      boolean lockFromTrx, boolean lockToSend, boolean startAllowed) {
         StringBuilder log = new StringBuilder();
         log.append(rssiLeft).append(";").append(rssiMiddle1).append(";").append(rssiMiddle2).append(";").append(rssiRight).append(";").append(rssiBack).append(";");
         log.append(isSmartphoneInPocket).append(";").append(isSmartphoneLaid).append(";").append(isPassiveEntryAction).append(";");
         log.append(rearmLock).append(";").append(rearmUnlock).append(";").append(rearmWelcome).append(";");
+        log.append(welcomeByte).append(";").append(lockByte).append(";").append(startByte).append(";");
+        log.append(leftAreaByte).append(";").append(rightAreaByte).append(";").append(backAreaByte).append(";");
+        log.append(walkAwayByte).append(";").append(steadyByte).append(";").append(approachByte).append(";");
+        log.append(leftTurnByte).append(";").append(fullTurnByte).append(";").append(rightTurnByte).append(";");
+        log.append(recordByte).append(";");
+        log.append(lockFromTrx).append(";").append(lockToSend).append(";").append(startAllowed).append(";");
         appendRssiLog(log.toString());
     }
 
@@ -462,7 +473,7 @@ public class TrxUtils {
                 logFile.createNewFile();
                 //Write 1st row with column names
                 //BufferedWriter for performance, true to set append to file flag
-                String ColNames = "TIMESTAMP;RSSI LEFT;RSSI MIDDLE1;RSSI MIDDLE2;RSSI RIGHT;RSSI BACK;IN POCKET;IS LAID;IS PEPS;REARM LOCK;REARM UNLOCK;REARM WELCOME;;LOCK;UNLOCK;";
+                String ColNames = "TIMESTAMP;RSSI LEFT;RSSI MIDDLE1;RSSI MIDDLE2;RSSI RIGHT;RSSI BACK;IN POCKET;IS LAID;IS PEPS;REARM LOCK;REARM UNLOCK;REARM WELCOME;WELCOME FLAG;LOCK FLAG;START FLAG;LEFT AREA FLAG; RIGHT AREA FLAG; BACK AREA FLAG;WALK AWAY FLAG;STEADY FLAG;APPROACH FLAG; LEFT TURN FLAG; FULL TURN FLAG; RIGHT TURN FLAG;RECORD FLAG;;LOCK FROM TRX;LOCK TO SEND;START ALLOWED;";
                 BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
                 buf.append(ColNames);
                 buf.newLine();

@@ -145,6 +145,19 @@ public class BleRangingHelper implements SensorEventListener {
     private Trx trxMiddle;
     private Trx trxRight;
     private Trx trxBack;
+    private byte welcomeByte = 0;
+    private byte lockByte = 0;
+    private byte startByte = 0;
+    private byte leftAreaByte = 0;
+    private byte rightAreaByte = 0;
+    private byte backAreaByte = 0;
+    private byte walkAwayByte = 0;
+    private byte steadyByte = 0;
+    private byte approachByte = 0;
+    private byte leftTurnByte = 0;
+    private byte fullTurnByte = 0;
+    private byte rightTurnByte = 0;
+    private byte recordByte = 0;
     private InblueProtocolManager mProtocolManager;
     private BleRangingListener bleRangingListener;
     private ArrayList<Double> lAccHistoric = new ArrayList<>(linAccSize);
@@ -168,7 +181,7 @@ public class BleRangingHelper implements SensorEventListener {
     private Runnable checkAntennaRunner = new Runnable() {
         @Override
         public void run() {
-            Log.w(Thread.currentThread().getName() + " rssiHistorics", "************************************** CHECK ANTENNAS ************************************************");
+            Log.w(" rssiHistorics", "************************************** CHECK ANTENNAS ************************************************");
             checkAllAntennas();
             if (mMainHandler != null) {
                 mMainHandler.postDelayed(this, 2500);
@@ -189,7 +202,7 @@ public class BleRangingHelper implements SensorEventListener {
     private Runnable printRunner = new Runnable() {
         @Override
         public void run() {
-            Log.w(Thread.currentThread().getName() + " rssiHistorics", "************************************** IHM LOOP START *************************************************");
+            Log.w(" rssiHistorics", "************************************** IHM LOOP START *************************************************");
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
             createHeaderDebugData(spannableStringBuilder);
             calculateTotalAverage();
@@ -197,7 +210,7 @@ public class BleRangingHelper implements SensorEventListener {
             createFooterDebugData(spannableStringBuilder);
             updateCarLocalization();
             bleRangingListener.printDebugInfo(spannableStringBuilder);
-            Log.w(Thread.currentThread().getName() + " rssiHistorics", "************************************** IHM LOOP END *************************************************");
+            Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
             if (mMainHandler != null) {
                 mMainHandler.postDelayed(this, 400);
             }
@@ -309,9 +322,9 @@ public class BleRangingHelper implements SensorEventListener {
         mIsLaidTimeOutHandler = new Handler();
         mBluetoothManager.addBluetoothManagementListener(new BluetoothManagementListener() {
             @Override
-            public void onPassiveEntryTry(BluetoothDevice device, int rssi, ScanResponse scanResponse) {
+            public void onPassiveEntryTry(BluetoothDevice device, int rssi, ScanResponse scanResponse, byte[] advertisedData) {
                 bleChannel = getCurrentChannel(device, bleChannel);
-                doPassiveEntry(device, rssi, scanResponse);
+                doPassiveEntry(device, rssi, scanResponse, advertisedData);
             }
         });
         SensorManager senSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
@@ -395,9 +408,10 @@ public class BleRangingHelper implements SensorEventListener {
      * @param rssi the rssi of the scanResponse
      * @param scanResponse the scanResponse received
      */
-    private void doPassiveEntry(final BluetoothDevice device, int rssi, ScanResponse scanResponse) {
+    private void doPassiveEntry(final BluetoothDevice device, int rssi, ScanResponse scanResponse, byte[] advertisedData) {
         if (device != null && scanResponse != null) {
             rearmWelcome(rssi); // rearm rearmWelcome Boolean
+            Log.d(" rssiHistoric", "BLE_ADDRESS_LOGGER2=" + TextUtils.printBleBytes(advertisedData));
             if (isFirstConnection && !mBluetoothManager.isFullyConnected() && device.getAddress().equals(trxAddressConnectable)) {
                 runFirstConnection(scanResponse);
                 mBluetoothManager.setConnectableDeviceAddress(trxAddressConnectable);
@@ -406,7 +420,7 @@ public class BleRangingHelper implements SensorEventListener {
                 if(device.getAddress().equals(trxAddressLeft)) {
                     trxLeft.getAntenna1().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
                     trxLeft.getAntenna2().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(Thread.currentThread().getName() + " rssiHistoric", "BLE_ADDRESS_LEFT=" + trxAddressLeft + " " + trxLeft.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT) + " " + trxLeft.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT));
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_LEFT=" + trxAddressLeft + " " + trxLeft.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT) + " " + trxLeft.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT));
                 } else if (device.getAddress().equals(trxAddressMiddle)) {
                     if (scanResponse.antennaId == Trx.ANTENNA_ID_1) {
                         trxMiddle.getAntenna1().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
@@ -422,23 +436,40 @@ public class BleRangingHelper implements SensorEventListener {
                         trxMiddle.getAntenna1().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
                         trxMiddle.getAntenna2().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
                     }
-                    Log.d(Thread.currentThread().getName() + " rssiHistoric", "BLE_ADDRESS_MIDDLE=" + trxAddressMiddle + " " + trxMiddle.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT) + " " + trxMiddle.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT));
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_MIDDLE=" + trxAddressMiddle + " " + trxMiddle.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT) + " " + trxMiddle.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT));
                 } else if (device.getAddress().equals(trxAddressRight)) {
                     trxRight.getAntenna1().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
                     trxRight.getAntenna2().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(Thread.currentThread().getName() + " rssiHistoric", "BLE_ADDRESS_RIGHT=" + trxAddressRight + " " + trxRight.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT) + " " + trxRight.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT));
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_RIGHT=" + trxAddressRight + " " + trxRight.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT) + " " + trxRight.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT));
                 } else if (device.getAddress().equals(trxAddressBack)) {
                     trxBack.getAntenna1().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
                     trxBack.getAntenna2().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(Thread.currentThread().getName() + " rssiHistoric", "BLE_ADDRESS_BACK=" + trxAddressBack + " " + trxBack.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT) + " " + trxBack.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT));
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_BACK=" + trxAddressBack + " " + trxBack.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT) + " " + trxBack.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT));
+                } else {
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_LOGGER=" + TextUtils.printBleBytes(advertisedData));
+                    getAdvertisedBytes(advertisedData);
                 }
-                TrxUtils.appendRssiLogs(trxLeft.getAntenna1().getCurrentOriginalRssi(),
-                        trxMiddle.getAntenna1().getCurrentOriginalRssi(), trxMiddle.getAntenna2().getCurrentOriginalRssi(),
-                        trxRight.getAntenna1().getCurrentOriginalRssi(), trxBack.getAntenna1().getCurrentOriginalRssi(),
-                        smartphoneIsInPocket, smartphoneIsLaidDownLAcc, isPassiveEntryAction.get(),
-                        rearmLock.get(), rearmUnlock.get(), rearmWelcome.get());
             }
         }
+    }
+
+    /**
+     * Create two bytes with all the bits from the switches
+     */
+    private void getAdvertisedBytes(byte[] advertisedData) {
+        steadyByte = (byte) (advertisedData[3] & (1 << 7));
+        walkAwayByte = (byte) (advertisedData[3] & (1 << 6));
+        backAreaByte = (byte) (advertisedData[3] & (1 << 5));
+        rightAreaByte = (byte) (advertisedData[3] & (1 << 4));
+        leftAreaByte = (byte) (advertisedData[3] & (1 << 3));
+        startByte = (byte) (advertisedData[3] & (1 << 2));
+        lockByte = (byte) (advertisedData[3] & (1 << 1));
+        welcomeByte = (byte) (advertisedData[3] & 1);
+        recordByte = (byte) (advertisedData[4] & (1 << 7));
+        rightTurnByte = (byte) (advertisedData[4] & (1 << 3));
+        fullTurnByte = (byte) (advertisedData[4] & (1 << 2));
+        leftTurnByte = (byte) (advertisedData[4] & (1 << 1));
+        approachByte = (byte) (advertisedData[4] & 1);
     }
 
     /**
@@ -541,7 +572,7 @@ public class BleRangingHelper implements SensorEventListener {
             isStartStrategyValid = TrxUtils.startStrategy(newLockStatus, trxLeft, trxMiddle, trxRight, trxBack, smartphoneIsInPocket);
             isWelcomeStrategyValid = TrxUtils.welcomeStrategy(totalAverage, smartphoneIsInPocket);
             if (isOnWelcomePostionTimerExpired.get() && rearmWelcome.get() && newLockStatus && isWelcomeStrategyValid) {
-                Log.d(Thread.currentThread().getName() + " rssiHistorics", "welcome");
+                Log.d(" rssiHistorics", "welcome");
                 //Initialize timeout flag which is cleared in the runnable launched in the next instruction
                 isOnWelcomePostionTimerExpired.set(false);
                 //Launch timeout
@@ -552,16 +583,16 @@ public class BleRangingHelper implements SensorEventListener {
                 //TODO Welcome
             } else if (isLockStatusChangedTimerExpired.get() && rearmLock.get() && isLockStrategyValid && isUnlockStrategyValid == 0) {
                 // DO NOT check if !newLockStatus to let the rearm algorithm in performLockVehicle work
-                Log.d(Thread.currentThread().getName() + " rssiHistorics", "lock");
+                Log.d(" rssiHistorics", "lock");
                 isPassiveEntryAction.set(true);
                 performLockVehicleRequest(true);
             } else if (isLockStatusChangedTimerExpired.get() && rearmUnlock.get() && isUnlockStrategyValid != 0 && !isLockStrategyValid) {
                 // DO NOT check if newLockStatus to let the rearm algorithm in performLockVehicle work
-                Log.d(Thread.currentThread().getName() + " rssiHistorics", "unlock");
+                Log.d(" rssiHistorics", "unlock");
                 isPassiveEntryAction.set(true);
                 performLockVehicleRequest(false);
             } else if (isOnStartPostionTimerExpired.get() && isStartStrategyValid) {
-                Log.d(Thread.currentThread().getName() + " rssiHistorics", "start");
+                Log.d(" rssiHistorics", "start");
                 //Initialize timeout flag which is cleared in the runnable launched in the next instruction
                 isOnStartPostionTimerExpired.set(false);
                 //Launch timeout
@@ -574,6 +605,15 @@ public class BleRangingHelper implements SensorEventListener {
             }
             mProtocolManager.setIsStartRequested(isStartAllowed);
         }
+        TrxUtils.appendRssiLogs(trxLeft.getAntenna1().getCurrentOriginalRssi(),
+                trxMiddle.getAntenna1().getCurrentOriginalRssi(), trxMiddle.getAntenna2().getCurrentOriginalRssi(),
+                trxRight.getAntenna1().getCurrentOriginalRssi(), trxBack.getAntenna1().getCurrentOriginalRssi(),
+                smartphoneIsInPocket, smartphoneIsLaidDownLAcc, isPassiveEntryAction.get(),
+                rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), welcomeByte,
+                lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
+                walkAwayByte, steadyByte, approachByte, leftTurnByte,
+                fullTurnByte, rightTurnByte, recordByte,
+                mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(), mProtocolManager.isStartRequested());
     }
 
     /**
@@ -821,7 +861,7 @@ public class BleRangingHelper implements SensorEventListener {
      */
     private void runFirstConnection(final ScanResponse scanResponse) {
         if(isFirstConnection) {
-            Log.w(Thread.currentThread().getName() + " rssiHistorics", "************************************** runFirstConnection ************************************************");
+            Log.w(" rssiHistorics", "************************************** runFirstConnection ************************************************");
             newLockStatus = (scanResponse.vehicleState & 0x01)!=0;
             mProtocolManager.setIsLockedToSend(newLockStatus);
             if(newLockStatus) {
