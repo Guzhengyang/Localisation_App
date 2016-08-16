@@ -199,6 +199,25 @@ public class BleRangingHelper implements SensorEventListener {
             isAbortRunning = false;
         }
     };
+    private Runnable sendPacketRunner = new Runnable() {
+        @Override
+        public void run() {
+            Log.d("NIH", "getPacketOnePayload then sendPackets");
+            bytesToSend = mProtocolManager.getPacketOnePayload();
+            mBluetoothManager.sendPackets(new byte[][]{bytesToSend});
+            if (mBluetoothManager.isFullyConnected() && mMainHandler != null) {
+                mMainHandler.postDelayed(this, 200);
+            }
+        }
+    };
+    private Runnable isLaidRunnable = new Runnable() {
+        @Override
+        public void run() {
+            smartphoneIsLaidDownLAcc = true; // smartphone is staying still
+            mIsLaidTimeOutHandler.removeCallbacks(this);
+        }
+    };
+    private boolean isLoggable = true;
     private Runnable printRunner = new Runnable() {
         @Override
         public void run() {
@@ -213,17 +232,6 @@ public class BleRangingHelper implements SensorEventListener {
             Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
             if (mMainHandler != null) {
                 mMainHandler.postDelayed(this, 400);
-            }
-        }
-    };
-    private Runnable sendPacketRunner = new Runnable() {
-        @Override
-        public void run() {
-            Log.d("NIH", "getPacketOnePayload then sendPackets");
-            bytesToSend = mProtocolManager.getPacketOnePayload();
-            mBluetoothManager.sendPackets(new byte[][]{bytesToSend});
-            if (mBluetoothManager.isFullyConnected() && mMainHandler != null) {
-                mMainHandler.postDelayed(this, 200);
             }
         }
     };
@@ -300,13 +308,6 @@ public class BleRangingHelper implements SensorEventListener {
             } else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 Log.d("NIH", "TRX ACTION_GATT_CONNECTED");
             }
-        }
-    };
-    private Runnable isLaidRunnable = new Runnable() {
-        @Override
-        public void run() {
-            smartphoneIsLaidDownLAcc = true; // smartphone is staying still
-            mIsLaidTimeOutHandler.removeCallbacks(this);
         }
     };
 
@@ -457,18 +458,18 @@ public class BleRangingHelper implements SensorEventListener {
      * Create two bytes with all the bits from the switches
      */
     private void getAdvertisedBytes(byte[] advertisedData) {
-        steadyByte = (byte) (advertisedData[3] & (1 << 7));
-        walkAwayByte = (byte) (advertisedData[3] & (1 << 6));
-        backAreaByte = (byte) (advertisedData[3] & (1 << 5));
-        rightAreaByte = (byte) (advertisedData[3] & (1 << 4));
-        leftAreaByte = (byte) (advertisedData[3] & (1 << 3));
-        startByte = (byte) (advertisedData[3] & (1 << 2));
-        lockByte = (byte) (advertisedData[3] & (1 << 1));
+        steadyByte = (byte) ((advertisedData[3] & (1 << 7)) >> 7);
+        walkAwayByte = (byte) ((advertisedData[3] & (1 << 6)) >> 6);
+        backAreaByte = (byte) ((advertisedData[3] & (1 << 5)) >> 5);
+        rightAreaByte = (byte) ((advertisedData[3] & (1 << 4)) >> 4);
+        leftAreaByte = (byte) ((advertisedData[3] & (1 << 3)) >> 3);
+        startByte = (byte) ((advertisedData[3] & (1 << 2)) >> 2);
+        lockByte = (byte) ((advertisedData[3] & (1 << 1)) >> 1);
         welcomeByte = (byte) (advertisedData[3] & 1);
-        recordByte = (byte) (advertisedData[4] & (1 << 7));
-        rightTurnByte = (byte) (advertisedData[4] & (1 << 3));
-        fullTurnByte = (byte) (advertisedData[4] & (1 << 2));
-        leftTurnByte = (byte) (advertisedData[4] & (1 << 1));
+        recordByte = (byte) ((advertisedData[4] & (1 << 7)) >> 7);
+        rightTurnByte = (byte) ((advertisedData[4] & (1 << 3)) >> 3);
+        fullTurnByte = (byte) ((advertisedData[4] & (1 << 2)) >> 2);
+        leftTurnByte = (byte) ((advertisedData[4] & (1 << 1)) >> 1);
         approachByte = (byte) (advertisedData[4] & 1);
     }
 
@@ -605,15 +606,17 @@ public class BleRangingHelper implements SensorEventListener {
             }
             mProtocolManager.setIsStartRequested(isStartAllowed);
         }
-        TrxUtils.appendRssiLogs(trxLeft.getAntenna1().getCurrentOriginalRssi(),
-                trxMiddle.getAntenna1().getCurrentOriginalRssi(), trxMiddle.getAntenna2().getCurrentOriginalRssi(),
-                trxRight.getAntenna1().getCurrentOriginalRssi(), trxBack.getAntenna1().getCurrentOriginalRssi(),
-                smartphoneIsInPocket, smartphoneIsLaidDownLAcc, isPassiveEntryAction.get(),
-                rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), welcomeByte,
-                lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
-                walkAwayByte, steadyByte, approachByte, leftTurnByte,
-                fullTurnByte, rightTurnByte, recordByte,
-                mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(), mProtocolManager.isStartRequested());
+        if (isLoggable) {
+            TrxUtils.appendRssiLogs(trxLeft.getAntenna1().getCurrentOriginalRssi(),
+                    trxMiddle.getAntenna1().getCurrentOriginalRssi(), trxMiddle.getAntenna2().getCurrentOriginalRssi(),
+                    trxRight.getAntenna1().getCurrentOriginalRssi(), trxBack.getAntenna1().getCurrentOriginalRssi(),
+                    smartphoneIsInPocket, smartphoneIsLaidDownLAcc, isPassiveEntryAction.get(), isLockStatusChangedTimerExpired.get(),
+                    rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), newLockStatus, welcomeByte,
+                    lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
+                    walkAwayByte, steadyByte, approachByte, leftTurnByte,
+                    fullTurnByte, rightTurnByte, recordByte,
+                    mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(), mProtocolManager.isStartRequested());
+        }
     }
 
     /**
@@ -1001,6 +1004,7 @@ public class BleRangingHelper implements SensorEventListener {
     public void closeApp() {
         // increase the file number use for logs files name
         SdkPreferencesHelper.getInstance().setRssiLogNumber(SdkPreferencesHelper.getInstance().getRssiLogNumber() + 1);
+        isLoggable = false;
         if(mStartPositionHandler != null)
             mStartPositionHandler.removeCallbacks(mManageStartPositionPeriodicTimer);
         if(mLockStatusChangedHandler != null)

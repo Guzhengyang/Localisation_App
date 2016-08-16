@@ -6,16 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/main_scroll"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/toolbar">
 
-        <FrameLayout
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/main_scroll"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+            android:layout_height="wrap_content">
             <RelativeLayout
                 android:id="@+id/main_scroll_relativeLayout"
                 android:layout_width="match_parent"
@@ -35,18 +34,18 @@
                     android:layout_height="match_parent"
                     android:layout_below="@id/content_car_model_selection_header" />
             </RelativeLayout>
+        </android.support.v4.widget.NestedScrollView>
 
-            <ImageView
-                android:id="@+id/blur_on_touch"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clickable="true"
-                android:contentDescription="@string/blur_on_touch"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:visibility="gone" />
-        </FrameLayout>
-    </android.support.v4.widget.NestedScrollView>
+        <ImageView
+            android:id="@+id/blur_on_touch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:contentDescription="@string/blur_on_touch"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/ble_status"

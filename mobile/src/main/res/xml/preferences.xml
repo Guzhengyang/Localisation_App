@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_offset">
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_OFFSET_POCKET_FOR_START"
+            android:title="@string/pref_offset_start" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_OFFSET_POCKET_FOR_LOCK"
+            android:title="@string/pref_offset_lock" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_OFFSET_POCKET_FOR_UNLOCK"
+            android:title="@string/pref_offset_unlock" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_threshold">
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_START_THR"
+            android:title="@string/pref_threshold_start" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_UNLOCK_THR"
+            android:title="@string/pref_threshold_unlock" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_LOCK_THR"
+            android:title="@string/pref_threshold_lock" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_WELCOME_THR"
+            android:title="@string/pref_threshold_welcome" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_NEXT_TO_DOOR_RATIO_THR"
+            android:title="@string/pref_threshold_next_to_door_ratio" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_NEXT_TO_BACKDOOR_RATIO_THR_MIN"
+            android:title="@string/pref_threshold_back_door_ratio_min" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_NEXT_TO_BACKDOOR_RATIO_THR_MAX"
+            android:title="@string/pref_threshold_back_door_ratio_max" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_NEXT_TO_DOOR_RATIO_THR_ML_MR_MAX"
+            android:title="@string/pref_threshold_next_to_door_ratio_ml_mr_max" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN"
+            android:title="@string/pref_threshold_next_to_door_ratio_ml_mr_min" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_AVERAGE_DELTA_LOCK_THRESHOLD"
+            android:title="@string/pref_threshold_average_delta_lock" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD"
+            android:title="@string/pref_threshold_average_delta_unlock" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_nb_element">
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_RSSI_LOG_NUMBER"
+            android:title="@string/pref_nb_element_rssi_log_number" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ROLLING_AV_ELEMENT"
+            android:title="@string/pref_nb_element_rolling_average" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_START_NB_ELEMENT"
+            android:title="@string/pref_nb_element_start" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_LOCK_NB_ELEMENT"
+            android:title="@string/pref_nb_element_lock" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_UNLOCK_NB_ELEMENT"
+            android:title="@string/pref_nb_element_unlock" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_WELCOME_NB_ELEMENT"
+            android:title="@string/pref_nb_element_welcome" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_LONG_NB_ELEMENT"
+            android:title="@string/pref_nb_element_long" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_SHORT_NB_ELEMENT"
+            android:title="@string/pref_nb_element_short" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_mode">
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_UNLOCK_MODE"
+            android:title="@string/pref_mode_unlock" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_LOCK_MODE"
+            android:title="@string/pref_mode_lock" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_START_MODE"
+            android:title="@string/pref_mode_start" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_ecretage">
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ECRETAGE_70_100"
+            android:title="@string/pref_ecretage_100" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ECRETAGE_50_70"
+            android:title="@string/pref_ecretage_70" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ECRETAGE_30_50"
+            android:title="@string/pref_ecretage_50" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ECRETAGE_30_30"
+            android:title="@string/pref_ecretage_30" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_acc">
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_LIN_ACC_SIZE"
+            android:title="@string/pref_acc_size" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_CORRECTION_LIN_ACC"
+            android:title="@string/pref_acc_correction" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_equalizer">
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_EQUALIZER_LEFT"
+            android:title="@string/pref_equalizer_left" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_EQUALIZER_MIDDLE"
+            android:title="@string/pref_equalizer_middle" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_EQUALIZER_RIGHT"
+            android:title="@string/pref_equalizer_right" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_EQUALIZER_BACK"
+            android:title="@string/pref_equalizer_back" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_ble_address">
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_CONNECTABLE"
+            android:title="@string/pref_ble_address_connectable" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_LEFT"
+            android:title="@string/pref_ble_address_left" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_MIDDLE"
+            android:title="@string/pref_ble_address_middle" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_RIGHT"
+            android:title="@string/pref_ble_address_right" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_BACK"
+            android:title="@string/pref_ble_address_back" />
+    </PreferenceCategory>
+</PreferenceScreen>

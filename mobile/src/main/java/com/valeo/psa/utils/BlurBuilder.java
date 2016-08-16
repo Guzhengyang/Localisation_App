@@ -12,7 +12,7 @@ import android.view.View;
 /**
  * Utils class used to generate a blurred image from a View.
  *
- * @see http://stackoverflow.com/questions/6795483/create-blurry-transparent-background-effect
+ * @see "http://stackoverflow.com/questions/6795483/create-blurry-transparent-background-effect"
  */
 public class BlurBuilder {
     /** A scale applied to the view background. */

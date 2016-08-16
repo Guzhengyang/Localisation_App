@@ -1,5 +1,6 @@
 package com.valeo.psa.activity;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -23,6 +24,8 @@ import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,9 +61,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private final static int MINUTE_IN_MILLI = 60000;
     private final static int SECOND_IN_MILLI = 1000;
     private final static float SCROLL_THRESHOLD = 10;
-    private enum CarDoorStatus {
-        LOCKED, DRIVER_DOOR_OPEN, UNLOCKED
-    }
+    private static final int RESULT_SETTINGS = 20;
     private Toolbar toolbar;
     private NestedScrollView content_main;
     private NestedScrollView main_scroll;
@@ -103,6 +104,16 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private CarDoorStatus carDoorStatus = CarDoorStatus.LOCKED;
     private BleRangingHelper mBleRangingHelper;
 
+    /**
+     * Get the status bar height
+     *
+     * @param res the app resources
+     * @return the height of the status bar
+     */
+    private static int statusBarHeight(Resources res) {
+        return (int) (R.dimen.status_bar_height * res.getDisplayMetrics().density);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -126,6 +137,33 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 break;
             case UNLOCKED:
                 vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
+                break;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.settings, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_settings:
+                Intent i = new Intent(this, SettingsActivity.class);
+                startActivityForResult(i, RESULT_SETTINGS);
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case RESULT_SETTINGS:
+                Log.d("settings", "ok");
                 break;
         }
     }
@@ -353,16 +391,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         mCarListAdapter = new CarListAdapter(mCarSelectionListener);
         car_model_recyclerView.setAdapter(mCarListAdapter);
         mCarListAdapter.setCars(createCarList());
-    }
-
-    /**
-     * Get the status bar height
-     *
-     * @param res the app resources
-     * @return the height of the status bar
-     */
-    private static int statusBarHeight(Resources res) {
-        return (int) (R.dimen.status_bar_height * res.getDisplayMetrics().density);
     }
 
     /**
@@ -663,7 +691,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 
     @Override
     public void printDebugInfo(SpannableStringBuilder spannableStringBuilder) {
-        if(mBleRangingHelper.isFullyConnected()) {
+        if (mBleRangingHelper.isFullyConnected()) {
             ble_status.setText(R.string.connected_over_ble);
         } else {
             ble_status.setText(R.string.not_connected_over_ble);
@@ -675,5 +703,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     public void onBackPressed() {
         mBleRangingHelper.closeApp();
         super.onBackPressed();
+    }
+
+    private enum CarDoorStatus {
+        LOCKED, DRIVER_DOOR_OPEN, UNLOCKED
     }
 }

@@ -1,7 +1,7 @@
 package com.valeo.bleranging.persistence;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 /**
@@ -20,9 +20,9 @@ public final class SdkPreferencesHelper {
     public final static int NEXT_TO_BACKDOOR_RATIO_THRESHOLD_MAX = 5;
     public final static int NEXT_TO_DOOR_RATIO_THRESHOLD_ML_MR_MAX = 12;
     public final static int NEXT_TO_DOOR_RATIO_THRESHOLD_ML_MR_MIN = 2;
-    public final static int RSSI_LOG_NUMBER = 0;
     public final static int AVERAGE_DELTA_UNLOCK_THRESHOLD = 10;
     public final static int AVERAGE_DELTA_LOCK_THRESHOLD = -10;
+    public final static int RSSI_LOG_NUMBER = 0;
     public final static int ROLLING_AVERAGE_ELEMENTS = 50;
     public final static int START_NB_ELEMENT = 10;
     public final static int LOCK_NB_ELEMENT = 5;
@@ -55,48 +55,48 @@ public final class SdkPreferencesHelper {
     public static final String SAVED_SELECTED_LOCATION = "savedSelectedLocation";
     public static final String SAVED_LIGHT_CAPTOR = "savedLightCaptor";
     /** Calibration measurement key formatter. */
-    private static final String ADDRESS_CONNECTABLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE";
-    private static final String ADDRESS_LEFT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_LEFT";
-    private static final String ADDRESS_MIDDLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_MIDDLE";
-    private static final String ADDRESS_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_RIGHT";
-    private static final String ADDRESS_BACK_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_BACK";
-    private static final String OFFSET_POCKET_FOR_START_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_START";
-    private static final String OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_LOCK";
-    private static final String OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_UNLOCK";
-    private static final String START_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_START_THR";
-    private static final String UNLOCK_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_THR";
-    private static final String LOCK_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOCK_THR";
-    private static final String WELCOME_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_WELCOME_THR";
-    private static final String NEXT_TO_DOOR_RATIO_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_DOOR_RATIO_THR";
-    private static final String NEXT_TO_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_BACKDOOR_RATIO_THR_MIN";
-    private static final String NEXT_TO_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_BACKDOOR_RATIO_THR_MAX";
-    private static final String NEXT_TO_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_DOOR_RATIO_THR_ML_MR_MAX";
-    private static final String NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN";
-    private static final String RSSI_LOG_NUMBER_PREFERENCES_NAME = "com.inblue.PREFERENCE_RSSI_LOG_NUMBER";
-    private static final String AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_LOCK_THRESHOLD";
-    private static final String AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD";
-    private static final String ROLLING_AV_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_ROLLING_AV_ELEMENT";
-    private static final String START_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_START_NB_ELEMENT";
-    private static final String LOCK_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOCK_NB_ELEMENT";
-    private static final String UNLOCK_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_NB_ELEMENT";
-    private static final String WELCOME_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_WELCOME_NB_ELEMENT";
-    private static final String LONG_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_LONG_NB_ELEMENT";
-    private static final String SHORT_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_SHORT_NB_ELEMENT";
-    private static final String UNLOCK_MODE_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_MODE";
-    private static final String LOCK_MODE_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOCK_MODE";
-    private static final String START_MODE_PREFERENCES_NAME = "com.inblue.PREFERENCE_START_MODE";
-    private static final String ECRETAGE_70_100_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_70_100";
-    private static final String ECRETAGE_50_70_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_50_70";
-    private static final String ECRETAGE_30_50_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_30_50";
-    private static final String ECRETAGE_30_30_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_30_30";
-    private static final String LIGHT_CAPTOR_PREFERENCES_NAME = "com.inblue.PREFERENCE_LIGHT_CAPTOR";
-    private static final String SELECTED_LOCATION_PREFERENCES_NAME = "com.inblue.PREFERENCE_SELECTED_LOCATION";
-    private static final String LIN_ACC_SIZE_PREFERENCES_NAME = "com.inblue.PREFERENCE_LIN_ACC_SIZE";
-    private static final String CORRECTION_LIN_ACC_PREFERENCES_NAME = "com.inblue.PREFERENCE_CORRECTION_LIN_ACC";
-    private static final String EQUALIZER_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_LEFT";
-    private static final String EQUALIZER_MIDDLE_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_MIDDLE";
-    private static final String EQUALIZER_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_RIGHT";
-    private static final String EQUALIZER_BACK_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_BACK";
+    public static final String ADDRESS_CONNECTABLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE";
+    public static final String ADDRESS_LEFT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_LEFT";
+    public static final String ADDRESS_MIDDLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_MIDDLE";
+    public static final String ADDRESS_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_RIGHT";
+    public static final String ADDRESS_BACK_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_BACK";
+    public static final String OFFSET_POCKET_FOR_START_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_START";
+    public static final String OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_LOCK";
+    public static final String OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_UNLOCK";
+    public static final String START_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_START_THR";
+    public static final String UNLOCK_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_THR";
+    public static final String LOCK_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOCK_THR";
+    public static final String WELCOME_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_WELCOME_THR";
+    public static final String NEXT_TO_DOOR_RATIO_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_DOOR_RATIO_THR";
+    public static final String NEXT_TO_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_BACKDOOR_RATIO_THR_MIN";
+    public static final String NEXT_TO_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_BACKDOOR_RATIO_THR_MAX";
+    public static final String NEXT_TO_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_DOOR_RATIO_THR_ML_MR_MAX";
+    public static final String NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN";
+    public static final String AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_LOCK_THRESHOLD";
+    public static final String AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD";
+    public static final String RSSI_LOG_NUMBER_PREFERENCES_NAME = "com.inblue.PREFERENCE_RSSI_LOG_NUMBER";
+    public static final String ROLLING_AV_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_ROLLING_AV_ELEMENT";
+    public static final String START_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_START_NB_ELEMENT";
+    public static final String LOCK_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOCK_NB_ELEMENT";
+    public static final String UNLOCK_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_NB_ELEMENT";
+    public static final String WELCOME_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_WELCOME_NB_ELEMENT";
+    public static final String LONG_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_LONG_NB_ELEMENT";
+    public static final String SHORT_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_SHORT_NB_ELEMENT";
+    public static final String UNLOCK_MODE_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_MODE";
+    public static final String LOCK_MODE_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOCK_MODE";
+    public static final String START_MODE_PREFERENCES_NAME = "com.inblue.PREFERENCE_START_MODE";
+    public static final String ECRETAGE_70_100_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_70_100";
+    public static final String ECRETAGE_50_70_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_50_70";
+    public static final String ECRETAGE_30_50_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_30_50";
+    public static final String ECRETAGE_30_30_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_30_30";
+    public static final String LIGHT_CAPTOR_PREFERENCES_NAME = "com.inblue.PREFERENCE_LIGHT_CAPTOR";
+    public static final String SELECTED_LOCATION_PREFERENCES_NAME = "com.inblue.PREFERENCE_SELECTED_LOCATION";
+    public static final String LIN_ACC_SIZE_PREFERENCES_NAME = "com.inblue.PREFERENCE_LIN_ACC_SIZE";
+    public static final String CORRECTION_LIN_ACC_PREFERENCES_NAME = "com.inblue.PREFERENCE_CORRECTION_LIN_ACC";
+    public static final String EQUALIZER_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_LEFT";
+    public static final String EQUALIZER_MIDDLE_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_MIDDLE";
+    public static final String EQUALIZER_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_RIGHT";
+    public static final String EQUALIZER_BACK_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_BACK";
 
     /** Single helper instance. */
     private static SdkPreferencesHelper sSingleInstance = null;
@@ -478,8 +478,11 @@ public final class SdkPreferencesHelper {
      * @return the read value, or the default one.
      */
     private String readString(final String fileName, final String keyName, final String defaultValue) {
-        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-        return sharedPref.getString(keyName, defaultValue);
+//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+//        return sharedPref.getString(keyName, defaultValue);
+        return PreferenceManager
+                .getDefaultSharedPreferences(mApplicationContext)
+                .getString(keyName, defaultValue);
     }
 
     /**
@@ -490,10 +493,13 @@ public final class SdkPreferencesHelper {
      * @param value    the value to save.
      */
     private void saveString(final String fileName, final String keyName, final String value) {
-        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(keyName, value);
-        editor.commit();
+//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPref.edit();
+//        editor.putString(keyName, value);
+//        editor.commit();
+        PreferenceManager
+                .getDefaultSharedPreferences(mApplicationContext)
+                .edit().putString(keyName, value).commit();
     }
 
     /**
@@ -505,8 +511,11 @@ public final class SdkPreferencesHelper {
      * @return the read value, or the default one.
      */
     private boolean readBoolean(final String fileName, final String keyName, final boolean defaultValue) {
-        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-        return sharedPref.getBoolean(keyName, defaultValue);
+//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+//        return sharedPref.getBoolean(keyName, defaultValue);
+        return Boolean.valueOf(PreferenceManager
+                .getDefaultSharedPreferences(mApplicationContext)
+                .getString(keyName, String.valueOf(defaultValue)));
     }
 
     /**
@@ -517,10 +526,13 @@ public final class SdkPreferencesHelper {
      * @param value    the value to save.
      */
     private void saveBoolean(final String fileName, final String keyName, final boolean value) {
-        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putBoolean(keyName, value);
-        editor.commit();
+//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPref.edit();
+//        editor.putBoolean(keyName, value);
+//        editor.commit();
+        PreferenceManager
+                .getDefaultSharedPreferences(mApplicationContext)
+                .edit().putString(keyName, String.valueOf(value)).commit();
     }
 
     /**
@@ -532,8 +544,11 @@ public final class SdkPreferencesHelper {
      * @return the read value, or the default one.
      */
     private float readFloat(final String fileName, final String keyName, final float defaultValue) {
-        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-        return sharedPref.getFloat(keyName, defaultValue);
+//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+//        return sharedPref.getFloat(keyName, defaultValue);
+        return Float.valueOf(PreferenceManager
+                .getDefaultSharedPreferences(mApplicationContext)
+                .getString(keyName, String.valueOf(defaultValue)));
     }
 
     /**
@@ -544,10 +559,13 @@ public final class SdkPreferencesHelper {
      * @param value    the value to save.
      */
     private void saveFloat(final String fileName, final String keyName, final float value) {
-        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putFloat(keyName, value);
-        editor.commit();
+//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPref.edit();
+//        editor.putFloat(keyName, value);
+//        editor.commit();
+        PreferenceManager
+                .getDefaultSharedPreferences(mApplicationContext)
+                .edit().putString(keyName, String.valueOf(value)).commit();
     }
 
     /**
@@ -559,8 +577,11 @@ public final class SdkPreferencesHelper {
      * @return the read value, or the default one.
      */
     private int readInt(final String fileName, final String keyName, final int defaultValue) {
-        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-        return sharedPref.getInt(keyName, defaultValue);
+//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+//        return sharedPref.getInt(keyName, defaultValue);
+        return Integer.valueOf(PreferenceManager
+                .getDefaultSharedPreferences(mApplicationContext)
+                .getString(keyName, String.valueOf(defaultValue)));
     }
 
     /**
@@ -571,10 +592,13 @@ public final class SdkPreferencesHelper {
      * @param value    the value to save.
      */
     private void saveInt(final String fileName, final String keyName, final int value) {
-        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(keyName, value);
-        editor.commit();
+//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPref.edit();
+//        editor.putInt(keyName, value);
+//        editor.commit();
+        PreferenceManager
+                .getDefaultSharedPreferences(mApplicationContext)
+                .edit().putString(keyName, String.valueOf(value)).commit();
     }
 
     // endregion

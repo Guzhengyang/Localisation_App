@@ -36,4 +36,59 @@
     <string name="dummy_space_view">dummy space view</string>
     <string name="VIN">VF3ATTENTDS180704</string>
     <string name="VIN2">VF3ATTENTDS180705</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_header_general">General</string>
+    <string name="menu_settings">Settings</string>
+    <string name="pref_offset">OFFSET</string>
+    <string name="pref_offset_start">Start Offset</string>
+    <string name="pref_offset_lock">Lock Offset</string>
+    <string name="pref_offset_unlock">Unlock Offset</string>
+    <string name="pref_threshold">THRESHOLD</string>
+    <string name="pref_threshold_start">Start Threshold</string>
+    <string name="pref_threshold_unlock">Unlock Threshold</string>
+    <string name="pref_threshold_lock">Lock Threshold</string>
+    <string name="pref_threshold_welcome">Welcome Threshold</string>
+    <string name="pref_threshold_next_to_door_ratio">Next To Door Ratio Threshold</string>
+    <string name="pref_threshold_back_door_ratio_min">Back Door Ratio Min Threshold</string>
+    <string name="pref_threshold_back_door_ratio_max">Back Door Ratio Max Threshold</string>
+    <string name="pref_threshold_next_to_door_ratio_ml_mr_max">Next To Door Ratio ML MR Max Threshold</string>
+    <string name="pref_threshold_next_to_door_ratio_ml_mr_min">Next To Door Ratio ML MR Min Threshold</string>
+    <string name="pref_threshold_average_delta_lock">Average Delta Lock Threshold</string>
+    <string name="pref_threshold_average_delta_unlock">Average Delte Unlock Threshold</string>
+    <string name="pref_nb_element">NUMBER OF ELEMENT</string>
+    <string name="pref_nb_element_rssi_log_number">Rssi Log Number Element</string>
+    <string name="pref_nb_element_rolling_average">Rolling Average Number Element</string>
+    <string name="pref_nb_element_start">Start Number Element</string>
+    <string name="pref_nb_element_lock">Lock Number Element</string>
+    <string name="pref_nb_element_unlock">Unlock Number Element</string>
+    <string name="pref_nb_element_welcome">Welcome Number Element</string>
+    <string name="pref_nb_element_long">Long Number Element</string>
+    <string name="pref_nb_element_short">Short Number Element</string>
+    <string name="pref_mode">MODE</string>
+    <string name="pref_mode_unlock">Unlock Mode</string>
+    <string name="pref_mode_lock">Lock Mode</string>
+    <string name="pref_mode_start">Start Mode</string>
+    <string name="pref_ecretage">ECRETAGE</string>
+    <string name="pref_ecretage_100">70_100 Ecretage</string>
+    <string name="pref_ecretage_70">50_70 Ecretage</string>
+    <string name="pref_ecretage_50">30_50 Ecretage</string>
+    <string name="pref_ecretage_30">30_30 Ecretage</string>
+    <string name="pref_acc">ACCELERATION</string>
+    <string name="pref_acc_size">Size Acceleration</string>
+    <string name="pref_acc_correction">Correction Acceleration</string>
+    <string name="pref_equalizer">EQUALIZER</string>
+    <string name="pref_equalizer_left">Left Equalizer</string>
+    <string name="pref_equalizer_middle">Middle Equalizer</string>
+    <string name="pref_equalizer_right">Right Equalizer</string>
+    <string name="pref_equalizer_back">Back Equalizer</string>
+    <string name="pref_ble_address">BLE ADDRESS</string>
+    <string name="pref_ble_address_connectable">Connectable BLE Address</string>
+    <string name="pref_ble_address_left">Left BLE Address</string>
+    <string name="pref_ble_address_middle">Middle BLE Address</string>
+    <string name="pref_ble_address_right">Right BLE Address</string>
+    <string name="pref_ble_address_back">Back BLE Address</string>
 </resources>
