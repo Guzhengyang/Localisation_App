@@ -514,16 +514,13 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 
     private void blurActivity(boolean blurActivity) {
         if (blurActivity) {
-            main_scroll_relativeLayout.setDrawingCacheEnabled(true);
-            main_scroll_relativeLayout.buildDrawingCache(true);
-            Bitmap blurredBitmap = BlurBuilder.blur(main_scroll_relativeLayout);
+            Bitmap blurredBitmap = BlurBuilder.blur(main_scroll);
             blur_on_touch.setImageDrawable(new BitmapDrawable(getResources(), blurredBitmap));
-            main_scroll_relativeLayout.setDrawingCacheEnabled(false); // clear drawing cache
             blur_on_touch.setVisibility(View.VISIBLE);
-            main_scroll_relativeLayout.setVisibility(View.GONE);
+            main_scroll.setVisibility(View.GONE);
         } else {
             blur_on_touch.setImageDrawable(null);
-            main_scroll_relativeLayout.setVisibility(View.VISIBLE);
+            main_scroll.setVisibility(View.VISIBLE);
             blur_on_touch.setVisibility(View.GONE);
         }
     }
