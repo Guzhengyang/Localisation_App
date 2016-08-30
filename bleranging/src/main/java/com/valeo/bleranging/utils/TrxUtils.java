@@ -410,9 +410,9 @@ public class TrxUtils {
      * @param totalAverage the total average of all antenna rssi
      * @return true if the strategy is verified, false otherwise
      */
-    public static boolean welcomeStrategy(int totalAverage, boolean smartphoneIsInPocket) {
+    public static boolean welcomeStrategy(boolean newlockStatus, int totalAverage, boolean smartphoneIsInPocket) {
         int threshold = getCurrentLockThreshold(SdkPreferencesHelper.getInstance().getWelcomeThreshold(), smartphoneIsInPocket);
-        return (totalAverage >= threshold);
+        return (totalAverage >= threshold) && newlockStatus;
     }
 
 //    public static boolean isApproaching(Trx trxLeft, Trx trxMiddle, Trx trxRight, Trx trxBack) {

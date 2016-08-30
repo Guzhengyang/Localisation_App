@@ -81,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private ImageButton driver_s_door_unlocked;
     private ImageButton vehicle_unlocked;
     private ImageButton start_button;
+    private ImageView signalReceived;
+    private LayerDrawable layerDrawable;
     private GradientDrawable welcome_area;
     private GradientDrawable start_area;
     private GradientDrawable lock_area;
@@ -324,7 +326,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         driver_s_door_unlocked = (ImageButton) findViewById(R.id.driver_s_door_unlocked);
         vehicle_unlocked = (ImageButton) findViewById(R.id.vehicle_unlocked);
         start_button = (ImageButton) findViewById(R.id.start_button);
-        final LayerDrawable layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization);
+        signalReceived = (ImageView) findViewById(R.id.signalReceived);
+        layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization);
         welcome_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.welcome_area);
         start_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area);
         lock_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.lock_area);
@@ -660,6 +663,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 start_area.setColor(Color.CYAN);
                 break;
         }
+        signalReceived.setImageDrawable(layerDrawable);
     }
 
     @Override
@@ -684,6 +688,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 start_area.setColor(Color.BLACK);
                 break;
         }
+        signalReceived.setImageDrawable(layerDrawable);
     }
 
     @Override

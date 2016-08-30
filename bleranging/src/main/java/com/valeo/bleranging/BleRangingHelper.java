@@ -52,8 +52,6 @@ public class BleRangingHelper implements SensorEventListener {
     public final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
     public final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
     public final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
-    private static final int START_POSITION_TIMEOUT = 400;
-    private static final int WELCOME_POSITION_TIMEOUT = 400;
     private static final int LOCK_STATUS_CHANGED_TIMEOUT = 3000;
     private final Context mContext;
     private final BluetoothManagement mBluetoothManager;
@@ -100,16 +98,6 @@ public class BleRangingHelper implements SensorEventListener {
     private boolean newLockStatus;
     private boolean isAbortRunning = false;
     private boolean isFirstConnection = true;
-    private AtomicBoolean isOnStartPostionTimerExpired = new AtomicBoolean(true);
-    /**
-     * Create a handler to detect if the vehicle can do a start
-     */
-    private final Runnable mManageStartPositionPeriodicTimer = new Runnable() {
-        @Override
-        public void run() {
-            isOnStartPostionTimerExpired.set(true);
-        }
-    };
     private AtomicBoolean isLockStatusChangedTimerExpired = new AtomicBoolean(true);
     /**
      * Create a handler to detect if the vehicle can do a unlock
@@ -120,25 +108,13 @@ public class BleRangingHelper implements SensorEventListener {
             isLockStatusChangedTimerExpired.set(true);
         }
     };
-    private AtomicBoolean isOnWelcomePostionTimerExpired = new AtomicBoolean(true);
-    /**
-     * Create a handler to detect if the vehicle can do a welcome
-     */
-    private final Runnable mManageWelcomePositionPeriodicTimer = new Runnable() {
-        @Override
-        public void run() {
-            isOnWelcomePostionTimerExpired.set(true);
-        }
-    };
     private AtomicBoolean rearmWelcome = new AtomicBoolean(true);
     private AtomicBoolean rearmLock = new AtomicBoolean(true);
     private AtomicBoolean rearmUnlock = new AtomicBoolean(true);
     private AtomicBoolean isPassiveEntryAction = new AtomicBoolean(false);
     private Antenna.BLEChannel bleChannel = Antenna.BLEChannel.BLE_CHANNEL_37;
     private Handler mMainHandler;
-    private Handler mWelcomeHandler;
     private Handler mLockStatusChangedHandler;
-    private Handler mStartPositionHandler;
     private Handler mHandlerTimeOut;
     private Handler mIsLaidTimeOutHandler;
     private Trx trxLeft;
@@ -316,9 +292,7 @@ public class BleRangingHelper implements SensorEventListener {
         this.mBluetoothManager = new BluetoothManagement(context);
         this.bleRangingListener = bleRangingListener;
         mProtocolManager = new InblueProtocolManager();
-        mStartPositionHandler = new Handler();
         mLockStatusChangedHandler = new Handler();
-        mWelcomeHandler = new Handler();
         mHandlerTimeOut = new Handler();
         mIsLaidTimeOutHandler = new Handler();
         mBluetoothManager.addBluetoothManagementListener(new BluetoothManagementListener() {
@@ -582,16 +556,9 @@ public class BleRangingHelper implements SensorEventListener {
             isLockStrategyValid = TrxUtils.lockStrategy(trxLeft, trxMiddle, trxRight, trxBack, smartphoneIsInPocket);
             isUnlockStrategyValid = TrxUtils.unlockStrategy(trxLeft, trxMiddle, trxRight, trxBack, smartphoneIsInPocket);
             isStartStrategyValid = TrxUtils.startStrategy(newLockStatus, trxLeft, trxMiddle, trxRight, trxBack, smartphoneIsInPocket);
-            isWelcomeStrategyValid = TrxUtils.welcomeStrategy(totalAverage, smartphoneIsInPocket);
-            if (isOnWelcomePostionTimerExpired.get() && rearmWelcome.get() && newLockStatus && isWelcomeStrategyValid) {
-                Log.d(" rssiHistorics", "welcome");
-                //Initialize timeout flag which is cleared in the runnable launched in the next instruction
-                isOnWelcomePostionTimerExpired.set(false);
-                //Launch timeout
-                mWelcomeHandler.postDelayed(mManageWelcomePositionPeriodicTimer, WELCOME_POSITION_TIMEOUT);
-                if (isLightCaptorEnabled) {
-                    makeNoise(ToneGenerator.TONE_CDMA_CONFIRM, 200);
-                }
+            isWelcomeStrategyValid = TrxUtils.welcomeStrategy(newLockStatus, totalAverage, smartphoneIsInPocket);
+            if (rearmWelcome.get() && isWelcomeStrategyValid) {
+                rearmWelcome.set(false);
                 //TODO Welcome
             } else if (isLockStatusChangedTimerExpired.get() && rearmLock.get() && isLockStrategyValid && isUnlockStrategyValid == 0) {
                 // DO NOT check if !newLockStatus to let the rearm algorithm in performLockVehicle work
@@ -603,12 +570,7 @@ public class BleRangingHelper implements SensorEventListener {
                 Log.d(" rssiHistorics", "unlock");
                 isPassiveEntryAction.set(true);
                 performLockVehicleRequest(false);
-            } else if (isOnStartPostionTimerExpired.get() && isStartStrategyValid) {
-                Log.d(" rssiHistorics", "start");
-                //Initialize timeout flag which is cleared in the runnable launched in the next instruction
-                isOnStartPostionTimerExpired.set(false);
-                //Launch timeout
-                mStartPositionHandler.postDelayed(mManageStartPositionPeriodicTimer, START_POSITION_TIMEOUT);
+            } else if (isStartStrategyValid) {
                 isStartAllowed = true;
                 //Perform the connection
                 if (isLightCaptorEnabled) {
@@ -823,10 +785,10 @@ public class BleRangingHelper implements SensorEventListener {
             bleRangingListener.darkenArea(START_AREA);
         }
         //UNLOCK
+        bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
+        bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
+        bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
         if(!isLockStrategyValid) {
-            bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
-            bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
-            bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
             switch (isUnlockStrategyValid) {
                 case Trx.NUMBER_TRX_LEFT:
                     bleRangingListener.lightUpArea(UNLOCK_LEFT_AREA);
@@ -851,7 +813,7 @@ public class BleRangingHelper implements SensorEventListener {
             bleRangingListener.darkenArea(LOCK_AREA);
         }
         // WELCOME
-        if(isWelcomeStrategyValid) {
+        if (rearmWelcome.get() && isWelcomeStrategyValid) {
             bleRangingListener.lightUpArea(WELCOME_AREA);
         } else {
             bleRangingListener.darkenArea(WELCOME_AREA);
@@ -1006,12 +968,8 @@ public class BleRangingHelper implements SensorEventListener {
         // increase the file number use for logs files name
         SdkPreferencesHelper.getInstance().setRssiLogNumber(SdkPreferencesHelper.getInstance().getRssiLogNumber() + 1);
         isLoggable = false;
-        if(mStartPositionHandler != null)
-            mStartPositionHandler.removeCallbacks(mManageStartPositionPeriodicTimer);
         if(mLockStatusChangedHandler != null)
             mLockStatusChangedHandler.removeCallbacks(mManageIsLockStatusChangedPeriodicTimer);
-        if(mWelcomeHandler != null)
-            mWelcomeHandler.removeCallbacks(mManageWelcomePositionPeriodicTimer);
         mBluetoothManager.disconnect();
     }
 }
