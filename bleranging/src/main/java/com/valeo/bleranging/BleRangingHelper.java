@@ -450,6 +450,17 @@ public class BleRangingHelper implements SensorEventListener {
                     Log.d(" rssiHistoric", "BLE_ADDRESS_LOGGER=" + TextUtils.printBleBytes(advertisedData));
                     getAdvertisedBytes(advertisedData);
                 }
+                if (isLoggable) {
+                    TrxUtils.appendRssiLogs(trxLeft.getAntenna1().getCurrentOriginalRssi(),
+                            trxMiddle.getAntenna1().getCurrentOriginalRssi(), trxMiddle.getAntenna2().getCurrentOriginalRssi(),
+                            trxRight.getAntenna1().getCurrentOriginalRssi(), trxBack.getAntenna1().getCurrentOriginalRssi(),
+                            smartphoneIsInPocket, smartphoneIsLaidDownLAcc, isPassiveEntryAction.get(), isLockStatusChangedTimerExpired.get(),
+                            rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), newLockStatus, welcomeByte,
+                            lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
+                            walkAwayByte, steadyByte, approachByte, leftTurnByte,
+                            fullTurnByte, rightTurnByte, recordByte,
+                            mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(), mProtocolManager.isStartRequested());
+                }
             }
         }
     }
@@ -605,17 +616,6 @@ public class BleRangingHelper implements SensorEventListener {
                 }
             }
             mProtocolManager.setIsStartRequested(isStartAllowed);
-        }
-        if (isLoggable) {
-            TrxUtils.appendRssiLogs(trxLeft.getAntenna1().getCurrentOriginalRssi(),
-                    trxMiddle.getAntenna1().getCurrentOriginalRssi(), trxMiddle.getAntenna2().getCurrentOriginalRssi(),
-                    trxRight.getAntenna1().getCurrentOriginalRssi(), trxBack.getAntenna1().getCurrentOriginalRssi(),
-                    smartphoneIsInPocket, smartphoneIsLaidDownLAcc, isPassiveEntryAction.get(), isLockStatusChangedTimerExpired.get(),
-                    rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), newLockStatus, welcomeByte,
-                    lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
-                    walkAwayByte, steadyByte, approachByte, leftTurnByte,
-                    fullTurnByte, rightTurnByte, recordByte,
-                    mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(), mProtocolManager.isStartRequested());
         }
     }
 
@@ -995,6 +995,7 @@ public class BleRangingHelper implements SensorEventListener {
                 }
             }
         }
+        isPassiveEntryAction.set(false);
     }
 
     public boolean isFullyConnected() {
