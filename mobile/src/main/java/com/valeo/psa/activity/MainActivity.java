@@ -31,6 +31,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -82,6 +84,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private ImageButton vehicle_unlocked;
     private ImageButton start_button;
     private ImageView signalReceived;
+    private Animation pulseAnimation;
+    private Animation pulseAnimation2;
+    private ImageView start_button_first_wave;
+    private ImageView start_button_second_wave;
     private LayerDrawable layerDrawable;
     private GradientDrawable welcome_area;
     private GradientDrawable start_area;
@@ -103,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private float mDownX;
     private float mDownY;
     private CarListAdapter mCarListAdapter = null;
-    private CarDoorStatus carDoorStatus = CarDoorStatus.LOCKED;
+    private CarDoorStatus carDoorStatus;
     private BleRangingHelper mBleRangingHelper;
 
     /**
@@ -129,18 +135,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         setOnClickListeners();
         SdkPreferencesHelper.initializeInstance(this);
         this.mBleRangingHelper = new BleRangingHelper(this, this);
-        //TODO setbackground over the true value of carDoorStatus
-        switch (carDoorStatus) {
-            case LOCKED:
-                vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
-                break;
-            case DRIVER_DOOR_OPEN:
-                driver_s_door_unlocked.setBackgroundResource(R.mipmap.slider_button);
-                break;
-            case UNLOCKED:
-                vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
-                break;
-        }
+        pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.pulse);
+        pulseAnimation2 = AnimationUtils.loadAnimation(this, R.anim.pulse);
     }
 
     @Override
@@ -246,6 +242,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     carDoorStatus = CarDoorStatus.LOCKED;
                     vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
                     driver_s_door_unlocked.setBackgroundResource(0);
+                    startButtonAnimation(false);
+                    mBleRangingHelper.setIsPassiveEntryAction(false);
                     mBleRangingHelper.performLockVehicleRequest(true); //lockVehicle
                 }
             }
@@ -260,6 +258,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     vehicle_locked.setBackgroundResource(0);
                     vehicle_unlocked.setBackgroundResource(0);
                     start_button.setBackgroundResource(0);
+                    startButtonAnimation(false);
+                    mBleRangingHelper.setIsPassiveEntryAction(false);
                     mBleRangingHelper.performLockVehicleRequest(false); //unlockVehicle
                 }
             }
@@ -272,7 +272,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     carDoorStatus = CarDoorStatus.UNLOCKED;
                     vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
                     driver_s_door_unlocked.setBackgroundResource(0);
-                    start_button.setBackgroundResource(R.mipmap.start_button_waves);
+                    startButtonAnimation(true);
+                    mBleRangingHelper.setIsPassiveEntryAction(false);
                     mBleRangingHelper.performLockVehicleRequest(false); //unlockVehicle
                 }
             }
@@ -326,6 +327,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         driver_s_door_unlocked = (ImageButton) findViewById(R.id.driver_s_door_unlocked);
         vehicle_unlocked = (ImageButton) findViewById(R.id.vehicle_unlocked);
         start_button = (ImageButton) findViewById(R.id.start_button);
+        start_button_first_wave = (ImageView) findViewById(R.id.start_button_first_wave);
+        start_button_second_wave = (ImageView) findViewById(R.id.start_button_second_wave);
         signalReceived = (ImageView) findViewById(R.id.signalReceived);
         layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization);
         welcome_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.welcome_area);
@@ -699,6 +702,40 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             ble_status.setText(R.string.not_connected_over_ble);
         }
         debug_info.setText(spannableStringBuilder);
+    }
+
+    @Override
+    public void updateCarDoorStatus(boolean lockStatus) {
+        if (lockStatus) {
+            car_door_status.setText(getString(R.string.vehicle_locked));
+            carDoorStatus = CarDoorStatus.LOCKED;
+            vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
+            driver_s_door_unlocked.setBackgroundResource(0);
+            vehicle_unlocked.setBackgroundResource(0);
+            startButtonAnimation(false);
+        } else {
+            car_door_status.setText(getString(R.string.vehicle_unlocked));
+            carDoorStatus = CarDoorStatus.UNLOCKED;
+            vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
+            driver_s_door_unlocked.setBackgroundResource(0);
+            vehicle_locked.setBackgroundResource(0);
+            // animation waves start_button
+            startButtonAnimation(true);
+        }
+    }
+
+    private void startButtonAnimation(boolean isAnimated) {
+        if (isAnimated) {
+            start_button_first_wave.setVisibility(View.VISIBLE);
+            start_button_second_wave.setVisibility(View.VISIBLE);
+            start_button_first_wave.setAnimation(pulseAnimation);
+            start_button_second_wave.setAnimation(pulseAnimation2);
+        } else {
+            start_button_first_wave.setVisibility(View.INVISIBLE);
+            start_button_second_wave.setVisibility(View.INVISIBLE);
+            start_button_first_wave.setAnimation(null);
+            start_button_second_wave.setAnimation(null);
+        }
     }
 
     @Override

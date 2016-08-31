@@ -257,6 +257,7 @@ public class BleRangingHelper implements SensorEventListener {
                         trxRight.resetWithHysteresis(trxRight.getTrxRssiAverage(Antenna.AVERAGE_LOCK));
                         trxBack.resetWithHysteresis(trxBack.getTrxRssiAverage(Antenna.AVERAGE_LOCK));
                     }
+                    bleRangingListener.updateCarDoorStatus(newLockStatus);
                 }
                 mProtocolManager.setIsLockedFromTrx(newLockStatus);
                 if (checkNewPacketOnlyOneLaunch) {
@@ -308,6 +309,10 @@ public class BleRangingHelper implements SensorEventListener {
         senSensorManager.registerListener(this, senProximity, SensorManager.SENSOR_DELAY_NORMAL);
         senSensorManager.registerListener(this, senLinAcceleration, SensorManager.SENSOR_DELAY_UI);
         mBluetoothManager.resumeLeScan();
+    }
+
+    public void setIsPassiveEntryAction(boolean isPassiveEntryAction) {
+        this.isPassiveEntryAction.set(isPassiveEntryAction);
     }
 
     /**
@@ -443,19 +448,21 @@ public class BleRangingHelper implements SensorEventListener {
      * Create two bytes with all the bits from the switches
      */
     private void getAdvertisedBytes(byte[] advertisedData) {
-        steadyByte = (byte) ((advertisedData[3] & (1 << 7)) >> 7);
-        walkAwayByte = (byte) ((advertisedData[3] & (1 << 6)) >> 6);
-        backAreaByte = (byte) ((advertisedData[3] & (1 << 5)) >> 5);
-        rightAreaByte = (byte) ((advertisedData[3] & (1 << 4)) >> 4);
-        leftAreaByte = (byte) ((advertisedData[3] & (1 << 3)) >> 3);
-        startByte = (byte) ((advertisedData[3] & (1 << 2)) >> 2);
-        lockByte = (byte) ((advertisedData[3] & (1 << 1)) >> 1);
-        welcomeByte = (byte) (advertisedData[3] & 1);
-        recordByte = (byte) ((advertisedData[4] & (1 << 7)) >> 7);
-        rightTurnByte = (byte) ((advertisedData[4] & (1 << 3)) >> 3);
-        fullTurnByte = (byte) ((advertisedData[4] & (1 << 2)) >> 2);
-        leftTurnByte = (byte) ((advertisedData[4] & (1 << 1)) >> 1);
-        approachByte = (byte) (advertisedData[4] & 1);
+        if (advertisedData != null) {
+            steadyByte = (byte) ((advertisedData[3] & (1 << 7)) >> 7);
+            walkAwayByte = (byte) ((advertisedData[3] & (1 << 6)) >> 6);
+            backAreaByte = (byte) ((advertisedData[3] & (1 << 5)) >> 5);
+            rightAreaByte = (byte) ((advertisedData[3] & (1 << 4)) >> 4);
+            leftAreaByte = (byte) ((advertisedData[3] & (1 << 3)) >> 3);
+            startByte = (byte) ((advertisedData[3] & (1 << 2)) >> 2);
+            lockByte = (byte) ((advertisedData[3] & (1 << 1)) >> 1);
+            welcomeByte = (byte) (advertisedData[3] & 1);
+            recordByte = (byte) ((advertisedData[4] & (1 << 7)) >> 7);
+            rightTurnByte = (byte) ((advertisedData[4] & (1 << 3)) >> 3);
+            fullTurnByte = (byte) ((advertisedData[4] & (1 << 2)) >> 2);
+            leftTurnByte = (byte) ((advertisedData[4] & (1 << 1)) >> 1);
+            approachByte = (byte) (advertisedData[4] & 1);
+        }
     }
 
     /**
@@ -828,6 +835,7 @@ public class BleRangingHelper implements SensorEventListener {
         if(isFirstConnection) {
             Log.w(" rssiHistorics", "************************************** runFirstConnection ************************************************");
             newLockStatus = (scanResponse.vehicleState & 0x01)!=0;
+            bleRangingListener.updateCarDoorStatus(newLockStatus);
             mProtocolManager.setIsLockedToSend(newLockStatus);
             if(newLockStatus) {
                 initializeTrx(RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE);
@@ -957,7 +965,6 @@ public class BleRangingHelper implements SensorEventListener {
                 }
             }
         }
-        isPassiveEntryAction.set(false);
     }
 
     public boolean isFullyConnected() {

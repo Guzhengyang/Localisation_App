@@ -9,4 +9,5 @@ public interface BleRangingListener {
     void lightUpArea(int area);
     void darkenArea(int area);
     void printDebugInfo(SpannableStringBuilder spannableStringBuilder);
+    void updateCarDoorStatus(boolean lockStatus);
 }

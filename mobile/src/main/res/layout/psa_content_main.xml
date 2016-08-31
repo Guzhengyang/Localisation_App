@@ -43,8 +43,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="40dp"
                 android:layout_marginRight="40dp"
-                android:layout_toLeftOf="@+id/start_button"
-                android:layout_toStartOf="@+id/start_button"
+                android:layout_toLeftOf="@+id/start_button_frame"
+                android:layout_toStartOf="@+id/start_button_frame"
                 android:adjustViewBounds="true"
                 android:background="@drawable/round_button"
                 android:contentDescription="@string/vehicle_locked"
@@ -73,8 +73,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="40dp"
                 android:layout_marginStart="40dp"
-                android:layout_toEndOf="@+id/start_button"
-                android:layout_toRightOf="@+id/start_button"
+                android:layout_toEndOf="@+id/start_button_frame"
+                android:layout_toRightOf="@+id/start_button_frame"
                 android:adjustViewBounds="true"
                 android:background="@drawable/round_button"
                 android:contentDescription="@string/vehicle_unlocked"
@@ -92,17 +92,42 @@
                 android:contentDescription="@string/dummy_space_view"
                 android:scaleType="fitCenter" />
 
-            <ImageButton
-                android:id="@+id/start_button"
+            <FrameLayout
+                android:id="@+id/start_button_frame"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/dummy_space_view"
-                android:layout_centerHorizontal="true"
-                android:adjustViewBounds="true"
-                android:background="@drawable/round_button"
-                android:contentDescription="@string/start_button"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/start_button" />
+                android:layout_centerHorizontal="true">
+
+                <ImageButton
+                    android:id="@+id/start_button"
+                    android:layout_width="101dp"
+                    android:layout_height="101dp"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/round_button"
+                    android:contentDescription="@string/start_button"
+                    android:src="@mipmap/start_button" />
+
+                <ImageView
+                    android:id="@+id/start_button_first_wave"
+                    android:layout_width="111dp"
+                    android:layout_height="111dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/start_button"
+                    android:src="@mipmap/start_button_waves"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:id="@+id/start_button_second_wave"
+                    android:layout_width="121dp"
+                    android:layout_height="121dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/start_button"
+                    android:src="@mipmap/start_button_waves"
+                    android:visibility="invisible" />
+            </FrameLayout>
+
 
         </RelativeLayout>
 
@@ -111,18 +136,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/door_status_switcher"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@color/black"
             android:contentDescription="@string/rssi_localization"
-            android:src="@drawable/rssi_localization"
-            android:background="@color/black" />
+            android:src="@drawable/rssi_localization" />
 
         <TextView
             android:id="@+id/debug_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/black"
-            android:textColor="#ffffff"
             android:layout_alignParentEnd="true"
-            android:layout_below="@id/signalReceived" />
+            android:layout_below="@id/signalReceived"
+            android:background="@color/black"
+            android:textColor="#ffffff" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/control_trunk_windows_lights"
