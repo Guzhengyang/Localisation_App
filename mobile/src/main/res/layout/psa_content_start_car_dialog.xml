@@ -37,6 +37,16 @@
         android:textColor="@color/white"
         android:textSize="@dimen/psa_56_px" />
 
+    <com.valeo.psa.view.ScalableImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/car_start_countdown_min_sec"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/press_start_pop_up" />
+
     <com.valeo.psa.view.ReverseProgressBar
         android:id="@+id/start_car_timeout"
         style="?android:attr/progressBarStyleHorizontal"
@@ -45,7 +55,6 @@
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/car_start_countdown_min_sec"
         android:layout_gravity="center"
-        android:background="@drawable/circular_shape"
         android:indeterminate="false"
         android:max="300"
         android:progress="0"

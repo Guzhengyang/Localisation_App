@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
-        <shape
-            android:innerRadiusRatio="2"
-            android:shape="ring"
-            android:thickness="12dp"
-            android:useLevel="true">
-            <gradient
-                android:endColor="@color/cast_intro_overlay_button_background_color"
-                android:startColor="@color/cast_intro_overlay_button_background_color"
-                android:type="sweep"
-                android:useLevel="true" />
-        </shape>
         <bitmap
             android:gravity="center"
             android:scaleType="centerInside"
