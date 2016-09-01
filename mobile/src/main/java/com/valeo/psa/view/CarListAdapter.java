@@ -91,5 +91,9 @@ public class CarListAdapter extends RecyclerView.Adapter<CarListAdapter.ViewHold
         public void onClick(View v) {
             mListener.onCarSelection(v, getAdapterPosition());
         }
+
+        public TextView getBrandCar() {
+            return brandCar;
+        }
     }
 }

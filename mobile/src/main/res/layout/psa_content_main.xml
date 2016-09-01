@@ -16,6 +16,7 @@
             android:id="@+id/car_door_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/vertical_padding"
             android:gravity="center"
             android:text="@string/vehicle_locked"
             android:textColor="@color/black"

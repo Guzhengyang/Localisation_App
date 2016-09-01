@@ -11,6 +11,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -66,8 +67,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int RESULT_SETTINGS = 20;
     private Toolbar toolbar;
     private NestedScrollView content_main;
-    private NestedScrollView main_scroll;
-    private RelativeLayout main_scroll_relativeLayout;
+    private CoordinatorLayout main_scroll;
     private ImageView blur_on_touch;
     private RelativeLayout content_start_car_dialog;
     private ReverseProgressBar start_car_timeout;
@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private TextView nfc_disclaimer;
     private RecyclerView control_trunk_windows_lights;
     private RecyclerView car_model_recyclerView;
+    private TextView selected_car_model_pinned;
     private ImageButton vehicle_locked;
     private ImageButton driver_s_door_unlocked;
     private ImageButton vehicle_unlocked;
@@ -218,22 +219,22 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                         + " hasNestedScrollingParent " + v.hasNestedScrollingParent());
             }
         });
-        main_scroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                Log.d("test main_scroll", "isNestedScrollingEnabled " + v.isNestedScrollingEnabled()
-                        + " isSmoothScrollingEnabled " + v.isSmoothScrollingEnabled()
-                        + " hasNestedScrollingParent " + v.hasNestedScrollingParent());
-                Log.d("test content_main", "isNestedScrollingEnabled " + content_main.isNestedScrollingEnabled()
-                        + " isSmoothScrollingEnabled " + content_main.isSmoothScrollingEnabled()
-                        + " hasNestedScrollingParent " + content_main.hasNestedScrollingParent());
-                if (scrollY < 488) {
-                    //TODO annule main_scroll event and scroll only content_main
-                } else {
-                    Log.d("onScroll main_scroll", String.format("%1$d %2$d %3$d %4$d", scrollX, scrollY, oldScrollX, oldScrollY));
-                }
-            }
-        });
+//        main_scroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+//            @Override
+//            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+//                Log.d("test main_scroll", "isNestedScrollingEnabled " + v.isNestedScrollingEnabled()
+//                        + " isSmoothScrollingEnabled " + v.isSmoothScrollingEnabled()
+//                        + " hasNestedScrollingParent " + v.hasNestedScrollingParent());
+//                Log.d("test content_main", "isNestedScrollingEnabled " + content_main.isNestedScrollingEnabled()
+//                        + " isSmoothScrollingEnabled " + content_main.isSmoothScrollingEnabled()
+//                        + " hasNestedScrollingParent " + content_main.hasNestedScrollingParent());
+//                if (scrollY < 488) {
+//                    //TODO annule main_scroll event and scroll only content_main
+//                } else {
+//                    Log.d("onScroll main_scroll", String.format("%1$d %2$d %3$d %4$d", scrollX, scrollY, oldScrollX, oldScrollY));
+//                }
+//            }
+//        });
         vehicle_locked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -311,8 +312,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      */
     private void setView() {
         content_main = (NestedScrollView) findViewById(R.id.content_main);
-        main_scroll = (NestedScrollView) findViewById(R.id.main_scroll);
-        main_scroll_relativeLayout = (RelativeLayout) findViewById(R.id.main_scroll_relativeLayout);
+        main_scroll = (CoordinatorLayout) findViewById(R.id.main_scroll);
         blur_on_touch = (ImageView) findViewById(R.id.blur_on_touch);
         content_start_car_dialog = (RelativeLayout) findViewById(R.id.content_start_car_dialog);
         start_car_timeout = (ReverseProgressBar) findViewById(R.id.start_car_timeout);
@@ -323,6 +323,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         nfc_disclaimer = (TextView) findViewById(R.id.nfc_disclaimer);
         control_trunk_windows_lights = (RecyclerView) findViewById(R.id.control_trunk_windows_lights);
         car_model_recyclerView = (RecyclerView) findViewById(R.id.car_model_recyclerView);
+        selected_car_model_pinned = (TextView) findViewById(R.id.selected_car_model_pinned);
         vehicle_locked = (ImageButton) findViewById(R.id.vehicle_locked);
         driver_s_door_unlocked = (ImageButton) findViewById(R.id.driver_s_door_unlocked);
         vehicle_unlocked = (ImageButton) findViewById(R.id.vehicle_unlocked);
@@ -384,7 +385,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         ith.attachToRecyclerView(control_trunk_windows_lights);
         //control_trunk_windows_lights.addOnItemTouchListener(new MyGestureListener());
         // make recycler view horizontal then set adapter
-        LinearLayoutManager llm = new LinearLayoutManager(this);
+        final LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.HORIZONTAL);
         car_model_recyclerView.setLayoutManager(llm);
         CarListAdapter.OnCarSelectionListener mCarSelectionListener = new CarListAdapter.OnCarSelectionListener() {
@@ -397,6 +398,16 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         mCarListAdapter = new CarListAdapter(mCarSelectionListener);
         car_model_recyclerView.setAdapter(mCarListAdapter);
         mCarListAdapter.setCars(createCarList());
+        car_model_recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    CarListAdapter.ViewHolder vh = (CarListAdapter.ViewHolder) recyclerView.findViewHolderForAdapterPosition(llm.findFirstCompletelyVisibleItemPosition());
+                    selected_car_model_pinned.setText(vh.getBrandCar().getText().toString());
+                }
+            }
+        });
     }
 
     /**
