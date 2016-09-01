@@ -1,5 +1,6 @@
 package com.valeo.psa.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -8,6 +9,8 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private TextView car_door_status;
     private TextView tips;
     private TextView nfc_disclaimer;
+    private ImageView nfc_logo;
     private RecyclerView control_trunk_windows_lights;
     private RecyclerView car_model_recyclerView;
     private TextView selected_car_model_pinned;
@@ -138,6 +142,13 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         this.mBleRangingHelper = new BleRangingHelper(this, this);
         pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.pulse);
         pulseAnimation2 = AnimationUtils.loadAnimation(this, R.anim.pulse);
+        NfcManager manager = (NfcManager) getSystemService(Context.NFC_SERVICE);
+        NfcAdapter adapter = manager.getDefaultAdapter();
+        if (adapter != null && adapter.isEnabled()) {
+            tips.setVisibility(View.VISIBLE);
+            nfc_disclaimer.setVisibility(View.VISIBLE);
+            nfc_logo.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -321,6 +332,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         car_door_status = (TextView) findViewById(R.id.car_door_status);
         tips = (TextView) findViewById(R.id.tips);
         nfc_disclaimer = (TextView) findViewById(R.id.nfc_disclaimer);
+        nfc_logo = (ImageView) findViewById(R.id.nfc_logo);
         control_trunk_windows_lights = (RecyclerView) findViewById(R.id.control_trunk_windows_lights);
         car_model_recyclerView = (RecyclerView) findViewById(R.id.car_model_recyclerView);
         selected_car_model_pinned = (TextView) findViewById(R.id.selected_car_model_pinned);

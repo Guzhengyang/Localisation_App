@@ -41,10 +41,10 @@
                 android:id="@+id/vehicle_locked"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="40dp"
+                android:layout_alignBottom="@+id/door_status_bg"
+                android:layout_marginBottom="12dp"
+                android:layout_marginEnd="27dp"
                 android:layout_marginRight="40dp"
-                android:layout_toLeftOf="@+id/start_button_frame"
                 android:layout_toStartOf="@+id/start_button_frame"
                 android:adjustViewBounds="true"
                 android:background="@drawable/round_button"
@@ -71,11 +71,9 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_alignTop="@+id/vehicle_locked"
-                android:layout_centerVertical="true"
                 android:layout_marginLeft="40dp"
-                android:layout_marginStart="40dp"
+                android:layout_marginStart="28dp"
                 android:layout_toEndOf="@+id/start_button_frame"
-                android:layout_toRightOf="@+id/start_button_frame"
                 android:adjustViewBounds="true"
                 android:background="@drawable/round_button"
                 android:contentDescription="@string/vehicle_unlocked"
@@ -170,7 +168,8 @@
             android:paddingStart="@dimen/tips_vertical_padding"
             android:text="@string/tips"
             android:textColor="@color/white"
-            android:textSize="@dimen/psa_47_px" />
+            android:textSize="@dimen/psa_47_px"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/nfc_disclaimer"
@@ -180,7 +179,8 @@
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:text="@string/nfc_disclaimer"
             android:textColor="@color/black"
-            android:textSize="@dimen/psa_56_px" />
+            android:textSize="@dimen/psa_56_px"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/nfc_logo"
@@ -190,7 +190,8 @@
             android:layout_centerHorizontal="true"
             android:contentDescription="@string/nfc_logo"
             android:paddingTop="@dimen/imageview_vertical_padding"
-            android:src="@mipmap/nfc_logo" />
+            android:src="@mipmap/nfc_logo"
+            android:visibility="gone" />
 
     </RelativeLayout>
 
