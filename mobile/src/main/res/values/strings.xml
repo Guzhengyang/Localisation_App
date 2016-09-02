@@ -36,6 +36,8 @@
     <string name="dummy_space_view">dummy space view</string>
     <string name="VIN">VF3ATTENTDS180704</string>
     <string name="VIN2">VF3ATTENTDS180705</string>
+    <string name="permision_available">permission granted</string>
+    <string name="permissions_not_granted">permissions not granted</string>
 
     <!-- Strings related to Settings -->
 

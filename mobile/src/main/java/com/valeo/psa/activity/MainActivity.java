@@ -1,7 +1,9 @@
 package com.valeo.psa.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -11,10 +13,14 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -68,6 +74,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private final static int SECOND_IN_MILLI = 1000;
     private final static float SCROLL_THRESHOLD = 10;
     private static final int RESULT_SETTINGS = 20;
+    private static final int REQUEST_ACCESS_COARSE_LOCATION_PERMISSION = 25110;
+    private static final int REQUEST_ACCESS_FINE_LOCATION_PERMISSION = 25111;
+    private static final int REQUEST_BLUETOOTH_PERMISSION = 25112;
+    private static final int REQUEST_BLUETOOTH_ADMIN_PERMISSION = 25113;
     private Toolbar toolbar;
     private NestedScrollView content_main;
     private CoordinatorLayout main_scroll;
@@ -139,6 +149,28 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         setFonts();
         setOnClickListeners();
         SdkPreferencesHelper.initializeInstance(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        REQUEST_ACCESS_COARSE_LOCATION_PERMISSION);
+            }
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        REQUEST_ACCESS_FINE_LOCATION_PERMISSION);
+            }
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.BLUETOOTH},
+                        REQUEST_BLUETOOTH_PERMISSION);
+            }
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.BLUETOOTH_ADMIN},
+                        REQUEST_BLUETOOTH_ADMIN_PERMISSION);
+            }
+        }
         this.mBleRangingHelper = new BleRangingHelper(this, this);
         pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.pulse);
         pulseAnimation2 = AnimationUtils.loadAnimation(this, R.anim.pulse);
@@ -175,6 +207,29 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             case RESULT_SETTINGS:
                 Log.d("settings", "ok");
                 break;
+        }
+    }
+
+    /**
+     * Callback received when a permissions request has been completed.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_ACCESS_COARSE_LOCATION_PERMISSION) {
+            // Received permission result for permission.
+            Log.i(TAG, "Received response for permission request.");
+            // Check if the permission has been granted
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // permission has been granted
+                Log.i(TAG, "permission has now been granted.");
+                Snackbar.make(content_main, R.string.permision_available,
+                        Snackbar.LENGTH_SHORT).show();
+            } else {
+                Log.i(TAG, "permission was NOT granted.");
+                Snackbar.make(content_main, R.string.permissions_not_granted,
+                        Snackbar.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -222,30 +277,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 super.onLongPress(e);
             }
         });
-        content_main.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                Log.d("test content_main", "isNestedScrollingEnabled " + v.isNestedScrollingEnabled()
-                        + " isSmoothScrollingEnabled " + v.isSmoothScrollingEnabled()
-                        + " hasNestedScrollingParent " + v.hasNestedScrollingParent());
-            }
-        });
-//        main_scroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-//            @Override
-//            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-//                Log.d("test main_scroll", "isNestedScrollingEnabled " + v.isNestedScrollingEnabled()
-//                        + " isSmoothScrollingEnabled " + v.isSmoothScrollingEnabled()
-//                        + " hasNestedScrollingParent " + v.hasNestedScrollingParent());
-//                Log.d("test content_main", "isNestedScrollingEnabled " + content_main.isNestedScrollingEnabled()
-//                        + " isSmoothScrollingEnabled " + content_main.isSmoothScrollingEnabled()
-//                        + " hasNestedScrollingParent " + content_main.hasNestedScrollingParent());
-//                if (scrollY < 488) {
-//                    //TODO annule main_scroll event and scroll only content_main
-//                } else {
-//                    Log.d("onScroll main_scroll", String.format("%1$d %2$d %3$d %4$d", scrollX, scrollY, oldScrollX, oldScrollY));
-//                }
-//            }
-//        });
         vehicle_locked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
