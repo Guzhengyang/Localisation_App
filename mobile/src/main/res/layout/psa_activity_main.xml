@@ -7,6 +7,7 @@
     tools:context=".activity.MainActivity">
 
     <FrameLayout
+        android:id="@+id/main_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar">
@@ -69,21 +70,20 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:visibility="gone" />
-    </FrameLayout>
 
-    <TextView
-        android:id="@+id/ble_status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
-        android:drawableLeft="@mipmap/bluetooth_icon"
-        android:drawablePadding="@dimen/imageview_padding"
-        android:drawableStart="@mipmap/bluetooth_icon"
-        android:gravity="center_vertical"
-        android:padding="@dimen/imageview_padding"
-        android:text="@string/not_connected_over_ble"
-        android:textColor="@color/ble_status"
-        android:textSize="@dimen/psa_40_px" />
+        <TextView
+            android:id="@+id/ble_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@mipmap/bluetooth_icon"
+            android:drawablePadding="@dimen/imageview_padding"
+            android:drawableStart="@mipmap/bluetooth_icon"
+            android:gravity="center_vertical"
+            android:padding="@dimen/imageview_padding"
+            android:text="@string/not_connected_over_ble"
+            android:textColor="@color/ble_status"
+            android:textSize="@dimen/psa_40_px" />
+    </FrameLayout>
 
     <include
         android:id="@+id/content_start_car_dialog"

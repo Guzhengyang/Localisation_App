@@ -16,7 +16,6 @@ import android.nfc.NfcManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -43,6 +42,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int REQUEST_BLUETOOTH_PERMISSION = 25112;
     private static final int REQUEST_BLUETOOTH_ADMIN_PERMISSION = 25113;
     private Toolbar toolbar;
+    private FrameLayout main_frame;
     private NestedScrollView content_main;
     private CoordinatorLayout main_scroll;
     private ImageView blur_on_touch;
@@ -353,6 +354,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      * Find all view by their id
      */
     private void setView() {
+        main_frame = (FrameLayout) findViewById(R.id.main_frame);
         content_main = (NestedScrollView) findViewById(R.id.content_main);
         main_scroll = (CoordinatorLayout) findViewById(R.id.main_scroll);
         blur_on_touch = (ImageView) findViewById(R.id.blur_on_touch);
@@ -550,38 +552,38 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      */
     public void switchToolbars(boolean mainToNewToolBar, int resId) {
         if (mainToNewToolBar) {
-            toolbar.findViewById(R.id.main_toolbar).setVisibility(View.GONE);
-            ble_status.setVisibility(View.GONE);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
             ViewGroup.LayoutParams layoutParams = toolbar.getLayoutParams();
             layoutParams.height = layoutParams.height + statusBarHeight(getResources());
             toolbar.setLayoutParams(layoutParams);
             toolbar.findViewById(resId).setVisibility(View.VISIBLE);
+            toolbar.findViewById(R.id.main_toolbar).setVisibility(View.GONE);
             blurActivity(true);
         } else {
             toolbar.findViewById(resId).setVisibility(View.GONE);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             ViewGroup.LayoutParams layoutParams = toolbar.getLayoutParams();
             layoutParams.height = layoutParams.height - statusBarHeight(getResources());
             toolbar.setLayoutParams(layoutParams);
             toolbar.findViewById(R.id.main_toolbar).setVisibility(View.VISIBLE);
-            ble_status.setVisibility(View.VISIBLE);
             blurActivity(false);
         }
     }
 
     private void blurActivity(boolean blurActivity) {
         if (blurActivity) {
-            Bitmap blurredBitmap = BlurBuilder.blur(main_scroll);
+            Bitmap blurredBitmap = BlurBuilder.blur(main_frame);
             blur_on_touch.setImageDrawable(new BitmapDrawable(getResources(), blurredBitmap));
             blur_on_touch.setVisibility(View.VISIBLE);
             main_scroll.setVisibility(View.GONE);
+            ble_status.setVisibility(View.GONE);
         } else {
             blur_on_touch.setImageDrawable(null);
-            main_scroll.setVisibility(View.VISIBLE);
             blur_on_touch.setVisibility(View.GONE);
+            main_scroll.setVisibility(View.VISIBLE);
+            ble_status.setVisibility(View.VISIBLE);
         }
     }
 
@@ -618,19 +620,19 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (!isIconLongPressed) {
-                    Log.d("icon onTouchEvent", "ACTION_DOWN");
+                    Log.d("Longpress", "ACTION_DOWN");
                     mDetector.onTouchEvent(event);
                     pressedView = null;
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (isIconLongPressed && (Math.abs(mDownX - event.getX()) > SCROLL_THRESHOLD || Math.abs(mDownY - event.getY()) > SCROLL_THRESHOLD)) {
-                    Log.d("icon onTouchEvent", "ACTION_MOVE");
-                } else {
-                    break;
+                    Log.d("Longpress", "ACTION_MOVE");
                 }
+                break;
             case MotionEvent.ACTION_CANCEL:
-                Log.d("icon onTouchEvent", "ACTION_CANCEL");
+                Log.d("Longpress", "ACTION_CANCEL");
+                // no break because no action up will be called
             case MotionEvent.ACTION_UP:
                 if (isIconLongPressed) {
                     final View childView = control_trunk_windows_lights.findContainingItemView(pressedView);
@@ -639,9 +641,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     if (viewModel != null) {
                         switch (viewModel.getViewModelId()) {
                             case UNLOCK_TRUNK:
-                                Log.d("icon onTouchEvent", "ACTION_UP UNLOCK_TRUNK");
+                                Log.d("Longpress", "ACTION_UP UNLOCK_TRUNK");
                                 switchToolbars(false, R.id.unlock_trunk_toolbar);
-                                new Handler(getMainLooper()).postDelayed(new Runnable() {
+                                v.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         ((MyRecyclerAdapter) control_trunk_windows_lights.getAdapter()).
@@ -654,9 +656,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                                 }, 100);
                                 break;
                             case LOCK_TRUNK:
-                                Log.d("icon onTouchEvent", "ACTION_UP LOCK_TRUNK");
+                                Log.d("Longpress", "ACTION_UP LOCK_TRUNK");
                                 switchToolbars(false, R.id.lock_trunk_toolbar);
-                                new Handler(getMainLooper()).postDelayed(new Runnable() {
+                                v.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         ((MyRecyclerAdapter) control_trunk_windows_lights.getAdapter()).
@@ -669,19 +671,19 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                                 }, 100);
                                 break;
                             case CLOSE_ALL_WINDOWS:
-                                Log.d("icon onTouchEvent", "ACTION_UP CLOSE_ALL_WINDOWS");
+                                Log.d("Longpress", "ACTION_UP CLOSE_ALL_WINDOWS");
                                 switchToolbars(false, R.id.close_all_windows_toolbar);
                                 break;
                             case FLASH_LIGHTS:
-                                Log.d("icon onTouchEvent", "ACTION_UP FLASH_LIGHTS");
+                                Log.d("Longpress", "ACTION_UP FLASH_LIGHTS");
                                 break;
                             case UNKNOWN:
-                                Log.d("icon onTouchEvent", "ACTION_UP UNKNOWN");
+                                Log.d("Longpress", "ACTION_UP UNKNOWN");
                                 break;
                         }
                     }
                 } else {
-                    Log.d("icon onTouchEvent", "ACTION_UP isIconLongPressed = false");
+                    Log.d("Longpress", "ACTION_UP isIconLongPressed = false");
                 }
                 isIconLongPressed = false;
                 mDownX = 0;
@@ -689,10 +691,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 pressedView = null;
                 break;
             case MotionEvent.ACTION_OUTSIDE:
-                Log.d("icon onTouchEvent", "ACTION_OUTSIDE");
+                Log.d("Longpress", "ACTION_OUTSIDE");
                 break;
             case MotionEvent.ACTION_SCROLL:
-                Log.d("icon onTouchEvent", "ACTION_SCROLL");
+                Log.d("Longpress", "ACTION_SCROLL");
                 break;
         }
         return true;
