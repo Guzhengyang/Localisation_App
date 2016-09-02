@@ -48,6 +48,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.trncic.library.DottedProgressBar;
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private GradientDrawable unlock_area_left;
     private GradientDrawable unlock_area_right;
     private GradientDrawable unlock_area_back;
+    private DottedProgressBar little_round_progressBar;
     private TextView debug_info;
     private ItemTouchHelper ith;
     private Typeface romanTypeFace;
@@ -127,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private CarListAdapter mCarListAdapter = null;
     private CarDoorStatus carDoorStatus;
     private BleRangingHelper mBleRangingHelper;
+    private boolean showMenu = true;
 
     /**
      * Get the status bar height
@@ -198,6 +201,12 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 startActivityForResult(i, RESULT_SETTINGS);
                 break;
         }
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.menu_settings).setVisible(showMenu);
         return true;
     }
 
@@ -383,6 +392,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         unlock_area_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_left);
         unlock_area_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_right);
         unlock_area_back = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_back);
+        little_round_progressBar = (DottedProgressBar) findViewById(R.id.little_round_progressBar);
         debug_info = (TextView) findViewById(R.id.debug_info);
     }
 
@@ -417,7 +427,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                //TODO
             }
 
             //defines the enabled move directions in each state (idle, swiping, dragging).
@@ -552,6 +561,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      */
     public void switchToolbars(boolean mainToNewToolBar, int resId) {
         if (mainToNewToolBar) {
+            showMenu = false;
+            invalidateOptionsMenu();
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
             ViewGroup.LayoutParams layoutParams = toolbar.getLayoutParams();
@@ -561,6 +572,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             toolbar.findViewById(R.id.main_toolbar).setVisibility(View.GONE);
             blurActivity(true);
         } else {
+            showMenu = true;
+            invalidateOptionsMenu();
             toolbar.findViewById(resId).setVisibility(View.GONE);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -603,6 +616,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 case CLOSE_ALL_WINDOWS:
                     Log.d("Longpress", "CLOSE_ALL_WINDOWS detected ");
                     switchToolbars(true, R.id.close_all_windows_toolbar);
+                    little_round_progressBar.startProgress();
                     break;
                 case FLASH_LIGHTS:
                     Log.d("Longpress", "FLASH_LIGHTS detected ");
@@ -628,8 +642,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             case MotionEvent.ACTION_MOVE:
                 if (isIconLongPressed && (Math.abs(mDownX - event.getX()) > SCROLL_THRESHOLD || Math.abs(mDownY - event.getY()) > SCROLL_THRESHOLD)) {
                     Log.d("Longpress", "ACTION_MOVE");
+                    // no break to prevent moving while long pressing
+                } else {
+                    break;
                 }
-                break;
             case MotionEvent.ACTION_CANCEL:
                 Log.d("Longpress", "ACTION_CANCEL");
                 // no break because no action up will be called
@@ -673,6 +689,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                             case CLOSE_ALL_WINDOWS:
                                 Log.d("Longpress", "ACTION_UP CLOSE_ALL_WINDOWS");
                                 switchToolbars(false, R.id.close_all_windows_toolbar);
+                                little_round_progressBar.stopProgress();
                                 break;
                             case FLASH_LIGHTS:
                                 Log.d("Longpress", "ACTION_UP FLASH_LIGHTS");

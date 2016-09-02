@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/close_all_windows_toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -29,11 +30,11 @@
         android:textColor="@color/white"
         android:textSize="@dimen/psa_56_px" />
 
-    <ProgressBar
+    <com.trncic.library.DottedProgressBar
         android:id="@+id/little_round_progressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_alignBottom="@id/close_all_windows_icon"
         android:layout_alignParentBottom="true"
         android:layout_below="@id/close_all_windows_title"
@@ -42,5 +43,11 @@
         android:indeterminate="true"
         android:maxHeight="10dip"
         android:minHeight="10dip"
-        android:progress="100" />
+        android:paddingBottom="12dp"
+        android:progress="100"
+        app:activeDot="@drawable/ic_play_dark"
+        app:dotSize="15dp"
+        app:inactiveDot="@drawable/ic_play_light"
+        app:jumpingSpeed="60"
+        app:spacing="1dp" />
 </RelativeLayout>

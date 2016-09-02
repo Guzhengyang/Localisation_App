@@ -30,7 +30,7 @@
         android:textSize="@dimen/psa_56_px" />
 
     <ProgressBar
-        android:id="@+id/little_round_progressBar"
+        android:id="@+id/unlock_progressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
