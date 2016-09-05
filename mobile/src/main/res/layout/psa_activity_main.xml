@@ -75,7 +75,6 @@
             android:id="@+id/ble_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@mipmap/bluetooth_icon"
             android:drawablePadding="@dimen/imageview_padding"
             android:drawableStart="@mipmap/bluetooth_icon"
             android:gravity="center_vertical"

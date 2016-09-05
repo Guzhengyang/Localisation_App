@@ -2,6 +2,7 @@
     <string name="app_name">PSAnoSDK</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">Remote key</string>
+    <string name="title_activity_login">Connect to My Peugeot</string>
     <string name="cancel_start_car">Cancel</string>
     <string name="you_can_start_tv">You can start your car !</string>
     <string name="car_start_countdown_min_sec">%1$02d : %2$02d</string>
@@ -38,6 +39,12 @@
     <string name="VIN2">VF3ATTENTDS180705</string>
     <string name="permision_available">permission granted</string>
     <string name="permissions_not_granted">permissions not granted</string>
+    <string name="mail">Email address</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign in</string>
+    <string name="create_account">Create your account</string>
+    <string name="not_valid_mail">Not a valid email address!</string>
+    <string name="not_valid_password">Not a valid password!</string>
 
     <!-- Strings related to Settings -->
 
@@ -45,6 +52,7 @@
     <string name="title_activity_settings">Settings</string>
     <string name="pref_header_general">General</string>
     <string name="menu_settings">Settings</string>
+    <string name="menu_connect">Connect</string>
     <string name="pref_offset">OFFSET</string>
     <string name="pref_offset_start">Start Offset</string>
     <string name="pref_offset_lock">Lock Offset</string>
@@ -93,4 +101,12 @@
     <string name="pref_ble_address_middle">Middle BLE Address</string>
     <string name="pref_ble_address_right">Right BLE Address</string>
     <string name="pref_ble_address_back">Back BLE Address</string>
+
+    <string name="forgot_password"><u>Forgot password ?</u></string>
+    <string name="choice_or"><b>OR</b></string>
+    <string name="sign_in_message_alert_yes">Yes</string>
+    <string name="sign_in_message_alert_no">No</string>
+    <string name="sign_in_message_alert_title"><b>Do you want My Peugeot to keep you logged in ?</b></string>
+    <string name="sign_in_message_alert">We recommend you to accept only\nif you password protect your phone.\n
+    You can always modify your choice\n in My Peugeot settings.</string>
 </resources>

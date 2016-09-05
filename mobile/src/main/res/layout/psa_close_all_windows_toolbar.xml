@@ -10,10 +10,8 @@
         android:id="@+id/close_all_windows_icon"
         android:layout_width="@dimen/psa_header_padding"
         android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginEnd="@dimen/psa_header_icon_right_padding"
-        android:layout_marginRight="@dimen/psa_header_icon_right_padding"
         android:contentDescription="@string/close_all_windows"
         android:src="@mipmap/close_windows_button" />
 
@@ -23,7 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@id/close_all_windows_icon"
-        android:layout_toRightOf="@id/close_all_windows_icon"
         android:gravity="center_vertical"
         android:paddingTop="@dimen/status_bar_height"
         android:text="@string/close_all_windows_title"
@@ -39,7 +36,6 @@
         android:layout_alignParentBottom="true"
         android:layout_below="@id/close_all_windows_title"
         android:layout_toEndOf="@id/close_all_windows_icon"
-        android:layout_toRightOf="@id/close_all_windows_icon"
         android:indeterminate="true"
         android:maxHeight="10dip"
         android:minHeight="10dip"

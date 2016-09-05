@@ -97,6 +97,8 @@ public final class SdkPreferencesHelper {
     public static final String EQUALIZER_MIDDLE_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_MIDDLE";
     public static final String EQUALIZER_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_RIGHT";
     public static final String EQUALIZER_BACK_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_BACK";
+    private static final String USER_MAIL_PREFERENCES_NAME = "com.inblue.PREFERENCE_USER_MAIL";
+    private static final String PASSWORD_PREFERENCES_NAME = "com.inblue.PREFERENCE_PASSWORD";
 
     /** Single helper instance. */
     private static SdkPreferencesHelper sSingleInstance = null;
@@ -465,6 +467,22 @@ public final class SdkPreferencesHelper {
 
     public int getTrxRssiEqualizerBack() {
         return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_BACK_PREFERENCES_NAME, EQUALIZER_BACK);
+    }
+
+    public String getUserMail() {
+        return readString(SAVED_SELECTED_LOCATION, USER_MAIL_PREFERENCES_NAME, "");
+    }
+
+    public void setUserMail(String userMail) {
+        saveString(SAVED_SELECTED_LOCATION, USER_MAIL_PREFERENCES_NAME, userMail);
+    }
+
+    public String getPassword() {
+        return readString(SAVED_SELECTED_LOCATION, PASSWORD_PREFERENCES_NAME, "");
+    }
+
+    public void setPassword(String password) {
+        saveString(SAVED_SELECTED_LOCATION, PASSWORD_PREFERENCES_NAME, password);
     }
 
     // region Internal methods

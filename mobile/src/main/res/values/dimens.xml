@@ -23,4 +23,6 @@
     <dimen name="psa_header_icon_right_padding">10dp</dimen>
     <dimen name="status_bar_height">24dp</dimen>
     <dimen name="car_model_type_margin">24dp</dimen>
+    <dimen name="login_forgot_password_margin">24dp</dimen>
+    <dimen name="login_or_margin">32dp</dimen>
 </resources>

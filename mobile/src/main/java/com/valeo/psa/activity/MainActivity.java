@@ -197,8 +197,12 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_settings:
-                Intent i = new Intent(this, SettingsActivity.class);
-                startActivityForResult(i, RESULT_SETTINGS);
+                Intent settingIntent = new Intent(this, SettingsActivity.class);
+                startActivityForResult(settingIntent, RESULT_SETTINGS);
+                break;
+            case R.id.menu_connect:
+                Intent loginIntent = new Intent(this, LoginActivity.class);
+                startActivityForResult(loginIntent, RESULT_SETTINGS);
                 break;
         }
         return true;
