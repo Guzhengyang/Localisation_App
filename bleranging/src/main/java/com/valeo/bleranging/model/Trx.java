@@ -6,10 +6,6 @@ package com.valeo.bleranging.model;
 public class Trx {
     public static final int ANTENNA_OR = 1;
     public static final int ANTENNA_AND = 2;
-    public static final int NUMBER_TRX_LEFT = 1;
-    public static final int NUMBER_TRX_MIDDLE = 2;
-    public static final int NUMBER_TRX_RIGHT = 3;
-    public static final int NUMBER_TRX_BACK = 4;
     public final static int ANTENNA_ID_0 = 0;
     public final static int ANTENNA_ID_1 = 4;
     public final static int ANTENNA_ID_2 = 8;
@@ -21,20 +17,52 @@ public class Trx {
         this.antenna2 = new Antenna(numberTrx, ANTENNA_ID_2, historicDefaultValue);
     }
 
-    public Antenna getAntenna1() {
-        return antenna1;
-    }
-
-    public Antenna getAntenna2() {
-        return antenna2;
-    }
-
     /**
      * Calculate the TRX average RSSI
+     * @param mode the trx average mode
      * @return the average of both antenna's rssi
      */
     public int getTrxRssiAverage(int mode) {
         return (int) -(Math.sqrt(antenna1.getAntennaRssiAverage(mode) * antenna2.getAntennaRssiAverage(mode)));
+    }
+
+    /**
+     * Calculate the TRX average RSSI
+     *
+     * @param antennaId the antenna id
+     * @param mode      the trx average mode
+     * @return the average of both antenna's rssi
+     */
+    public int getAntennaRssiAverage(int antennaId, int mode) {
+        switch (antennaId) {
+            case ANTENNA_ID_0:
+                return getTrxRssiAverage(mode);
+            case ANTENNA_ID_1:
+                return antenna1.getAntennaRssiAverage(mode);
+            case ANTENNA_ID_2:
+                return antenna2.getAntennaRssiAverage(mode);
+            default:
+                return getTrxRssiAverage(mode);
+        }
+    }
+
+    /**
+     * Get the current original rssi
+     *
+     * @param antennaId the antenna id that received the rssi
+     * @return the current original rssi value for id 1 or 2. Antenna id 0 will return antenna 1 current rssi
+     */
+    public int getCurrentOriginalRssi(int antennaId) {
+        switch (antennaId) {
+            case ANTENNA_ID_0:
+                return antenna1.getCurrentOriginalRssi();
+            case ANTENNA_ID_1:
+                return antenna1.getCurrentOriginalRssi();
+            case ANTENNA_ID_2:
+                return antenna2.getCurrentOriginalRssi();
+            default:
+                return antenna1.getCurrentOriginalRssi();
+        }
     }
 
     /**
@@ -87,66 +115,12 @@ public class Trx {
         }
     }
 
-//    /**
-//     * Calculate the TRX pente of RSSI and compare with thresold
-//     * @param mode the mode to use to compare with threshold (&& or ||)
-//     * @param threshold the threshold to compare with
-//     * @return true if the pente of rssi of each antenna is greater than the threshold, false otherwise
-//     */
-//    public boolean trxPenteGreaterThanThreshold(int mode, int threshold) {
-//        if(isActive()) {
-//            switch (mode) {
-//                case ANTENNA_OR:
-//                    return ((antenna1.getPenteApproximationValue() > threshold) || (antenna2.getPenteApproximationValue() > threshold));
-//                case ANTENNA_AND:
-//                    return ((antenna1.getPenteApproximationValue() > threshold) && (antenna2.getPenteApproximationValue() > threshold));
-//                default:
-//                    return false;
-//            }
-//        } else {
-//            return false;
-//        }
-//    }
-//
-//    /**
-//     * Calculate the TRX pente of RSSI and compare with thresold
-//     * @param mode the mode to use to compare with threshold (&& or ||)
-//     * @param threshold the threshold to compare with
-//     * @return true if the pente of rssi of each antenna is greater than the threshold, false otherwise
-//     */
-//    public boolean trxPenteLowerThanThreshold(int mode, int threshold) {
-//        if(isActive()) {
-//            switch (mode) {
-//                case ANTENNA_OR:
-//                    return ((antenna1.getPenteApproximationValue() < threshold) || (antenna2.getPenteApproximationValue() < threshold));
-//                case ANTENNA_AND:
-//                    return ((antenna1.getPenteApproximationValue() < threshold) && (antenna2.getPenteApproximationValue() < threshold));
-//                default:
-//                    return false;
-//            }
-//        } else {
-//            return false;
-//        }
-//    }
-
-//    /**
-//     * Calculate the offsetBleChannel37 and offsetBleChannel39 comparing to channel38 of each antenna
-//     */
-//    public void calculateChannelOffsets() {
-//        antenna1.calculateChannelOffsets();
-//        antenna2.calculateChannelOffsets();
-//    }
-
     /**
      * Compare checker then set isAntennaActive and newChecker
      */
     public void compareCheckerAndSetAntennaActive() {
         antenna1.compareCheckerAndSetAntennaActive();
         antenna2.compareCheckerAndSetAntennaActive();
-    }
-
-    public int getPenteApproximationValue() {
-        return (antenna1.getPenteApproximationValue() + antenna2.getPenteApproximationValue()) / 2;
     }
 
     /**
@@ -157,4 +131,52 @@ public class Trx {
         antenna2.resetWithHysteresis(defaultValue);
     }
 
+    /**
+     * Save the received rssi
+     *
+     * @param antennaId                the antenna id that sent the rssi
+     * @param rssi                     the rssi value
+     * @param bleChannel               the ble channel use to send signal
+     * @param smartphoneIsLaidDownLAcc the boolean which determines if the smartphone is moving or not
+     */
+    public void saveRssi(int antennaId, int rssi, Antenna.BLEChannel bleChannel, boolean smartphoneIsLaidDownLAcc) {
+        switch (antennaId) {
+            case ANTENNA_ID_0:
+                antenna1.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                antenna2.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                break;
+            case ANTENNA_ID_1:
+                antenna1.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                if (!antenna2.isAntennaActive()) {
+                    antenna2.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                }
+                break;
+            case ANTENNA_ID_2:
+                antenna2.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                if (!antenna1.isAntennaActive()) {
+                    antenna1.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                }
+                break;
+            default:
+                antenna1.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                antenna2.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                break;
+        }
+    }
+
+    /**
+     * Get the offset for channel 38
+     *
+     * @param antennaId the antenna id
+     * @return the offset for channel 38
+     */
+    public int getOffset38(int antennaId) {
+        if (antennaId == ANTENNA_ID_1) {
+            return antenna1.getOffsetBleChannel38();
+        } else if (antennaId == ANTENNA_ID_2) {
+            return antenna2.getOffsetBleChannel38();
+        } else {
+            return 0;
+        }
+    }
 }

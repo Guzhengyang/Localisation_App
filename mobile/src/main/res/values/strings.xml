@@ -95,6 +95,10 @@
     <string name="pref_equalizer_middle">Middle Equalizer</string>
     <string name="pref_equalizer_right">Right Equalizer</string>
     <string name="pref_equalizer_back">Back Equalizer</string>
+    <string name="pref_equalizer_front_left">Front Left Equalizer</string>
+    <string name="pref_equalizer_rear_left">Rear Left Equalizer</string>
+    <string name="pref_equalizer_front_right">Front Right Equalizer</string>
+    <string name="pref_equalizer_rear_right">Rear Right Equalizer</string>
     <string name="pref_ble_address">BLE ADDRESS</string>
     <string name="pref_ble_address_connectable">Connectable BLE Address</string>
     <string name="pref_ble_address_left">Left BLE Address</string>

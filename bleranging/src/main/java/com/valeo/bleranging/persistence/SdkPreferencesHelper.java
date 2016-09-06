@@ -43,11 +43,19 @@ public final class SdkPreferencesHelper {
     public final static int EQUALIZER_MIDDLE = 5;
     public final static int EQUALIZER_RIGHT = 5;
     public final static int EQUALIZER_BACK = 5;
+    public final static int EQUALIZER_FRONT_LEFT = 5;
+    public final static int EQUALIZER_FRONT_RIGHT = 5;
+    public final static int EQUALIZER_REAR_LEFT = 5;
+    public final static int EQUALIZER_REAR_RIGHT = 5;
     public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:73:88";
     public final static String BLE_ADDRESS_LEFT = "D4:F5:13:56:39:A5";
     public final static String BLE_ADDRESS_MIDDLE = "D4:F5:13:56:6B:65";
     public final static String BLE_ADDRESS_RIGHT = "D4:F5:13:56:65:16";
     public final static String BLE_ADDRESS_BACK = "78:A5:04:81:5A:21"; //"D4:F5:13:56:5C:B4";
+    public final static String BLE_ADDRESS_FRONT_LEFT = "D4:F5:13:56:39:A6";
+    public final static String BLE_ADDRESS_REAR_LEFT = "D4:F5:13:56:39:A7";
+    public final static String BLE_ADDRESS_FRONT_RIGHT = "D4:F5:13:56:39:A8";
+    public final static String BLE_ADDRESS_REAR_RIGHT = "D4:F5:13:56:39:A9";
     public final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
     public final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
     public final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
@@ -60,6 +68,10 @@ public final class SdkPreferencesHelper {
     public static final String ADDRESS_MIDDLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_MIDDLE";
     public static final String ADDRESS_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_RIGHT";
     public static final String ADDRESS_BACK_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_BACK";
+    public static final String ADDRESS_FRONT_LEFT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_ADDRESS_FRONT_LEFT";
+    public static final String ADDRESS_REAR_LEFT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_ADDRESS_REAR_LEFT";
+    public static final String ADDRESS_FRONT_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_ADDRESS_FRONT_RIGHT";
+    public static final String ADDRESS_REAR_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_ADDRESS_REAR_RIGHT";
     public static final String OFFSET_POCKET_FOR_START_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_START";
     public static final String OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_LOCK";
     public static final String OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_UNLOCK";
@@ -97,6 +109,10 @@ public final class SdkPreferencesHelper {
     public static final String EQUALIZER_MIDDLE_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_MIDDLE";
     public static final String EQUALIZER_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_RIGHT";
     public static final String EQUALIZER_BACK_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_BACK";
+    public static final String EQUALIZER_FRONT_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_FRONT_LEFT";
+    public static final String EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_FRONT_RIGHT";
+    public static final String EQUALIZER_REAR_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_REAR_LEFT";
+    public static final String EQUALIZER_REAR_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_REAR_RIGHT";
     private static final String USER_MAIL_PREFERENCES_NAME = "com.inblue.PREFERENCE_USER_MAIL";
     private static final String PASSWORD_PREFERENCES_NAME = "com.inblue.PREFERENCE_PASSWORD";
 
@@ -155,6 +171,22 @@ public final class SdkPreferencesHelper {
 
     public void setEqualizerBack(int equalizer) {
         saveInt(SAVED_SELECTED_LOCATION, EQUALIZER_BACK_PREFERENCES_NAME, equalizer);
+    }
+
+    public void setEqualizerFrontLeft(int equalizer) {
+        saveInt(SAVED_SELECTED_LOCATION, EQUALIZER_FRONT_LEFT_PREFERENCES_NAME, equalizer);
+    }
+
+    public void setEqualizerFrontRight(int equalizer) {
+        saveInt(SAVED_SELECTED_LOCATION, EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME, equalizer);
+    }
+
+    public void setEqualizerRearLeft(int equalizer) {
+        saveInt(SAVED_SELECTED_LOCATION, EQUALIZER_REAR_LEFT_PREFERENCES_NAME, equalizer);
+    }
+
+    public void setEqualizerRearRight(int equalizer) {
+        saveInt(SAVED_SELECTED_LOCATION, EQUALIZER_REAR_RIGHT_PREFERENCES_NAME, equalizer);
     }
 
     public void setSelectedLocation(final String selectedLocation) {
@@ -437,6 +469,22 @@ public final class SdkPreferencesHelper {
         saveString(SAVED_SELECTED_LOCATION, ADDRESS_BACK_PREFERENCE_NAME, address);
     }
 
+    public String getTrxAddressFrontLeft() {
+        return readString(SAVED_SELECTED_LOCATION, ADDRESS_FRONT_LEFT_PREFERENCE_NAME, BLE_ADDRESS_FRONT_LEFT);
+    }
+
+    public String getTrxAddressRearLeft() {
+        return readString(SAVED_SELECTED_LOCATION, ADDRESS_REAR_LEFT_PREFERENCE_NAME, BLE_ADDRESS_REAR_LEFT);
+    }
+
+    public String getTrxAddressFrontRight() {
+        return readString(SAVED_SELECTED_LOCATION, ADDRESS_FRONT_RIGHT_PREFERENCE_NAME, BLE_ADDRESS_FRONT_RIGHT);
+    }
+
+    public String getTrxAddressRearRight() {
+        return readString(SAVED_SELECTED_LOCATION, ADDRESS_REAR_RIGHT_PREFERENCE_NAME, BLE_ADDRESS_REAR_RIGHT);
+    }
+
     public int getLinAccSize() {
         return readInt(SAVED_SELECTED_LOCATION, LIN_ACC_SIZE_PREFERENCES_NAME, LIN_ACC_SIZE);
     }
@@ -457,12 +505,28 @@ public final class SdkPreferencesHelper {
         return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_LEFT_PREFERENCES_NAME, EQUALIZER_LEFT);
     }
 
+    public int getTrxRssiEqualizerFrontLeft() {
+        return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_FRONT_LEFT_PREFERENCES_NAME, EQUALIZER_FRONT_LEFT);
+    }
+
+    public int getTrxRssiEqualizerRearLeft() {
+        return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_REAR_LEFT_PREFERENCES_NAME, EQUALIZER_REAR_LEFT);
+    }
+
     public int getTrxRssiEqualizerMiddle() {
         return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_MIDDLE_PREFERENCES_NAME, EQUALIZER_MIDDLE);
     }
 
     public int getTrxRssiEqualizerRight() {
         return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_RIGHT_PREFERENCES_NAME, EQUALIZER_RIGHT);
+    }
+
+    public int getTrxRssiEqualizerFrontRight() {
+        return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME, EQUALIZER_FRONT_RIGHT);
+    }
+
+    public int getTrxRssiEqualizerRearRight() {
+        return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_REAR_RIGHT_PREFERENCES_NAME, EQUALIZER_REAR_RIGHT);
     }
 
     public int getTrxRssiEqualizerBack() {

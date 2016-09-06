@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,9 +12,7 @@ import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 
 import com.valeo.bleranging.bluetooth.BluetoothLeService;
@@ -24,6 +21,7 @@ import com.valeo.bleranging.bluetooth.BluetoothManagementListener;
 import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.ScanResponse;
 import com.valeo.bleranging.model.Antenna;
+import com.valeo.bleranging.model.ConnectedCar;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
@@ -31,18 +29,12 @@ import com.valeo.bleranging.utils.TextUtils;
 import com.valeo.bleranging.utils.TrxUtils;
 
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by l-avaratha on 19/07/2016.
  */
 public class BleRangingHelper implements SensorEventListener {
-    public final static int RSSI_LOCK_DEFAULT_VALUE = -120;
-    public final static int RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE = -50;
-    public final static int RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE = -30;
-    public final static int RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE = -70;
-    public final static int RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE = -80;
     public final static int WELCOME_AREA = 1;
     public final static int LOCK_AREA = 2;
     public final static int UNLOCK_LEFT_AREA = 3;
@@ -55,34 +47,17 @@ public class BleRangingHelper implements SensorEventListener {
     private static final int LOCK_STATUS_CHANGED_TIMEOUT = 3000;
     private final Context mContext;
     private final BluetoothManagement mBluetoothManager;
-    private final int welcomeThreshold = SdkPreferencesHelper.getInstance().getWelcomeThreshold();
-    private final int lockThreshold = SdkPreferencesHelper.getInstance().getLockThreshold();
-    private final int unlockThreshold = SdkPreferencesHelper.getInstance().getUnlockThreshold();
-    private final int startThreshold = SdkPreferencesHelper.getInstance().getStartThreshold();
-    private final int averageDeltaLockThreshold = SdkPreferencesHelper.getInstance().getAverageDeltaLockThreshold();
-    private final int averageDeltaUnlockThreshold = SdkPreferencesHelper.getInstance().getAverageDeltaUnlockThreshold();
-    private final int lockMode = SdkPreferencesHelper.getInstance().getLockMode();
-    private final int unlockMode = SdkPreferencesHelper.getInstance().getUnlockMode();
-    private final int startMode = SdkPreferencesHelper.getInstance().getStartMode();
     private final float linAccThreshold = SdkPreferencesHelper.getInstance().getCorrectionLinAcc();
-    private final int nextToDoorRatioThreshold = SdkPreferencesHelper.getInstance().getNextToDoorRatioThreshold();
-    private final int nextToBackDoorRatioThresholdMin = SdkPreferencesHelper.getInstance().getNextToBackDoorRatioThresholdMin();
-    private final int nextToBackDoorRatioThresholdMax = SdkPreferencesHelper.getInstance().getNextToBackDoorRatioThresholdMax();
-    private final int nextToDoorThresholdMLorMRMin = SdkPreferencesHelper.getInstance().getNextToDoorThresholdMLorMRMin();
-    private final int nextToDoorThresholdMLorMRMax = SdkPreferencesHelper.getInstance().getNextToDoorThresholdMLorMRMax();
-    private final int rollingAvElement = SdkPreferencesHelper.getInstance().getRollingAvElement();
-    private final int startNbElement = SdkPreferencesHelper.getInstance().getStartNbElement();
-    private final int lockNbElement = SdkPreferencesHelper.getInstance().getLockNbElement();
-    private final int unlockNbElement = SdkPreferencesHelper.getInstance().getUnlockNbElement();
-    private final int welcomeNbElement = SdkPreferencesHelper.getInstance().getWelcomeNbElement();
-    private final int longNbElement = SdkPreferencesHelper.getInstance().getLongNbElement();
-    private final int shortNbElement = SdkPreferencesHelper.getInstance().getShortNbElement();
     private final int linAccSize = SdkPreferencesHelper.getInstance().getLinAccSize();
     private final String trxAddressConnectable = SdkPreferencesHelper.getInstance().getTrxAddressConnectable();
     private final String trxAddressLeft = SdkPreferencesHelper.getInstance().getTrxAddressLeft();
     private final String trxAddressMiddle = SdkPreferencesHelper.getInstance().getTrxAddressMiddle();
     private final String trxAddressRight = SdkPreferencesHelper.getInstance().getTrxAddressRight();
     private final String trxAddressBack = SdkPreferencesHelper.getInstance().getTrxAddressBack();
+    private final String trxAddressFrontLeft = SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft();
+    private final String trxAddressFrontRight = SdkPreferencesHelper.getInstance().getTrxAddressFrontRight();
+    private final String trxAddressRearLeft = SdkPreferencesHelper.getInstance().getTrxAddressRearLeft();
+    private final String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
     public boolean smartphoneIsInPocket = false;
     public boolean smartphoneIsLaidDownLAcc = false;
     private boolean isLockStrategyValid = false;
@@ -117,10 +92,7 @@ public class BleRangingHelper implements SensorEventListener {
     private Handler mLockStatusChangedHandler;
     private Handler mHandlerTimeOut;
     private Handler mIsLaidTimeOutHandler;
-    private Trx trxLeft;
-    private Trx trxMiddle;
-    private Trx trxRight;
-    private Trx trxBack;
+    private ConnectedCar connectedCar;
     private byte welcomeByte = 0;
     private byte lockByte = 0;
     private byte startByte = 0;
@@ -158,7 +130,7 @@ public class BleRangingHelper implements SensorEventListener {
         @Override
         public void run() {
             Log.w(" rssiHistorics", "************************************** CHECK ANTENNAS ************************************************");
-            checkAllAntennas();
+            connectedCar.compareCheckerAndSetAntennaActive();
             if (mMainHandler != null) {
                 mMainHandler.postDelayed(this, 2500);
             }
@@ -194,15 +166,42 @@ public class BleRangingHelper implements SensorEventListener {
         }
     };
     private boolean isLoggable = true;
+    private Runnable logRunner = new Runnable() {
+        @Override
+        public void run() {
+            if (isLoggable) {
+                TrxUtils.appendRssiLogs(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_2),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_0),
+                        smartphoneIsInPocket, smartphoneIsLaidDownLAcc, isPassiveEntryAction.get(), isLockStatusChangedTimerExpired.get(),
+                        rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), newLockStatus, welcomeByte,
+                        lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
+                        walkAwayByte, steadyByte, approachByte, leftTurnByte,
+                        fullTurnByte, rightTurnByte, recordByte,
+                        mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(), mProtocolManager.isStartRequested());
+            }
+            if (mMainHandler != null) {
+                mMainHandler.postDelayed(this, 105);
+            }
+        }
+    };
     private Runnable printRunner = new Runnable() {
         @Override
         public void run() {
             Log.w(" rssiHistorics", "************************************** IHM LOOP START *************************************************");
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-            createHeaderDebugData(spannableStringBuilder);
-            calculateTotalAverage();
+            spannableStringBuilder = TextUtils.createHeaderDebugData(spannableStringBuilder, connectedCar, bleChannel);
+            totalAverage = connectedCar.getAllTrxAverage(Antenna.AVERAGE_DEFAULT);
             tryStrategies(newLockStatus);
-            createFooterDebugData(spannableStringBuilder);
+            spannableStringBuilder = TextUtils.createFirstFooterDebugData(spannableStringBuilder, connectedCar);
+            spannableStringBuilder = TextUtils.createSecondFooterDebugData(spannableStringBuilder, connectedCar, smartphoneIsInPocket, smartphoneIsLaidDownLAcc, totalAverage, rearmLock.get(), rearmUnlock.get());
+            spannableStringBuilder = TextUtils.createThirdFooterDebugData(spannableStringBuilder, connectedCar, bytesToSend, bytesReceived, deltaLinAcc, smartphoneIsLaidDownLAcc, mBluetoothManager);
             updateCarLocalization();
             bleRangingListener.printDebugInfo(spannableStringBuilder);
             Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
@@ -211,6 +210,7 @@ public class BleRangingHelper implements SensorEventListener {
             }
         }
     };
+
     /**
      * Handles various events fired by the Service.
      * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
@@ -227,36 +227,7 @@ public class BleRangingHelper implements SensorEventListener {
                 boolean oldLockStatus = newLockStatus;
                 newLockStatus = (bytesReceived[5] & 0x01) != 0;
                 if (isPassiveEntryAction.get() && oldLockStatus != newLockStatus) {
-                    if (!newLockStatus) { // just perform an unlock
-                        switch (isUnlockStrategyValid) {
-                            case Trx.NUMBER_TRX_LEFT:
-                                trxLeft.resetWithHysteresis(RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE);
-                                trxRight.resetWithHysteresis(RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE);
-                                trxBack.resetWithHysteresis(RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE);
-                                break;
-                            case Trx.NUMBER_TRX_RIGHT:
-                                trxLeft.resetWithHysteresis(RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE);
-                                trxRight.resetWithHysteresis(RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE);
-                                trxBack.resetWithHysteresis(RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE);
-                                break;
-                            case Trx.NUMBER_TRX_BACK:
-                                trxLeft.resetWithHysteresis(RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE);
-                                trxRight.resetWithHysteresis(RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE);
-                                trxBack.resetWithHysteresis(RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE);
-                                break;
-                            default:
-                                trxLeft.resetWithHysteresis(RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE);
-                                trxRight.resetWithHysteresis(RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE);
-                                trxBack.resetWithHysteresis(RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE);
-                                break;
-                        }
-                        trxMiddle.resetWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE);
-                    } else { // just perform a lock
-                        trxLeft.resetWithHysteresis(trxLeft.getTrxRssiAverage(Antenna.AVERAGE_LOCK));
-                        trxMiddle.resetWithHysteresis(trxMiddle.getTrxRssiAverage(Antenna.AVERAGE_LOCK));
-                        trxRight.resetWithHysteresis(trxRight.getTrxRssiAverage(Antenna.AVERAGE_LOCK));
-                        trxBack.resetWithHysteresis(trxBack.getTrxRssiAverage(Antenna.AVERAGE_LOCK));
-                    }
+                    connectedCar.resetWithHysteresis(newLockStatus, isUnlockStrategyValid);
                     bleRangingListener.updateCarDoorStatus(newLockStatus);
                 }
                 mProtocolManager.setIsLockedFromTrx(newLockStatus);
@@ -292,10 +263,11 @@ public class BleRangingHelper implements SensorEventListener {
         this.mContext = context;
         this.mBluetoothManager = new BluetoothManagement(context);
         this.bleRangingListener = bleRangingListener;
-        mProtocolManager = new InblueProtocolManager();
-        mLockStatusChangedHandler = new Handler();
-        mHandlerTimeOut = new Handler();
-        mIsLaidTimeOutHandler = new Handler();
+        this.mProtocolManager = new InblueProtocolManager();
+        this.connectedCar = new ConnectedCar(ConnectedCar.ConnectionNumber.THREE_CONNECTION);
+        this.mLockStatusChangedHandler = new Handler();
+        this.mHandlerTimeOut = new Handler();
+        this.mIsLaidTimeOutHandler = new Handler();
         mBluetoothManager.addBluetoothManagementListener(new BluetoothManagementListener() {
             @Override
             public void onPassiveEntryTry(BluetoothDevice device, int rssi, ScanResponse scanResponse, byte[] advertisedData) {
@@ -316,18 +288,6 @@ public class BleRangingHelper implements SensorEventListener {
     }
 
     /**
-     * Initialize trx and antenna and their rssi historic with default value periph and central
-     * @param historicDefaultValuePeriph the peripheral trx default value
-     * @param historicDefaultValueCentral the central trx default value
-     */
-    private void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
-        trxLeft = new Trx(Trx.NUMBER_TRX_LEFT, historicDefaultValuePeriph);
-        trxMiddle = new Trx(Trx.NUMBER_TRX_MIDDLE, historicDefaultValueCentral);
-        trxRight = new Trx(Trx.NUMBER_TRX_RIGHT, historicDefaultValuePeriph);
-        trxBack = new Trx(Trx.NUMBER_TRX_BACK, historicDefaultValuePeriph);
-    }
-
-    /**
      * Suspend scan, stop all loops, reinit all variables, then resume scan to be able to reconnect
      */
     private void restartConnection() {
@@ -337,6 +297,7 @@ public class BleRangingHelper implements SensorEventListener {
         if (mMainHandler != null) {
             mMainHandler.removeCallbacks(checkAntennaRunner);
             mMainHandler.removeCallbacks(printRunner);
+            mMainHandler.removeCallbacks(logRunner);
             mMainHandler.removeCallbacks(sendPacketRunner);
             mMainHandler.removeCallbacks(checkNewPacketsRunner);
             mMainHandler.removeCallbacks(null);
@@ -398,47 +359,34 @@ public class BleRangingHelper implements SensorEventListener {
                 mBluetoothManager.connect(mTrxUpdateReceiver);
             } else if (!isFirstConnection && mBluetoothManager.isFullyConnected()) {
                 if(device.getAddress().equals(trxAddressLeft)) {
-                    trxLeft.getAntenna1().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    trxLeft.getAntenna2().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_LEFT=" + trxAddressLeft + " " + trxLeft.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT) + " " + trxLeft.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT));
+                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_LEFT=" + trxAddressLeft + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
                 } else if (device.getAddress().equals(trxAddressMiddle)) {
-                    if (scanResponse.antennaId == Trx.ANTENNA_ID_1) {
-                        trxMiddle.getAntenna1().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                        if(!trxMiddle.getAntenna2().isAntennaActive()) {
-                            trxMiddle.getAntenna2().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                        }
-                    } else if (scanResponse.antennaId == Trx.ANTENNA_ID_2) {
-                        trxMiddle.getAntenna2().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                        if(!trxMiddle.getAntenna1().isAntennaActive()) {
-                            trxMiddle.getAntenna1().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                        }
-                    } else if(scanResponse.antennaId == Trx.ANTENNA_ID_0) {
-                        trxMiddle.getAntenna1().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                        trxMiddle.getAntenna2().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    }
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_MIDDLE=" + trxAddressMiddle + " " + trxMiddle.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT) + " " + trxMiddle.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT));
+                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_LEFT, scanResponse.antennaId, rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_MIDDLE=" + trxAddressMiddle + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
                 } else if (device.getAddress().equals(trxAddressRight)) {
-                    trxRight.getAntenna1().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    trxRight.getAntenna2().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_RIGHT=" + trxAddressRight + " " + trxRight.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT) + " " + trxRight.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT));
+                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_RIGHT=" + trxAddressRight + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
                 } else if (device.getAddress().equals(trxAddressBack)) {
-                    trxBack.getAntenna1().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    trxBack.getAntenna2().saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_BACK=" + trxAddressBack + " " + trxBack.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT) + " " + trxBack.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT));
+                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_BACK=" + trxAddressBack + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
+                } else if (device.getAddress().equals(trxAddressLeft)) {
+                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_FRONT_LEFT=" + trxAddressFrontLeft + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
+                } else if (device.getAddress().equals(trxAddressLeft)) {
+                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_FRONT_RIGHT=" + trxAddressFrontRight + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
+                } else if (device.getAddress().equals(trxAddressLeft)) {
+                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_REAR_LEFT=" + trxAddressRearLeft + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
+                } else if (device.getAddress().equals(trxAddressLeft)) {
+                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_REAR_RIGHT=" + trxAddressRearRight + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
                 } else {
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_LOGGER=" + TextUtils.printBleBytes(advertisedData));
-                    getAdvertisedBytes(advertisedData);
-                }
-                if (isLoggable) {
-                    TrxUtils.appendRssiLogs(trxLeft.getAntenna1().getCurrentOriginalRssi(),
-                            trxMiddle.getAntenna1().getCurrentOriginalRssi(), trxMiddle.getAntenna2().getCurrentOriginalRssi(),
-                            trxRight.getAntenna1().getCurrentOriginalRssi(), trxBack.getAntenna1().getCurrentOriginalRssi(),
-                            smartphoneIsInPocket, smartphoneIsLaidDownLAcc, isPassiveEntryAction.get(), isLockStatusChangedTimerExpired.get(),
-                            rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), newLockStatus, welcomeByte,
-                            lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
-                            walkAwayByte, steadyByte, approachByte, leftTurnByte,
-                            fullTurnByte, rightTurnByte, recordByte,
-                            mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(), mProtocolManager.isStartRequested());
+                    if (advertisedData.length > 0) {
+                        Log.d(" rssiHistoric", "BLE_ADDRESS_LOGGER=" + TextUtils.printBleBytes(advertisedData));
+                        getAdvertisedBytes(advertisedData);
+                    }
                 }
             }
         }
@@ -489,81 +437,16 @@ public class BleRangingHelper implements SensorEventListener {
     }
 
     /**
-     * Update all antenna active boolean
-     */
-    private void checkAllAntennas() {
-        trxLeft.compareCheckerAndSetAntennaActive();
-        trxMiddle.compareCheckerAndSetAntennaActive();
-        trxRight.compareCheckerAndSetAntennaActive();
-        trxBack.compareCheckerAndSetAntennaActive();
-    }
-
-    /**
-     * Create a string of header debug
-     * @param spannableStringBuilder the spannable string builder to fill
-     */
-    private void createHeaderDebugData(SpannableStringBuilder spannableStringBuilder) {
-        spannableStringBuilder.append("Scanning on channel: ").append(bleChannel.toString()).append("\n");
-        spannableStringBuilder.append("-------------------------------------------------------------------------\n");
-        spannableStringBuilder.append(TextUtils.colorText(trxLeft.isActive(),
-                "      LEFT       ", Color.WHITE, Color.DKGRAY));
-        spannableStringBuilder.append(TextUtils.colorText(trxMiddle.isActive(),
-                "   MIDDLE        ", Color.WHITE, Color.DKGRAY));
-        spannableStringBuilder.append(TextUtils.colorText(trxRight.isActive(),
-                "   RIGHT     ", Color.WHITE, Color.DKGRAY));
-        spannableStringBuilder.append(TextUtils.colorText(trxBack.isActive(),
-                "   BACK\n", Color.WHITE, Color.DKGRAY));
-    }
-
-    /**
-     * Calculate totalAverage to show it in debug mode
-     * @return 0 if all trx offline, total average otherwise
-     */
-    private int calculateTotalAverage() {
-        int numberOfAntenna = 0;
-        totalAverage = 0;
-        if (trxLeft.isActive()) {
-            totalAverage += (trxLeft.getTrxRssiAverage(Antenna.AVERAGE_DEFAULT));
-            numberOfAntenna++;
-        }
-        if (trxMiddle.isActive()) {
-            totalAverage += (trxMiddle.getTrxRssiAverage(Antenna.AVERAGE_DEFAULT));
-            numberOfAntenna++;
-        }
-        if (trxRight.isActive()) {
-            totalAverage += (trxRight.getTrxRssiAverage(Antenna.AVERAGE_DEFAULT));
-            numberOfAntenna++;
-        }
-        if (trxBack.isActive()) {
-            totalAverage += (trxBack.getTrxRssiAverage(Antenna.AVERAGE_DEFAULT));
-            numberOfAntenna++;
-        }
-        if (numberOfAntenna == 0) { // If all trx are down restart the app
-//                                Intent i = mContext.getPackageManager()
-//                                        .getLaunchIntentForPackage(mContext.getPackageName() );
-//                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                                int mPendingIntentId = 123456;
-//                                PendingIntent mPendingIntent = PendingIntent.getActivity(mContext, mPendingIntentId, i, PendingIntent.FLAG_CANCEL_CURRENT);
-//                                AlarmManager mgr = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
-//                                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-//                                System.exit(0);
-            return 0;
-        }
-        totalAverage /= numberOfAntenna;
-        return totalAverage;
-    }
-
-    /**
      * Try all strategy based on rssi values
      * @param newLockStatus the lock status of the vehicle
      */
     private void tryStrategies(boolean newLockStatus) {
         if(mBluetoothManager.isFullyConnected()) {
             boolean isStartAllowed = false;
-            isLockStrategyValid = TrxUtils.lockStrategy(trxLeft, trxMiddle, trxRight, trxBack, smartphoneIsInPocket);
-            isUnlockStrategyValid = TrxUtils.unlockStrategy(trxLeft, trxMiddle, trxRight, trxBack, smartphoneIsInPocket);
-            isStartStrategyValid = TrxUtils.startStrategy(newLockStatus, trxLeft, trxMiddle, trxRight, trxBack, smartphoneIsInPocket);
-            isWelcomeStrategyValid = TrxUtils.welcomeStrategy(newLockStatus, totalAverage, smartphoneIsInPocket);
+            isLockStrategyValid = TrxUtils.lockStrategy(connectedCar, smartphoneIsInPocket);
+            isUnlockStrategyValid = TrxUtils.unlockStrategy(connectedCar, smartphoneIsInPocket);
+            isStartStrategyValid = TrxUtils.startStrategy(connectedCar, newLockStatus, smartphoneIsInPocket);
+            isWelcomeStrategyValid = TrxUtils.welcomeStrategy(totalAverage, newLockStatus, smartphoneIsInPocket);
             if (rearmWelcome.get() && isWelcomeStrategyValid) {
                 rearmWelcome.set(false);
                 //TODO Welcome
@@ -589,199 +472,6 @@ public class BleRangingHelper implements SensorEventListener {
     }
 
     /**
-     * Create a string of footer debug
-     * @param spannableStringBuilder the spannable string builder to fill
-     */
-    private void createFooterDebugData(SpannableStringBuilder spannableStringBuilder) {
-        spannableStringBuilder.append("\n"); // return to line after tryStrategies print if success
-        StringBuilder dataStringBuilder = new StringBuilder()
-                .append(trxLeft.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT)).append("     ").append(trxLeft.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT)).append("      ")
-                .append(trxMiddle.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT)).append("     ").append(trxMiddle.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT)).append("      ")
-                .append(trxRight.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT)).append("     ").append(trxRight.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT)).append("      ")
-                .append(trxBack.getAntenna1().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT)).append("     ").append(trxBack.getAntenna2().getAntennaRssiAverage(Antenna.AVERAGE_DEFAULT)).append("\n");
-        dataStringBuilder
-                .append(trxLeft.getAntenna1().getCurrentOriginalRssi()).append("     ").append(trxLeft.getAntenna2().getCurrentOriginalRssi()).append("      ")
-                .append(trxMiddle.getAntenna1().getCurrentOriginalRssi()).append("     ").append(trxMiddle.getAntenna2().getCurrentOriginalRssi()).append("      ")
-                .append(trxRight.getAntenna1().getCurrentOriginalRssi()).append("     ").append(trxRight.getAntenna2().getCurrentOriginalRssi()).append("      ")
-                .append(trxBack.getAntenna1().getCurrentOriginalRssi()).append("     ").append(trxBack.getAntenna2().getCurrentOriginalRssi()).append("\n");
-        dataStringBuilder
-                .append("      ").append(trxLeft.getTrxRssiAverage(Antenna.AVERAGE_DEFAULT)).append("           ")
-                .append("      ").append(trxMiddle.getTrxRssiAverage(Antenna.AVERAGE_DEFAULT)).append("           ")
-                .append("      ").append(trxRight.getTrxRssiAverage(Antenna.AVERAGE_DEFAULT)).append("           ")
-                .append("      ").append(trxBack.getTrxRssiAverage(Antenna.AVERAGE_DEFAULT)).append("\n");
-        dataStringBuilder.append("                               ")
-                .append("Total :").append(" ").append(totalAverage).append("\n");
-        spannableStringBuilder.append(dataStringBuilder.toString());
-        // WELCOME
-        spannableStringBuilder.append("welcome ");
-        StringBuilder welcomeStringBuilder = new StringBuilder().append("rssi > (")
-                .append(TrxUtils.getCurrentLockThreshold(welcomeThreshold, smartphoneIsInPocket))
-                .append("): ").append(totalAverage).append("\n");
-        spannableStringBuilder.append(TextUtils.colorText(
-                totalAverage > TrxUtils.getCurrentLockThreshold(welcomeThreshold, smartphoneIsInPocket),
-                welcomeStringBuilder.toString(), Color.WHITE, Color.DKGRAY));
-        spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_WELCOME, Color.WHITE,
-                TrxUtils.getCurrentLockThreshold(welcomeThreshold, smartphoneIsInPocket), ">"));
-        // LOCK
-        spannableStringBuilder.append("lock").append("  mode : ").append(String.valueOf(lockMode)).append(" ");
-        StringBuilder averageLSDeltaLockStringBuilder = new StringBuilder().append(String.valueOf(TrxUtils.getAverageLSDelta(Antenna.AVERAGE_LONG, Antenna.AVERAGE_SHORT, trxLeft, trxMiddle, trxRight, trxBack))).append(" ");
-        spannableStringBuilder.append(TextUtils.colorText(
-                TrxUtils.getAverageLSDeltaGreaterThanThreshold(trxLeft, trxMiddle, trxRight, trxBack, TrxUtils.getCurrentLockThreshold(averageDeltaLockThreshold, smartphoneIsInPocket)),
-                averageLSDeltaLockStringBuilder.toString(), Color.RED, Color.DKGRAY));
-        StringBuilder lockStringBuilder = new StringBuilder().append("rssi < (").append(TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket)).append(") ");
-        spannableStringBuilder.append(TextUtils.colorText(
-                TrxUtils.isInLockArea(trxLeft, trxMiddle, trxRight, trxBack, TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket)),
-                lockStringBuilder.toString(), Color.RED, Color.DKGRAY));
-        StringBuilder rearmLockStringBuilder = new StringBuilder().append("rearm Lock: ").append(rearmLock.get()).append("\n");
-        spannableStringBuilder.append(TextUtils.colorText(
-                rearmLock.get(),
-                rearmLockStringBuilder.toString(), Color.RED, Color.DKGRAY));
-        spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_LOCK, Color.RED,
-                TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket), "<"));
-        // UNLOCK
-        spannableStringBuilder.append("unlock").append("  mode : ").append(String.valueOf(unlockMode)).append(" ");
-        StringBuilder averageLSDeltaUnlockStringBuilder = new StringBuilder().append(String.valueOf(TrxUtils.getAverageLSDelta(Antenna.AVERAGE_LONG, Antenna.AVERAGE_SHORT, trxLeft, trxMiddle, trxRight, trxBack))).append(" ");
-        spannableStringBuilder.append(TextUtils.colorText(
-                TrxUtils.getAverageLSDeltaLowerThanThreshold(trxLeft, trxMiddle, trxRight, trxBack, TrxUtils.getCurrentUnlockThreshold(averageDeltaUnlockThreshold, smartphoneIsInPocket)),
-                averageLSDeltaUnlockStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
-        StringBuilder unlockStringBuilder = new StringBuilder().append("rssi > (").append(TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket)).append(") ");
-        spannableStringBuilder.append(TextUtils.colorText(
-                TrxUtils.isInUnlockArea(trxLeft, trxMiddle, trxRight, trxBack, TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket)),
-                unlockStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
-        StringBuilder rearmUnlockStringBuilder = new StringBuilder().append("rearm Unlock: ").append(rearmUnlock.get()).append("\n");
-        spannableStringBuilder.append(TextUtils.colorText(
-                rearmUnlock.get(),
-                rearmUnlockStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
-        spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_UNLOCK, Color.GREEN,
-                TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket), ">"));
-        StringBuilder ratioLRStringBuilder = new StringBuilder().append("       ratio L/R > (+/-")
-                .append(nextToDoorRatioThreshold)
-                .append("): ").append(TrxUtils.getRatioNextToDoor(Antenna.AVERAGE_UNLOCK, trxLeft, trxRight)).append("\n");
-        spannableStringBuilder.append(TextUtils.colorText(
-                TrxUtils.getRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, trxLeft, trxRight, nextToDoorRatioThreshold)
-                        || TrxUtils.getRatioNextToDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, trxLeft, trxRight, -nextToDoorRatioThreshold),
-                ratioLRStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
-        StringBuilder ratioLBStringBuilder = new StringBuilder().append("       ratio LouR - B (")
-                .append("< ").append(nextToBackDoorRatioThresholdMin)
-                .append("): ").append(TrxUtils.getRatioNextToDoor(Antenna.AVERAGE_UNLOCK, trxLeft, trxBack))
-                .append("|").append(TrxUtils.getRatioNextToDoor(Antenna.AVERAGE_UNLOCK, trxRight, trxBack)).append("\n");
-        spannableStringBuilder.append(TextUtils.colorText(
-                trxBack.isActive() && (
-                        TrxUtils.getRatioNextToDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, trxLeft, trxBack, nextToBackDoorRatioThresholdMin)
-                                || TrxUtils.getRatioNextToDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, trxRight, trxBack, nextToBackDoorRatioThresholdMin)),
-                ratioLBStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
-        StringBuilder ratioRBStringBuilder = new StringBuilder().append("       ratio LouR - B (")
-                .append(" > ").append(nextToBackDoorRatioThresholdMax)
-                .append("): ").append(TrxUtils.getRatioNextToDoor(Antenna.AVERAGE_UNLOCK, trxLeft, trxBack))
-                .append("|").append(TrxUtils.getRatioNextToDoor(Antenna.AVERAGE_UNLOCK, trxRight, trxBack)).append("\n");
-        spannableStringBuilder.append(TextUtils.colorText(
-                trxBack.isActive() && (
-                        TrxUtils.getRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, trxLeft, trxBack, nextToBackDoorRatioThresholdMax)
-                                || TrxUtils.getRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, trxRight, trxBack, nextToBackDoorRatioThresholdMax)),
-                ratioRBStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
-        // START
-        spannableStringBuilder.append("start").append("  mode : ").append(String.valueOf(startMode)).append(" ");
-        StringBuilder startStringBuilder = new StringBuilder().append("rssi > (").append(TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket)).append(")\n");
-        spannableStringBuilder.append(TextUtils.colorText(
-                TrxUtils.isInStartArea(trxLeft, trxMiddle, trxRight, trxBack, TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket)),
-                startStringBuilder.toString(), Color.CYAN, Color.DKGRAY));
-        spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_START, Color.CYAN,
-                TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket), ">"));
-        StringBuilder ratioMLMRMaxStringBuilder = new StringBuilder().append("       ratio M/L OR M/R Max > (")
-                .append(nextToDoorThresholdMLorMRMax)
-                .append("): ").append(TrxUtils.getRatioNextToDoor(Antenna.AVERAGE_START, trxMiddle, trxLeft))
-                .append(" | ").append(TrxUtils.getRatioNextToDoor(Antenna.AVERAGE_START, trxMiddle, trxRight)).append("\n");
-        spannableStringBuilder.append(TextUtils.colorText(
-                TrxUtils.getRatioNextToDoor(Antenna.AVERAGE_START, trxMiddle, trxLeft) > nextToDoorThresholdMLorMRMax
-                        || TrxUtils.getRatioNextToDoor(Antenna.AVERAGE_START, trxMiddle, trxRight) > nextToDoorThresholdMLorMRMax,
-                ratioMLMRMaxStringBuilder.toString(), Color.CYAN, Color.DKGRAY));
-        StringBuilder ratioMLMRMinStringBuilder = new StringBuilder().append("       ratio M/L AND M/R Min > (")
-                .append(nextToDoorThresholdMLorMRMin)
-                .append("): ").append(TrxUtils.getRatioNextToDoor(Antenna.AVERAGE_START, trxMiddle, trxLeft))
-                .append(" & ").append(TrxUtils.getRatioNextToDoor(Antenna.AVERAGE_START, trxMiddle, trxRight)).append("\n");
-        spannableStringBuilder.append(TextUtils.colorText(
-                TrxUtils.getRatioNextToDoor(Antenna.AVERAGE_START, trxMiddle, trxLeft) > nextToDoorThresholdMLorMRMin
-                        && TrxUtils.getRatioNextToDoor(Antenna.AVERAGE_START, trxMiddle, trxRight) > nextToDoorThresholdMLorMRMin,
-                ratioMLMRMinStringBuilder.toString(), Color.CYAN, Color.DKGRAY));
-        if(mBluetoothManager.isFullyConnected()) {
-            spannableStringBuilder.append("Connected").append("\n")
-                    .append("       Send:       ").append(TextUtils.printBleBytes((bytesToSend))).append("\n")
-                    .append("       Receive: ").append(TextUtils.printBleBytes(bytesReceived)).append("\n");
-        } else {
-            SpannableString disconnectedSpanString = new SpannableString("Disconnected\n");
-            disconnectedSpanString.setSpan(new ForegroundColorSpan(Color.DKGRAY), 0, "Disconnected\n".length(), 0);
-            spannableStringBuilder.append(disconnectedSpanString);
-        }
-        StringBuilder lAccStringBuilder = new StringBuilder().append("Linear Acceleration < (")
-                .append(linAccThreshold)
-                .append("): ").append(String.format(Locale.FRANCE, "%1$.4f", deltaLinAcc)).append("\n");
-        spannableStringBuilder.append(TextUtils.colorText(
-                smartphoneIsLaidDownLAcc,
-                lAccStringBuilder.toString(), Color.WHITE, Color.DKGRAY));
-        spannableStringBuilder.append("-------------------------------------------------------------------------\n");
-        spannableStringBuilder.append("offset channel 38 :\n");
-        StringBuilder offset38StringBuilder = new StringBuilder()
-                .append(trxLeft.getAntenna1().getOffsetBleChannel38()).append("     ").append(trxLeft.getAntenna2().getOffsetBleChannel38()).append("      ")
-                .append(trxMiddle.getAntenna1().getOffsetBleChannel38()).append("     ").append(trxMiddle.getAntenna2().getOffsetBleChannel38()).append("      ");
-        offset38StringBuilder
-                .append(trxRight.getAntenna1().getOffsetBleChannel38()).append("     ").append(trxRight.getAntenna2().getOffsetBleChannel38()).append("      ")
-                .append(trxBack.getAntenna1().getOffsetBleChannel38()).append("     ").append(trxBack.getAntenna2().getOffsetBleChannel38()).append("\n");
-        spannableStringBuilder.append(offset38StringBuilder.toString());
-        spannableStringBuilder.append("-------------------------------------------------------------------------");
-    }
-
-    /**
-     * Color each antenna average with color if comparaisonSign (> or <) threshold, DK_GRAY otherwise
-     * @param mode the average mode to calculate
-     * @param color the color to use if the conditions is checked
-     * @param threshold the threshold to compare with
-     * @param comparaisonSign the comparaison sign
-     * @return a colored spannablestringbuilder with all the trx's average
-     */
-    private SpannableStringBuilder printModedAverage(int mode, int color, int threshold, String comparaisonSign) {
-        SpannableStringBuilder ssb = new SpannableStringBuilder(String.valueOf(getNbElement(mode)) + "     ");
-        ssb.append(TextUtils.colorAntennaAverage(trxLeft.getAntenna1().getAntennaRssiAverage(mode), color, threshold, comparaisonSign));
-        ssb.append(TextUtils.colorAntennaAverage(trxLeft.getAntenna2().getAntennaRssiAverage(mode), color, threshold, comparaisonSign));
-        ssb.append(TextUtils.colorAntennaAverage(trxMiddle.getAntenna1().getAntennaRssiAverage(mode), color, threshold, comparaisonSign));
-        ssb.append(TextUtils.colorAntennaAverage(trxMiddle.getAntenna2().getAntennaRssiAverage(mode), color, threshold, comparaisonSign));
-        ssb.append(TextUtils.colorAntennaAverage(trxRight.getAntenna1().getAntennaRssiAverage(mode), color, threshold, comparaisonSign));
-        ssb.append(TextUtils.colorAntennaAverage(trxRight.getAntenna2().getAntennaRssiAverage(mode), color, threshold, comparaisonSign));
-        ssb.append(TextUtils.colorAntennaAverage(trxBack.getAntenna1().getAntennaRssiAverage(mode), color, threshold, comparaisonSign));
-        ssb.append(TextUtils.colorAntennaAverage(trxBack.getAntenna2().getAntennaRssiAverage(mode), color, threshold, comparaisonSign));
-        ssb.append("\n");
-        return ssb;
-    }
-
-    /**
-     * Calculate the number of element to use to calculate the rolling average
-     * @param mode the average mode
-     * @return the number of element to calculate the average
-     */
-    private int getNbElement(int mode) {
-        if(smartphoneIsLaidDownLAcc) {
-            return rollingAvElement;
-        }
-        switch (mode) {
-            case Antenna.AVERAGE_DEFAULT:
-                return rollingAvElement;
-            case Antenna.AVERAGE_START:
-                return startNbElement;
-            case Antenna.AVERAGE_LOCK:
-                return lockNbElement;
-            case Antenna.AVERAGE_UNLOCK:
-                return unlockNbElement;
-            case Antenna.AVERAGE_WELCOME:
-                return welcomeNbElement;
-            case Antenna.AVERAGE_LONG:
-                return longNbElement;
-            case Antenna.AVERAGE_SHORT:
-                return shortNbElement;
-            default:
-                return rollingAvElement;
-        }
-    }
-
-    /**
      * Update the mini map with our location around the car
      */
     private void updateCarLocalization() {
@@ -797,13 +487,13 @@ public class BleRangingHelper implements SensorEventListener {
         bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
         if(!isLockStrategyValid) {
             switch (isUnlockStrategyValid) {
-                case Trx.NUMBER_TRX_LEFT:
+                case ConnectedCar.NUMBER_TRX_LEFT:
                     bleRangingListener.lightUpArea(UNLOCK_LEFT_AREA);
                     break;
-                case Trx.NUMBER_TRX_RIGHT:
+                case ConnectedCar.NUMBER_TRX_RIGHT:
                     bleRangingListener.lightUpArea(UNLOCK_RIGHT_AREA);
                     break;
-                case Trx.NUMBER_TRX_BACK:
+                case ConnectedCar.NUMBER_TRX_BACK:
                     bleRangingListener.lightUpArea(UNLOCK_BACK_AREA);
                     break;
                 default:
@@ -837,14 +527,11 @@ public class BleRangingHelper implements SensorEventListener {
             newLockStatus = (scanResponse.vehicleState & 0x01)!=0;
             bleRangingListener.updateCarDoorStatus(newLockStatus);
             mProtocolManager.setIsLockedToSend(newLockStatus);
-            if(newLockStatus) {
-                initializeTrx(RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE);
-            } else {
-                initializeTrx(RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE);
-            }
+            connectedCar.initializeTrx(newLockStatus);
             mMainHandler = new Handler(Looper.getMainLooper());
             mMainHandler.post(checkAntennaRunner);
             mMainHandler.post(printRunner);
+            mMainHandler.post(logRunner);
             isFirstConnection = false;
         }
     }
@@ -905,7 +592,6 @@ public class BleRangingHelper implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
 
     /**

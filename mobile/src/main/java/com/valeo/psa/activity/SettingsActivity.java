@@ -177,6 +177,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_MIDDLE_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_MIDDLE));
             bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_RIGHT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_RIGHT));
             bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_BACK_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_BACK));
+            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_FRONT_LEFT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_FRONT_LEFT));
+            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_REAR_LEFT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_REAR_LEFT));
+            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_FRONT_RIGHT));
+            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_REAR_RIGHT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_REAR_RIGHT));
 
             bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_PREFERENCE_NAME), String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE));
             bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.ADDRESS_LEFT_PREFERENCE_NAME), String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_LEFT));

@@ -9,9 +9,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by l-avaratha on 08/06/2016.
  */
 public class Antenna {
-    public enum BLEChannel {
-        BLE_CHANNEL_37, BLE_CHANNEL_38, BLE_CHANNEL_39
-    }
     public static final int AVERAGE_DEFAULT = 0;
     public static final int AVERAGE_START = 1;
     public static final int AVERAGE_LOCK = 2;
@@ -19,14 +16,16 @@ public class Antenna {
     public static final int AVERAGE_WELCOME = 4;
     public static final int AVERAGE_LONG = 5;
     public static final int AVERAGE_SHORT = 6;
+    private final AtomicBoolean isAntennaActive;
+    private final AtomicBoolean hasReceivedRssi;
+    private final ArrayList<Integer> rssiPente;
+    private final ArrayList<Integer> rssiHistoric;
     private int numberTrx;
     private int antennaId;
     private int lastOriginalRssi;
     private int currentOriginalRssi;
     private BLEChannel lastBleChannel;
     private boolean lastIsSmartphoneLaid;
-//    private float currentVariance;
-//    private float currentEcartType;
     private int antennaRssiAverage;
     private int antennaRssiAverageStart;
     private int antennaRssiAverageLock;
@@ -34,13 +33,8 @@ public class Antenna {
     private int antennaRssiAverageWelcome;
     private int antennaRssiAverageLong;
     private int antennaRssiAverageShort;
-    private final AtomicBoolean isAntennaActive;
-    private final AtomicBoolean hasReceivedRssi;
-    private final ArrayList<Integer> rssiPente;
-    private final ArrayList<Integer> rssiHistoric;
     private int offsetBleChannel38 = 0;
     private boolean hasBeenInitialized = false;
-
     public Antenna(int numberTrx, int antennaId, int historicDefaultValue) {
         this.numberTrx = numberTrx;
         this.antennaId = antennaId;
@@ -91,7 +85,8 @@ public class Antenna {
 
     /**
      * Correct the rssi received within BORNE_INF and BORNE_SUP
-     * @param rssi the rssi to correct
+     *
+     * @param rssi       the rssi to correct
      * @param bleChannel the ble channel from which the rssi come
      * @return the corrected rssi
      */
@@ -103,20 +98,20 @@ public class Antenna {
                 offsetBleChannel38 = 0;
                 break;
             case BLE_CHANNEL_38:
-                if(!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
+                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
                     offsetBleChannel38 = calculateOffsetChannel(rssi);
                 }
                 rssi += offsetBleChannel38;
                 break;
             case BLE_CHANNEL_39:
-                if(!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
+                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
                     offsetBleChannel38 = 0;
                 }
                 break;
         }
-        if(rssi > borneSup) {
+        if (rssi > borneSup) {
             return borneSup;
-        } else if(rssi < borneInf) {
+        } else if (rssi < borneInf) {
             return borneInf;
         } else {
             return rssi;
@@ -130,9 +125,9 @@ public class Antenna {
      */
     private int calculateOffsetChannel(int rssi) {
         int offsetBleChannel = antennaRssiAverageWelcome - rssi;
-        if(offsetBleChannel > 10) {
+        if (offsetBleChannel > 10) {
             offsetBleChannel = 10;
-        } else if(offsetBleChannel < -10) {
+        } else if (offsetBleChannel < -10) {
             offsetBleChannel = -10;
         }
         return offsetBleChannel;
@@ -150,7 +145,7 @@ public class Antenna {
         antennaRssiAverageLong = 0;
         antennaRssiAverageShort = 0;
         int toIndex = rssiHistoric.size();
-        if(toIndex != 0) {
+        if (toIndex != 0) {
             int indexDefault = getFromIndex(AVERAGE_DEFAULT, isSmartphoneLaid);
             int indexStart = getFromIndex(AVERAGE_START, isSmartphoneLaid);
             int indexLock = getFromIndex(AVERAGE_LOCK, isSmartphoneLaid);
@@ -158,26 +153,26 @@ public class Antenna {
             int indexWelcome = getFromIndex(AVERAGE_WELCOME, isSmartphoneLaid);
             int indexLong = getFromIndex(AVERAGE_LONG, isSmartphoneLaid);
             int indexShort = getFromIndex(AVERAGE_SHORT, isSmartphoneLaid);
-            int currentHistoricValue = 0;
-            for (int i = toIndex-1; i >= 0; i--) {
+            int currentHistoricValue;
+            for (int i = toIndex - 1; i >= 0; i--) {
                 currentHistoricValue = rssiHistoric.get(i);
                 antennaRssiAverage += currentHistoricValue;
-                if(i >= indexStart) {
+                if (i >= indexStart) {
                     antennaRssiAverageStart += currentHistoricValue;
                 }
-                if(i >= indexLock) {
+                if (i >= indexLock) {
                     antennaRssiAverageLock += currentHistoricValue;
                 }
-                if(i >= indexUnlock) {
+                if (i >= indexUnlock) {
                     antennaRssiAverageUnlock += currentHistoricValue;
                 }
-                if(i >= indexWelcome) {
+                if (i >= indexWelcome) {
                     antennaRssiAverageWelcome += currentHistoricValue;
                 }
-                if(i >= indexLong) {
+                if (i >= indexLong) {
                     antennaRssiAverageLong += currentHistoricValue;
                 }
-                if(i >= indexShort) {
+                if (i >= indexShort) {
                     antennaRssiAverageShort += currentHistoricValue;
                 }
             }
@@ -198,89 +193,12 @@ public class Antenna {
      * @return the valid index, or 1 if the index is invalid
      */
     private int getStartIndexTabPosition(int toIndex, int fromIndex) {
-        if((fromIndex > 0) && (toIndex - fromIndex) > 0) {
+        if ((fromIndex > 0) && (toIndex - fromIndex) > 0) {
             return toIndex - fromIndex;
         } else {
             return toIndex;
         }
     }
-
-//    /**
-//     * Calculate the historic ecart type
-//     * @return the ecart-type of the trx rssi historic
-//     */
-//    public int getEcartType() {
-//        return (int) currentEcartType;
-//    }
-
-//    /**
-//     * Sort and save the rssi in different list regarding their channel
-//     * @param rssi the rssi to sort and save
-//     * @param bleChannel the ble channel in which the rssi came from
-//     */
-//    public void calibrateAntenna(int rssi, BLEChannel bleChannel) {
-//        if(calibrationOnChannel37 == null) {
-//            calibrationOnChannel37 = new ArrayList<>();
-//        }
-//        if(calibrationOnChannel38 == null) {
-//            calibrationOnChannel38 = new ArrayList<>();
-//        }
-//        if(calibrationOnChannel39 == null) {
-//            calibrationOnChannel39 = new ArrayList<>();
-//        }
-//        switch (bleChannel) {
-//            case BLE_CHANNEL_37:
-//                calibrationOnChannel37.add(rssi);
-//                break;
-//            case BLE_CHANNEL_38:
-//                calibrationOnChannel38.add(rssi);
-//                break;
-//            case BLE_CHANNEL_39:
-//                calibrationOnChannel39.add(rssi);
-//                break;
-//        }
-//    }
-
-//    /**
-//     * Calculate the average rssi for calibration purposes
-//     * @param calibrationOnChannel the list of saved rssi
-//     * @return the average rssi of the list
-//     */
-//    private int getCalibrationOnChannelAverageRssi(List<Integer> calibrationOnChannel) {
-//        if(calibrationOnChannel != null && calibrationOnChannel.size() > 0) {
-//            StringBuilder stringBuilder = new StringBuilder("trx n°" + numberTrx + ": ");
-//            int average = 0;
-//            for (int rssi : calibrationOnChannel) {
-//                average += rssi;
-//                stringBuilder.append(rssi).append(" ");
-//            }
-//            average /= calibrationOnChannel.size();
-//            Log.e("Antenna", stringBuilder.toString());
-//            return average;
-//        }
-//        return 0;
-//    }
-
-//    /**
-//     * Calculate the offsetBleChannel37 and offsetBleChannel39 comparing to channel38
-//     */
-//    public void calculateChannelOffsets() {
-//        if(calibrationOnChannel37 != null && calibrationOnChannel38 != null && calibrationOnChannel39 != null) {
-//            int average37 = getCalibrationOnChannelAverageRssi(calibrationOnChannel37);
-//            int average38 = getCalibrationOnChannelAverageRssi(calibrationOnChannel38);
-//            int average39 = getCalibrationOnChannelAverageRssi(calibrationOnChannel39);
-//            Log.e("Antenna", "trx n°" + numberTrx + " average37 " + average37 + " average38 " + average38 + " average39 " + average39);
-//            offsetBleChannel37 = average38 - average37;
-//            offsetBleChannel39 = average38 - average39;
-//            Log.e("Antenna", "trx n°" + numberTrx + " offsetBleChannel37 " + offsetBleChannel37 + " offsetBleChannel39 " + offsetBleChannel39);
-//            calibrationOnChannel37.clear();
-//            calibrationOnChannel38.clear();
-//            calibrationOnChannel39.clear();
-//            calibrationOnChannel37 = null;
-//            calibrationOnChannel38 = null;
-//            calibrationOnChannel39 = null;
-//        }
-//    }
 
     /**
      * Save the received rssi in the antenna historic
@@ -295,7 +213,7 @@ public class Antenna {
             this.lastIsSmartphoneLaid = isSmartphoneLaid;
             hasBeenInitialized = true;
         }
-        if(rssiPente.size() == 10) {
+        if (rssiPente.size() == 10) {
             rssiPente.remove(0);
         }
         currentOriginalRssi = rssi;
@@ -303,12 +221,12 @@ public class Antenna {
         lastOriginalRssi = currentOriginalRssi;
         rssi += getTrxRssiEqualizer(numberTrx); // add trx rssi antenna power Equalizer
         rssi = getCorrectedRssi(rssi, bleChannel); // Correct the rssi value with an ecretage on the last N-2 rssi seen
-        if(rssiHistoric.size() == SdkPreferencesHelper.getInstance().getRollingAvElement()) {
+        if (rssiHistoric.size() == SdkPreferencesHelper.getInstance().getRollingAvElement()) {
             rssiHistoric.remove(0);
         }
         this.rssiHistoric.add(rssi);
         this.lastBleChannel = bleChannel;
-        if(lastIsSmartphoneLaid != isSmartphoneLaid) {
+        if (lastIsSmartphoneLaid != isSmartphoneLaid) {
             resetWithHysteresis(antennaRssiAverageWelcome);
             lastIsSmartphoneLaid = isSmartphoneLaid;
         }
@@ -323,13 +241,21 @@ public class Antenna {
      */
     private int getTrxRssiEqualizer(int numberTrx) {
         switch (numberTrx) {
-            case Trx.NUMBER_TRX_LEFT:
+            case ConnectedCar.NUMBER_TRX_LEFT:
                 return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerLeft();
-            case Trx.NUMBER_TRX_MIDDLE:
+            case ConnectedCar.NUMBER_TRX_FRONT_LEFT:
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontLeft();
+            case ConnectedCar.NUMBER_TRX_REAR_LEFT:
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearLeft();
+            case ConnectedCar.NUMBER_TRX_MIDDLE:
                 return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerMiddle();
-            case Trx.NUMBER_TRX_RIGHT:
+            case ConnectedCar.NUMBER_TRX_RIGHT:
                 return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRight();
-            case Trx.NUMBER_TRX_BACK:
+            case ConnectedCar.NUMBER_TRX_FRONT_RIGHT:
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontRight();
+            case ConnectedCar.NUMBER_TRX_REAR_RIGHT:
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearRight();
+            case ConnectedCar.NUMBER_TRX_BACK:
                 return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerBack();
             default:
                 return 0;
@@ -344,7 +270,7 @@ public class Antenna {
      */
     private int getFromIndex(int mode, boolean isSmartphoneLaid) {
         // if smartphone doesn't move, take all the tab
-        if(isSmartphoneLaid) {
+        if (isSmartphoneLaid) {
             return 0;
         }
         switch (mode) {
@@ -366,14 +292,6 @@ public class Antenna {
                 return 0;
         }
 
-    }
-
-    public int getPenteApproximationValue() {
-        int approximation = 0;
-        for(int rssiAlpha : rssiPente) {
-            approximation += rssiAlpha;
-        }
-        return approximation;
     }
 
     /**
@@ -425,6 +343,10 @@ public class Antenna {
 
     public int getCurrentOriginalRssi() {
         return currentOriginalRssi;
+    }
+
+    public enum BLEChannel {
+        BLE_CHANNEL_37, BLE_CHANNEL_38, BLE_CHANNEL_39
     }
 
 }

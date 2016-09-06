@@ -118,6 +118,18 @@
         <EditTextPreference
             android:key="com.inblue.PREFERENCE_EQUALIZER_BACK"
             android:title="@string/pref_equalizer_back" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_EQUALIZER_FRONT_LEFT"
+            android:title="@string/pref_equalizer_front_left" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_EQUALIZER_REAR_LEFT"
+            android:title="@string/pref_equalizer_rear_left" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_EQUALIZER_FRONT_RIGHT"
+            android:title="@string/pref_equalizer_front_right" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_EQUALIZER_REAR_RIGHT"
+            android:title="@string/pref_equalizer_rear_right" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_ble_address">
         <EditTextPreference
