@@ -11,6 +11,7 @@ public class Trx {
     public final static int ANTENNA_ID_2 = 8;
     private final Antenna antenna1;
     private final Antenna antenna2;
+    private boolean isEnabled = false;
 
     public Trx(int numberTrx, int historicDefaultValue) {
         this.antenna1 = new Antenna(numberTrx, ANTENNA_ID_1, historicDefaultValue);
@@ -65,12 +66,16 @@ public class Trx {
         }
     }
 
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
+
     /**
      * Check if the trx is active
      * @return true if the trx is active, false otherwise
      */
     public boolean isActive() {
-        return (antenna1.isAntennaActive() && antenna2.isAntennaActive());
+        return isEnabled && (antenna1.isAntennaActive() && antenna2.isAntennaActive());
     }
 
     /**

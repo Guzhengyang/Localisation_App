@@ -365,9 +365,46 @@ public class TrxUtils {
 
     /**
      * Create the string to write in the log file and add it
+     * @param rssiLeft the left trx rssi
+     * @param rssiMiddle1 the middle trx antenna 1 rssi
+     * @param rssiMiddle2 the middle trx antenna 2 rssi
+     * @param rssiRight the right trx rssi
+     * @param rssiBack the back trx rssi
+     * @param rssiFrontLeft the front left trx rssi
+     * @param rssiFrontRight the front right trx rssi
+     * @param rssiRearLeft the rear left trx rssi
+     * @param rssiRearRight the rear right trx rssi
+     * @param z the device z position azimuth
+     * @param x the device x position pitch
+     * @param y the device y position roll
+     * @param isSmartphoneInPocket true if the smartphone is in pocket, false otherwise
+     * @param isSmartphoneLaid true if the smartphone is moving, false otherwise
+     * @param isPassiveEntryAction true if it is a passive entry action, false otherwise
+     * @param isLockStatusChangedTimerExpired true if the lock timeout is expired, false otherwise
+     * @param rearmLock true if the lock can be done, false otherwise
+     * @param rearmUnlock true if the unlock can be done, false otherwise
+     * @param rearmWelcome true if the welcome can be done, false otherwise
+     * @param lockStatus true if the car is locked, false otherwise
+     * @param welcomeByte equals 1 if welcome is activated, 0 otherwise
+     * @param lockByte equals 1 if lock is activated, 0 otherwise
+     * @param startByte equals 1 if start is activated, 0 otherwise
+     * @param leftAreaByte equals 1 if left area is activated, 0 otherwise
+     * @param rightAreaByte equals 1 if right area is activated, 0 otherwise
+     * @param backAreaByte equals 1 if back area is activated, 0 otherwise
+     * @param walkAwayByte equals 1 if walk away is activated, 0 otherwise
+     * @param steadyByte equals 1 if steady is activated, 0 otherwise
+     * @param approachByte equals 1 if approach is activated, 0 otherwise
+     * @param leftTurnByte equals 1 if left turn is activated, 0 otherwise
+     * @param fullTurnByte equals 1 if full turn is activated, 0 otherwise
+     * @param rightTurnByte equals 1 if right turn is activated, 0 otherwise
+     * @param recordByte equals 1 if record is activated, 0 otherwise
+     * @param lockFromTrx lock status from trx
+     * @param lockToSend lock status to send
+     * @param startAllowed true if start is allowed, false otherwise
      */
     public static void appendRssiLogs(int rssiLeft, int rssiMiddle1, int rssiMiddle2, int rssiRight, int rssiBack,
                                       int rssiFrontLeft, int rssiFrontRight, int rssiRearLeft, int rssiRearRight,
+                                      float z, float x, float y,
                                       boolean isSmartphoneInPocket, boolean isSmartphoneLaid, boolean isPassiveEntryAction, boolean isLockStatusChangedTimerExpired,
                                       boolean rearmLock, boolean rearmUnlock, boolean rearmWelcome, boolean lockStatus,
                                       byte welcomeByte, byte lockByte, byte startByte,
@@ -379,6 +416,7 @@ public class TrxUtils {
         StringBuilder log = new StringBuilder();
         log.append(rssiLeft).append(comma).append(rssiMiddle1).append(comma).append(rssiMiddle2).append(comma).append(rssiRight).append(comma).append(rssiBack).append(comma);
         log.append(rssiFrontLeft).append(comma).append(rssiFrontRight).append(comma).append(rssiRearLeft).append(comma).append(rssiRearRight).append(comma);
+        log.append(z).append(comma).append(x).append(comma).append(y).append(comma);
         log.append(isSmartphoneInPocket).append(comma).append(isSmartphoneLaid).append(comma).append(isPassiveEntryAction).append(comma).append(isLockStatusChangedTimerExpired).append(comma);
         log.append(rearmLock).append(comma).append(rearmUnlock).append(comma).append(rearmWelcome).append(comma).append(lockStatus).append(comma);
         log.append(welcomeByte).append(comma).append(lockByte).append(comma).append(startByte).append(comma);
@@ -408,7 +446,7 @@ public class TrxUtils {
                 logFile.createNewFile();
                 //Write 1st row with column names
                 //BufferedWriter for performance, true to set append to file flag
-                String ColNames = "TIMESTAMP;RSSI LEFT;RSSI MIDDLE1;RSSI MIDDLE2;RSSI RIGHT;RSSI BACK;RSSI FRONTLEFT;RSSI FRONTRIGHT;RSSI REARLEFT;RSSI REARRIGHT;IN POCKET;IS LAID;IS PEPS;IS LOCK STATUS CHANGED TIMER;REARM LOCK;REARM UNLOCK;REARM WELCOME;IS LOCK;WELCOME FLAG;LOCK FLAG;START FLAG;LEFT AREA FLAG; RIGHT AREA FLAG; BACK AREA FLAG;WALK AWAY FLAG;STEADY FLAG;APPROACH FLAG; LEFT TURN FLAG; FULL TURN FLAG; RIGHT TURN FLAG;RECORD FLAG;LOCK FROM TRX;LOCK TO SEND;START ALLOWED;";
+                String ColNames = "TIMESTAMP;RSSI LEFT;RSSI MIDDLE1;RSSI MIDDLE2;RSSI RIGHT;RSSI BACK;RSSI FRONTLEFT;RSSI FRONTRIGHT;RSSI REARLEFT;RSSI REARRIGHT;Z AZIMUTH;X PITCH;Y ROLL;IN POCKET;IS LAID;IS PEPS;IS LOCK STATUS CHANGED TIMER;REARM LOCK;REARM UNLOCK;REARM WELCOME;IS LOCK;WELCOME FLAG;LOCK FLAG;START FLAG;LEFT AREA FLAG; RIGHT AREA FLAG; BACK AREA FLAG;WALK AWAY FLAG;STEADY FLAG;APPROACH FLAG; LEFT TURN FLAG; FULL TURN FLAG; RIGHT TURN FLAG;RECORD FLAG;LOCK FROM TRX;LOCK TO SEND;START ALLOWED;";
                 BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
                 buf.append(ColNames);
                 buf.newLine();

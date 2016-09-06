@@ -111,6 +111,9 @@ public class BleRangingHelper implements SensorEventListener {
     private ArrayList<Double> lAccHistoric = new ArrayList<>(linAccSize);
     private double deltaLinAcc = 0;
     private boolean isLaidRunnableAlreadyLaunched = false;
+    private float[] mGravity;
+    private float[] mGeomagnetic;
+    private float orientation[] = new float[3];
     private Runnable checkNewPacketsRunner = new Runnable() {
         @Override
         public void run() {
@@ -179,6 +182,7 @@ public class BleRangingHelper implements SensorEventListener {
                         connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_0),
                         connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_0),
                         connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_0),
+                        orientation[0], orientation[1], orientation[2],
                         smartphoneIsInPocket, smartphoneIsLaidDownLAcc, isPassiveEntryAction.get(), isLockStatusChangedTimerExpired.get(),
                         rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), newLockStatus, welcomeByte,
                         lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
@@ -200,8 +204,10 @@ public class BleRangingHelper implements SensorEventListener {
             totalAverage = connectedCar.getAllTrxAverage(Antenna.AVERAGE_DEFAULT);
             tryStrategies(newLockStatus);
             spannableStringBuilder = TextUtils.createFirstFooterDebugData(spannableStringBuilder, connectedCar);
-            spannableStringBuilder = TextUtils.createSecondFooterDebugData(spannableStringBuilder, connectedCar, smartphoneIsInPocket, smartphoneIsLaidDownLAcc, totalAverage, rearmLock.get(), rearmUnlock.get());
-            spannableStringBuilder = TextUtils.createThirdFooterDebugData(spannableStringBuilder, connectedCar, bytesToSend, bytesReceived, deltaLinAcc, smartphoneIsLaidDownLAcc, mBluetoothManager);
+            spannableStringBuilder = TextUtils.createSecondFooterDebugData(spannableStringBuilder, connectedCar,
+                    smartphoneIsInPocket, smartphoneIsLaidDownLAcc, totalAverage, rearmLock.get(), rearmUnlock.get());
+            spannableStringBuilder = TextUtils.createThirdFooterDebugData(spannableStringBuilder, connectedCar,
+                    bytesToSend, bytesReceived, deltaLinAcc, smartphoneIsLaidDownLAcc, mBluetoothManager);
             updateCarLocalization();
             bleRangingListener.printDebugInfo(spannableStringBuilder);
             Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
@@ -278,8 +284,10 @@ public class BleRangingHelper implements SensorEventListener {
         SensorManager senSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         Sensor senProximity = senSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         Sensor senLinAcceleration = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        Sensor magnetometer = senSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         senSensorManager.registerListener(this, senProximity, SensorManager.SENSOR_DELAY_NORMAL);
         senSensorManager.registerListener(this, senLinAcceleration, SensorManager.SENSOR_DELAY_UI);
+        senSensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
         mBluetoothManager.resumeLeScan();
     }
 
@@ -570,6 +578,7 @@ public class BleRangingHelper implements SensorEventListener {
             smartphoneIsInPocket = (event.values[0] == 0);
         }
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            mGravity = event.values;
             if (lAccHistoric.size() == linAccSize) {
                 lAccHistoric.remove(0);
             }
@@ -586,6 +595,17 @@ public class BleRangingHelper implements SensorEventListener {
                 smartphoneIsLaidDownLAcc = false; // smartphone is moving
                 mIsLaidTimeOutHandler.removeCallbacks(isLaidRunnable);
                 isLaidRunnableAlreadyLaunched = false;
+            }
+        }
+        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            mGeomagnetic = event.values;
+        }
+        if (mGravity != null && mGeomagnetic != null) {
+            float R[] = new float[9];
+            float I[] = new float[9];
+            boolean success = SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
+            if (success) {
+                SensorManager.getOrientation(R, orientation); // orientation contains: azimut, pitch and roll
             }
         }
     }

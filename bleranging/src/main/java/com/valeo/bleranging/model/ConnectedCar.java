@@ -46,23 +46,60 @@ public class ConnectedCar {
      * @param historicDefaultValuePeriph  the peripheral trx default value
      * @param historicDefaultValueCentral the central trx default value
      */
-    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
+    private void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
         trxMap = new HashMap<>();
         trxLeft = new Trx(NUMBER_TRX_LEFT, historicDefaultValuePeriph);
-        trxMap.put(NUMBER_TRX_LEFT, trxLeft);
         trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, historicDefaultValuePeriph);
-        trxMap.put(NUMBER_TRX_FRONT_LEFT, trxFrontLeft);
         trxRearLeft = new Trx(NUMBER_TRX_REAR_LEFT, historicDefaultValuePeriph);
-        trxMap.put(NUMBER_TRX_REAR_LEFT, trxRearLeft);
         trxMiddle = new Trx(NUMBER_TRX_MIDDLE, historicDefaultValueCentral);
-        trxMap.put(NUMBER_TRX_MIDDLE, trxMiddle);
         trxRight = new Trx(NUMBER_TRX_RIGHT, historicDefaultValuePeriph);
-        trxMap.put(NUMBER_TRX_RIGHT, trxRight);
         trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, historicDefaultValuePeriph);
-        trxMap.put(NUMBER_TRX_FRONT_RIGHT, trxFrontRight);
         trxRearRight = new Trx(NUMBER_TRX_REAR_RIGHT, historicDefaultValuePeriph);
-        trxMap.put(NUMBER_TRX_REAR_RIGHT, trxRearRight);
         trxBack = new Trx(NUMBER_TRX_BACK, historicDefaultValuePeriph);
+        switch (connectionNumber) {
+            case THREE_CONNECTION:
+                trxLeft.setEnabled(true);
+                trxMiddle.setEnabled(true);
+                trxRight.setEnabled(true);
+                break;
+            case FOUR_CONNECTION:
+                trxLeft.setEnabled(true);
+                trxMiddle.setEnabled(true);
+                trxRight.setEnabled(true);
+                trxBack.setEnabled(true);
+                break;
+            case FIVE_CONNECTION:
+                trxFrontLeft.setEnabled(true);
+                trxRearLeft.setEnabled(true);
+                trxMiddle.setEnabled(true);
+                trxFrontRight.setEnabled(true);
+                trxRearRight.setEnabled(true);
+                break;
+            case SIX_CONNECTION:
+                trxLeft.setEnabled(true);
+                trxMiddle.setEnabled(true);
+                trxRight.setEnabled(true);
+                trxBack.setEnabled(true);
+                trxRearLeft.setEnabled(true);
+                trxRearRight.setEnabled(true);
+                break;
+            case SEVEN_CONNECTION:
+                trxLeft.setEnabled(true);
+                trxMiddle.setEnabled(true);
+                trxRight.setEnabled(true);
+                trxFrontLeft.setEnabled(true);
+                trxFrontRight.setEnabled(true);
+                trxRearLeft.setEnabled(true);
+                trxRearRight.setEnabled(true);
+                break;
+        }
+        trxMap.put(NUMBER_TRX_LEFT, trxLeft);
+        trxMap.put(NUMBER_TRX_FRONT_LEFT, trxFrontLeft);
+        trxMap.put(NUMBER_TRX_REAR_LEFT, trxRearLeft);
+        trxMap.put(NUMBER_TRX_MIDDLE, trxMiddle);
+        trxMap.put(NUMBER_TRX_RIGHT, trxRight);
+        trxMap.put(NUMBER_TRX_FRONT_RIGHT, trxFrontRight);
+        trxMap.put(NUMBER_TRX_REAR_RIGHT, trxRearRight);
         trxMap.put(NUMBER_TRX_BACK, trxBack);
     }
 
