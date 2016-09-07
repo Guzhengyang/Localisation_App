@@ -146,6 +146,7 @@ public class BleRangingHelper implements SensorEventListener {
             Log.d("NIH rearm", "abortCommandRunner");
             if(mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) {
                 mProtocolManager.setIsLockedToSend(mProtocolManager.isLockedFromTrx());
+                bleRangingListener.updateCarDoorStatus(mProtocolManager.isLockedFromTrx());
                 rearmLock.set(false);
             }
             isAbortRunning = false;
@@ -271,7 +272,6 @@ public class BleRangingHelper implements SensorEventListener {
         this.mBluetoothManager = new BluetoothManagement(context);
         this.bleRangingListener = bleRangingListener;
         this.mProtocolManager = new InblueProtocolManager();
-        this.connectedCar = ConnectedCarFactory.getConnectedCar(SdkPreferencesHelper.getInstance().getConnectedCarType()); // TODO string car name constant
         this.mLockStatusChangedHandler = new Handler();
         this.mHandlerTimeOut = new Handler();
         this.mIsLaidTimeOutHandler = new Handler();
@@ -536,7 +536,10 @@ public class BleRangingHelper implements SensorEventListener {
             newLockStatus = (scanResponse.vehicleState & 0x01)!=0;
             bleRangingListener.updateCarDoorStatus(newLockStatus);
             mProtocolManager.setIsLockedToSend(newLockStatus);
-            connectedCar.initializeTrx(newLockStatus);
+            connectedCar = ConnectedCarFactory.getConnectedCar(SdkPreferencesHelper.getInstance().getConnectedCarType());
+            if (connectedCar != null) {
+                connectedCar.initializeTrx(newLockStatus);
+            }
             mMainHandler = new Handler(Looper.getMainLooper());
             mMainHandler.post(checkAntennaRunner);
             mMainHandler.post(printRunner);

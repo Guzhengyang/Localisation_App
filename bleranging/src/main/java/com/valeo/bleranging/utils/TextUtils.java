@@ -134,12 +134,12 @@ public class TextUtils {
         dataStringBuilder
                 .append(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1)).append("     ")
                 .append(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2)).append("      ")
-                .append(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1)).append("     ")
-                .append(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2)).append("      ")
-                .append(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1)).append("     ")
-                .append(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2)).append("      ")
-                .append(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1)).append("     ")
-                .append(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2)).append("\n");
+                .append(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1)).append("     ")
+                .append(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_2)).append("      ")
+                .append(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_1)).append("     ")
+                .append(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_2)).append("      ")
+                .append(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_1)).append("     ")
+                .append(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_2)).append("\n");
         dataStringBuilder
                 .append("      ").append(connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_0, Antenna.AVERAGE_DEFAULT)).append("           ")
                 .append("      ").append(connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_0, Antenna.AVERAGE_DEFAULT)).append("           ")
@@ -184,7 +184,7 @@ public class TextUtils {
                 averageLSDeltaLockStringBuilder.toString(), Color.RED, Color.DKGRAY));
         StringBuilder lockStringBuilder = new StringBuilder().append("rssi < (").append(TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket)).append(") ");
         spannableStringBuilder.append(colorText(
-                TrxUtils.isInLockArea(connectedCar, TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket)),
+                connectedCar.isInLockArea(TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket)),
                 lockStringBuilder.toString(), Color.RED, Color.DKGRAY));
         StringBuilder rearmLockStringBuilder = new StringBuilder().append("rearm Lock: ").append(rearmLock).append("\n");
         spannableStringBuilder.append(colorText(
@@ -200,7 +200,7 @@ public class TextUtils {
                 averageLSDeltaUnlockStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
         StringBuilder unlockStringBuilder = new StringBuilder().append("rssi > (").append(TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket)).append(") ");
         spannableStringBuilder.append(colorText(
-                TrxUtils.isInUnlockArea(connectedCar, TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket)),
+                connectedCar.isInUnlockArea(TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket)),
                 unlockStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
         StringBuilder rearmUnlockStringBuilder = new StringBuilder().append("rearm Unlock: ").append(rearmUnlock).append("\n");
         spannableStringBuilder.append(colorText(
@@ -235,7 +235,7 @@ public class TextUtils {
         spannableStringBuilder.append("start").append("  mode : ").append(String.valueOf(startMode)).append(" ");
         StringBuilder startStringBuilder = new StringBuilder().append("rssi > (").append(TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket)).append(")\n");
         spannableStringBuilder.append(colorText(
-                TrxUtils.isInStartArea(connectedCar, TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket)),
+                connectedCar.isInStartArea(TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket)),
                 startStringBuilder.toString(), Color.CYAN, Color.DKGRAY));
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_START, Color.CYAN,
                 TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket), ">", smartphoneIsLaidDownLAcc, connectedCar));

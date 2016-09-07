@@ -41,14 +41,6 @@ public abstract class ConnectedCar {
     /**
      * Initialize trx and antenna and their rssi historic with default value periph and central
      *
-     * @param historicDefaultValuePeriph  the peripheral trx default value
-     * @param historicDefaultValueCentral the central trx default value
-     */
-    public abstract void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral);
-
-    /**
-     * Initialize trx and antenna and their rssi historic with default value periph and central
-     *
      * @param newLockStatus the lock status that determines which values to set
      */
     public void initializeTrx(boolean newLockStatus) {
@@ -119,14 +111,29 @@ public abstract class ConnectedCar {
     private void resetTrxWithHysteresis(int valueMiddle, int valueLeft, int valueRight,
                                         int valueBack, int valueFrontLeft, int valueFrontRight,
                                         int valueRearLeft, int valueRearRight) {
-        trxLeft.resetWithHysteresis(valueLeft);
-        trxFrontLeft.resetWithHysteresis(valueFrontLeft);
-        trxRearLeft.resetWithHysteresis(valueRearLeft);
-        trxMiddle.resetWithHysteresis(valueMiddle);
-        trxRight.resetWithHysteresis(valueRight);
-        trxFrontRight.resetWithHysteresis(valueFrontRight);
-        trxRearRight.resetWithHysteresis(valueRearRight);
-        trxBack.resetWithHysteresis(valueBack);
+        if(trxLeft != null) {
+            trxLeft.resetWithHysteresis(valueLeft);
+        }
+        if(trxFrontLeft != null) {
+            trxFrontLeft.resetWithHysteresis(valueFrontLeft);
+        }
+        if(trxRearLeft != null) {
+            trxRearLeft.resetWithHysteresis(valueRearLeft);}
+        if(trxMiddle != null) {
+            trxMiddle.resetWithHysteresis(valueMiddle);
+        }
+        if(trxRight != null) {
+            trxRight.resetWithHysteresis(valueRight);
+        }
+        if(trxFrontRight != null) {
+            trxFrontRight.resetWithHysteresis(valueFrontRight);
+        }
+        if(trxRearRight != null) {
+            trxRearRight.resetWithHysteresis(valueRearRight);
+        }
+        if(trxBack != null) {
+            trxBack.resetWithHysteresis(valueBack);
+        }
     }
 
     /**
@@ -140,16 +147,26 @@ public abstract class ConnectedCar {
      */
     public void saveRssi(int trxNumber, int antennaId, int rssi, Antenna.BLEChannel bleChannel, boolean smartphoneIsLaidDownLAcc) {
         Trx tmpTrx = trxMap.get(trxNumber);
-        tmpTrx.saveRssi(antennaId, rssi, bleChannel, smartphoneIsLaidDownLAcc);
-        trxMap.put(trxNumber, tmpTrx);
+        if(tmpTrx != null) {
+            tmpTrx.saveRssi(antennaId, rssi, bleChannel, smartphoneIsLaidDownLAcc);
+            trxMap.put(trxNumber, tmpTrx);
+        }
     }
 
     public int getRssiAverage(int trxNumber, int antennaId, int averageMode) {
-        return trxMap.get(trxNumber).getAntennaRssiAverage(antennaId, averageMode);
+        if(trxMap.get(trxNumber) != null) {
+            return trxMap.get(trxNumber).getAntennaRssiAverage(antennaId, averageMode);
+        } else {
+            return 0;
+        }
     }
 
     public int getCurrentOriginalRssi(int trxNumber, int antennaId) {
-        return trxMap.get(trxNumber).getCurrentOriginalRssi(antennaId);
+        if(trxMap.get(trxNumber) != null) {
+            return trxMap.get(trxNumber).getCurrentOriginalRssi(antennaId);
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -192,31 +209,59 @@ public abstract class ConnectedCar {
     }
 
     public int getRatioNextToDoor(int mode, int trx1, int trx2) {
-        return TrxUtils.getRatioNextToDoor(mode, trxMap.get(trx1), trxMap.get(trx2));
+        if(trxMap.get(trx1) != null && trxMap.get(trx2) != null) {
+            return TrxUtils.getRatioNextToDoor(mode, trxMap.get(trx1), trxMap.get(trx2));
+        } else {
+            return 0;
+        }
     }
 
     public boolean isRatioNextToDoorGreaterThanThreshold(int mode, int trx1, int trx2, int threshold) {
-        return TrxUtils.getRatioNextToDoorGreaterThanThreshold(mode, trxMap.get(trx1), trxMap.get(trx2), threshold);
+        if(trxMap.get(trx1) != null && trxMap.get(trx2) != null) {
+            return TrxUtils.getRatioNextToDoorGreaterThanThreshold(mode, trxMap.get(trx1), trxMap.get(trx2), threshold);
+        } else {
+            return false;
+        }
     }
 
     public boolean isRatioNextToDoorLowerThanThreshold(int mode, int trx1, int trx2, int threshold) {
-        return TrxUtils.getRatioNextToDoorLowerThanThreshold(mode, trxMap.get(trx1), trxMap.get(trx2), threshold);
+        if(trxMap.get(trx1) != null && trxMap.get(trx2) != null) {
+            return TrxUtils.getRatioNextToDoorLowerThanThreshold(mode, trxMap.get(trx1), trxMap.get(trx2), threshold);
+        } else {
+            return false;
+        }
     }
 
     public boolean isTrxGreaterThanThreshold(int trxNumber, int antennaMode, int averageMode, int threshold) {
-        return trxMap.get(trxNumber).trxGreaterThanThreshold(antennaMode, averageMode, threshold);
+        if(trxMap.get(trxNumber) != null) {
+            return trxMap.get(trxNumber).trxGreaterThanThreshold(antennaMode, averageMode, threshold);
+        } else {
+            return false;
+        }
     }
 
     public boolean isTrxLowerThanThreshold(int trxNumber, int antennaMode, int averageMode, int threshold) {
-        return trxMap.get(trxNumber).trxLowerThanThreshold(antennaMode, averageMode, threshold);
+        if(trxMap.get(trxNumber) != null) {
+            return trxMap.get(trxNumber).trxLowerThanThreshold(antennaMode, averageMode, threshold);
+        } else {
+            return false;
+        }
     }
 
     public boolean isActive(int trxNumber) {
-        return trxMap.get(trxNumber).isActive();
+        if(trxMap.get(trxNumber) != null) {
+            return trxMap.get(trxNumber).isActive();
+        } else {
+            return false;
+        }
     }
 
     public int getOffsetBleChannel38(int trxNumber, int antennaId) {
-        return trxMap.get(trxNumber).getOffset38(antennaId);
+        if(trxMap.get(trxNumber) != null) {
+            return trxMap.get(trxNumber).getOffset38(antennaId);
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -291,6 +336,14 @@ public abstract class ConnectedCar {
      */
     public abstract boolean numberOfTrxValid(int mode, boolean trxL, boolean trxM, boolean trxR, boolean trxB,
                                              boolean trxFL, boolean trxRL, boolean trxFR, boolean trxRR);
+
+    /**
+     * Initialize trx and antenna and their rssi historic with default value periph and central
+     *
+     * @param historicDefaultValuePeriph  the peripheral trx default value
+     * @param historicDefaultValueCentral the central trx default value
+     */
+    public abstract void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral);
 
     protected enum ConnectionNumber {
         THREE_CONNECTION, FOUR_CONNECTION, FIVE_CONNECTION, SIX_CONNECTION, SEVEN_CONNECTION
