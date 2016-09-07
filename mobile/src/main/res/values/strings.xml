@@ -108,6 +108,10 @@
     <string name="pref_ble_address_middle">Middle BLE Address</string>
     <string name="pref_ble_address_right">Right BLE Address</string>
     <string name="pref_ble_address_back">Back BLE Address</string>
+    <string name="pref_ble_address_front_left">Front left BLE Address</string>
+    <string name="pref_ble_address_front_right">Front right BLE Address</string>
+    <string name="pref_ble_address_rear_left">Rear left BLE Address</string>
+    <string name="pref_ble_address_rear_right">Rear right BLE Address</string>
 
     <string name="forgot_password"><u>Forgot password ?</u></string>
     <string name="choice_or"><b>OR</b></string>

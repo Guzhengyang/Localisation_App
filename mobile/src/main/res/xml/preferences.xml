@@ -155,5 +155,17 @@
         <EditTextPreference
             android:key="com.inblue.PREFERENCE_ADDRESS_BACK"
             android:title="@string/pref_ble_address_back" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_FRONT_LEFT"
+            android:title="@string/pref_ble_address_front_left" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_FRONT_RIGHT"
+            android:title="@string/pref_ble_address_front_right" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_REAR_LEFT"
+            android:title="@string/pref_ble_address_rear_left" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_REAR_RIGHT"
+            android:title="@string/pref_ble_address_rear_right" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -392,7 +392,7 @@ public class BleRangingHelper implements SensorEventListener {
                     connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
                     Log.d(" rssiHistoric", "BLE_ADDRESS_REAR_RIGHT=" + trxAddressRearRight + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
                 } else {
-                    if (advertisedData.length > 0) {
+                    if (advertisedData != null && advertisedData.length > 0) {
                         Log.d(" rssiHistoric", "BLE_ADDRESS_LOGGER=" + TextUtils.printBleBytes(advertisedData));
                         getAdvertisedBytes(advertisedData);
                     }

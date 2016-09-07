@@ -7,12 +7,15 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
@@ -126,68 +129,235 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
+        private ListPreference connected_car_type;
+        private EditTextPreference offset_pocket_start;
+        private EditTextPreference offset_pocket_lock;
+        private EditTextPreference offset_pocket_unlock;
+        private EditTextPreference start_thr;
+        private EditTextPreference unlock_thr;
+        private EditTextPreference lock_thr;
+        private EditTextPreference welcome_thr;
+        private EditTextPreference next_to_door_ratio;
+        private EditTextPreference next_back_door_thr_min;
+        private EditTextPreference next_back_door_thr_max;
+        private EditTextPreference next_to_door_thr_ml_mr_max;
+        private EditTextPreference next_to_door_thr_ml_mr_min;
+        private EditTextPreference average_delta_unlock_thr;
+        private EditTextPreference average_delta_lock_thr;
+        private EditTextPreference rssi_log_number;
+        private EditTextPreference rolling_av_element;
+        private EditTextPreference start_nb_element;
+        private EditTextPreference lock_nb_element;
+        private EditTextPreference unlock_nb_element;
+        private EditTextPreference welcome_nb_element;
+        private EditTextPreference long_nb_element;
+        private EditTextPreference short_nb_element;
+        private EditTextPreference unlock_mode;
+        private EditTextPreference lock_mode;
+        private EditTextPreference start_mode;
+        private EditTextPreference ecretage_100;
+        private EditTextPreference ecretage_70;
+        private EditTextPreference ecretage_50;
+        private EditTextPreference ecretage_30;
+        private EditTextPreference lin_acc_size;
+        private EditTextPreference correction_lin_acc;
+        private EditTextPreference equalizer_left;
+        private EditTextPreference equalizer_middle;
+        private EditTextPreference equalizer_right;
+        private EditTextPreference equalizer_back;
+        private EditTextPreference equalizer_front_left;
+        private EditTextPreference equalizer_rear_left;
+        private EditTextPreference equalizer_front_right;
+        private EditTextPreference equalizer_rear_right;
+        private EditTextPreference address_connectable;
+        private EditTextPreference address_left;
+        private EditTextPreference address_middle;
+        private EditTextPreference address_right;
+        private EditTextPreference address_back;
+        private EditTextPreference address_front_left;
+        private EditTextPreference address_front_right;
+        private EditTextPreference address_rear_left;
+        private EditTextPreference address_rear_right;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences);
             setHasOptionsMenu(true);
+            setViews();
+            bindSummaries();
+        }
 
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.CONNECTED_CAR_TYPE_PREFERENCES_NAME), ConnectedCarFactory.TYPE_4_A);
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_START_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_START));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_LOCK));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_UNLOCK));
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            setDefaultValues();
+        }
 
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.START_THR_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.START_THRESHOLD));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.UNLOCK_THR_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.UNLOCK_IN_THE_RUN_THRESHOLD));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.LOCK_THR_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.WALK_AWAY_LOCKING_THRESHOLD));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.WELCOME_THR_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.WELCOME_THRESHOLD));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.NEXT_TO_DOOR_RATIO_THR_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.NEXT_TO_DOOR_RATIO_THRESHOLD));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.NEXT_TO_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.NEXT_TO_BACKDOOR_RATIO_THRESHOLD_MIN));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.NEXT_TO_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.NEXT_TO_BACKDOOR_RATIO_THRESHOLD_MAX));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.NEXT_TO_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.NEXT_TO_DOOR_RATIO_THRESHOLD_ML_MR_MAX));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.NEXT_TO_DOOR_RATIO_THRESHOLD_ML_MR_MIN));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.AVERAGE_DELTA_UNLOCK_THRESHOLD));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.AVERAGE_DELTA_LOCK_THRESHOLD));
+        private void setViews() {
+            connected_car_type = ((ListPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_TYPE_PREFERENCES_NAME));
+            offset_pocket_start = ((EditTextPreference) findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_START_PREFERENCES_NAME));
+            offset_pocket_lock = ((EditTextPreference) findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME));
+            offset_pocket_unlock = ((EditTextPreference) findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME));
+            start_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.START_THR_PREFERENCES_NAME));
+            unlock_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.UNLOCK_THR_PREFERENCES_NAME));
+            lock_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.LOCK_THR_PREFERENCES_NAME));
+            welcome_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.WELCOME_THR_PREFERENCES_NAME));
+            next_to_door_ratio = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEXT_TO_DOOR_RATIO_THR_PREFERENCES_NAME));
+            next_back_door_thr_min = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEXT_TO_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME));
+            next_back_door_thr_max = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEXT_TO_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME));
+            next_to_door_thr_ml_mr_max = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEXT_TO_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME));
+            next_to_door_thr_ml_mr_min = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME));
+            average_delta_unlock_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME));
+            average_delta_lock_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME));
+            rssi_log_number = ((EditTextPreference) findPreference(SdkPreferencesHelper.RSSI_LOG_NUMBER_PREFERENCES_NAME));
+            rolling_av_element = ((EditTextPreference) findPreference(SdkPreferencesHelper.ROLLING_AV_ELEMENT_PREFERENCES_NAME));
+            start_nb_element = ((EditTextPreference) findPreference(SdkPreferencesHelper.START_NB_ELEMENT_PREFERENCES_NAME));
+            lock_nb_element = ((EditTextPreference) findPreference(SdkPreferencesHelper.LOCK_NB_ELEMENT_PREFERENCES_NAME));
+            unlock_nb_element = ((EditTextPreference) findPreference(SdkPreferencesHelper.UNLOCK_NB_ELEMENT_PREFERENCES_NAME));
+            welcome_nb_element = ((EditTextPreference) findPreference(SdkPreferencesHelper.WELCOME_NB_ELEMENT_PREFERENCES_NAME));
+            long_nb_element = ((EditTextPreference) findPreference(SdkPreferencesHelper.LONG_NB_ELEMENT_PREFERENCES_NAME));
+            short_nb_element = ((EditTextPreference) findPreference(SdkPreferencesHelper.SHORT_NB_ELEMENT_PREFERENCES_NAME));
+            unlock_mode = ((EditTextPreference) findPreference(SdkPreferencesHelper.UNLOCK_MODE_PREFERENCES_NAME));
+            lock_mode = ((EditTextPreference) findPreference(SdkPreferencesHelper.LOCK_MODE_PREFERENCES_NAME));
+            start_mode = ((EditTextPreference) findPreference(SdkPreferencesHelper.START_MODE_PREFERENCES_NAME));
+            ecretage_100 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ECRETAGE_70_100_PREFERENCES_NAME));
+            ecretage_70 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ECRETAGE_50_70_PREFERENCES_NAME));
+            ecretage_50 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ECRETAGE_30_50_PREFERENCES_NAME));
+            ecretage_30 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ECRETAGE_30_30_PREFERENCES_NAME));
+            lin_acc_size = ((EditTextPreference) findPreference(SdkPreferencesHelper.LIN_ACC_SIZE_PREFERENCES_NAME));
+            correction_lin_acc = ((EditTextPreference) findPreference(SdkPreferencesHelper.CORRECTION_LIN_ACC_PREFERENCES_NAME));
+            equalizer_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_LEFT_PREFERENCES_NAME));
+            equalizer_middle = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_MIDDLE_PREFERENCES_NAME));
+            equalizer_right = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_RIGHT_PREFERENCES_NAME));
+            equalizer_back = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_BACK_PREFERENCES_NAME));
+            equalizer_front_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_FRONT_LEFT_PREFERENCES_NAME));
+            equalizer_rear_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_REAR_LEFT_PREFERENCES_NAME));
+            equalizer_front_right = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME));
+            equalizer_rear_right = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_REAR_RIGHT_PREFERENCES_NAME));
+            address_connectable = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_PREFERENCE_NAME));
+            address_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_LEFT_PREFERENCE_NAME));
+            address_middle = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_MIDDLE_PREFERENCE_NAME));
+            address_right = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_RIGHT_PREFERENCE_NAME));
+            address_back = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_BACK_PREFERENCE_NAME));
+            address_front_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_FRONT_LEFT_PREFERENCE_NAME));
+            address_front_right = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_FRONT_RIGHT_PREFERENCE_NAME));
+            address_rear_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_REAR_LEFT_PREFERENCE_NAME));
+            address_rear_right = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_REAR_RIGHT_PREFERENCE_NAME));
+        }
 
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.RSSI_LOG_NUMBER_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.RSSI_LOG_NUMBER));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.ROLLING_AV_ELEMENT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.ROLLING_AVERAGE_ELEMENTS));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.START_NB_ELEMENT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.START_NB_ELEMENT));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.LOCK_NB_ELEMENT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.LOCK_NB_ELEMENT));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.UNLOCK_NB_ELEMENT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.UNLOCK_NB_ELEMENT));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.WELCOME_NB_ELEMENT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.WELCOME_NB_ELEMENT));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.LONG_NB_ELEMENT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.LONG_NB_ELEMENT));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.SHORT_NB_ELEMENT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.SHORT_NB_ELEMENT));
+        private void setDefaultValues() {
+            offset_pocket_start.setText(offset_pocket_start.getSummary().toString());
+            offset_pocket_lock.setText(offset_pocket_lock.getSummary().toString());
+            offset_pocket_unlock.setText(offset_pocket_unlock.getSummary().toString());
+            start_thr.setText(start_thr.getSummary().toString());
+            unlock_thr.setText(unlock_thr.getSummary().toString());
+            lock_thr.setText(lock_thr.getSummary().toString());
+            welcome_thr.setText(welcome_thr.getSummary().toString());
+            next_to_door_ratio.setText(next_to_door_ratio.getSummary().toString());
+            next_back_door_thr_min.setText(next_back_door_thr_min.getSummary().toString());
+            next_back_door_thr_max.setText(next_back_door_thr_max.getSummary().toString());
+            next_to_door_thr_ml_mr_max.setText(next_to_door_thr_ml_mr_max.getSummary().toString());
+            next_to_door_thr_ml_mr_min.setText(next_to_door_thr_ml_mr_min.getSummary().toString());
+            average_delta_unlock_thr.setText(average_delta_unlock_thr.getSummary().toString());
+            average_delta_lock_thr.setText(average_delta_lock_thr.getSummary().toString());
+            rssi_log_number.setText(rssi_log_number.getSummary().toString());
+            rolling_av_element.setText(rolling_av_element.getSummary().toString());
+            start_nb_element.setText(start_nb_element.getSummary().toString());
+            lock_nb_element.setText(lock_nb_element.getSummary().toString());
+            unlock_nb_element.setText(unlock_nb_element.getSummary().toString());
+            welcome_nb_element.setText(welcome_nb_element.getSummary().toString());
+            long_nb_element.setText(long_nb_element.getSummary().toString());
+            short_nb_element.setText(short_nb_element.getSummary().toString());
+            unlock_mode.setText(unlock_mode.getSummary().toString());
+            lock_mode.setText(lock_mode.getSummary().toString());
+            start_mode.setText(start_mode.getSummary().toString());
+            ecretage_100.setText(ecretage_100.getSummary().toString());
+            ecretage_70.setText(ecretage_70.getSummary().toString());
+            ecretage_50.setText(ecretage_50.getSummary().toString());
+            ecretage_30.setText(ecretage_30.getSummary().toString());
+            lin_acc_size.setText(lin_acc_size.getSummary().toString());
+            correction_lin_acc.setText(correction_lin_acc.getSummary().toString());
+            equalizer_left.setText(equalizer_left.getSummary().toString());
+            equalizer_middle.setText(equalizer_middle.getSummary().toString());
+            equalizer_right.setText(equalizer_right.getSummary().toString());
+            equalizer_back.setText(equalizer_back.getSummary().toString());
+            equalizer_front_left.setText(equalizer_front_left.getSummary().toString());
+            equalizer_rear_left.setText(equalizer_rear_left.getSummary().toString());
+            equalizer_front_right.setText(equalizer_front_right.getSummary().toString());
+            equalizer_rear_right.setText(equalizer_rear_right.getSummary().toString());
+            address_connectable.setText(address_connectable.getSummary().toString());
+            address_left.setText(address_left.getSummary().toString());
+            address_middle.setText(address_middle.getSummary().toString());
+            address_right.setText(address_right.getSummary().toString());
+            address_back.setText(address_back.getSummary().toString());
+            address_front_left.setText(address_front_left.getSummary().toString());
+            address_front_right.setText(address_front_right.getSummary().toString());
+            address_rear_left.setText(address_rear_left.getSummary().toString());
+            address_rear_right.setText(address_rear_right.getSummary().toString());
+        }
 
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.UNLOCK_MODE_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.UNLOCK_MODE));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.LOCK_MODE_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.LOCK_MODE));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.START_MODE_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.START_MODE));
+        // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+        // to their values. When their values change, their summaries are
+        // updated to reflect the new value, per the Android Design
+        // guidelines.
+        private void bindSummaries() {
+            bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_A);
+            bindPreferenceSummaryToValue(offset_pocket_start, String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_START));
+            bindPreferenceSummaryToValue(offset_pocket_lock, String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_LOCK));
+            bindPreferenceSummaryToValue(offset_pocket_unlock, String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_UNLOCK));
 
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.ECRETAGE_70_100_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.ECRETAGE_70_100));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.ECRETAGE_50_70_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.ECRETAGE_50_70));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.ECRETAGE_30_50_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.ECRETAGE_30_50));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.ECRETAGE_30_30_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.ECRETAGE_30_30));
+            bindPreferenceSummaryToValue(start_thr, String.valueOf(SdkPreferencesHelper.START_THRESHOLD));
+            bindPreferenceSummaryToValue(unlock_thr, String.valueOf(SdkPreferencesHelper.UNLOCK_IN_THE_RUN_THRESHOLD));
+            bindPreferenceSummaryToValue(lock_thr, String.valueOf(SdkPreferencesHelper.WALK_AWAY_LOCKING_THRESHOLD));
+            bindPreferenceSummaryToValue(welcome_thr, String.valueOf(SdkPreferencesHelper.WELCOME_THRESHOLD));
+            bindPreferenceSummaryToValue(next_to_door_ratio, String.valueOf(SdkPreferencesHelper.NEXT_TO_DOOR_RATIO_THRESHOLD));
+            bindPreferenceSummaryToValue(next_back_door_thr_min, String.valueOf(SdkPreferencesHelper.NEXT_TO_BACKDOOR_RATIO_THRESHOLD_MIN));
+            bindPreferenceSummaryToValue(next_back_door_thr_max, String.valueOf(SdkPreferencesHelper.NEXT_TO_BACKDOOR_RATIO_THRESHOLD_MAX));
+            bindPreferenceSummaryToValue(next_to_door_thr_ml_mr_max, String.valueOf(SdkPreferencesHelper.NEXT_TO_DOOR_RATIO_THRESHOLD_ML_MR_MAX));
+            bindPreferenceSummaryToValue(next_to_door_thr_ml_mr_min, String.valueOf(SdkPreferencesHelper.NEXT_TO_DOOR_RATIO_THRESHOLD_ML_MR_MIN));
+            bindPreferenceSummaryToValue(average_delta_unlock_thr, String.valueOf(SdkPreferencesHelper.AVERAGE_DELTA_UNLOCK_THRESHOLD));
+            bindPreferenceSummaryToValue(average_delta_lock_thr, String.valueOf(SdkPreferencesHelper.AVERAGE_DELTA_LOCK_THRESHOLD));
 
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.LIN_ACC_SIZE_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.LIN_ACC_SIZE));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.CORRECTION_LIN_ACC_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.CORRECTION_LIN_ACC));
+            bindPreferenceSummaryToValue(rssi_log_number, String.valueOf(SdkPreferencesHelper.RSSI_LOG_NUMBER));
+            bindPreferenceSummaryToValue(rolling_av_element, String.valueOf(SdkPreferencesHelper.ROLLING_AVERAGE_ELEMENTS));
+            bindPreferenceSummaryToValue(start_nb_element, String.valueOf(SdkPreferencesHelper.START_NB_ELEMENT));
+            bindPreferenceSummaryToValue(lock_nb_element, String.valueOf(SdkPreferencesHelper.LOCK_NB_ELEMENT));
+            bindPreferenceSummaryToValue(unlock_nb_element, String.valueOf(SdkPreferencesHelper.UNLOCK_NB_ELEMENT));
+            bindPreferenceSummaryToValue(welcome_nb_element, String.valueOf(SdkPreferencesHelper.WELCOME_NB_ELEMENT));
+            bindPreferenceSummaryToValue(long_nb_element, String.valueOf(SdkPreferencesHelper.LONG_NB_ELEMENT));
+            bindPreferenceSummaryToValue(short_nb_element, String.valueOf(SdkPreferencesHelper.SHORT_NB_ELEMENT));
 
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_LEFT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_LEFT));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_MIDDLE_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_MIDDLE));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_RIGHT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_RIGHT));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_BACK_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_BACK));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_FRONT_LEFT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_FRONT_LEFT));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_REAR_LEFT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_REAR_LEFT));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_FRONT_RIGHT));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.EQUALIZER_REAR_RIGHT_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.EQUALIZER_REAR_RIGHT));
+            bindPreferenceSummaryToValue(unlock_mode, String.valueOf(SdkPreferencesHelper.UNLOCK_MODE));
+            bindPreferenceSummaryToValue(lock_mode, String.valueOf(SdkPreferencesHelper.LOCK_MODE));
+            bindPreferenceSummaryToValue(start_mode, String.valueOf(SdkPreferencesHelper.START_MODE));
 
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_PREFERENCE_NAME), String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.ADDRESS_LEFT_PREFERENCE_NAME), String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_LEFT));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.ADDRESS_MIDDLE_PREFERENCE_NAME), String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_MIDDLE));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.ADDRESS_RIGHT_PREFERENCE_NAME), String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_RIGHT));
-            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.ADDRESS_BACK_PREFERENCE_NAME), String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_BACK));
+            bindPreferenceSummaryToValue(ecretage_100, String.valueOf(SdkPreferencesHelper.ECRETAGE_70_100));
+            bindPreferenceSummaryToValue(ecretage_70, String.valueOf(SdkPreferencesHelper.ECRETAGE_50_70));
+            bindPreferenceSummaryToValue(ecretage_50, String.valueOf(SdkPreferencesHelper.ECRETAGE_30_50));
+            bindPreferenceSummaryToValue(ecretage_30, String.valueOf(SdkPreferencesHelper.ECRETAGE_30_30));
+
+            bindPreferenceSummaryToValue(lin_acc_size, String.valueOf(SdkPreferencesHelper.LIN_ACC_SIZE));
+            bindPreferenceSummaryToValue(correction_lin_acc, String.valueOf(SdkPreferencesHelper.CORRECTION_LIN_ACC));
+
+            bindPreferenceSummaryToValue(equalizer_left, String.valueOf(SdkPreferencesHelper.EQUALIZER_LEFT));
+            bindPreferenceSummaryToValue(equalizer_middle, String.valueOf(SdkPreferencesHelper.EQUALIZER_MIDDLE));
+            bindPreferenceSummaryToValue(equalizer_right, String.valueOf(SdkPreferencesHelper.EQUALIZER_RIGHT));
+            bindPreferenceSummaryToValue(equalizer_back, String.valueOf(SdkPreferencesHelper.EQUALIZER_BACK));
+            bindPreferenceSummaryToValue(equalizer_front_left, String.valueOf(SdkPreferencesHelper.EQUALIZER_FRONT_LEFT));
+            bindPreferenceSummaryToValue(equalizer_rear_left, String.valueOf(SdkPreferencesHelper.EQUALIZER_REAR_LEFT));
+            bindPreferenceSummaryToValue(equalizer_front_right, String.valueOf(SdkPreferencesHelper.EQUALIZER_FRONT_RIGHT));
+            bindPreferenceSummaryToValue(equalizer_rear_right, String.valueOf(SdkPreferencesHelper.EQUALIZER_REAR_RIGHT));
+
+            bindPreferenceSummaryToValue(address_connectable, String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE));
+            bindPreferenceSummaryToValue(address_left, String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_LEFT));
+            bindPreferenceSummaryToValue(address_middle, String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_MIDDLE));
+            bindPreferenceSummaryToValue(address_right, String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_RIGHT));
+            bindPreferenceSummaryToValue(address_back, String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_BACK));
+            bindPreferenceSummaryToValue(address_front_left, String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_FRONT_LEFT));
+            bindPreferenceSummaryToValue(address_front_right, String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_FRONT_RIGHT));
+            bindPreferenceSummaryToValue(address_rear_left, String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_REAR_LEFT));
+            bindPreferenceSummaryToValue(address_rear_right, String.valueOf(SdkPreferencesHelper.BLE_ADDRESS_REAR_RIGHT));
         }
 
         @Override
