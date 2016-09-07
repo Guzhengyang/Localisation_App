@@ -1,5 +1,7 @@
-package com.valeo.bleranging.model;
+package com.valeo.bleranging.model.connectedcar;
 
+import com.valeo.bleranging.model.Antenna;
+import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.utils.TrxUtils;
 
 import java.util.HashMap;
@@ -7,7 +9,7 @@ import java.util.HashMap;
 /**
  * Created by l-avaratha on 05/09/2016.
  */
-public class ConnectedCar {
+public abstract class ConnectedCar {
     public static final int NUMBER_TRX_LEFT = 1;
     public static final int NUMBER_TRX_MIDDLE = 2;
     public static final int NUMBER_TRX_RIGHT = 3;
@@ -21,22 +23,18 @@ public class ConnectedCar {
     public final static int RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE = -30;
     public final static int RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE = -70;
     public final static int RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE = -80;
-    private Trx trxLeft;
-    private Trx trxMiddle;
-    private Trx trxRight;
-    private Trx trxBack;
-    private Trx trxFrontLeft;
-    private Trx trxRearLeft;
-    private Trx trxFrontRight;
-    private Trx trxRearRight;
-    private HashMap<Integer, Trx> trxMap;
-    private ConnectionNumber connectionNumber;
+    protected Trx trxLeft;
+    protected Trx trxMiddle;
+    protected Trx trxRight;
+    protected Trx trxBack;
+    protected Trx trxFrontLeft;
+    protected Trx trxRearLeft;
+    protected Trx trxFrontRight;
+    protected Trx trxRearRight;
+    protected HashMap<Integer, Trx> trxMap;
+    protected ConnectionNumber connectionNumber;
 
     public ConnectedCar(ConnectionNumber connectionNumber) {
-        this.connectionNumber = connectionNumber;
-    }
-
-    public void setConnectionNumber(ConnectionNumber connectionNumber) {
         this.connectionNumber = connectionNumber;
     }
 
@@ -46,62 +44,7 @@ public class ConnectedCar {
      * @param historicDefaultValuePeriph  the peripheral trx default value
      * @param historicDefaultValueCentral the central trx default value
      */
-    private void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
-        trxMap = new HashMap<>();
-        trxLeft = new Trx(NUMBER_TRX_LEFT, historicDefaultValuePeriph);
-        trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, historicDefaultValuePeriph);
-        trxRearLeft = new Trx(NUMBER_TRX_REAR_LEFT, historicDefaultValuePeriph);
-        trxMiddle = new Trx(NUMBER_TRX_MIDDLE, historicDefaultValueCentral);
-        trxRight = new Trx(NUMBER_TRX_RIGHT, historicDefaultValuePeriph);
-        trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, historicDefaultValuePeriph);
-        trxRearRight = new Trx(NUMBER_TRX_REAR_RIGHT, historicDefaultValuePeriph);
-        trxBack = new Trx(NUMBER_TRX_BACK, historicDefaultValuePeriph);
-        switch (connectionNumber) {
-            case THREE_CONNECTION:
-                trxLeft.setEnabled(true);
-                trxMiddle.setEnabled(true);
-                trxRight.setEnabled(true);
-                break;
-            case FOUR_CONNECTION:
-                trxLeft.setEnabled(true);
-                trxMiddle.setEnabled(true);
-                trxRight.setEnabled(true);
-                trxBack.setEnabled(true);
-                break;
-            case FIVE_CONNECTION:
-                trxFrontLeft.setEnabled(true);
-                trxRearLeft.setEnabled(true);
-                trxMiddle.setEnabled(true);
-                trxFrontRight.setEnabled(true);
-                trxRearRight.setEnabled(true);
-                break;
-            case SIX_CONNECTION:
-                trxLeft.setEnabled(true);
-                trxMiddle.setEnabled(true);
-                trxRight.setEnabled(true);
-                trxBack.setEnabled(true);
-                trxRearLeft.setEnabled(true);
-                trxRearRight.setEnabled(true);
-                break;
-            case SEVEN_CONNECTION:
-                trxLeft.setEnabled(true);
-                trxMiddle.setEnabled(true);
-                trxRight.setEnabled(true);
-                trxFrontLeft.setEnabled(true);
-                trxFrontRight.setEnabled(true);
-                trxRearLeft.setEnabled(true);
-                trxRearRight.setEnabled(true);
-                break;
-        }
-        trxMap.put(NUMBER_TRX_LEFT, trxLeft);
-        trxMap.put(NUMBER_TRX_FRONT_LEFT, trxFrontLeft);
-        trxMap.put(NUMBER_TRX_REAR_LEFT, trxRearLeft);
-        trxMap.put(NUMBER_TRX_MIDDLE, trxMiddle);
-        trxMap.put(NUMBER_TRX_RIGHT, trxRight);
-        trxMap.put(NUMBER_TRX_FRONT_RIGHT, trxFrontRight);
-        trxMap.put(NUMBER_TRX_REAR_RIGHT, trxRearRight);
-        trxMap.put(NUMBER_TRX_BACK, trxBack);
-    }
+    public abstract void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral);
 
     /**
      * Initialize trx and antenna and their rssi historic with default value periph and central
@@ -209,6 +152,9 @@ public class ConnectedCar {
         return trxMap.get(trxNumber).getCurrentOriginalRssi(antennaId);
     }
 
+    /**
+     * Check all trx antenna to see if they are active
+     */
     public void compareCheckerAndSetAntennaActive() {
         for (Trx trx : trxMap.values()) {
             trx.compareCheckerAndSetAntennaActive();
@@ -217,7 +163,6 @@ public class ConnectedCar {
 
     /**
      * Calculate all the trx average
-     *
      * @param averageMode the average mode
      * @return the average of all active trx or 0 if there is none
      */
@@ -274,7 +219,80 @@ public class ConnectedCar {
         return trxMap.get(trxNumber).getOffset38(antennaId);
     }
 
-    public enum ConnectionNumber {
+    /**
+     * Condition to enable Start action
+     *
+     * @param newLockStatus        the car lock status
+     * @param smartphoneIsInPocket the "is in pocket" status
+     * @return true if the strategy is verified, false otherwise
+     */
+    public abstract boolean startStrategy(boolean newLockStatus, boolean smartphoneIsInPocket);
+
+    /**
+     * Check if we are in start area
+     *
+     * @return true if we are in start area, false otherwise
+     */
+    public abstract boolean isInStartArea(int threshold);
+
+    /**
+     * Condition to enable unlock action
+     *
+     * @param smartphoneIsInPocket the "is in pocket" status
+     * @return true if the strategy is verified, false otherwise
+     */
+    public abstract int unlockStrategy(boolean smartphoneIsInPocket);
+
+    /**
+     * Check if we are in unlock area
+     *
+     * @return true if we are in unlock area, false otherwise
+     */
+    public abstract boolean isInUnlockArea(int threshold);
+
+    /**
+     * Condition to enable lock action
+     *
+     * @param smartphoneIsInPocket the "is in pocket" status
+     * @return true if the strategy is verified, false otherwise
+     */
+    public abstract boolean lockStrategy(boolean smartphoneIsInPocket);
+
+    /**
+     * Check if we are in lock area
+     *
+     * @return true if we are in lock area, false otherwise
+     */
+    public abstract boolean isInLockArea(int threshold);
+
+    /**
+     * Condition to enable welcome action
+     *
+     * @param totalAverage         the total average of all antenna rssi
+     * @param newlockStatus        the lock status
+     * @param smartphoneIsInPocket the "is in pocket" status
+     * @return true if the strategy is verified, false otherwise
+     */
+    public abstract boolean welcomeStrategy(int totalAverage, boolean newlockStatus, boolean smartphoneIsInPocket);
+
+    /**
+     * Select a mode of validity and check it
+     *
+     * @param mode  the mode of validity to check
+     * @param trxL  the left trx status
+     * @param trxM  the middle trx status
+     * @param trxR  the right trx status
+     * @param trxB  the back trx status
+     * @param trxFL the front left trx status
+     * @param trxRL the rear left trx status
+     * @param trxFR the front right trx status
+     * @param trxRR the rear right trx status
+     * @return true if the trx check the condition of validity of the select mode
+     */
+    public abstract boolean numberOfTrxValid(int mode, boolean trxL, boolean trxM, boolean trxR, boolean trxB,
+                                             boolean trxFL, boolean trxRL, boolean trxFR, boolean trxRR);
+
+    protected enum ConnectionNumber {
         THREE_CONNECTION, FOUR_CONNECTION, FIVE_CONNECTION, SIX_CONNECTION, SEVEN_CONNECTION
     }
 }

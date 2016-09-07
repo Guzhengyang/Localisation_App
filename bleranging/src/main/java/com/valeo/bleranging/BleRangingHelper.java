@@ -21,8 +21,9 @@ import com.valeo.bleranging.bluetooth.BluetoothManagementListener;
 import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.ScanResponse;
 import com.valeo.bleranging.model.Antenna;
-import com.valeo.bleranging.model.ConnectedCar;
 import com.valeo.bleranging.model.Trx;
+import com.valeo.bleranging.model.connectedcar.ConnectedCar;
+import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
 import com.valeo.bleranging.utils.TextUtils;
@@ -270,7 +271,7 @@ public class BleRangingHelper implements SensorEventListener {
         this.mBluetoothManager = new BluetoothManagement(context);
         this.bleRangingListener = bleRangingListener;
         this.mProtocolManager = new InblueProtocolManager();
-        this.connectedCar = new ConnectedCar(ConnectedCar.ConnectionNumber.THREE_CONNECTION);
+        this.connectedCar = ConnectedCarFactory.getConnectedCar(SdkPreferencesHelper.getInstance().getConnectedCarType()); // TODO string car name constant
         this.mLockStatusChangedHandler = new Handler();
         this.mHandlerTimeOut = new Handler();
         this.mIsLaidTimeOutHandler = new Handler();
@@ -451,10 +452,10 @@ public class BleRangingHelper implements SensorEventListener {
     private void tryStrategies(boolean newLockStatus) {
         if(mBluetoothManager.isFullyConnected()) {
             boolean isStartAllowed = false;
-            isLockStrategyValid = TrxUtils.lockStrategy(connectedCar, smartphoneIsInPocket);
-            isUnlockStrategyValid = TrxUtils.unlockStrategy(connectedCar, smartphoneIsInPocket);
-            isStartStrategyValid = TrxUtils.startStrategy(connectedCar, newLockStatus, smartphoneIsInPocket);
-            isWelcomeStrategyValid = TrxUtils.welcomeStrategy(totalAverage, newLockStatus, smartphoneIsInPocket);
+            isLockStrategyValid = connectedCar.lockStrategy(smartphoneIsInPocket);
+            isUnlockStrategyValid = connectedCar.unlockStrategy(smartphoneIsInPocket);
+            isStartStrategyValid = connectedCar.startStrategy(newLockStatus, smartphoneIsInPocket);
+            isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus, smartphoneIsInPocket);
             if (rearmWelcome.get() && isWelcomeStrategyValid) {
                 rearmWelcome.set(false);
                 //TODO Welcome

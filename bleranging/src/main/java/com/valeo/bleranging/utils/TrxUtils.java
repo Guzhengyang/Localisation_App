@@ -1,8 +1,8 @@
 package com.valeo.bleranging.utils;
 
 import com.valeo.bleranging.model.Antenna;
-import com.valeo.bleranging.model.ConnectedCar;
 import com.valeo.bleranging.model.Trx;
+import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.io.BufferedWriter;

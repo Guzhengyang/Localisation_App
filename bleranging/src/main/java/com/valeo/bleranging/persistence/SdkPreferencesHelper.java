@@ -4,6 +4,8 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
+import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
+
 /**
  * Constants file for SharedPrefs
  */
@@ -72,6 +74,7 @@ public final class SdkPreferencesHelper {
     public static final String ADDRESS_REAR_LEFT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_ADDRESS_REAR_LEFT";
     public static final String ADDRESS_FRONT_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_ADDRESS_FRONT_RIGHT";
     public static final String ADDRESS_REAR_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_ADDRESS_REAR_RIGHT";
+    public static final String CONNECTED_CAR_TYPE_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_TYPE";
     public static final String OFFSET_POCKET_FOR_START_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_START";
     public static final String OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_LOCK";
     public static final String OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_UNLOCK";
@@ -203,6 +206,10 @@ public final class SdkPreferencesHelper {
 
     public void enableLightCaptorEnabled(final boolean enable) {
         saveBoolean(SAVED_LIGHT_CAPTOR, LIGHT_CAPTOR_PREFERENCES_NAME, enable);
+    }
+
+    public String getConnectedCarType() {
+        return readString(SAVED_SELECTED_LOCATION, CONNECTED_CAR_TYPE_PREFERENCES_NAME, ConnectedCarFactory.TYPE_4_A);
     }
 
     public int getOffsetPocketForStart() {

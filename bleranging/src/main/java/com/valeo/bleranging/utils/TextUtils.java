@@ -7,8 +7,8 @@ import android.text.style.ForegroundColorSpan;
 
 import com.valeo.bleranging.bluetooth.BluetoothManagement;
 import com.valeo.bleranging.model.Antenna;
-import com.valeo.bleranging.model.ConnectedCar;
 import com.valeo.bleranging.model.Trx;
+import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.util.Locale;

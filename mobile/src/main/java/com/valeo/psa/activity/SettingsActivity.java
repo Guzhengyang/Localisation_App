@@ -14,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
+import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.psa.R;
 
@@ -116,8 +117,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * Make sure to deny any unknown fragments here.
      */
     protected boolean isValidFragment(String fragmentName) {
-        return PreferenceFragment.class.getName().equals(fragmentName)
-                || GeneralPreferenceFragment.class.getName().equals(fragmentName);
+        return GeneralPreferenceFragment.class.getName().equals(fragmentName);
     }
 
     /**
@@ -136,6 +136,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
+            bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.CONNECTED_CAR_TYPE_PREFERENCES_NAME), ConnectedCarFactory.TYPE_4_A);
             bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_START_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_START));
             bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_LOCK));
             bindPreferenceSummaryToValue(findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME), String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_UNLOCK));

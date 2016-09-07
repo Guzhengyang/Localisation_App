@@ -1,5 +1,6 @@
 package com.valeo.bleranging.model;
 
+import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.util.ArrayList;

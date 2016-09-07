@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="entries_list_preference">
+        <item>TYPE_3_A</item>
+        <item>TYPE_3_B</item>
+        <item>TYPE_4_A</item>
+        <item>TYPE_4_B</item>
+        <item>TYPE_5_A</item>
+        <item>TYPE_5_B</item>
+        <item>TYPE_6_A</item>
+        <item>TYPE_6_B</item>
+        <item>TYPE_7_A</item>
+        <item>TYPE_7_B</item>
+    </string-array>
+    <string-array name="entryvalues_list_preference">
+        <item>"threeLMR"        </item>
+        <item>"threeLRB"        </item>
+        <item>"fourLMRB"        </item>
+        <item>"fourLRRlRr"      </item>
+        <item>"fiveLMRRlRr"     </item>
+        <item>"fiveFlFrLRB"     </item>
+        <item>"sixLMRRlBRr"     </item>
+        <item>"sixFlFrLRRlRr"   </item>
+        <item>"sevenFlFrLMRRlRr"</item>
+        <item>"sevenFlFrLRRlBRr"</item>
+    </string-array>
+</resources>

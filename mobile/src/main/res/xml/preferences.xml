@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_car_type">
+        <ListPreference
+            android:dialogTitle="@string/dialog_title_list_preference"
+            android:entries="@array/entries_list_preference"
+            android:entryValues="@array/entryvalues_list_preference"
+            android:key="com.inblue.PREFERENCE_CONNECTED_CAR_TYPE"
+            android:title="@string/pref_car_type_title" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_offset">
         <EditTextPreference
             android:key="com.inblue.PREFERENCE_OFFSET_POCKET_FOR_START"
