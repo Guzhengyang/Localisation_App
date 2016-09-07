@@ -371,7 +371,7 @@ public class BleRangingHelper implements SensorEventListener {
                     connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
                     Log.d(" rssiHistoric", "BLE_ADDRESS_LEFT=" + trxAddressLeft + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
                 } else if (device.getAddress().equals(trxAddressMiddle)) {
-                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_LEFT, scanResponse.antennaId, rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_MIDDLE, scanResponse.antennaId, rssi, bleChannel, smartphoneIsLaidDownLAcc);
                     Log.d(" rssiHistoric", "BLE_ADDRESS_MIDDLE=" + trxAddressMiddle + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
                 } else if (device.getAddress().equals(trxAddressRight)) {
                     connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
@@ -379,18 +379,18 @@ public class BleRangingHelper implements SensorEventListener {
                 } else if (device.getAddress().equals(trxAddressBack)) {
                     connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
                     Log.d(" rssiHistoric", "BLE_ADDRESS_BACK=" + trxAddressBack + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
-                } else if (device.getAddress().equals(trxAddressLeft)) {
+                } else if (device.getAddress().equals(trxAddressFrontLeft)) {
                     connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_FRONT_LEFT=" + trxAddressFrontLeft + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
-                } else if (device.getAddress().equals(trxAddressLeft)) {
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_FRONT_LEFT=" + trxAddressFrontLeft + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
+                } else if (device.getAddress().equals(trxAddressFrontRight)) {
                     connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_FRONT_RIGHT=" + trxAddressFrontRight + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
-                } else if (device.getAddress().equals(trxAddressLeft)) {
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_FRONT_RIGHT=" + trxAddressFrontRight + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
+                } else if (device.getAddress().equals(trxAddressRearLeft)) {
                     connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_REAR_LEFT=" + trxAddressRearLeft + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
-                } else if (device.getAddress().equals(trxAddressLeft)) {
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_REAR_LEFT=" + trxAddressRearLeft + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
+                } else if (device.getAddress().equals(trxAddressRearRight)) {
                     connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_REAR_RIGHT=" + trxAddressRearRight + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_REAR_RIGHT=" + trxAddressRearRight + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
                 } else {
                     if (advertisedData != null && advertisedData.length > 0) {
                         Log.d(" rssiHistoric", "BLE_ADDRESS_LOGGER=" + TextUtils.printBleBytes(advertisedData));
