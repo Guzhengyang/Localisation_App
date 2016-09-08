@@ -61,90 +61,85 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
 
     @Override
     public boolean startStrategy(boolean newLockStatus, boolean smartphoneIsInPocket) {
-        boolean isInStartArea = isInStartArea(TrxUtils.getCurrentStartThreshold(SdkPreferencesHelper.getInstance().getStartThreshold(), smartphoneIsInPocket));
+        boolean isInStartArea = isInStartArea(TrxUtils.getCurrentStartThreshold(SdkPreferencesHelper.getInstance().getStartThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()), smartphoneIsInPocket));
         return (isInStartArea
                 && (!newLockStatus)
-                && (isRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_RIGHT, -SdkPreferencesHelper.getInstance().getNextToDoorRatioThreshold())
-                || isRatioNextToDoorLowerThanThreshold(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_RIGHT, SdkPreferencesHelper.getInstance().getNextToDoorRatioThreshold()))
-                && (isRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_LEFT, SdkPreferencesHelper.getInstance().getNextToDoorThresholdMLorMRMax())
-                || isRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_RIGHT, SdkPreferencesHelper.getInstance().getNextToDoorThresholdMLorMRMax()))
-                && (isRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_LEFT, SdkPreferencesHelper.getInstance().getNextToDoorThresholdMLorMRMin())
-                && isRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_RIGHT, SdkPreferencesHelper.getInstance().getNextToDoorThresholdMLorMRMin()))
+                && (isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_START, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()))
+                || isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_START, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType())))
+                && (isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_LEFT, SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMax(SdkPreferencesHelper.getInstance().getConnectedCarType()))
+                || isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_RIGHT, SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMax(SdkPreferencesHelper.getInstance().getConnectedCarType())))
+                && (isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_LEFT, SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMin(SdkPreferencesHelper.getInstance().getConnectedCarType()))
+                && isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_RIGHT, SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMin(SdkPreferencesHelper.getInstance().getConnectedCarType())))
         );
     }
 
     @Override
     public boolean isInStartArea(int threshold) {
-        boolean trxL = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
-        boolean trxM = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
-        boolean trxR = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
-        boolean trxB = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
-        boolean trxFL = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
-        boolean trxRL = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
-        boolean trxFR = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
-        boolean trxRR = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
-        return numberOfTrxValid(SdkPreferencesHelper.getInstance().getStartMode(), trxL, trxM, trxR, trxB, trxFL, trxRL, trxFR, trxRR);
+        boolean trxL = isTrxGreaterThanThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
+        boolean trxM = isTrxGreaterThanThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
+        boolean trxR = isTrxGreaterThanThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
+        boolean trxFL = isTrxGreaterThanThreshold(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
+        boolean trxRL = isTrxGreaterThanThreshold(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
+        boolean trxFR = isTrxGreaterThanThreshold(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
+        boolean trxRR = isTrxGreaterThanThreshold(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
+        return numberOfTrxValid(SdkPreferencesHelper.getInstance().getStartMode(SdkPreferencesHelper.getInstance().getConnectedCarType()), trxL, trxM, trxR, false, trxFL, trxRL, trxFR, trxRR);
     }
 
     @Override
     public int unlockStrategy(boolean smartphoneIsInPocket) {
-        boolean isInUnlockArea = isInUnlockArea(TrxUtils.getCurrentUnlockThreshold(SdkPreferencesHelper.getInstance().getUnlockThreshold(), smartphoneIsInPocket));
-        boolean isNextToDoorLRMax = isRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_RIGHT, SdkPreferencesHelper.getInstance().getNextToDoorRatioThreshold());
-        boolean isNextToDoorLRMin = isRatioNextToDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_RIGHT, -SdkPreferencesHelper.getInstance().getNextToDoorRatioThreshold());
-        boolean isNextToDoorLBMax = isRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_BACK, SdkPreferencesHelper.getInstance().getNextToBackDoorRatioThresholdMax());
-        boolean isNextToDoorLBMin = isRatioNextToDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_BACK, SdkPreferencesHelper.getInstance().getNextToBackDoorRatioThresholdMin());
-        boolean isNextToDoorRBMax = isRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_RIGHT, ConnectedCar.NUMBER_TRX_BACK, SdkPreferencesHelper.getInstance().getNextToBackDoorRatioThresholdMax());
-        boolean isNextToDoorRBMin = isRatioNextToDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_RIGHT, ConnectedCar.NUMBER_TRX_BACK, SdkPreferencesHelper.getInstance().getNextToBackDoorRatioThresholdMin());
-        boolean isApproaching = TrxUtils.getAverageLSDeltaLowerThanThreshold(this, TrxUtils.getCurrentUnlockThreshold(SdkPreferencesHelper.getInstance().getAverageDeltaUnlockThreshold(), smartphoneIsInPocket));
-        if (isInUnlockArea && (isNextToDoorLRMax && isNextToDoorLBMax) && isApproaching) {
-            return ConnectedCar.NUMBER_TRX_LEFT;
-        } else if (isInUnlockArea && (isNextToDoorLRMin && isNextToDoorRBMax) && isApproaching) {
-            return ConnectedCar.NUMBER_TRX_RIGHT;
-        } else if (isInUnlockArea && (isNextToDoorLBMin && isNextToDoorRBMin) && isApproaching) {
-            return ConnectedCar.NUMBER_TRX_BACK;
+        boolean isInUnlockArea = isInUnlockArea(TrxUtils.getCurrentUnlockThreshold(SdkPreferencesHelper.getInstance().getUnlockThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()), smartphoneIsInPocket));
+        boolean isNearDoorLRMax = isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()));
+        boolean isNearDoorLRMin = isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()));
+        boolean isApproaching = TrxUtils.getAverageLSDeltaLowerThanThreshold(this, TrxUtils.getCurrentUnlockThreshold(SdkPreferencesHelper.getInstance().getAverageDeltaUnlockThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()), smartphoneIsInPocket));
+        if (isInUnlockArea && isApproaching) {
+            if (isNearDoorLRMax) {
+                return NUMBER_TRX_LEFT;
+            } else if (isNearDoorLRMin) {
+                return NUMBER_TRX_RIGHT;
+            } else {
+                return NUMBER_TRX_BACK;
+            }
         }
         return 0;
     }
 
     @Override
     public boolean isInUnlockArea(int threshold) {
-        boolean trxL  = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
-        boolean trxM  = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
-        boolean trxR  = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
-        boolean trxB  = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
-        boolean trxFL = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
-        boolean trxRL = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
-        boolean trxFR = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
-        boolean trxRR = isTrxGreaterThanThreshold(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
-        return numberOfTrxValid(SdkPreferencesHelper.getInstance().getUnlockMode(), trxL, trxM, trxR, trxB, trxFL, trxRL, trxFR, trxRR);
+        boolean trxL = isTrxGreaterThanThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
+        boolean trxM = isTrxGreaterThanThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
+        boolean trxR = isTrxGreaterThanThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
+        boolean trxFL = isTrxGreaterThanThreshold(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
+        boolean trxRL = isTrxGreaterThanThreshold(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
+        boolean trxFR = isTrxGreaterThanThreshold(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
+        boolean trxRR = isTrxGreaterThanThreshold(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
+        return numberOfTrxValid(SdkPreferencesHelper.getInstance().getUnlockMode(SdkPreferencesHelper.getInstance().getConnectedCarType()), trxL, trxM, trxR, false, trxFL, trxRL, trxFR, trxRR);
     }
 
     @Override
     public boolean lockStrategy(boolean smartphoneIsInPocket) {
-        boolean isInLockArea = isInLockArea(TrxUtils.getCurrentLockThreshold(SdkPreferencesHelper.getInstance().getLockThreshold(), smartphoneIsInPocket));
-        boolean isLeaving = TrxUtils.getAverageLSDeltaGreaterThanThreshold(this, TrxUtils.getCurrentLockThreshold(SdkPreferencesHelper.getInstance().getAverageDeltaLockThreshold(), smartphoneIsInPocket));
+        boolean isInLockArea = isInLockArea(TrxUtils.getCurrentLockThreshold(SdkPreferencesHelper.getInstance().getLockThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()), smartphoneIsInPocket));
+        boolean isLeaving = TrxUtils.getAverageLSDeltaGreaterThanThreshold(this, TrxUtils.getCurrentLockThreshold(SdkPreferencesHelper.getInstance().getAverageDeltaLockThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()), smartphoneIsInPocket));
         return (isInLockArea && isLeaving);
     }
 
     @Override
     public boolean isInLockArea(int threshold) {
-        boolean trxL  = isTrxLowerThanThreshold(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
-        boolean trxM  = isTrxLowerThanThreshold(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
-        boolean trxR  = isTrxLowerThanThreshold(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
-        boolean trxB  = isTrxLowerThanThreshold(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
-        boolean trxFL = isTrxLowerThanThreshold(ConnectedCar.NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
-        boolean trxRL = isTrxLowerThanThreshold(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
-        boolean trxFR = isTrxLowerThanThreshold(ConnectedCar.NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
-        boolean trxRR = isTrxLowerThanThreshold(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
-        return numberOfTrxValid(SdkPreferencesHelper.getInstance().getLockMode(), trxL, trxM, trxR, trxB, trxFL, trxRL, trxFR, trxRR)
-                || (trxM && (isRatioNextToDoorLowerThanThreshold(Antenna.AVERAGE_LOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_RIGHT, SdkPreferencesHelper.getInstance().getNextToDoorRatioThreshold())
-                || isRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_LOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_RIGHT, -SdkPreferencesHelper.getInstance().getNextToDoorRatioThreshold())));
+        boolean trxL = isTrxLowerThanThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
+        boolean trxM = isTrxLowerThanThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
+        boolean trxR = isTrxLowerThanThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
+        boolean trxFL = isTrxLowerThanThreshold(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
+        boolean trxRL = isTrxLowerThanThreshold(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
+        boolean trxFR = isTrxLowerThanThreshold(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
+        boolean trxRR = isTrxLowerThanThreshold(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
+        return numberOfTrxValid(SdkPreferencesHelper.getInstance().getLockMode(SdkPreferencesHelper.getInstance().getConnectedCarType()), trxL, trxM, trxR, false, trxFL, trxRL, trxFR, trxRR)
+                || (trxM && (isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_LOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()))
+                || isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_LOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()))));
 
     }
 
     @Override
     public boolean welcomeStrategy(int totalAverage, boolean newlockStatus, boolean smartphoneIsInPocket) {
-        int threshold = TrxUtils.getCurrentLockThreshold(SdkPreferencesHelper.getInstance().getWelcomeThreshold(), smartphoneIsInPocket);
+        int threshold = TrxUtils.getCurrentLockThreshold(SdkPreferencesHelper.getInstance().getWelcomeThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()), smartphoneIsInPocket);
         return (totalAverage >= threshold) && newlockStatus;
     }
 

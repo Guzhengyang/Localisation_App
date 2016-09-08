@@ -25,7 +25,7 @@ public class TrxUtils {
      * @param trx2 the second trx
      * @return the delta between both trx average rssi
      */
-    public static int getRatioNextToDoor(int mode, Trx trx1, Trx trx2) {
+    public static int getRatioNearDoor(int mode, Trx trx1, Trx trx2) {
         int trxAverageRssi1 = trx1.getTrxRssiAverage(mode);
         int trxAverageRssi2 = trx2.getTrxRssiAverage(mode);
         return trxAverageRssi1 - trxAverageRssi2;
@@ -39,9 +39,9 @@ public class TrxUtils {
      * @param threshold the threshold to compare with
      * @return true if the difference of the two average rssi is greater than the threshold, false otherwise
      */
-    public static boolean getRatioNextToDoorGreaterThanThreshold(int mode, Trx trx1, Trx trx2, int threshold) {
+    public static boolean getRatioNearDoorGreaterThanThreshold(int mode, Trx trx1, Trx trx2, int threshold) {
         if(trx1.isActive() && trx2.isActive()) {
-            int ratioValue = getRatioNextToDoor(mode, trx1, trx2);
+            int ratioValue = getRatioNearDoor(mode, trx1, trx2);
             return (ratioValue > threshold);
         } else {
             return true;
@@ -56,9 +56,9 @@ public class TrxUtils {
      * @param threshold the threshold to compare with
      * @return true if the difference of the two average rssi is greater than the threshold, false otherwise
      */
-    public static boolean getRatioNextToDoorLowerThanThreshold(int mode, Trx trx1, Trx trx2, int threshold) {
+    public static boolean getRatioNearDoorLowerThanThreshold(int mode, Trx trx1, Trx trx2, int threshold) {
         if(trx1.isActive() && trx2.isActive()) {
-            int ratioValue = getRatioNextToDoor(mode, trx1, trx2);
+            int ratioValue = getRatioNearDoor(mode, trx1, trx2);
             return (ratioValue < threshold);
         } else {
             return true;
@@ -141,7 +141,7 @@ public class TrxUtils {
      */
     public static int getCurrentLockThreshold(int threshold, boolean smartphoneIsInPocket) {
         if(smartphoneIsInPocket) {
-            threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock();
+            threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock(SdkPreferencesHelper.getInstance().getConnectedCarType());
         }
         return threshold;
     }
@@ -154,7 +154,7 @@ public class TrxUtils {
      */
     public static int getCurrentUnlockThreshold(int threshold, boolean smartphoneIsInPocket) {
         if(smartphoneIsInPocket) {
-            threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock();
+            threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(SdkPreferencesHelper.getInstance().getConnectedCarType());
         }
         return threshold;
     }
@@ -167,7 +167,7 @@ public class TrxUtils {
      */
     public static int getCurrentStartThreshold(int threshold, boolean smartphoneIsInPocket) {
         if(smartphoneIsInPocket) {
-            threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForStart();
+            threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForStart(SdkPreferencesHelper.getInstance().getConnectedCarType());
         }
         return threshold;
     }

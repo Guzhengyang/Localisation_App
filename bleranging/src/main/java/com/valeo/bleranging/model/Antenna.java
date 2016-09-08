@@ -73,13 +73,13 @@ public class Antenna {
 
     private float getEcretageValue(int lastN2Rssi) {
         if (lastN2Rssi >= -170 && lastN2Rssi < -70) {
-            return SdkPreferencesHelper.getInstance().getEcretage70_100();
+            return SdkPreferencesHelper.getInstance().getEcretage70_100(SdkPreferencesHelper.getInstance().getConnectedCarType());
         } else if (lastN2Rssi >= -70 && lastN2Rssi < -50) {
-            return SdkPreferencesHelper.getInstance().getEcretage50_70();
+            return SdkPreferencesHelper.getInstance().getEcretage50_70(SdkPreferencesHelper.getInstance().getConnectedCarType());
         } else if (lastN2Rssi >= -50 && lastN2Rssi < -30) {
-            return SdkPreferencesHelper.getInstance().getEcretage30_50();
+            return SdkPreferencesHelper.getInstance().getEcretage30_50(SdkPreferencesHelper.getInstance().getConnectedCarType());
         } else if (lastN2Rssi >= -30 && lastN2Rssi < +30) {
-            return SdkPreferencesHelper.getInstance().getEcretage30_30();
+            return SdkPreferencesHelper.getInstance().getEcretage30_30(SdkPreferencesHelper.getInstance().getConnectedCarType());
         }
         return 0;
     }
@@ -243,21 +243,21 @@ public class Antenna {
     private int getTrxRssiEqualizer(int numberTrx) {
         switch (numberTrx) {
             case ConnectedCar.NUMBER_TRX_LEFT:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerLeft();
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerLeft(SdkPreferencesHelper.getInstance().getConnectedCarType());
             case ConnectedCar.NUMBER_TRX_FRONT_LEFT:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontLeft();
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontLeft(SdkPreferencesHelper.getInstance().getConnectedCarType());
             case ConnectedCar.NUMBER_TRX_REAR_LEFT:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearLeft();
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearLeft(SdkPreferencesHelper.getInstance().getConnectedCarType());
             case ConnectedCar.NUMBER_TRX_MIDDLE:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerMiddle();
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerMiddle(SdkPreferencesHelper.getInstance().getConnectedCarType());
             case ConnectedCar.NUMBER_TRX_RIGHT:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRight();
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRight(SdkPreferencesHelper.getInstance().getConnectedCarType());
             case ConnectedCar.NUMBER_TRX_FRONT_RIGHT:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontRight();
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontRight(SdkPreferencesHelper.getInstance().getConnectedCarType());
             case ConnectedCar.NUMBER_TRX_REAR_RIGHT:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearRight();
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearRight(SdkPreferencesHelper.getInstance().getConnectedCarType());
             case ConnectedCar.NUMBER_TRX_BACK:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerBack();
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerBack(SdkPreferencesHelper.getInstance().getConnectedCarType());
             default:
                 return 0;
         }

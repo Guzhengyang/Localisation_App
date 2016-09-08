@@ -17,21 +17,21 @@ import java.util.Locale;
  * Created by l-avaratha on 20/07/2016.
  */
 public class TextUtils {
-    private final static int welcomeThreshold = SdkPreferencesHelper.getInstance().getWelcomeThreshold();
-    private final static int lockThreshold = SdkPreferencesHelper.getInstance().getLockThreshold();
-    private final static int unlockThreshold = SdkPreferencesHelper.getInstance().getUnlockThreshold();
-    private final static int startThreshold = SdkPreferencesHelper.getInstance().getStartThreshold();
+    private final static int welcomeThreshold = SdkPreferencesHelper.getInstance().getWelcomeThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType());
+    private final static int lockThreshold = SdkPreferencesHelper.getInstance().getLockThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType());
+    private final static int unlockThreshold = SdkPreferencesHelper.getInstance().getUnlockThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType());
+    private final static int startThreshold = SdkPreferencesHelper.getInstance().getStartThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType());
     private final static float linAccThreshold = SdkPreferencesHelper.getInstance().getCorrectionLinAcc();
-    private final static int averageDeltaLockThreshold = SdkPreferencesHelper.getInstance().getAverageDeltaLockThreshold();
-    private final static int averageDeltaUnlockThreshold = SdkPreferencesHelper.getInstance().getAverageDeltaUnlockThreshold();
-    private final static int lockMode = SdkPreferencesHelper.getInstance().getLockMode();
-    private final static int unlockMode = SdkPreferencesHelper.getInstance().getUnlockMode();
-    private final static int startMode = SdkPreferencesHelper.getInstance().getStartMode();
-    private final static int nextToDoorRatioThreshold = SdkPreferencesHelper.getInstance().getNextToDoorRatioThreshold();
-    private final static int nextToBackDoorRatioThresholdMin = SdkPreferencesHelper.getInstance().getNextToBackDoorRatioThresholdMin();
-    private final static int nextToBackDoorRatioThresholdMax = SdkPreferencesHelper.getInstance().getNextToBackDoorRatioThresholdMax();
-    private final static int nextToDoorThresholdMLorMRMin = SdkPreferencesHelper.getInstance().getNextToDoorThresholdMLorMRMin();
-    private final static int nextToDoorThresholdMLorMRMax = SdkPreferencesHelper.getInstance().getNextToDoorThresholdMLorMRMax();
+    private final static int averageDeltaLockThreshold = SdkPreferencesHelper.getInstance().getAverageDeltaLockThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType());
+    private final static int averageDeltaUnlockThreshold = SdkPreferencesHelper.getInstance().getAverageDeltaUnlockThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType());
+    private final static int lockMode = SdkPreferencesHelper.getInstance().getLockMode(SdkPreferencesHelper.getInstance().getConnectedCarType());
+    private final static int unlockMode = SdkPreferencesHelper.getInstance().getUnlockMode(SdkPreferencesHelper.getInstance().getConnectedCarType());
+    private final static int startMode = SdkPreferencesHelper.getInstance().getStartMode(SdkPreferencesHelper.getInstance().getConnectedCarType());
+    private final static int nearDoorRatioThreshold = SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType());
+    private final static int nearBackDoorRatioThresholdMin = SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMin(SdkPreferencesHelper.getInstance().getConnectedCarType());
+    private final static int nearBackDoorRatioThresholdMax = SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMax(SdkPreferencesHelper.getInstance().getConnectedCarType());
+    private final static int nearDoorThresholdMLorMRMin = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMin(SdkPreferencesHelper.getInstance().getConnectedCarType());
+    private final static int nearDoorThresholdMLorMRMax = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMax(SdkPreferencesHelper.getInstance().getConnectedCarType());
     private final static int rollingAvElement = SdkPreferencesHelper.getInstance().getRollingAvElement();
     private final static int startNbElement = SdkPreferencesHelper.getInstance().getStartNbElement();
     private final static int lockNbElement = SdkPreferencesHelper.getInstance().getLockNbElement();
@@ -209,27 +209,27 @@ public class TextUtils {
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_UNLOCK, Color.GREEN,
                 TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket), ">", smartphoneIsLaidDownLAcc, connectedCar));
         StringBuilder ratioLRStringBuilder = new StringBuilder().append("       ratio L/R > (+/-")
-                .append(nextToDoorRatioThreshold)
-                .append("): ").append(connectedCar.getRatioNextToDoor(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_RIGHT)).append("\n");
+                .append(nearDoorRatioThreshold)
+                .append("): ").append(connectedCar.getRatioNearDoor(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_RIGHT)).append("\n");
         spannableStringBuilder.append(colorText(
-                connectedCar.isRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_RIGHT, nextToDoorRatioThreshold)
-                        || connectedCar.isRatioNextToDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_RIGHT, -nextToDoorRatioThreshold),
+                connectedCar.isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_RIGHT, nearDoorRatioThreshold)
+                        || connectedCar.isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_RIGHT, -nearDoorRatioThreshold),
                 ratioLRStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
         StringBuilder ratioLBStringBuilder = new StringBuilder().append("       ratio LouR - B (")
-                .append("< ").append(nextToBackDoorRatioThresholdMin)
-                .append("): ").append(connectedCar.getRatioNextToDoor(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_BACK))
-                .append("|").append(connectedCar.getRatioNextToDoor(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_RIGHT, ConnectedCar.NUMBER_TRX_BACK)).append("\n");
+                .append("< ").append(nearBackDoorRatioThresholdMin)
+                .append("): ").append(connectedCar.getRatioNearDoor(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_BACK))
+                .append("|").append(connectedCar.getRatioNearDoor(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_RIGHT, ConnectedCar.NUMBER_TRX_BACK)).append("\n");
         spannableStringBuilder.append(colorText(
-                (connectedCar.isRatioNextToDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_BACK, nextToBackDoorRatioThresholdMin)
-                        || connectedCar.isRatioNextToDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_RIGHT, ConnectedCar.NUMBER_TRX_BACK, nextToBackDoorRatioThresholdMin)),
+                (connectedCar.isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_BACK, nearBackDoorRatioThresholdMin)
+                        || connectedCar.isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_RIGHT, ConnectedCar.NUMBER_TRX_BACK, nearBackDoorRatioThresholdMin)),
                 ratioLBStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
         StringBuilder ratioRBStringBuilder = new StringBuilder().append("       ratio LouR - B (")
-                .append(" > ").append(nextToBackDoorRatioThresholdMax)
-                .append("): ").append(connectedCar.getRatioNextToDoor(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_BACK))
-                .append("|").append(connectedCar.getRatioNextToDoor(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_RIGHT, ConnectedCar.NUMBER_TRX_BACK)).append("\n");
+                .append(" > ").append(nearBackDoorRatioThresholdMax)
+                .append("): ").append(connectedCar.getRatioNearDoor(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_BACK))
+                .append("|").append(connectedCar.getRatioNearDoor(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_RIGHT, ConnectedCar.NUMBER_TRX_BACK)).append("\n");
         spannableStringBuilder.append(colorText(
-                (connectedCar.isRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_BACK, nextToBackDoorRatioThresholdMax)
-                        || connectedCar.isRatioNextToDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_RIGHT, ConnectedCar.NUMBER_TRX_BACK, nextToBackDoorRatioThresholdMax)),
+                (connectedCar.isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_LEFT, ConnectedCar.NUMBER_TRX_BACK, nearBackDoorRatioThresholdMax)
+                        || connectedCar.isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, ConnectedCar.NUMBER_TRX_RIGHT, ConnectedCar.NUMBER_TRX_BACK, nearBackDoorRatioThresholdMax)),
                 ratioRBStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
         // START
         spannableStringBuilder.append("start").append("  mode : ").append(String.valueOf(startMode)).append(" ");
@@ -240,20 +240,20 @@ public class TextUtils {
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_START, Color.CYAN,
                 TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket), ">", smartphoneIsLaidDownLAcc, connectedCar));
         StringBuilder ratioMLMRMaxStringBuilder = new StringBuilder().append("       ratio M/L OR M/R Max > (")
-                .append(nextToDoorThresholdMLorMRMax)
-                .append("): ").append(connectedCar.getRatioNextToDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_LEFT))
-                .append(" | ").append(connectedCar.getRatioNextToDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_RIGHT)).append("\n");
+                .append(nearDoorThresholdMLorMRMax)
+                .append("): ").append(connectedCar.getRatioNearDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_LEFT))
+                .append(" | ").append(connectedCar.getRatioNearDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_RIGHT)).append("\n");
         spannableStringBuilder.append(colorText(
-                connectedCar.getRatioNextToDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_LEFT) > nextToDoorThresholdMLorMRMax
-                        || connectedCar.getRatioNextToDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_RIGHT) > nextToDoorThresholdMLorMRMax,
+                connectedCar.getRatioNearDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_LEFT) > nearDoorThresholdMLorMRMax
+                        || connectedCar.getRatioNearDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_RIGHT) > nearDoorThresholdMLorMRMax,
                 ratioMLMRMaxStringBuilder.toString(), Color.CYAN, Color.DKGRAY));
         StringBuilder ratioMLMRMinStringBuilder = new StringBuilder().append("       ratio M/L AND M/R Min > (")
-                .append(nextToDoorThresholdMLorMRMin)
-                .append("): ").append(connectedCar.getRatioNextToDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_LEFT))
-                .append(" & ").append(connectedCar.getRatioNextToDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_RIGHT)).append("\n");
+                .append(nearDoorThresholdMLorMRMin)
+                .append("): ").append(connectedCar.getRatioNearDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_LEFT))
+                .append(" & ").append(connectedCar.getRatioNearDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_RIGHT)).append("\n");
         spannableStringBuilder.append(colorText(
-                connectedCar.getRatioNextToDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_LEFT) > nextToDoorThresholdMLorMRMin
-                        && connectedCar.getRatioNextToDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_RIGHT) > nextToDoorThresholdMLorMRMin,
+                connectedCar.getRatioNearDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_LEFT) > nearDoorThresholdMLorMRMin
+                        && connectedCar.getRatioNearDoor(Antenna.AVERAGE_START, ConnectedCar.NUMBER_TRX_MIDDLE, ConnectedCar.NUMBER_TRX_RIGHT) > nearDoorThresholdMLorMRMin,
                 ratioMLMRMinStringBuilder.toString(), Color.CYAN, Color.DKGRAY));
         return spannableStringBuilder;
     }

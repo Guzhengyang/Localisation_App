@@ -208,25 +208,25 @@ public abstract class ConnectedCar {
         return totalAverage;
     }
 
-    public int getRatioNextToDoor(int mode, int trx1, int trx2) {
+    public int getRatioNearDoor(int mode, int trx1, int trx2) {
         if(trxMap.get(trx1) != null && trxMap.get(trx2) != null) {
-            return TrxUtils.getRatioNextToDoor(mode, trxMap.get(trx1), trxMap.get(trx2));
+            return TrxUtils.getRatioNearDoor(mode, trxMap.get(trx1), trxMap.get(trx2));
         } else {
             return 0;
         }
     }
 
-    public boolean isRatioNextToDoorGreaterThanThreshold(int mode, int trx1, int trx2, int threshold) {
+    public boolean isRatioNearDoorGreaterThanThreshold(int mode, int trx1, int trx2, int threshold) {
         if(trxMap.get(trx1) != null && trxMap.get(trx2) != null) {
-            return TrxUtils.getRatioNextToDoorGreaterThanThreshold(mode, trxMap.get(trx1), trxMap.get(trx2), threshold);
+            return TrxUtils.getRatioNearDoorGreaterThanThreshold(mode, trxMap.get(trx1), trxMap.get(trx2), threshold);
         } else {
             return false;
         }
     }
 
-    public boolean isRatioNextToDoorLowerThanThreshold(int mode, int trx1, int trx2, int threshold) {
+    public boolean isRatioNearDoorLowerThanThreshold(int mode, int trx1, int trx2, int threshold) {
         if(trxMap.get(trx1) != null && trxMap.get(trx2) != null) {
-            return TrxUtils.getRatioNextToDoorLowerThanThreshold(mode, trxMap.get(trx1), trxMap.get(trx2), threshold);
+            return TrxUtils.getRatioNearDoorLowerThanThreshold(mode, trxMap.get(trx1), trxMap.get(trx2), threshold);
         } else {
             return false;
         }

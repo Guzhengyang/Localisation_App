@@ -51,6 +51,7 @@
     <!-- Example General settings -->
     <string name="title_activity_settings">Settings</string>
     <string name="pref_header_general">General</string>
+    <string name="pref_header_specific">Specific</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_connect">Connect</string>
     <string name="pref_car_type">Connected Car Option</string>
@@ -65,11 +66,11 @@
     <string name="pref_threshold_unlock">Unlock Threshold</string>
     <string name="pref_threshold_lock">Lock Threshold</string>
     <string name="pref_threshold_welcome">Welcome Threshold</string>
-    <string name="pref_threshold_next_to_door_ratio">Next To Door Ratio Threshold</string>
+    <string name="pref_threshold_near_door_ratio">Near Door Ratio Threshold</string>
     <string name="pref_threshold_back_door_ratio_min">Back Door Ratio Min Threshold</string>
     <string name="pref_threshold_back_door_ratio_max">Back Door Ratio Max Threshold</string>
-    <string name="pref_threshold_next_to_door_ratio_ml_mr_max">Next To Door Ratio ML MR Max Threshold</string>
-    <string name="pref_threshold_next_to_door_ratio_ml_mr_min">Next To Door Ratio ML MR Min Threshold</string>
+    <string name="pref_threshold_near_door_ratio_ml_mr_max">Near Door Ratio ML MR Max Threshold</string>
+    <string name="pref_threshold_near_door_ratio_ml_mr_min">Near Door Ratio ML MR Min Threshold</string>
     <string name="pref_threshold_average_delta_lock">Average Delta Lock Threshold</string>
     <string name="pref_threshold_average_delta_unlock">Average Delte Unlock Threshold</string>
     <string name="pref_nb_element">NUMBER OF ELEMENT</string>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_car_type">
+        <ListPreference
+            android:dialogTitle="@string/dialog_title_list_preference"
+            android:entries="@array/entries_list_preference"
+            android:entryValues="@array/entryvalues_list_preference"
+            android:key="com.inblue.PREFERENCE_CONNECTED_CAR_TYPE"
+            android:title="@string/pref_car_type_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_ble_address">
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_CONNECTABLE"
+            android:title="@string/pref_ble_address_connectable" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_LEFT"
+            android:title="@string/pref_ble_address_left" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_MIDDLE"
+            android:title="@string/pref_ble_address_middle" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_RIGHT"
+            android:title="@string/pref_ble_address_right" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_BACK"
+            android:title="@string/pref_ble_address_back" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_FRONT_LEFT"
+            android:title="@string/pref_ble_address_front_left" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_FRONT_RIGHT"
+            android:title="@string/pref_ble_address_front_right" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_REAR_LEFT"
+            android:title="@string/pref_ble_address_rear_left" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_REAR_RIGHT"
+            android:title="@string/pref_ble_address_rear_right" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_nb_element">
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_RSSI_LOG_NUMBER"
+            android:title="@string/pref_nb_element_rssi_log_number" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ROLLING_AV_ELEMENT"
+            android:title="@string/pref_nb_element_rolling_average" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_START_NB_ELEMENT"
+            android:title="@string/pref_nb_element_start" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_LOCK_NB_ELEMENT"
+            android:title="@string/pref_nb_element_lock" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_UNLOCK_NB_ELEMENT"
+            android:title="@string/pref_nb_element_unlock" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_WELCOME_NB_ELEMENT"
+            android:title="@string/pref_nb_element_welcome" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_LONG_NB_ELEMENT"
+            android:title="@string/pref_nb_element_long" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_SHORT_NB_ELEMENT"
+            android:title="@string/pref_nb_element_short" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_acc">
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_LIN_ACC_SIZE"
+            android:title="@string/pref_acc_size" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_CORRECTION_LIN_ACC"
+            android:title="@string/pref_acc_correction" />
+    </PreferenceCategory>
+</PreferenceScreen>

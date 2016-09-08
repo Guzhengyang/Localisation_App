@@ -1,7 +1,7 @@
 package com.valeo.bleranging.persistence;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
@@ -17,11 +17,11 @@ public final class SdkPreferencesHelper {
     public final static int UNLOCK_IN_THE_RUN_THRESHOLD = -65;
     public final static int WALK_AWAY_LOCKING_THRESHOLD = -70;
     public final static int WELCOME_THRESHOLD = -95;
-    public final static int NEXT_TO_DOOR_RATIO_THRESHOLD = 8;
-    public final static int NEXT_TO_BACKDOOR_RATIO_THRESHOLD_MIN = -5;
-    public final static int NEXT_TO_BACKDOOR_RATIO_THRESHOLD_MAX = 5;
-    public final static int NEXT_TO_DOOR_RATIO_THRESHOLD_ML_MR_MAX = 12;
-    public final static int NEXT_TO_DOOR_RATIO_THRESHOLD_ML_MR_MIN = 2;
+    public final static int NEAR_DOOR_RATIO_THRESHOLD = 8;
+    public final static int NEAR_BACKDOOR_RATIO_THRESHOLD_MIN = -5;
+    public final static int NEAR_BACKDOOR_RATIO_THRESHOLD_MAX = 5;
+    public final static int NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MAX = 12;
+    public final static int NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MIN = 2;
     public final static int AVERAGE_DELTA_UNLOCK_THRESHOLD = 10;
     public final static int AVERAGE_DELTA_LOCK_THRESHOLD = -10;
     public final static int RSSI_LOG_NUMBER = 0;
@@ -61,10 +61,13 @@ public final class SdkPreferencesHelper {
     public final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
     public final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
     public final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
-    /** Calibration preferences file name. */
-    public static final String SAVED_SELECTED_LOCATION = "savedSelectedLocation";
+    /**
+     * Preferences file name.
+     */
     public static final String SAVED_LIGHT_CAPTOR = "savedLightCaptor";
-    /** Calibration measurement key formatter. */
+    public static final String SAVED_LOGIN_INFO = "savedLoginInfo";
+    public static final String SAVED_CC_GENERIC_OPTION = "savedConnectedCarGenericOption";
+    /** Key formatter. */
     public static final String ADDRESS_CONNECTABLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE";
     public static final String ADDRESS_LEFT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_LEFT";
     public static final String ADDRESS_MIDDLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_MIDDLE";
@@ -82,11 +85,11 @@ public final class SdkPreferencesHelper {
     public static final String UNLOCK_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_THR";
     public static final String LOCK_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOCK_THR";
     public static final String WELCOME_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_WELCOME_THR";
-    public static final String NEXT_TO_DOOR_RATIO_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_DOOR_RATIO_THR";
-    public static final String NEXT_TO_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_BACKDOOR_RATIO_THR_MIN";
-    public static final String NEXT_TO_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_BACKDOOR_RATIO_THR_MAX";
-    public static final String NEXT_TO_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_DOOR_RATIO_THR_ML_MR_MAX";
-    public static final String NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN";
+    public static final String NEAR_DOOR_RATIO_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR";
+    public static final String NEAR_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_BACKDOOR_RATIO_THR_MIN";
+    public static final String NEAR_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_BACKDOOR_RATIO_THR_MAX";
+    public static final String NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_ML_MR_MAX";
+    public static final String NEAR_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_ML_MR_MIN";
     public static final String AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_LOCK_THRESHOLD";
     public static final String AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD";
     public static final String RSSI_LOG_NUMBER_PREFERENCES_NAME = "com.inblue.PREFERENCE_RSSI_LOG_NUMBER";
@@ -152,52 +155,244 @@ public final class SdkPreferencesHelper {
         return sSingleInstance;
     }
 
-    public void setNextToDoorThresholdLMorMRMax(int nextToDoorRatioThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, NEXT_TO_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME, nextToDoorRatioThreshold);
+    public void setNearDoorThresholdLMorMRMax(final String fileName, int nearDoorRatioThreshold) {
+        saveInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME, nearDoorRatioThreshold);
     }
 
-    public void setNextToDoorThresholdLMorMRMin(int nextToDoorRatioThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME, nextToDoorRatioThreshold);
+    public void setNearDoorThresholdLMorMRMin(final String fileName, int nearDoorRatioThreshold) {
+        saveInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME, nearDoorRatioThreshold);
     }
 
-    public void setEqualizerLeft(int equalizer) {
-        saveInt(SAVED_SELECTED_LOCATION, EQUALIZER_LEFT_PREFERENCES_NAME, equalizer);
+    public void setEqualizerLeft(final String fileName, int equalizer) {
+        saveInt(fileName, EQUALIZER_LEFT_PREFERENCES_NAME, equalizer);
     }
 
-    public void setEqualizerMiddle(int equalizer) {
-        saveInt(SAVED_SELECTED_LOCATION, EQUALIZER_MIDDLE_PREFERENCES_NAME, equalizer);
+    public void setEqualizerMiddle(final String fileName, int equalizer) {
+        saveInt(fileName, EQUALIZER_MIDDLE_PREFERENCES_NAME, equalizer);
     }
 
-    public void setEqualizerRight(int equalizer) {
-        saveInt(SAVED_SELECTED_LOCATION, EQUALIZER_RIGHT_PREFERENCES_NAME, equalizer);
+    public void setEqualizerRight(final String fileName, int equalizer) {
+        saveInt(fileName, EQUALIZER_RIGHT_PREFERENCES_NAME, equalizer);
     }
 
-    public void setEqualizerBack(int equalizer) {
-        saveInt(SAVED_SELECTED_LOCATION, EQUALIZER_BACK_PREFERENCES_NAME, equalizer);
+    public void setEqualizerBack(final String fileName, int equalizer) {
+        saveInt(fileName, EQUALIZER_BACK_PREFERENCES_NAME, equalizer);
     }
 
-    public void setEqualizerFrontLeft(int equalizer) {
-        saveInt(SAVED_SELECTED_LOCATION, EQUALIZER_FRONT_LEFT_PREFERENCES_NAME, equalizer);
+    public void setEqualizerFrontLeft(final String fileName, int equalizer) {
+        saveInt(fileName, EQUALIZER_FRONT_LEFT_PREFERENCES_NAME, equalizer);
     }
 
-    public void setEqualizerFrontRight(int equalizer) {
-        saveInt(SAVED_SELECTED_LOCATION, EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME, equalizer);
+    public void setEqualizerFrontRight(final String fileName, int equalizer) {
+        saveInt(fileName, EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME, equalizer);
     }
 
-    public void setEqualizerRearLeft(int equalizer) {
-        saveInt(SAVED_SELECTED_LOCATION, EQUALIZER_REAR_LEFT_PREFERENCES_NAME, equalizer);
+    public void setEqualizerRearLeft(final String fileName, int equalizer) {
+        saveInt(fileName, EQUALIZER_REAR_LEFT_PREFERENCES_NAME, equalizer);
     }
 
-    public void setEqualizerRearRight(int equalizer) {
-        saveInt(SAVED_SELECTED_LOCATION, EQUALIZER_REAR_RIGHT_PREFERENCES_NAME, equalizer);
+    public void setEqualizerRearRight(final String fileName, int equalizer) {
+        saveInt(fileName, EQUALIZER_REAR_RIGHT_PREFERENCES_NAME, equalizer);
     }
 
-    public void setSelectedLocation(final String selectedLocation) {
-        saveString(SAVED_SELECTED_LOCATION, SELECTED_LOCATION_PREFERENCES_NAME, selectedLocation);
+    public void setSelectedLocation(final String fileName, final String selectedLocation) {
+        saveString(fileName, SELECTED_LOCATION_PREFERENCES_NAME, selectedLocation);
     }
 
-    public String getSelectedLocation(final String defaultValue) {
-        return readString(SAVED_SELECTED_LOCATION, SELECTED_LOCATION_PREFERENCES_NAME, defaultValue);
+    public String getSelectedLocation(final String fileName, final String defaultValue) {
+        return readString(fileName, SELECTED_LOCATION_PREFERENCES_NAME, defaultValue);
+    }
+
+    public int getOffsetPocketForStart(final String fileName) {
+        return readInt(fileName, OFFSET_POCKET_FOR_START_PREFERENCES_NAME, OFFSET_POCKET_FOR_START);
+    }
+
+    public void setOffsetPocketForStart(final String fileName, int offsetPocket) {
+        saveInt(fileName, OFFSET_POCKET_FOR_START_PREFERENCES_NAME, offsetPocket);
+    }
+
+    public int getOffsetPocketForLock(final String fileName) {
+        return readInt(fileName, OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME, OFFSET_POCKET_FOR_LOCK);
+    }
+
+    public void setOffsetPocketForLock(final String fileName, int offsetPocket) {
+        saveInt(fileName, OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME, offsetPocket);
+    }
+
+    public int getOffsetPocketForUnlock(final String fileName) {
+        return readInt(fileName, OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME, OFFSET_POCKET_FOR_UNLOCK);
+    }
+
+    public void setOffsetPocketForUnlock(final String fileName, int offsetPocket) {
+        saveInt(fileName, OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME, offsetPocket);
+    }
+
+    public int getStartThreshold(final String fileName) {
+        return readInt(fileName, START_THR_PREFERENCES_NAME, START_THRESHOLD);
+    }
+
+    public void setStartThreshold(final String fileName, int startThreshold) {
+        saveInt(fileName, START_THR_PREFERENCES_NAME, startThreshold);
+    }
+
+    public int getUnlockThreshold(final String fileName) {
+        return readInt(fileName, UNLOCK_THR_PREFERENCES_NAME, UNLOCK_IN_THE_RUN_THRESHOLD);
+    }
+
+    public void setUnlockThreshold(final String fileName, int unlockThreshold) {
+        saveInt(fileName, UNLOCK_THR_PREFERENCES_NAME, unlockThreshold);
+    }
+
+    public int getLockThreshold(final String fileName) {
+        return readInt(fileName, LOCK_THR_PREFERENCES_NAME, WALK_AWAY_LOCKING_THRESHOLD);
+    }
+
+    public void setLockThreshold(final String fileName, int lockThreshold) {
+        saveInt(fileName, LOCK_THR_PREFERENCES_NAME, lockThreshold);
+    }
+
+    public int getWelcomeThreshold(final String fileName) {
+        return readInt(fileName, WELCOME_THR_PREFERENCES_NAME, WELCOME_THRESHOLD);
+    }
+
+    public void setWelcomeThreshold(final String fileName, int welcomeThreshold) {
+        saveInt(fileName, WELCOME_THR_PREFERENCES_NAME, welcomeThreshold);
+    }
+
+    public int getNearDoorRatioThreshold(final String fileName) {
+        return readInt(fileName, NEAR_DOOR_RATIO_THR_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD);
+    }
+
+    public void setNearDoorRatioThreshold(final String fileName, int nearDoorRatioThreshold) {
+        saveInt(fileName, NEAR_DOOR_RATIO_THR_PREFERENCES_NAME, nearDoorRatioThreshold);
+    }
+
+    public int getNearBackDoorRatioThresholdMin(final String fileName) {
+        return readInt(fileName, NEAR_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME, NEAR_BACKDOOR_RATIO_THRESHOLD_MIN);
+    }
+
+    public void setNearBackDoorRatioThresholdMin(final String fileName, int nearBackDoorRatioThresholdMin) {
+        saveInt(fileName, NEAR_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME, nearBackDoorRatioThresholdMin);
+    }
+
+    public int getNearBackDoorRatioThresholdMax(final String fileName) {
+        return readInt(fileName, NEAR_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME, NEAR_BACKDOOR_RATIO_THRESHOLD_MAX);
+    }
+
+    public void setNearBackDoorRatioThresholdMax(final String fileName, int nearBackDoorRatioThresholdMax) {
+        saveInt(fileName, NEAR_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME, nearBackDoorRatioThresholdMax);
+    }
+
+    public int getNearDoorThresholdMLorMRMax(final String fileName) {
+        return readInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MAX);
+    }
+
+    public int getNearDoorThresholdMLorMRMin(final String fileName) {
+        return readInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MIN);
+    }
+
+    public int getAverageDeltaUnlockThreshold(final String fileName) {
+        return readInt(fileName, AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME, AVERAGE_DELTA_UNLOCK_THRESHOLD);
+    }
+
+    public void setAverageDeltaUnlockThreshold(final String fileName, int averageDeltaThreshold) {
+        saveInt(fileName, AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
+    }
+
+    public int getAverageDeltaLockThreshold(final String fileName) {
+        return readInt(fileName, AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME, AVERAGE_DELTA_LOCK_THRESHOLD);
+    }
+
+    public void setAverageDeltaLockThreshold(final String fileName, int averageDeltaThreshold) {
+        saveInt(fileName, AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
+    }
+
+    public int getUnlockMode(final String fileName) {
+        return readInt(fileName, UNLOCK_MODE_PREFERENCES_NAME, UNLOCK_MODE);
+    }
+
+    public void setUnlockMode(final String fileName, int unlockMode) {
+        saveInt(fileName, UNLOCK_MODE_PREFERENCES_NAME, unlockMode);
+    }
+
+    public int getLockMode(final String fileName) {
+        return readInt(fileName, LOCK_MODE_PREFERENCES_NAME, LOCK_MODE);
+    }
+
+    public void setLockMode(final String fileName, int lockMode) {
+        saveInt(fileName, LOCK_MODE_PREFERENCES_NAME, lockMode);
+    }
+
+    public int getStartMode(final String fileName) {
+        return readInt(fileName, START_MODE_PREFERENCES_NAME, START_MODE);
+    }
+
+    public void setStartMode(final String fileName, int startMode) {
+        saveInt(fileName, START_MODE_PREFERENCES_NAME, startMode);
+    }
+
+    public float getEcretage70_100(final String fileName) {
+        return readFloat(fileName, ECRETAGE_70_100_PREFERENCES_NAME, ECRETAGE_70_100);
+    }
+
+    public void setEcretage70_100(final String fileName, float ecretage) {
+        saveFloat(fileName, ECRETAGE_70_100_PREFERENCES_NAME, ecretage);
+    }
+
+    public float getEcretage50_70(final String fileName) {
+        return readFloat(fileName, ECRETAGE_50_70_PREFERENCES_NAME, ECRETAGE_50_70);
+    }
+
+    public void setEcretage50_70(final String fileName, float ecretage) {
+        saveFloat(fileName, ECRETAGE_50_70_PREFERENCES_NAME, ecretage);
+    }
+
+    public float getEcretage30_50(final String fileName) {
+        return readFloat(fileName, ECRETAGE_30_50_PREFERENCES_NAME, ECRETAGE_30_50);
+    }
+
+    public void setEcretage30_50(final String fileName, float ecretage) {
+        saveFloat(fileName, ECRETAGE_30_50_PREFERENCES_NAME, ecretage);
+    }
+
+    public float getEcretage30_30(final String fileName) {
+        return readFloat(fileName, ECRETAGE_30_30_PREFERENCES_NAME, ECRETAGE_30_30);
+    }
+
+    public void setEcretage30_30(final String fileName, float ecretage) {
+        saveFloat(fileName, ECRETAGE_30_30_PREFERENCES_NAME, ecretage);
+    }
+
+    public int getTrxRssiEqualizerLeft(final String fileName) {
+        return readInt(fileName, EQUALIZER_LEFT_PREFERENCES_NAME, EQUALIZER_LEFT);
+    }
+
+    public int getTrxRssiEqualizerFrontLeft(final String fileName) {
+        return readInt(fileName, EQUALIZER_FRONT_LEFT_PREFERENCES_NAME, EQUALIZER_FRONT_LEFT);
+    }
+
+    public int getTrxRssiEqualizerRearLeft(final String fileName) {
+        return readInt(fileName, EQUALIZER_REAR_LEFT_PREFERENCES_NAME, EQUALIZER_REAR_LEFT);
+    }
+
+    public int getTrxRssiEqualizerMiddle(final String fileName) {
+        return readInt(fileName, EQUALIZER_MIDDLE_PREFERENCES_NAME, EQUALIZER_MIDDLE);
+    }
+
+    public int getTrxRssiEqualizerRight(final String fileName) {
+        return readInt(fileName, EQUALIZER_RIGHT_PREFERENCES_NAME, EQUALIZER_RIGHT);
+    }
+
+    public int getTrxRssiEqualizerFrontRight(final String fileName) {
+        return readInt(fileName, EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME, EQUALIZER_FRONT_RIGHT);
+    }
+
+    public int getTrxRssiEqualizerRearRight(final String fileName) {
+        return readInt(fileName, EQUALIZER_REAR_RIGHT_PREFERENCES_NAME, EQUALIZER_REAR_RIGHT);
+    }
+
+    public int getTrxRssiEqualizerBack(final String fileName) {
+        return readInt(fileName, EQUALIZER_BACK_PREFERENCES_NAME, EQUALIZER_BACK);
     }
 
     public boolean isLightCaptorEnabled() {
@@ -209,351 +404,159 @@ public final class SdkPreferencesHelper {
     }
 
     public String getConnectedCarType() {
-        return readString(SAVED_SELECTED_LOCATION, CONNECTED_CAR_TYPE_PREFERENCES_NAME, ConnectedCarFactory.TYPE_4_A);
-    }
-
-    public int getOffsetPocketForStart() {
-        return readInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_START_PREFERENCES_NAME, OFFSET_POCKET_FOR_START);
-    }
-
-    public void setOffsetPocketForStart(int offsetPocket) {
-        saveInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_START_PREFERENCES_NAME, offsetPocket);
-    }
-
-    public int getOffsetPocketForLock() {
-        return readInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME, OFFSET_POCKET_FOR_LOCK);
-    }
-
-    public void setOffsetPocketForLock(int offsetPocket) {
-        saveInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME, offsetPocket);
-    }
-
-    public int getOffsetPocketForUnlock() {
-        return readInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME, OFFSET_POCKET_FOR_UNLOCK);
-    }
-
-    public void setOffsetPocketForUnlock(int offsetPocket) {
-        saveInt(SAVED_SELECTED_LOCATION, OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME, offsetPocket);
-    }
-
-    public int getStartThreshold() {
-        return readInt(SAVED_SELECTED_LOCATION, START_THR_PREFERENCES_NAME, START_THRESHOLD);
-    }
-
-    public void setStartThreshold(int startThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, START_THR_PREFERENCES_NAME, startThreshold);
-    }
-
-    public int getUnlockThreshold() {
-        return readInt(SAVED_SELECTED_LOCATION, UNLOCK_THR_PREFERENCES_NAME, UNLOCK_IN_THE_RUN_THRESHOLD);
-    }
-
-    public void setUnlockThreshold(int unlockThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, UNLOCK_THR_PREFERENCES_NAME, unlockThreshold);
-    }
-
-    public int getLockThreshold() {
-        return readInt(SAVED_SELECTED_LOCATION, LOCK_THR_PREFERENCES_NAME, WALK_AWAY_LOCKING_THRESHOLD);
-    }
-
-    public void setLockThreshold(int lockThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, LOCK_THR_PREFERENCES_NAME, lockThreshold);
-    }
-
-    public int getWelcomeThreshold() {
-        return readInt(SAVED_SELECTED_LOCATION, WELCOME_THR_PREFERENCES_NAME, WELCOME_THRESHOLD);
-    }
-
-    public void setWelcomeThreshold(int welcomeThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, WELCOME_THR_PREFERENCES_NAME, welcomeThreshold);
-    }
-
-    public int getNextToDoorRatioThreshold() {
-        return readInt(SAVED_SELECTED_LOCATION, NEXT_TO_DOOR_RATIO_THR_PREFERENCES_NAME, NEXT_TO_DOOR_RATIO_THRESHOLD);
-    }
-
-    public void setNextToDoorRatioThreshold(int nextToDoorRatioThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, NEXT_TO_DOOR_RATIO_THR_PREFERENCES_NAME, nextToDoorRatioThreshold);
-    }
-
-    public int getNextToBackDoorRatioThresholdMin() {
-        return readInt(SAVED_SELECTED_LOCATION, NEXT_TO_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME, NEXT_TO_BACKDOOR_RATIO_THRESHOLD_MIN);
-    }
-
-    public void setNextToBackDoorRatioThresholdMin(int nextToBackDoorRatioThresholdMin) {
-        saveInt(SAVED_SELECTED_LOCATION, NEXT_TO_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME, nextToBackDoorRatioThresholdMin);
-    }
-
-    public int getNextToBackDoorRatioThresholdMax() {
-        return readInt(SAVED_SELECTED_LOCATION, NEXT_TO_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME, NEXT_TO_BACKDOOR_RATIO_THRESHOLD_MAX);
-    }
-
-    public void setNextToBackDoorRatioThresholdMax(int nextToBackDoorRatioThresholdMax) {
-        saveInt(SAVED_SELECTED_LOCATION, NEXT_TO_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME, nextToBackDoorRatioThresholdMax);
-    }
-
-    public int getNextToDoorThresholdMLorMRMax() {
-        return readInt(SAVED_SELECTED_LOCATION, NEXT_TO_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME, NEXT_TO_DOOR_RATIO_THRESHOLD_ML_MR_MAX);
-    }
-
-    public int getNextToDoorThresholdMLorMRMin() {
-        return readInt(SAVED_SELECTED_LOCATION, NEXT_TO_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME, NEXT_TO_DOOR_RATIO_THRESHOLD_ML_MR_MIN);
+        return readString(SAVED_CC_GENERIC_OPTION, CONNECTED_CAR_TYPE_PREFERENCES_NAME, ConnectedCarFactory.TYPE_4_A);
     }
 
     public int getRssiLogNumber() {
-        return readInt(SAVED_SELECTED_LOCATION, RSSI_LOG_NUMBER_PREFERENCES_NAME, RSSI_LOG_NUMBER);
+        return readInt(SAVED_CC_GENERIC_OPTION, RSSI_LOG_NUMBER_PREFERENCES_NAME, RSSI_LOG_NUMBER);
     }
 
     public void setRssiLogNumber(int rssiLogNumber) {
-        saveInt(SAVED_SELECTED_LOCATION, RSSI_LOG_NUMBER_PREFERENCES_NAME, rssiLogNumber);
-    }
-
-    public int getAverageDeltaUnlockThreshold() {
-        return readInt(SAVED_SELECTED_LOCATION, AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME, AVERAGE_DELTA_UNLOCK_THRESHOLD);
-    }
-
-    public void setAverageDeltaUnlockThreshold(int averageDeltaThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
-    }
-
-    public int getAverageDeltaLockThreshold() {
-        return readInt(SAVED_SELECTED_LOCATION, AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME, AVERAGE_DELTA_LOCK_THRESHOLD);
-    }
-
-    public void setAverageDeltaLockThreshold(int averageDeltaThreshold) {
-        saveInt(SAVED_SELECTED_LOCATION, AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
+        saveInt(SAVED_CC_GENERIC_OPTION, RSSI_LOG_NUMBER_PREFERENCES_NAME, rssiLogNumber);
     }
 
     public int getRollingAvElement() {
-        return readInt(SAVED_SELECTED_LOCATION, ROLLING_AV_ELEMENT_PREFERENCES_NAME, ROLLING_AVERAGE_ELEMENTS);
+        return readInt(SAVED_CC_GENERIC_OPTION, ROLLING_AV_ELEMENT_PREFERENCES_NAME, ROLLING_AVERAGE_ELEMENTS);
     }
 
     public void setRollingAvElement(int rollingAvElement) {
-        saveInt(SAVED_SELECTED_LOCATION, ROLLING_AV_ELEMENT_PREFERENCES_NAME, rollingAvElement);
+        saveInt(SAVED_CC_GENERIC_OPTION, ROLLING_AV_ELEMENT_PREFERENCES_NAME, rollingAvElement);
     }
 
     public int getStartNbElement() {
-        return readInt(SAVED_SELECTED_LOCATION, START_NB_ELEMENT_PREFERENCES_NAME, START_NB_ELEMENT);
+        return readInt(SAVED_CC_GENERIC_OPTION, START_NB_ELEMENT_PREFERENCES_NAME, START_NB_ELEMENT);
     }
 
     public void setStartNbElement(int startNbElement) {
-        saveInt(SAVED_SELECTED_LOCATION, START_NB_ELEMENT_PREFERENCES_NAME, startNbElement);
+        saveInt(SAVED_CC_GENERIC_OPTION, START_NB_ELEMENT_PREFERENCES_NAME, startNbElement);
     }
 
     public int getLockNbElement() {
-        return readInt(SAVED_SELECTED_LOCATION, LOCK_NB_ELEMENT_PREFERENCES_NAME, LOCK_NB_ELEMENT);
+        return readInt(SAVED_CC_GENERIC_OPTION, LOCK_NB_ELEMENT_PREFERENCES_NAME, LOCK_NB_ELEMENT);
     }
 
     public void setLockNbElement(int lockNbElement) {
-        saveInt(SAVED_SELECTED_LOCATION, LOCK_NB_ELEMENT_PREFERENCES_NAME, lockNbElement);
+        saveInt(SAVED_CC_GENERIC_OPTION, LOCK_NB_ELEMENT_PREFERENCES_NAME, lockNbElement);
     }
 
     public int getUnlockNbElement() {
-        return readInt(SAVED_SELECTED_LOCATION, UNLOCK_NB_ELEMENT_PREFERENCES_NAME, UNLOCK_NB_ELEMENT);
+        return readInt(SAVED_CC_GENERIC_OPTION, UNLOCK_NB_ELEMENT_PREFERENCES_NAME, UNLOCK_NB_ELEMENT);
     }
 
     public void setUnlockNbElement(int unlockNbElement) {
-        saveInt(SAVED_SELECTED_LOCATION, UNLOCK_NB_ELEMENT_PREFERENCES_NAME, unlockNbElement);
+        saveInt(SAVED_CC_GENERIC_OPTION, UNLOCK_NB_ELEMENT_PREFERENCES_NAME, unlockNbElement);
     }
 
     public int getWelcomeNbElement() {
-        return readInt(SAVED_SELECTED_LOCATION, WELCOME_NB_ELEMENT_PREFERENCES_NAME, WELCOME_NB_ELEMENT);
+        return readInt(SAVED_CC_GENERIC_OPTION, WELCOME_NB_ELEMENT_PREFERENCES_NAME, WELCOME_NB_ELEMENT);
     }
 
     public void setWelcomeNbElement(int welcomeNbElement) {
-        saveInt(SAVED_SELECTED_LOCATION, WELCOME_NB_ELEMENT_PREFERENCES_NAME, welcomeNbElement);
+        saveInt(SAVED_CC_GENERIC_OPTION, WELCOME_NB_ELEMENT_PREFERENCES_NAME, welcomeNbElement);
     }
 
     public int getLongNbElement() {
-        return readInt(SAVED_SELECTED_LOCATION, LONG_NB_ELEMENT_PREFERENCES_NAME, LONG_NB_ELEMENT);
+        return readInt(SAVED_CC_GENERIC_OPTION, LONG_NB_ELEMENT_PREFERENCES_NAME, LONG_NB_ELEMENT);
     }
 
     public void setLongNbElement(int longNbElement) {
-        saveInt(SAVED_SELECTED_LOCATION, LONG_NB_ELEMENT_PREFERENCES_NAME, longNbElement);
+        saveInt(SAVED_CC_GENERIC_OPTION, LONG_NB_ELEMENT_PREFERENCES_NAME, longNbElement);
     }
 
     public int getShortNbElement() {
-        return readInt(SAVED_SELECTED_LOCATION, SHORT_NB_ELEMENT_PREFERENCES_NAME, SHORT_NB_ELEMENT);
+        return readInt(SAVED_CC_GENERIC_OPTION, SHORT_NB_ELEMENT_PREFERENCES_NAME, SHORT_NB_ELEMENT);
     }
 
     public void setShortNbElement(int shortNbElement) {
-        saveInt(SAVED_SELECTED_LOCATION, SHORT_NB_ELEMENT_PREFERENCES_NAME, shortNbElement);
-    }
-
-    public int getUnlockMode() {
-        return readInt(SAVED_SELECTED_LOCATION, UNLOCK_MODE_PREFERENCES_NAME, UNLOCK_MODE);
-    }
-
-    public void setUnlockMode(int unlockMode) {
-        saveInt(SAVED_SELECTED_LOCATION, UNLOCK_MODE_PREFERENCES_NAME, unlockMode);
-    }
-
-    public int getLockMode() {
-        return readInt(SAVED_SELECTED_LOCATION, LOCK_MODE_PREFERENCES_NAME, LOCK_MODE);
-    }
-
-    public void setLockMode(int lockMode) {
-        saveInt(SAVED_SELECTED_LOCATION, LOCK_MODE_PREFERENCES_NAME, lockMode);
-    }
-
-    public int getStartMode() {
-        return readInt(SAVED_SELECTED_LOCATION, START_MODE_PREFERENCES_NAME, START_MODE);
-    }
-
-    public void setStartMode(int startMode) {
-        saveInt(SAVED_SELECTED_LOCATION, START_MODE_PREFERENCES_NAME, startMode);
-    }
-
-    public float getEcretage70_100() {
-        return readFloat(SAVED_SELECTED_LOCATION, ECRETAGE_70_100_PREFERENCES_NAME, ECRETAGE_70_100);
-    }
-
-    public void setEcretage70_100(float ecretage) {
-        saveFloat(SAVED_SELECTED_LOCATION, ECRETAGE_70_100_PREFERENCES_NAME, ecretage);
-    }
-
-    public float getEcretage50_70() {
-        return readFloat(SAVED_SELECTED_LOCATION, ECRETAGE_50_70_PREFERENCES_NAME, ECRETAGE_50_70);
-    }
-
-    public void setEcretage50_70(float ecretage) {
-        saveFloat(SAVED_SELECTED_LOCATION, ECRETAGE_50_70_PREFERENCES_NAME, ecretage);
-    }
-
-    public float getEcretage30_50() {
-        return readFloat(SAVED_SELECTED_LOCATION, ECRETAGE_30_50_PREFERENCES_NAME, ECRETAGE_30_50);
-    }
-
-    public void setEcretage30_50(float ecretage) {
-        saveFloat(SAVED_SELECTED_LOCATION, ECRETAGE_30_50_PREFERENCES_NAME, ecretage);
-    }
-
-    public float getEcretage30_30() {
-        return readFloat(SAVED_SELECTED_LOCATION, ECRETAGE_30_30_PREFERENCES_NAME, ECRETAGE_30_30);
-    }
-
-    public void setEcretage30_30(float ecretage) {
-        saveFloat(SAVED_SELECTED_LOCATION, ECRETAGE_30_30_PREFERENCES_NAME, ecretage);
+        saveInt(SAVED_CC_GENERIC_OPTION, SHORT_NB_ELEMENT_PREFERENCES_NAME, shortNbElement);
     }
 
     public String getTrxAddressConnectable() {
-        return readString(SAVED_SELECTED_LOCATION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, BLE_ADDRESS_CONNECTABLE);
+        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, BLE_ADDRESS_CONNECTABLE);
     }
 
     public void setTrxAddressConnectable(String address) {
-        saveString(SAVED_SELECTED_LOCATION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, address);
+        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, address);
     }
 
     public String getTrxAddressLeft() {
-        return readString(SAVED_SELECTED_LOCATION, ADDRESS_LEFT_PREFERENCE_NAME, BLE_ADDRESS_LEFT);
+        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_LEFT_PREFERENCE_NAME, BLE_ADDRESS_LEFT);
     }
 
     public void setTrxAddressLeft(String address) {
-        saveString(SAVED_SELECTED_LOCATION, ADDRESS_LEFT_PREFERENCE_NAME, address);
+        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_LEFT_PREFERENCE_NAME, address);
     }
 
     public String getTrxAddressMiddle() {
-        return readString(SAVED_SELECTED_LOCATION, ADDRESS_MIDDLE_PREFERENCE_NAME, BLE_ADDRESS_MIDDLE);
+        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_MIDDLE_PREFERENCE_NAME, BLE_ADDRESS_MIDDLE);
     }
 
     public void setTrxAddressMiddle(String address) {
-        saveString(SAVED_SELECTED_LOCATION, ADDRESS_MIDDLE_PREFERENCE_NAME, address);
+        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_MIDDLE_PREFERENCE_NAME, address);
     }
 
     public String getTrxAddressRight() {
-        return readString(SAVED_SELECTED_LOCATION, ADDRESS_RIGHT_PREFERENCE_NAME, BLE_ADDRESS_RIGHT);
+        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_RIGHT_PREFERENCE_NAME, BLE_ADDRESS_RIGHT);
     }
 
     public void setTrxAddressRight(String address) {
-        saveString(SAVED_SELECTED_LOCATION, ADDRESS_RIGHT_PREFERENCE_NAME, address);
+        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_RIGHT_PREFERENCE_NAME, address);
     }
 
     public String getTrxAddressBack() {
-        return readString(SAVED_SELECTED_LOCATION, ADDRESS_BACK_PREFERENCE_NAME, BLE_ADDRESS_BACK);
+        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_BACK_PREFERENCE_NAME, BLE_ADDRESS_BACK);
     }
 
     public void setTrxAddressBack(String address) {
-        saveString(SAVED_SELECTED_LOCATION, ADDRESS_BACK_PREFERENCE_NAME, address);
+        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_BACK_PREFERENCE_NAME, address);
     }
 
     public String getTrxAddressFrontLeft() {
-        return readString(SAVED_SELECTED_LOCATION, ADDRESS_FRONT_LEFT_PREFERENCE_NAME, BLE_ADDRESS_FRONT_LEFT);
+        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_FRONT_LEFT_PREFERENCE_NAME, BLE_ADDRESS_FRONT_LEFT);
     }
 
     public String getTrxAddressRearLeft() {
-        return readString(SAVED_SELECTED_LOCATION, ADDRESS_REAR_LEFT_PREFERENCE_NAME, BLE_ADDRESS_REAR_LEFT);
+        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_REAR_LEFT_PREFERENCE_NAME, BLE_ADDRESS_REAR_LEFT);
     }
 
     public String getTrxAddressFrontRight() {
-        return readString(SAVED_SELECTED_LOCATION, ADDRESS_FRONT_RIGHT_PREFERENCE_NAME, BLE_ADDRESS_FRONT_RIGHT);
+        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_FRONT_RIGHT_PREFERENCE_NAME, BLE_ADDRESS_FRONT_RIGHT);
     }
 
     public String getTrxAddressRearRight() {
-        return readString(SAVED_SELECTED_LOCATION, ADDRESS_REAR_RIGHT_PREFERENCE_NAME, BLE_ADDRESS_REAR_RIGHT);
+        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_REAR_RIGHT_PREFERENCE_NAME, BLE_ADDRESS_REAR_RIGHT);
     }
 
     public int getLinAccSize() {
-        return readInt(SAVED_SELECTED_LOCATION, LIN_ACC_SIZE_PREFERENCES_NAME, LIN_ACC_SIZE);
+        return readInt(SAVED_CC_GENERIC_OPTION, LIN_ACC_SIZE_PREFERENCES_NAME, LIN_ACC_SIZE);
     }
 
     public void setLinAccSize(int linAccSize) {
-        saveInt(SAVED_SELECTED_LOCATION, LIN_ACC_SIZE_PREFERENCES_NAME, linAccSize);
+        saveInt(SAVED_CC_GENERIC_OPTION, LIN_ACC_SIZE_PREFERENCES_NAME, linAccSize);
     }
 
     public float getCorrectionLinAcc() {
-        return readFloat(SAVED_SELECTED_LOCATION, CORRECTION_LIN_ACC_PREFERENCES_NAME, CORRECTION_LIN_ACC);
+        return readFloat(SAVED_CC_GENERIC_OPTION, CORRECTION_LIN_ACC_PREFERENCES_NAME, CORRECTION_LIN_ACC);
     }
 
     public void setCorrectionLinAcc(float correctionLinAcc) {
-        saveFloat(SAVED_SELECTED_LOCATION, CORRECTION_LIN_ACC_PREFERENCES_NAME, correctionLinAcc);
-    }
-
-    public int getTrxRssiEqualizerLeft() {
-        return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_LEFT_PREFERENCES_NAME, EQUALIZER_LEFT);
-    }
-
-    public int getTrxRssiEqualizerFrontLeft() {
-        return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_FRONT_LEFT_PREFERENCES_NAME, EQUALIZER_FRONT_LEFT);
-    }
-
-    public int getTrxRssiEqualizerRearLeft() {
-        return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_REAR_LEFT_PREFERENCES_NAME, EQUALIZER_REAR_LEFT);
-    }
-
-    public int getTrxRssiEqualizerMiddle() {
-        return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_MIDDLE_PREFERENCES_NAME, EQUALIZER_MIDDLE);
-    }
-
-    public int getTrxRssiEqualizerRight() {
-        return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_RIGHT_PREFERENCES_NAME, EQUALIZER_RIGHT);
-    }
-
-    public int getTrxRssiEqualizerFrontRight() {
-        return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME, EQUALIZER_FRONT_RIGHT);
-    }
-
-    public int getTrxRssiEqualizerRearRight() {
-        return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_REAR_RIGHT_PREFERENCES_NAME, EQUALIZER_REAR_RIGHT);
-    }
-
-    public int getTrxRssiEqualizerBack() {
-        return readInt(SAVED_SELECTED_LOCATION, EQUALIZER_BACK_PREFERENCES_NAME, EQUALIZER_BACK);
+        saveFloat(SAVED_CC_GENERIC_OPTION, CORRECTION_LIN_ACC_PREFERENCES_NAME, correctionLinAcc);
     }
 
     public String getUserMail() {
-        return readString(SAVED_SELECTED_LOCATION, USER_MAIL_PREFERENCES_NAME, "");
+        return readString(SAVED_LOGIN_INFO, USER_MAIL_PREFERENCES_NAME, "");
     }
 
     public void setUserMail(String userMail) {
-        saveString(SAVED_SELECTED_LOCATION, USER_MAIL_PREFERENCES_NAME, userMail);
+        saveString(SAVED_LOGIN_INFO, USER_MAIL_PREFERENCES_NAME, userMail);
     }
 
     public String getPassword() {
-        return readString(SAVED_SELECTED_LOCATION, PASSWORD_PREFERENCES_NAME, "");
+        return readString(SAVED_LOGIN_INFO, PASSWORD_PREFERENCES_NAME, "");
     }
 
     public void setPassword(String password) {
-        saveString(SAVED_SELECTED_LOCATION, PASSWORD_PREFERENCES_NAME, password);
+        saveString(SAVED_LOGIN_INFO, PASSWORD_PREFERENCES_NAME, password);
     }
 
     // region Internal methods
@@ -567,11 +570,8 @@ public final class SdkPreferencesHelper {
      * @return the read value, or the default one.
      */
     private String readString(final String fileName, final String keyName, final String defaultValue) {
-//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-//        return sharedPref.getString(keyName, defaultValue);
-        return PreferenceManager
-                .getDefaultSharedPreferences(mApplicationContext)
-                .getString(keyName, defaultValue);
+        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+        return sharedPref.getString(keyName, defaultValue);
     }
 
     /**
@@ -582,13 +582,10 @@ public final class SdkPreferencesHelper {
      * @param value    the value to save.
      */
     private void saveString(final String fileName, final String keyName, final String value) {
-//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPref.edit();
-//        editor.putString(keyName, value);
-//        editor.commit();
-        PreferenceManager
-                .getDefaultSharedPreferences(mApplicationContext)
-                .edit().putString(keyName, value).commit();
+        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(keyName, value);
+        editor.commit();
     }
 
     /**
@@ -600,11 +597,8 @@ public final class SdkPreferencesHelper {
      * @return the read value, or the default one.
      */
     private boolean readBoolean(final String fileName, final String keyName, final boolean defaultValue) {
-//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-//        return sharedPref.getBoolean(keyName, defaultValue);
-        return Boolean.valueOf(PreferenceManager
-                .getDefaultSharedPreferences(mApplicationContext)
-                .getString(keyName, String.valueOf(defaultValue)));
+        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+        return Boolean.parseBoolean(sharedPref.getString(keyName, String.valueOf(defaultValue)));
     }
 
     /**
@@ -615,13 +609,10 @@ public final class SdkPreferencesHelper {
      * @param value    the value to save.
      */
     private void saveBoolean(final String fileName, final String keyName, final boolean value) {
-//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPref.edit();
-//        editor.putBoolean(keyName, value);
-//        editor.commit();
-        PreferenceManager
-                .getDefaultSharedPreferences(mApplicationContext)
-                .edit().putString(keyName, String.valueOf(value)).commit();
+        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(keyName, String.valueOf(value));
+        editor.commit();
     }
 
     /**
@@ -633,11 +624,8 @@ public final class SdkPreferencesHelper {
      * @return the read value, or the default one.
      */
     private float readFloat(final String fileName, final String keyName, final float defaultValue) {
-//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-//        return sharedPref.getFloat(keyName, defaultValue);
-        return Float.valueOf(PreferenceManager
-                .getDefaultSharedPreferences(mApplicationContext)
-                .getString(keyName, String.valueOf(defaultValue)));
+        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+        return Float.parseFloat(sharedPref.getString(keyName, String.valueOf(defaultValue)));
     }
 
     /**
@@ -648,13 +636,10 @@ public final class SdkPreferencesHelper {
      * @param value    the value to save.
      */
     private void saveFloat(final String fileName, final String keyName, final float value) {
-//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPref.edit();
-//        editor.putFloat(keyName, value);
-//        editor.commit();
-        PreferenceManager
-                .getDefaultSharedPreferences(mApplicationContext)
-                .edit().putString(keyName, String.valueOf(value)).commit();
+        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(keyName, String.valueOf(value));
+        editor.commit();
     }
 
     /**
@@ -666,11 +651,8 @@ public final class SdkPreferencesHelper {
      * @return the read value, or the default one.
      */
     private int readInt(final String fileName, final String keyName, final int defaultValue) {
-//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-//        return sharedPref.getInt(keyName, defaultValue);
-        return Integer.valueOf(PreferenceManager
-                .getDefaultSharedPreferences(mApplicationContext)
-                .getString(keyName, String.valueOf(defaultValue)));
+        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+        return Integer.parseInt(sharedPref.getString(keyName, String.valueOf(defaultValue)));
     }
 
     /**
@@ -681,13 +663,10 @@ public final class SdkPreferencesHelper {
      * @param value    the value to save.
      */
     private void saveInt(final String fileName, final String keyName, final int value) {
-//        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPref.edit();
-//        editor.putInt(keyName, value);
-//        editor.commit();
-        PreferenceManager
-                .getDefaultSharedPreferences(mApplicationContext)
-                .edit().putString(keyName, String.valueOf(value)).commit();
+        SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(keyName, String.valueOf(value));
+        editor.commit();
     }
 
     // endregion
