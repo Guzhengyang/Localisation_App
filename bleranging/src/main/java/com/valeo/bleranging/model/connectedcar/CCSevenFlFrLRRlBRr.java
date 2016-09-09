@@ -4,8 +4,6 @@ import android.text.SpannableStringBuilder;
 
 import com.valeo.bleranging.model.Trx;
 
-import java.util.HashMap;
-
 /**
  * Created by l-avaratha on 07/09/2016.
  */
@@ -17,7 +15,6 @@ public class CCSevenFlFrLRRlBRr extends ConnectedCar {
 
     @Override
     public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
-        trxMap = new HashMap<>();
         trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME, historicDefaultValuePeriph);
         trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, TRX_FRONT_RIGHT_NAME, historicDefaultValuePeriph);
         trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME, historicDefaultValuePeriph);
@@ -32,13 +29,13 @@ public class CCSevenFlFrLRRlBRr extends ConnectedCar {
         trxRearLeft.setEnabled(true);
         trxBack.setEnabled(true);
         trxRearRight.setEnabled(true);
-        trxMap.put(NUMBER_TRX_FRONT_LEFT, trxFrontLeft);
-        trxMap.put(NUMBER_TRX_FRONT_RIGHT, trxFrontRight);
-        trxMap.put(NUMBER_TRX_LEFT, trxLeft);
-        trxMap.put(NUMBER_TRX_RIGHT, trxRight);
-        trxMap.put(NUMBER_TRX_REAR_LEFT, trxRearLeft);
-        trxMap.put(NUMBER_TRX_BACK, trxBack);
-        trxMap.put(NUMBER_TRX_REAR_RIGHT, trxRearRight);
+        trxLinkedHMap.put(NUMBER_TRX_FRONT_LEFT, trxFrontLeft);
+        trxLinkedHMap.put(NUMBER_TRX_FRONT_RIGHT, trxFrontRight);
+        trxLinkedHMap.put(NUMBER_TRX_LEFT, trxLeft);
+        trxLinkedHMap.put(NUMBER_TRX_RIGHT, trxRight);
+        trxLinkedHMap.put(NUMBER_TRX_REAR_LEFT, trxRearLeft);
+        trxLinkedHMap.put(NUMBER_TRX_BACK, trxBack);
+        trxLinkedHMap.put(NUMBER_TRX_REAR_RIGHT, trxRearRight);
     }
 
     @Override

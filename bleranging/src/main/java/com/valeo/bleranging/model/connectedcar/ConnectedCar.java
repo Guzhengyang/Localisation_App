@@ -12,7 +12,7 @@ import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.TextUtils;
 import com.valeo.bleranging.utils.TrxUtils;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 
 /**
@@ -63,7 +63,7 @@ public abstract class ConnectedCar {
     protected Trx trxRearLeft;
     protected Trx trxFrontRight;
     protected Trx trxRearRight;
-    protected HashMap<Integer, Trx> trxMap;
+    protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
     protected ConnectionNumber connectionNumber;
 
     public ConnectedCar(ConnectionNumber connectionNumber) {
@@ -75,6 +75,7 @@ public abstract class ConnectedCar {
      * @param newLockStatus the lock status that determines which values to set
      */
     public void initializeTrx(boolean newLockStatus) {
+        trxLinkedHMap = new LinkedHashMap<>();
         if (newLockStatus) {
             initializeTrx(RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE);
         } else {
@@ -175,24 +176,24 @@ public abstract class ConnectedCar {
      * @param smartphoneIsLaidDownLAcc the boolean that determines if the smartphone is moving or not
      */
     public void saveRssi(int trxNumber, int antennaId, int rssi, Antenna.BLEChannel bleChannel, boolean smartphoneIsLaidDownLAcc) {
-        Trx tmpTrx = trxMap.get(trxNumber);
+        Trx tmpTrx = trxLinkedHMap.get(trxNumber);
         if(tmpTrx != null) {
             tmpTrx.saveRssi(antennaId, rssi, bleChannel, smartphoneIsLaidDownLAcc);
-            trxMap.put(trxNumber, tmpTrx);
+            trxLinkedHMap.put(trxNumber, tmpTrx);
         }
     }
 
     public int getRssiAverage(int trxNumber, int antennaId, int averageMode) {
-        if(trxMap.get(trxNumber) != null) {
-            return trxMap.get(trxNumber).getAntennaRssiAverage(antennaId, averageMode);
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            return trxLinkedHMap.get(trxNumber).getAntennaRssiAverage(antennaId, averageMode);
         } else {
             return 0;
         }
     }
 
     public int getCurrentOriginalRssi(int trxNumber, int antennaId) {
-        if(trxMap.get(trxNumber) != null) {
-            return trxMap.get(trxNumber).getCurrentOriginalRssi(antennaId);
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            return trxLinkedHMap.get(trxNumber).getCurrentOriginalRssi(antennaId);
         } else {
             return 0;
         }
@@ -202,7 +203,7 @@ public abstract class ConnectedCar {
      * Check all trx antenna to see if they are active
      */
     public void compareCheckerAndSetAntennaActive() {
-        for (Trx trx : trxMap.values()) {
+        for (Trx trx : trxLinkedHMap.values()) {
             trx.compareCheckerAndSetAntennaActive();
         }
     }
@@ -215,7 +216,7 @@ public abstract class ConnectedCar {
     public int getAllTrxAverage(int averageMode) {
         int totalAverage = 0;
         int numberOfAntenna = 0;
-        for (Trx trx : trxMap.values()) {
+        for (Trx trx : trxLinkedHMap.values()) {
             if (trx.isActive()) {
                 totalAverage += (trx.getTrxRssiAverage(averageMode));
                 numberOfAntenna++;
@@ -238,56 +239,56 @@ public abstract class ConnectedCar {
     }
 
     public int getRatioNearDoor(int mode, int trx1, int trx2) {
-        if(trxMap.get(trx1) != null && trxMap.get(trx2) != null) {
-            return TrxUtils.getRatioNearDoor(mode, trxMap.get(trx1), trxMap.get(trx2));
+        if (trxLinkedHMap.get(trx1) != null && trxLinkedHMap.get(trx2) != null) {
+            return TrxUtils.getRatioNearDoor(mode, trxLinkedHMap.get(trx1), trxLinkedHMap.get(trx2));
         } else {
             return 0;
         }
     }
 
     public boolean isRatioNearDoorGreaterThanThreshold(int mode, int trx1, int trx2, int threshold) {
-        if(trxMap.get(trx1) != null && trxMap.get(trx2) != null) {
-            return TrxUtils.getRatioNearDoorGreaterThanThreshold(mode, trxMap.get(trx1), trxMap.get(trx2), threshold);
+        if (trxLinkedHMap.get(trx1) != null && trxLinkedHMap.get(trx2) != null) {
+            return TrxUtils.getRatioNearDoorGreaterThanThreshold(mode, trxLinkedHMap.get(trx1), trxLinkedHMap.get(trx2), threshold);
         } else {
             return false;
         }
     }
 
     public boolean isRatioNearDoorLowerThanThreshold(int mode, int trx1, int trx2, int threshold) {
-        if(trxMap.get(trx1) != null && trxMap.get(trx2) != null) {
-            return TrxUtils.getRatioNearDoorLowerThanThreshold(mode, trxMap.get(trx1), trxMap.get(trx2), threshold);
+        if (trxLinkedHMap.get(trx1) != null && trxLinkedHMap.get(trx2) != null) {
+            return TrxUtils.getRatioNearDoorLowerThanThreshold(mode, trxLinkedHMap.get(trx1), trxLinkedHMap.get(trx2), threshold);
         } else {
             return false;
         }
     }
 
     public boolean isTrxGreaterThanThreshold(int trxNumber, int antennaMode, int averageMode, int threshold) {
-        if(trxMap.get(trxNumber) != null) {
-            return trxMap.get(trxNumber).trxGreaterThanThreshold(antennaMode, averageMode, threshold);
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            return trxLinkedHMap.get(trxNumber).trxGreaterThanThreshold(antennaMode, averageMode, threshold);
         } else {
             return false;
         }
     }
 
     public boolean isTrxLowerThanThreshold(int trxNumber, int antennaMode, int averageMode, int threshold) {
-        if(trxMap.get(trxNumber) != null) {
-            return trxMap.get(trxNumber).trxLowerThanThreshold(antennaMode, averageMode, threshold);
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            return trxLinkedHMap.get(trxNumber).trxLowerThanThreshold(antennaMode, averageMode, threshold);
         } else {
             return false;
         }
     }
 
     public boolean isActive(int trxNumber) {
-        if(trxMap.get(trxNumber) != null) {
-            return trxMap.get(trxNumber).isActive();
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            return trxLinkedHMap.get(trxNumber).isActive();
         } else {
             return false;
         }
     }
 
     public int getOffsetBleChannel38(int trxNumber, int antennaId) {
-        if(trxMap.get(trxNumber) != null) {
-            return trxMap.get(trxNumber).getOffset38(antennaId);
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            return trxLinkedHMap.get(trxNumber).getOffset38(antennaId);
         } else {
             return 0;
         }
@@ -369,7 +370,7 @@ public abstract class ConnectedCar {
             SpannableStringBuilder spannableStringBuilder, Antenna.BLEChannel bleChannel) {
         spannableStringBuilder.append("Scanning on channel: ").append(bleChannel.toString()).append("\n");
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
-        for (Trx trx : trxMap.values()) {
+        for (Trx trx : trxLinkedHMap.values()) {
             spannableStringBuilder
                     .append(TextUtils.colorText(isActive(trx.getTrxNumber()), trx.getTrxName(), Color.WHITE, Color.DKGRAY))
                     .append("    ");
@@ -386,19 +387,19 @@ public abstract class ConnectedCar {
     public SpannableStringBuilder createFirstFooterDebugData(SpannableStringBuilder spannableStringBuilder) {
         spannableStringBuilder.append("\n"); // return to line after tryStrategies print if success
         StringBuilder dataStringBuilder = new StringBuilder();
-        for (Trx trx : trxMap.values()) {
+        for (Trx trx : trxLinkedHMap.values()) {
             dataStringBuilder
                     .append(getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT))
                     .append("    ");
         }
         dataStringBuilder.append('\n');
-        for (Trx trx : trxMap.values()) {
+        for (Trx trx : trxLinkedHMap.values()) {
             dataStringBuilder
                     .append(getCurrentOriginalRssi(trx.getTrxNumber(), Trx.ANTENNA_ID_1))
                     .append("    ");
         }
         dataStringBuilder.append('\n');
-        for (Trx trx : trxMap.values()) {
+        for (Trx trx : trxLinkedHMap.values()) {
             dataStringBuilder
                     .append(getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_0, Antenna.AVERAGE_DEFAULT))
                     .append("    ");
@@ -457,7 +458,7 @@ public abstract class ConnectedCar {
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
         spannableStringBuilder.append("offset channel 38 :\n");
         StringBuilder offset38StringBuilder = new StringBuilder();
-        for (Trx trx : trxMap.values()) {
+        for (Trx trx : trxLinkedHMap.values()) {
             offset38StringBuilder
                     .append(getOffsetBleChannel38(trx.getTrxNumber(), Trx.ANTENNA_ID_1))
                     .append("    ");
@@ -488,7 +489,7 @@ public abstract class ConnectedCar {
      */
     public SpannableStringBuilder printModedAverage(int mode, int color, int threshold, String comparaisonSign, boolean smartphoneIsLaidDownLAcc, ConnectedCar connectedCar) {
         SpannableStringBuilder ssb = new SpannableStringBuilder(String.valueOf(TextUtils.getNbElement(mode, smartphoneIsLaidDownLAcc)) + "     ");
-        for (Trx trx : trxMap.values()) {
+        for (Trx trx : trxLinkedHMap.values()) {
             ssb.append(TextUtils.colorAntennaAverage(getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_1, mode), color, threshold, comparaisonSign));
         }
         ssb.append("\n");
