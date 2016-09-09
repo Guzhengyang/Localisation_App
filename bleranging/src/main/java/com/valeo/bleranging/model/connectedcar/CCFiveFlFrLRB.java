@@ -1,5 +1,7 @@
 package com.valeo.bleranging.model.connectedcar;
 
+import android.text.SpannableStringBuilder;
+
 import com.valeo.bleranging.model.Trx;
 
 import java.util.HashMap;
@@ -16,11 +18,11 @@ public class CCFiveFlFrLRB extends ConnectedCar {
     @Override
     public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
         trxMap = new HashMap<>();
-        trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, historicDefaultValuePeriph);
-        trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, historicDefaultValuePeriph);
-        trxLeft = new Trx(NUMBER_TRX_LEFT, historicDefaultValuePeriph);
-        trxRight = new Trx(NUMBER_TRX_RIGHT, historicDefaultValuePeriph);
-        trxBack = new Trx(NUMBER_TRX_BACK, historicDefaultValuePeriph);
+        trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME, historicDefaultValuePeriph);
+        trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, TRX_FRONT_RIGHT_NAME, historicDefaultValuePeriph);
+        trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME, historicDefaultValuePeriph);
+        trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME, historicDefaultValuePeriph);
+        trxBack = new Trx(NUMBER_TRX_BACK, TRX_BACK_NAME, historicDefaultValuePeriph);
         trxFrontLeft.setEnabled(true);
         trxFrontRight.setEnabled(true);
         trxLeft.setEnabled(true);
@@ -71,5 +73,10 @@ public class CCFiveFlFrLRB extends ConnectedCar {
     @Override
     public boolean numberOfTrxValid(int mode, boolean trxL, boolean trxM, boolean trxR, boolean trxB, boolean trxFL, boolean trxRL, boolean trxFR, boolean trxRR) {
         return false;
+    }
+
+    @Override
+    public SpannableStringBuilder createSecondFooterDebugData(SpannableStringBuilder spannableStringBuilder, boolean smartphoneIsInPocket, boolean smartphoneIsLaidDownLAcc, int totalAverage, boolean rearmLock, boolean rearmUnlock) {
+        return spannableStringBuilder;
     }
 }

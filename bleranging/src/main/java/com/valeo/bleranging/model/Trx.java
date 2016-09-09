@@ -9,13 +9,25 @@ public class Trx {
     public final static int ANTENNA_ID_0 = 0;
     public final static int ANTENNA_ID_1 = 4;
     public final static int ANTENNA_ID_2 = 8;
+    private final int trxNumber;
+    private final String trxName;
     private final Antenna antenna1;
     private final Antenna antenna2;
     private boolean isEnabled = false;
 
-    public Trx(int numberTrx, int historicDefaultValue) {
-        this.antenna1 = new Antenna(numberTrx, ANTENNA_ID_1, historicDefaultValue);
-        this.antenna2 = new Antenna(numberTrx, ANTENNA_ID_2, historicDefaultValue);
+    public Trx(int trxNumber, String trxName, int historicDefaultValue) {
+        this.trxNumber = trxNumber;
+        this.trxName = trxName;
+        this.antenna1 = new Antenna(trxNumber, ANTENNA_ID_1, historicDefaultValue);
+        this.antenna2 = new Antenna(trxNumber, ANTENNA_ID_2, historicDefaultValue);
+    }
+
+    public int getTrxNumber() {
+        return trxNumber;
+    }
+
+    public String getTrxName() {
+        return trxName;
     }
 
     /**

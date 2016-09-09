@@ -1,5 +1,7 @@
 package com.valeo.bleranging.model.connectedcar;
 
+import android.text.SpannableStringBuilder;
+
 import com.valeo.bleranging.model.Trx;
 
 import java.util.HashMap;
@@ -16,10 +18,10 @@ public class CCFourLRRlRr extends ConnectedCar {
     @Override
     public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
         trxMap = new HashMap<>();
-        trxLeft = new Trx(NUMBER_TRX_LEFT, historicDefaultValuePeriph);
-        trxRight = new Trx(NUMBER_TRX_RIGHT, historicDefaultValuePeriph);
-        trxRearLeft = new Trx(NUMBER_TRX_REAR_LEFT, historicDefaultValuePeriph);
-        trxRearRight = new Trx(NUMBER_TRX_REAR_RIGHT, historicDefaultValuePeriph);
+        trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME, historicDefaultValuePeriph);
+        trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME, historicDefaultValuePeriph);
+        trxRearLeft = new Trx(NUMBER_TRX_REAR_LEFT, TRX_REAR_LEFT_NAME, historicDefaultValuePeriph);
+        trxRearRight = new Trx(NUMBER_TRX_REAR_RIGHT, TRX_REAR_RIGHT_NAME, historicDefaultValuePeriph);
         trxLeft.setEnabled(true);
         trxRight.setEnabled(true);
         trxRearLeft.setEnabled(true);
@@ -68,5 +70,10 @@ public class CCFourLRRlRr extends ConnectedCar {
     @Override
     public boolean numberOfTrxValid(int mode, boolean trxL, boolean trxM, boolean trxR, boolean trxB, boolean trxFL, boolean trxRL, boolean trxFR, boolean trxRR) {
         return false;
+    }
+
+    @Override
+    public SpannableStringBuilder createSecondFooterDebugData(SpannableStringBuilder spannableStringBuilder, boolean smartphoneIsInPocket, boolean smartphoneIsLaidDownLAcc, int totalAverage, boolean rearmLock, boolean rearmUnlock) {
+        return spannableStringBuilder;
     }
 }

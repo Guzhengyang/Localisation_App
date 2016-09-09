@@ -200,10 +200,14 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 Intent settingIntent = new Intent(this, SettingsActivity.class);
                 startActivityForResult(settingIntent, RESULT_SETTINGS);
                 break;
-            case R.id.menu_connect:
+            case R.id.menu_login:
                 Intent loginIntent = new Intent(this, LoginActivity.class);
                 startActivityForResult(loginIntent, RESULT_SETTINGS);
                 break;
+            case R.id.menu_reconnect_ble:
+                mBleRangingHelper.restartConnection(false);
+                break;
+
         }
         return true;
     }
@@ -462,7 +466,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     CarListAdapter.ViewHolder vh = (CarListAdapter.ViewHolder) recyclerView.findViewHolderForAdapterPosition(llm.findFirstCompletelyVisibleItemPosition());
-                    selected_car_model_pinned.setText(vh.getBrandCar().getText().toString());
+                    if(vh != null) {
+                        selected_car_model_pinned.setText(vh.getBrandCar().getText().toString());
+                    }
                 }
             }
         });
@@ -819,6 +825,14 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     public void onBackPressed() {
         mBleRangingHelper.closeApp();
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mBleRangingHelper != null) {
+            mBleRangingHelper.initializeConnectedCar();
+        }
     }
 
     private enum CarDoorStatus {
