@@ -106,4 +106,18 @@ public class TextUtils {
                 return rollingAvElement;
         }
     }
+
+    /**
+     * Get a byte array and returns the corresponding hexadecimal values
+     *
+     * @param bytes array
+     * @return the corresponding hexadecimal value
+     */
+    public static String getHexString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
+        for (byte b : bytes) {
+            sb.append(String.format("%02X ", b));
+        }
+        return sb.toString();
+    }
 }

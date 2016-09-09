@@ -137,9 +137,11 @@ public class BleRangingHelper implements SensorEventListener {
     private Runnable checkAntennaRunner = new Runnable() {
         @Override
         public void run() {
-            Log.w(" rssiHistorics", "************************************** CHECK ANTENNAS ************************************************");
-            connectedCar.compareCheckerAndSetAntennaActive();
-            if (isFullyConnected() && mMainHandler != null) {
+            if (isFullyConnected()) {
+                Log.w(" rssiHistorics", "************************************** CHECK ANTENNAS ************************************************");
+                connectedCar.compareCheckerAndSetAntennaActive();
+            }
+            if (mMainHandler != null) {
                 mMainHandler.postDelayed(this, 2500);
             }
         }
@@ -204,20 +206,22 @@ public class BleRangingHelper implements SensorEventListener {
     private Runnable printRunner = new Runnable() {
         @Override
         public void run() {
-            Log.w(" rssiHistorics", "************************************** IHM LOOP START *************************************************");
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-            spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder, bleChannel);
-            totalAverage = connectedCar.getAllTrxAverage(Antenna.AVERAGE_DEFAULT);
-            tryStrategies(newLockStatus);
-            spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
-            spannableStringBuilder = connectedCar.createSecondFooterDebugData(spannableStringBuilder,
-                    smartphoneIsInPocket, smartphoneIsLaidDownLAcc, totalAverage, rearmLock.get(), rearmUnlock.get());
-            spannableStringBuilder = connectedCar.createThirdFooterDebugData(spannableStringBuilder,
-                    bytesToSend, bytesReceived, deltaLinAcc, smartphoneIsLaidDownLAcc, mBluetoothManager);
-            updateCarLocalization();
-            bleRangingListener.printDebugInfo(spannableStringBuilder);
-            Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
-            if (isFullyConnected() && mMainHandler != null) {
+            if (isFullyConnected()) {
+                Log.w(" rssiHistorics", "************************************** IHM LOOP START *************************************************");
+                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+                spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder, bleChannel);
+                totalAverage = connectedCar.getAllTrxAverage(Antenna.AVERAGE_DEFAULT);
+                tryStrategies(newLockStatus);
+                spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
+                spannableStringBuilder = connectedCar.createSecondFooterDebugData(spannableStringBuilder,
+                        smartphoneIsInPocket, smartphoneIsLaidDownLAcc, totalAverage, rearmLock.get(), rearmUnlock.get());
+                spannableStringBuilder = connectedCar.createThirdFooterDebugData(spannableStringBuilder,
+                        bytesToSend, bytesReceived, deltaLinAcc, smartphoneIsLaidDownLAcc, mBluetoothManager);
+                updateCarLocalization();
+                bleRangingListener.printDebugInfo(spannableStringBuilder);
+                Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
+            }
+            if (mMainHandler != null) {
                 mMainHandler.postDelayed(this, 400);
             }
         }
@@ -558,11 +562,18 @@ public class BleRangingHelper implements SensorEventListener {
 
 
     public void initializeConnectedCar() {
-        // if car type has changed, create a new car;
-        if (!lastConnectedCarType.equalsIgnoreCase(SdkPreferencesHelper.getInstance().getConnectedCarType())) {
-            Log.d("test", "car type changed :" + lastConnectedCarType
-                    + " -> " + SdkPreferencesHelper.getInstance().getConnectedCarType());
-            restartConnection(true);
+        if (lastConnectedCarType.equals("")) {
+            // on first run, create a new car
+            lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
+            connectedCar = ConnectedCarFactory.getConnectedCar(lastConnectedCarType);
+        } else if (!lastConnectedCarType.equalsIgnoreCase(SdkPreferencesHelper.getInstance().getConnectedCarType())) {
+            if (isFullyConnected()) {
+                // if car type has changed, stop connection, create a new car, and restart it
+                restartConnection(true);
+            } else {
+                lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
+                connectedCar = ConnectedCarFactory.getConnectedCar(lastConnectedCarType);
+            }
         }
     }
 

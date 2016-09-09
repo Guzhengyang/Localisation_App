@@ -21,6 +21,8 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 
+import com.valeo.bleranging.utils.TextUtils;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,11 +67,6 @@ public class BluetoothLeService extends Service {
 
     /** Handler to return to the controller results from the action requested */
     private Handler mBSHandler;
-
-    public Deque<byte[]> getReceiveQueue(){
-        return mReceiveQueue;
-    }
-
     /**
      * Implements callback methods for GATT events that the app cares about. For example,
      * connection change and services discovered.
@@ -78,12 +75,12 @@ public class BluetoothLeService extends Service {
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             Log.i("NIH", "onCharacteristicWrite(): status=" + status + " " +
-                    getHexString(characteristic.getValue()));
+                    TextUtils.getHexString(characteristic.getValue()));
             if (mDevice != null && mBluetoothGatt != null) {
                 //Disconnect after write
                 mPacketToWriteCount--;
-                if(mPacketToWriteCount == 0) {
-                    for(int i=0;i<mListeners.size();i++) {
+                if (mPacketToWriteCount == 0) {
+                    for (int i = 0; i < mListeners.size(); i++) {
                         mListeners.get(i).onSendPacketSuccess();
                     }
                 }
@@ -122,7 +119,7 @@ public class BluetoothLeService extends Service {
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             Log.d("NIH", "onConnectionStateChange , Status =" + status + " , NewState = " + newState);
             String intentAction;
-            if(status == 8) {
+            if (status == 8) {
                 intentAction = ACTION_GATT_CONNECTION_LOSS;
                 broadcastUpdate(intentAction);
                 isFullyConnected = false;
@@ -146,8 +143,8 @@ public class BluetoothLeService extends Service {
                     intentAction = ACTION_GATT_SERVICES_FAILED;
                     broadcastUpdate(intentAction);
                 }
-            }else if (newState == BluetoothProfile.STATE_CONNECTED) {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            } else if (newState == BluetoothProfile.STATE_CONNECTED) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     gatt.requestMtu(42);
                 } else {
                     Log.d("NIH", "onConnectionStateChange no mtu request");
@@ -193,12 +190,12 @@ public class BluetoothLeService extends Service {
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
-            if(characteristic == null){
-                Log.e("NIH", "onCharacteristicRead(): null characteristic, status: " +status);
+            if (characteristic == null) {
+                Log.e("NIH", "onCharacteristicRead(): null characteristic, status: " + status);
                 return;
             }
-            if(characteristic.getValue() == null){
-                Log.e("NIH", "onCharacteristicRead(): null value, status: " +status);
+            if (characteristic.getValue() == null) {
+                Log.e("NIH", "onCharacteristicRead(): null value, status: " + status);
                 return;
             }
             Log.i("NIH", "onCharacteristicRead(): " + Arrays.toString(characteristic.getValue()) + ", status=" + status);
@@ -235,6 +232,10 @@ public class BluetoothLeService extends Service {
 
     };
 
+    public Deque<byte[]> getReceiveQueue(){
+        return mReceiveQueue;
+    }
+
     /**
      * Send an action to the broadcast channel
      * @param action the action to execute
@@ -246,12 +247,6 @@ public class BluetoothLeService extends Service {
 
     public boolean isFullyConnected() {
         return isFullyConnected;
-    }
-
-    public class LocalBinder extends Binder {
-        public BluetoothLeService getService() {
-            return BluetoothLeService.this;
-        }
     }
 
     public void init() {
@@ -332,7 +327,7 @@ public class BluetoothLeService extends Service {
                 mBluetoothGatt = mDevice.connectGatt(getApplicationContext(), true, mGattCallback);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     Log.d("NIH", "Android version >= 5.0 --> request HIGH priority (connection interval 7,5ms) 2");
-                    if(mBluetoothGatt != null) {
+                    if (mBluetoothGatt != null) {
                         mBluetoothGatt.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH);
                     }
                 }
@@ -352,10 +347,10 @@ public class BluetoothLeService extends Service {
         Log.i("NIH", "BluetoothLeService.disconnect()");
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
             Log.w("NIH", "BluetoothAdapter not initialized 1");
-            if(mBluetoothAdapter == null){
+            if (mBluetoothAdapter == null) {
                 Log.w("NIH", "mBluetoothAdapter is null");
             }
-            if(mBluetoothGatt == null){
+            if (mBluetoothGatt == null) {
                 Log.w("NIH", "mBluetoothGatt is null");
             }
             return;
@@ -436,7 +431,7 @@ public class BluetoothLeService extends Service {
             Log.e("NIH", "writeCharacteristic(): Null value");
             return false;
         }
-        Log.d("NIH", "writeCharacteristic(" + VALEO_IN_CHARACTERISTIC + "): " + getHexString(value));
+        Log.d("NIH", "writeCharacteristic(" + VALEO_IN_CHARACTERISTIC + "): " + TextUtils.getHexString(value));
         charac.setValue(value);
         if(mBluetoothGatt != null) {
             bReturn = mBluetoothGatt.writeCharacteristic(charac);
@@ -456,29 +451,10 @@ public class BluetoothLeService extends Service {
         mListeners.remove(listener);
     }
 
-    /**
-     * Get a byte array and returns the corresponding hexadecimal values
-     * @param bytes array
-     * @return the corresponding hexadecimal value
-     */
-    public static String getHexString(byte[] bytes) {
-        StringBuilder sb = new StringBuilder(bytes.length * 2);
-        for (byte b : bytes) {
-            sb.append(String.format("%02X ", b));
+    public class LocalBinder extends Binder {
+        public BluetoothLeService getService() {
+            return BluetoothLeService.this;
         }
-        return sb.toString();
     }
 
-    @Override
-    public void onDestroy() {
-        Log.i("NIH", "onDestroy()");
-        isFullyConnected = false;
-        super.onDestroy();
-    }
-
-    @Override
-    public void onRebind(Intent intent) {
-        super.onRebind(intent);
-        Log.i("NIH", "onRebind()");
-    }
 }
