@@ -81,12 +81,14 @@ public class CCFourLMRB extends ConnectedCar {
         boolean isNearDoorRBMax = isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_RIGHT, NUMBER_TRX_BACK, SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMax(SdkPreferencesHelper.getInstance().getConnectedCarType()));
         boolean isNearDoorRBMin = isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_RIGHT, NUMBER_TRX_BACK, SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMin(SdkPreferencesHelper.getInstance().getConnectedCarType()));
         boolean isApproaching = TrxUtils.getAverageLSDeltaLowerThanThreshold(this, TrxUtils.getCurrentUnlockThreshold(SdkPreferencesHelper.getInstance().getAverageDeltaUnlockThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()), smartphoneIsInPocket));
-        if (isInUnlockArea && (isNearDoorLRMax && isNearDoorLBMax) && isApproaching) {
-            return NUMBER_TRX_LEFT;
-        } else if (isInUnlockArea && (isNearDoorLRMin && isNearDoorRBMax) && isApproaching) {
-            return NUMBER_TRX_RIGHT;
-        } else if (isInUnlockArea && (isNearDoorLBMin && isNearDoorRBMin) && isApproaching) {
-            return NUMBER_TRX_BACK;
+        if (isInUnlockArea && isApproaching) {
+            if (isNearDoorLRMax && isNearDoorLBMax) {
+                return NUMBER_TRX_LEFT;
+            } else if (isNearDoorLRMin && isNearDoorRBMax) {
+                return NUMBER_TRX_RIGHT;
+            } else if (isNearDoorLBMin && isNearDoorRBMin) {
+                return NUMBER_TRX_BACK;
+            }
         }
         return 0;
     }

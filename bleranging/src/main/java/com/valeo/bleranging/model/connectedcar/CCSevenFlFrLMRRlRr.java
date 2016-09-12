@@ -25,11 +25,8 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
     private static final int MODE_ONE_OF_TWO_WITHOUT_BACK_AND_MIDDLE = 10;
     private static final int MODE_ALL_OF_TWO_WITHOUT_BACK_AND_MIDDLE = 11;
     private static final int MODE_ONLY_MIDDLE = 12;
-    private static final int MODE_LEFT_SIDE = 13;
-    private static final int MODE_RIGHT_SIDE = 14;
-    private static final int MODE_TRUNK_SIDE = 15;
-    private static final int MODE_LEFT_BACK_ANGLE = 16;
-    private static final int MODE_RIGHT_BACK_ANGLE = 17;
+    private static final int MODE_ONE_OF_SIX_WITHOUT_MIDDLE = 13;
+    private static final int MODE_ALL_SEVEN = 14;
 
     public CCSevenFlFrLMRRlRr(ConnectionNumber connectionNumber) {
         super(connectionNumber);
@@ -76,28 +73,94 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
 
     @Override
     public boolean isInStartArea(int threshold) {
+        boolean trxFL = isTrxGreaterThanThreshold(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
+        boolean trxFR = isTrxGreaterThanThreshold(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
         boolean trxL = isTrxGreaterThanThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
         boolean trxM = isTrxGreaterThanThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
         boolean trxR = isTrxGreaterThanThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
-        boolean trxFL = isTrxGreaterThanThreshold(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
         boolean trxRL = isTrxGreaterThanThreshold(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
-        boolean trxFR = isTrxGreaterThanThreshold(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
         boolean trxRR = isTrxGreaterThanThreshold(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
         return numberOfTrxValid(SdkPreferencesHelper.getInstance().getStartMode(SdkPreferencesHelper.getInstance().getConnectedCarType()), trxL, trxM, trxR, false, trxFL, trxRL, trxFR, trxRR);
+    }
+
+    private boolean isNearDoor(int mode, int trxNumber, int threshold, int threshold2, int threshold3, boolean areEquals) {
+        switch (trxNumber) {
+            case NUMBER_TRX_FRONT_LEFT:
+                return isNearDoor(mode, NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, NUMBER_TRX_FRONT_RIGHT, threshold, threshold2, threshold3, areEquals);
+            case NUMBER_TRX_FRONT_RIGHT:
+                return isNearDoor(mode, NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_LEFT, threshold, threshold2, threshold3, areEquals);
+            case NUMBER_TRX_LEFT:
+                return isNearDoor(mode, NUMBER_TRX_LEFT, NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_REAR_LEFT, threshold, threshold2, threshold3, areEquals);
+            case NUMBER_TRX_RIGHT:
+                return isNearDoor(mode, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_REAR_RIGHT, threshold, threshold2, threshold3, areEquals);
+            case NUMBER_TRX_REAR_LEFT:
+                return isNearDoor(mode, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_LEFT, NUMBER_TRX_REAR_RIGHT, threshold, threshold2, threshold3, areEquals);
+            case NUMBER_TRX_REAR_RIGHT:
+                return isNearDoor(mode, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_REAR_LEFT, threshold, threshold2, threshold3, areEquals);
+            case NUMBER_TRX_BACK:
+                boolean isNearBackL = isNearDoor(mode, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_LEFT, threshold, threshold2, threshold3, areEquals);
+                boolean isNearBackR = isNearDoor(mode, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_RIGHT, threshold, threshold2, threshold3, areEquals);
+                return isNearBackL && isNearBackR;
+            default:
+                return false;
+        }
+    }
+
+    private boolean isNearDoor(int mode, int nearThisTrx, int sideTrx, int farTrx, int threshold, int threshold2, int threshold3, boolean areEquals) {
+        boolean isNearSideTrx = isRatioNearDoorGreaterThanThreshold(mode, nearThisTrx, sideTrx, threshold);
+        boolean isNearFarTrx = isRatioNearDoorGreaterThanThreshold(mode, nearThisTrx, farTrx, threshold);
+        if (areEquals) {
+            boolean isEquidistantToSideTrxAndFarTrx = isRatioNearDoorLowerThanThreshold(mode, sideTrx, farTrx, threshold2);
+            return isNearSideTrx && isNearFarTrx && isEquidistantToSideTrxAndFarTrx;
+        } else {
+            boolean isNearerToSideTrxThanFarTrx = isRatioNearDoorGreaterThanThreshold(mode, sideTrx, farTrx, threshold3);
+            return isNearSideTrx && isNearFarTrx && isNearerToSideTrxThanFarTrx;
+        }
+    }
+
+    private boolean isNearDoor(int mode, int trxNumber) {
+        int threshold = 0; //SdkPreferencesHelper.getInstance().getNearDoorThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType())
+        int threshold2 = 0; //SdkPreferencesHelper.getInstance().getNearerThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType())
+        int threshold3 = 0; //SdkPreferencesHelper.getInstance().getEquallyNearThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType())
+        boolean isNearFront;
+        boolean isNearSide;
+        boolean isNearRear;
+        // left front side proche de Fl : ((Fl - Fr) > thr && (Fl - L) > thr) && (L - Fr) > thr2 :Fr<L
+        // OR left side  proche de L : ((L - Fl) > thr && (L - Rl) > thr) && (Fl - Rl < thr) :FletRl quasi egal car equidistant donc delta petit
+        // OR rear left side  proche de Rl : ((Rl - L) > thr && (Rl - Rr) > thr) && (L - Rr) > thr2 :Rr<L
+        switch (trxNumber) {
+            case NUMBER_TRX_LEFT:
+                isNearFront = isNearDoor(mode, NUMBER_TRX_FRONT_LEFT, threshold, threshold2, threshold3, false);
+                isNearSide = isNearDoor(mode, NUMBER_TRX_LEFT, threshold, threshold2, threshold3, true);
+                isNearRear = isNearDoor(mode, NUMBER_TRX_REAR_LEFT, threshold, threshold2, threshold3, false);
+                return isNearFront || isNearSide || isNearRear;
+            case NUMBER_TRX_RIGHT:
+                isNearFront = isNearDoor(mode, NUMBER_TRX_FRONT_RIGHT, threshold, threshold2, threshold3, false);
+                isNearSide = isNearDoor(mode, NUMBER_TRX_RIGHT, threshold, threshold2, threshold3, true);
+                isNearRear = isNearDoor(mode, NUMBER_TRX_REAR_RIGHT, threshold, threshold2, threshold3, false);
+                return isNearFront || isNearSide || isNearRear;
+            case NUMBER_TRX_BACK:
+                return isNearDoor(mode, NUMBER_TRX_BACK, threshold, threshold2, threshold3, false);
+            default:
+                return false;
+        }
     }
 
     @Override
     public int unlockStrategy(boolean smartphoneIsInPocket) {
         boolean isInUnlockArea = isInUnlockArea(TrxUtils.getCurrentUnlockThreshold(SdkPreferencesHelper.getInstance().getUnlockThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()), smartphoneIsInPocket));
-        boolean isNearDoorLRMax = isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()));
-        boolean isNearDoorLRMin = isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()));
         boolean isApproaching = TrxUtils.getAverageLSDeltaLowerThanThreshold(this, TrxUtils.getCurrentUnlockThreshold(SdkPreferencesHelper.getInstance().getAverageDeltaUnlockThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()), smartphoneIsInPocket));
         if (isInUnlockArea && isApproaching) {
-            if (isNearDoorLRMax) {
+            boolean isNearLeftDoor = isNearDoor(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT);
+            boolean isNearRightDoor = isNearDoor(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_RIGHT);
+            boolean isNearBackDoor = isNearDoor(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_BACK);
+            boolean isNearDoorLRMax = isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()));
+            boolean isNearDoorLRMin = isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()));
+            if (isNearDoorLRMax && isNearLeftDoor) {
                 return NUMBER_TRX_LEFT;
-            } else if (isNearDoorLRMin) {
+            } else if (isNearDoorLRMin && isNearRightDoor) {
                 return NUMBER_TRX_RIGHT;
-            } else {
+            } else if (isNearBackDoor) {
                 return NUMBER_TRX_BACK;
             }
         }
@@ -106,12 +169,12 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
 
     @Override
     public boolean isInUnlockArea(int threshold) {
+        boolean trxFL = isTrxGreaterThanThreshold(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
+        boolean trxFR = isTrxGreaterThanThreshold(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
         boolean trxL = isTrxGreaterThanThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
         boolean trxM = isTrxGreaterThanThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
         boolean trxR = isTrxGreaterThanThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
-        boolean trxFL = isTrxGreaterThanThreshold(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
         boolean trxRL = isTrxGreaterThanThreshold(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
-        boolean trxFR = isTrxGreaterThanThreshold(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
         boolean trxRR = isTrxGreaterThanThreshold(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
         return numberOfTrxValid(SdkPreferencesHelper.getInstance().getUnlockMode(SdkPreferencesHelper.getInstance().getConnectedCarType()), trxL, trxM, trxR, false, trxFL, trxRL, trxFR, trxRR);
     }
@@ -125,12 +188,12 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
 
     @Override
     public boolean isInLockArea(int threshold) {
+        boolean trxFL = isTrxLowerThanThreshold(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
+        boolean trxFR = isTrxLowerThanThreshold(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
         boolean trxL = isTrxLowerThanThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
         boolean trxM = isTrxLowerThanThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
         boolean trxR = isTrxLowerThanThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
-        boolean trxFL = isTrxLowerThanThreshold(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
         boolean trxRL = isTrxLowerThanThreshold(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
-        boolean trxFR = isTrxLowerThanThreshold(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
         boolean trxRR = isTrxLowerThanThreshold(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
         return numberOfTrxValid(SdkPreferencesHelper.getInstance().getLockMode(SdkPreferencesHelper.getInstance().getConnectedCarType()), trxL, trxM, trxR, false, trxFL, trxRL, trxFR, trxRR)
                 || (trxM && (isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_LOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(SdkPreferencesHelper.getInstance().getConnectedCarType()))
@@ -277,16 +340,10 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
                 return (trxL && trxR) ;
             case MODE_ONLY_MIDDLE:
                 return trxM;
-            case MODE_LEFT_SIDE:
-                return trxL && trxFL && trxRL;
-            case MODE_RIGHT_SIDE:
-                return trxR && trxFR && trxRR;
-            case MODE_TRUNK_SIDE:
-                return trxB && trxRL && trxRR;
-            case MODE_LEFT_BACK_ANGLE:
-                return trxL && trxRL && trxB;
-            case MODE_RIGHT_BACK_ANGLE:
-                return trxR && trxRR && trxB;
+            case MODE_ONE_OF_SIX_WITHOUT_MIDDLE:
+                return trxFL || trxFR || trxL || trxR || trxRL || trxRR;
+            case MODE_ALL_SEVEN:
+                return trxFL && trxFR && trxL && trxM && trxR && trxRL && trxRR;
             default:
                 return false;
         }
