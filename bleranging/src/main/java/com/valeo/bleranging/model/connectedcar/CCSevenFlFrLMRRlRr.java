@@ -270,22 +270,6 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
                 isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, nearDoorRatioThreshold)
                         || isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -nearDoorRatioThreshold),
                 ratioLRStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
-        StringBuilder ratioLBStringBuilder = new StringBuilder().append("       ratio LouR - B (")
-                .append("< ").append(nearBackDoorRatioThresholdMin)
-                .append("): ").append(getRatioNearDoor(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_BACK))
-                .append("|").append(getRatioNearDoor(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_RIGHT, NUMBER_TRX_BACK)).append("\n");
-        spannableStringBuilder.append(TextUtils.colorText(
-                (isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_BACK, nearBackDoorRatioThresholdMin)
-                        || isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_RIGHT, NUMBER_TRX_BACK, nearBackDoorRatioThresholdMin)),
-                ratioLBStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
-        StringBuilder ratioRBStringBuilder = new StringBuilder().append("       ratio LouR - B (")
-                .append(" > ").append(nearBackDoorRatioThresholdMax)
-                .append("): ").append(getRatioNearDoor(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_BACK))
-                .append("|").append(getRatioNearDoor(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_RIGHT, NUMBER_TRX_BACK)).append("\n");
-        spannableStringBuilder.append(TextUtils.colorText(
-                (isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_BACK, nearBackDoorRatioThresholdMax)
-                        || isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_RIGHT, NUMBER_TRX_BACK, nearBackDoorRatioThresholdMax)),
-                ratioRBStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
         // START
         spannableStringBuilder.append("start").append("  mode : ").append(String.valueOf(startMode)).append(" ");
         StringBuilder startStringBuilder = new StringBuilder().append("rssi > (").append(TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket)).append(")\n");

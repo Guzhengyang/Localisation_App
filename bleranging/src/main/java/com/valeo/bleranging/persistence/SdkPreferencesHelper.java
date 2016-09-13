@@ -54,10 +54,10 @@ public final class SdkPreferencesHelper {
     public final static String BLE_ADDRESS_MIDDLE = "D4:F5:13:56:6B:65";
     public final static String BLE_ADDRESS_RIGHT = "D4:F5:13:56:65:16";
     public final static String BLE_ADDRESS_BACK = "78:A5:04:81:5A:21"; //"D4:F5:13:56:5C:B4";
-    public final static String BLE_ADDRESS_FRONT_LEFT = "D4:F5:13:56:39:A6";
-    public final static String BLE_ADDRESS_REAR_LEFT = "D4:F5:13:56:39:A7";
-    public final static String BLE_ADDRESS_FRONT_RIGHT = "D4:F5:13:56:39:A8";
-    public final static String BLE_ADDRESS_REAR_RIGHT = "D4:F5:13:56:39:A9";
+    public final static String BLE_ADDRESS_FRONT_LEFT = "D4:F5:13:56:5C:F0";
+    public final static String BLE_ADDRESS_REAR_LEFT = "D4:F5:13:56:7A:55";
+    public final static String BLE_ADDRESS_FRONT_RIGHT = "D4:F5:13:56:7C:C2";
+    public final static String BLE_ADDRESS_REAR_RIGHT = "D4:F5:13:56:71:4B";
     public final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
     public final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
     public final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
