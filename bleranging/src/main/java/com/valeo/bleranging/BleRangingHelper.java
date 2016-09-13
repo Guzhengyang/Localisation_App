@@ -21,6 +21,7 @@ import com.valeo.bleranging.bluetooth.BluetoothManagementListener;
 import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.ScanResponse;
 import com.valeo.bleranging.model.Antenna;
+import com.valeo.bleranging.model.Ranging;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
@@ -31,6 +32,10 @@ import com.valeo.bleranging.utils.TrxUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -47,6 +52,7 @@ public class BleRangingHelper implements SensorEventListener {
     public final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
     public final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
     private static final int LOCK_STATUS_CHANGED_TIMEOUT = 3000;
+    private static final int PREDICTION_MAX = 16;
     private final Context mContext;
     private final BluetoothManagement mBluetoothManager;
     private final float linAccThreshold = SdkPreferencesHelper.getInstance().getCorrectionLinAcc();
@@ -62,6 +68,8 @@ public class BleRangingHelper implements SensorEventListener {
     private final String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
     public boolean smartphoneIsInPocket = false;
     public boolean smartphoneIsLaidDownLAcc = false;
+    private Integer rangingPredictionInt;
+    private LinkedList<Integer> predictionHistoric;
     private boolean isLockStrategyValid = false;
     private int isUnlockStrategyValid = 0;
     private boolean isStartStrategyValid = false;
@@ -195,7 +203,7 @@ public class BleRangingHelper implements SensorEventListener {
                         rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), newLockStatus, welcomeByte,
                         lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
                         walkAwayByte, steadyByte, approachByte, leftTurnByte,
-                        fullTurnByte, rightTurnByte, recordByte,
+                        fullTurnByte, rightTurnByte, recordByte, rangingPredictionInt,
                         mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(), mProtocolManager.isStartRequested());
             }
             if (isFullyConnected() && mMainHandler != null) {
@@ -222,7 +230,7 @@ public class BleRangingHelper implements SensorEventListener {
                 Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
             }
             if (mMainHandler != null) {
-                mMainHandler.postDelayed(this, 400);
+                mMainHandler.postDelayed(this, 500);
             }
         }
     };
@@ -279,6 +287,7 @@ public class BleRangingHelper implements SensorEventListener {
         this.mContext = context;
         this.mBluetoothManager = new BluetoothManagement(context);
         this.bleRangingListener = bleRangingListener;
+        this.predictionHistoric = new LinkedList<>();
         this.mProtocolManager = new InblueProtocolManager();
         this.mLockStatusChangedHandler = new Handler();
         this.mHandlerTimeOut = new Handler();
@@ -410,8 +419,31 @@ public class BleRangingHelper implements SensorEventListener {
                         getAdvertisedBytes(advertisedData);
                     }
                 }
+                Ranging ranging = connectedCar.prepareRanging(mContext, smartphoneIsInPocket);
+                if (predictionHistoric.size() == PREDICTION_MAX) {
+                    predictionHistoric.remove(0);
+                }
+                int prediction = ranging.predict2int();
+                predictionHistoric.add(prediction);
             }
         }
+    }
+
+    public Integer mostCommon(List<Integer> list) {
+        if (list.size() == 0) {
+            return null;
+        }
+        Map<Integer, Integer> map = new LinkedHashMap<>();
+        for (Integer t : list) {
+            Integer val = map.get(t);
+            map.put(t, val == null ? 1 : val + 1);
+        }
+        Map.Entry<Integer, Integer> max = null;
+        for (Map.Entry<Integer, Integer> e : map.entrySet()) {
+            if (max == null || e.getValue() > max.getValue())
+                max = e;
+        }
+        return max == null ? null : max.getKey();
     }
 
     /**
@@ -469,6 +501,7 @@ public class BleRangingHelper implements SensorEventListener {
             isUnlockStrategyValid = connectedCar.unlockStrategy(smartphoneIsInPocket);
             isStartStrategyValid = connectedCar.startStrategy(newLockStatus, smartphoneIsInPocket);
             isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus, smartphoneIsInPocket);
+            rangingPredictionInt = mostCommon(predictionHistoric);
             if (rearmWelcome.get() && isWelcomeStrategyValid) {
                 rearmWelcome.set(false);
                 //TODO Welcome

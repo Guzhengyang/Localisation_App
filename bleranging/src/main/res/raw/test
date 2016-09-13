@@ -1,0 +1,11 @@
+@relation test
+
+@attribute Left numeric
+@attribute Middle numeric
+@attribute Right numeric
+@attribute Back numeric
+@attribute Pocket numeric
+@attribute class {start,unlock_left,unlock_right,unlock_back,lock,welcome}
+
+@data
+-68,-38,-61,-74,0,start

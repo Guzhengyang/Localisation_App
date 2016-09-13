@@ -207,6 +207,7 @@ public class TrxUtils {
      * @param fullTurnByte equals 1 if full turn is activated, 0 otherwise
      * @param rightTurnByte equals 1 if right turn is activated, 0 otherwise
      * @param recordByte equals 1 if record is activated, 0 otherwise
+     * @param rangingPredictionInt prediction from random forest algorithm
      * @param lockFromTrx lock status from trx
      * @param lockToSend lock status to send
      * @param startAllowed true if start is allowed, false otherwise
@@ -219,7 +220,7 @@ public class TrxUtils {
                                       byte welcomeByte, byte lockByte, byte startByte,
                                       byte leftAreaByte, byte rightAreaByte, byte backAreaByte,
                                       byte walkAwayByte, byte steadyByte, byte approachByte,
-                                      byte leftTurnByte, byte fullTurnByte, byte rightTurnByte, byte recordByte,
+                                      byte leftTurnByte, byte fullTurnByte, byte rightTurnByte, byte recordByte, int rangingPredictionInt,
                                       boolean lockFromTrx, boolean lockToSend, boolean startAllowed) {
         final String comma = ";";
         StringBuilder log = new StringBuilder();
@@ -232,7 +233,7 @@ public class TrxUtils {
         log.append(leftAreaByte).append(comma).append(rightAreaByte).append(comma).append(backAreaByte).append(comma);
         log.append(walkAwayByte).append(comma).append(steadyByte).append(comma).append(approachByte).append(comma);
         log.append(leftTurnByte).append(comma).append(fullTurnByte).append(comma).append(rightTurnByte).append(comma);
-        log.append(recordByte).append(comma);
+        log.append(recordByte).append(comma).append(rangingPredictionInt).append(comma);
         log.append(lockFromTrx).append(comma).append(lockToSend).append(comma).append(startAllowed).append(comma);
         appendRssiLog(log.toString());
     }
@@ -255,7 +256,7 @@ public class TrxUtils {
                 logFile.createNewFile();
                 //Write 1st row with column names
                 //BufferedWriter for performance, true to set append to file flag
-                String ColNames = "TIMESTAMP;RSSI LEFT;RSSI MIDDLE1;RSSI MIDDLE2;RSSI RIGHT;RSSI BACK;RSSI FRONTLEFT;RSSI FRONTRIGHT;RSSI REARLEFT;RSSI REARRIGHT;Z AZIMUTH;X PITCH;Y ROLL;IN POCKET;IS LAID;IS PEPS;IS LOCK STATUS CHANGED TIMER;REARM LOCK;REARM UNLOCK;REARM WELCOME;IS LOCK;WELCOME FLAG;LOCK FLAG;START FLAG;LEFT AREA FLAG; RIGHT AREA FLAG; BACK AREA FLAG;WALK AWAY FLAG;STEADY FLAG;APPROACH FLAG; LEFT TURN FLAG; FULL TURN FLAG; RIGHT TURN FLAG;RECORD FLAG;LOCK FROM TRX;LOCK TO SEND;START ALLOWED;";
+                String ColNames = "TIMESTAMP;RSSI LEFT;RSSI MIDDLE1;RSSI MIDDLE2;RSSI RIGHT;RSSI BACK;RSSI FRONTLEFT;RSSI FRONTRIGHT;RSSI REARLEFT;RSSI REARRIGHT;Z AZIMUTH;X PITCH;Y ROLL;IN POCKET;IS LAID;IS PEPS;IS LOCK STATUS CHANGED TIMER;REARM LOCK;REARM UNLOCK;REARM WELCOME;IS LOCK;WELCOME FLAG;LOCK FLAG;START FLAG;LEFT AREA FLAG; RIGHT AREA FLAG; BACK AREA FLAG;WALK AWAY FLAG;STEADY FLAG;APPROACH FLAG; LEFT TURN FLAG; FULL TURN FLAG; RIGHT TURN FLAG;RECORD FLAG;PREDICTION;LOCK FROM TRX;LOCK TO SEND;START ALLOWED;";
                 BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
                 buf.append(ColNames);
                 buf.newLine();

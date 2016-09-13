@@ -1,5 +1,6 @@
 package com.valeo.bleranging.model.connectedcar;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -7,6 +8,7 @@ import android.text.style.ForegroundColorSpan;
 
 import com.valeo.bleranging.bluetooth.BluetoothManagement;
 import com.valeo.bleranging.model.Antenna;
+import com.valeo.bleranging.model.Ranging;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.TextUtils;
@@ -494,6 +496,20 @@ public abstract class ConnectedCar {
         }
         ssb.append("\n");
         return ssb;
+    }
+
+    public Ranging prepareRanging(Context context, boolean smartphoneIsInPocket) {
+        Ranging ranging = new Ranging(context);
+        ranging.setLeft(getCurrentOriginalRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1));
+        ranging.setMiddle(getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1));
+        ranging.setRight(getCurrentOriginalRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_1));
+        ranging.setBack(getCurrentOriginalRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_1));
+        if (smartphoneIsInPocket) {
+            ranging.setPocket(1);
+        } else {
+            ranging.setPocket(0);
+        }
+        return ranging;
     }
 
     protected enum ConnectionNumber {
