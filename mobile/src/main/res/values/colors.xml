@@ -12,4 +12,12 @@
     <color name="car_slider_inactive_bg">#f3f3f1</color>
     <color name="content_start_car_dialog">#FA333333</color>
     <color name="countdown_past">#258f929b</color>
+    <color name="default_big_button_text_color">#ffffff</color>
+    <color name="default_big_button_sub_text_color">#ffffff</color>
+    <color name="default_title_text_color">#ffffff</color>
+    <color name="default_left_button_text_color">#ffffff</color>
+    <color name="default_right_button_text_color">#ffffff</color>
+    <color name="default_overlay_color">#99999999</color>
+    <color name="default_button_press">#66ffffff</color>
+    <color name="default_indicator">#99ffffff</color>
 </resources>

@@ -24,4 +24,29 @@
         <item>"sevenFlFrLMRRlRr"</item>
         <item>"sevenFlFrLRRlBRr"</item>
     </string-array>
+    <string-array name="default_big_button_text">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+
+    <string-array name="default_big_button_sub_text">
+        <item>0</item>
+        <item>1</item>
+        <item>ABC</item>
+        <item>DEF</item>
+        <item>GHI</item>
+        <item>JKL</item>
+        <item>MNO</item>
+        <item>PQRS</item>
+        <item>TUV</item>
+        <item>WXYZ</item>
+    </string-array>
 </resources>

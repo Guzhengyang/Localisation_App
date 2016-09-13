@@ -1,6 +1,8 @@
 package com.valeo.psa.activity;
 
 import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -47,6 +49,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.trncic.library.DottedProgressBar;
 import com.valeo.bleranging.BleRangingHelper;
@@ -79,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int REQUEST_ACCESS_FINE_LOCATION_PERMISSION = 25111;
     private static final int REQUEST_BLUETOOTH_PERMISSION = 25112;
     private static final int REQUEST_BLUETOOTH_ADMIN_PERMISSION = 25113;
+    private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
     private Toolbar toolbar;
     private FrameLayout main_frame;
     private NestedScrollView content_main;
@@ -130,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private CarDoorStatus carDoorStatus;
     private BleRangingHelper mBleRangingHelper;
     private boolean showMenu = true;
+    private KeyguardManager mKeyguardManager;
 
     /**
      * Get the status bar height
@@ -185,6 +190,23 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             nfc_disclaimer.setVisibility(View.VISIBLE);
             nfc_logo.setVisibility(View.VISIBLE);
         }
+        mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+        if (!mKeyguardManager.isKeyguardSecure()) {
+            // Show a message that the user hasn't set up a lock screen.
+            Toast.makeText(this, getString(R.string.set_security_lock), Toast.LENGTH_LONG).show();
+            return;
+        }
+//        showAuthenticationScreen();
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void showAuthenticationScreen() {
+        // Create the Confirm Credentials screen. You can customize the title and description. Or
+        // we will provide a generic one for you if you leave it null
+        Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(null, null);
+        if (intent != null) {
+            startActivityForResult(intent, REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS);
+        }
     }
 
     @Override
@@ -216,16 +238,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.menu_settings).setVisible(showMenu);
         return true;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case RESULT_SETTINGS:
-                Log.d("settings", "ok");
-                break;
-        }
     }
 
     /**
