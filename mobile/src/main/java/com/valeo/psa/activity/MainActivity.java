@@ -270,26 +270,28 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         start_button.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (countDownTimer == null) { // prevent from launching two countDownTimer
-                    // Change toolbar to start car mode
-                    switchToolbarStartCar(true);
-                    /** CountDownTimer starts with 5 minutes and every onTick is 1 second */
-                    countDownTimer = new CountDownTimer(FIVE_MINUTES_IN_MILLI, SECOND_IN_MILLI) {
-                        public void onTick(long millisUntilFinished) {
-                            int timePassed = (int) (millisUntilFinished / SECOND_IN_MILLI);
-                            updateStartCarTimeoutBar(timePassed);
-                            progressMin = (int) (millisUntilFinished / MINUTE_IN_MILLI);
-                            progressSec = timePassed % 60; // ignore minutes
-                            updateStartCarTimeout(progressMin, progressSec);
-                        }
+                if (carDoorStatus != null && carDoorStatus == CarDoorStatus.UNLOCKED) {
+                    if (countDownTimer == null) { // prevent from launching two countDownTimer
+                        // Change toolbar to start car mode
+                        switchToolbarStartCar(true);
+                        /** CountDownTimer starts with 5 minutes and every onTick is 1 second */
+                        countDownTimer = new CountDownTimer(FIVE_MINUTES_IN_MILLI, SECOND_IN_MILLI) {
+                            public void onTick(long millisUntilFinished) {
+                                int timePassed = (int) (millisUntilFinished / SECOND_IN_MILLI);
+                                updateStartCarTimeoutBar(timePassed);
+                                progressMin = (int) (millisUntilFinished / MINUTE_IN_MILLI);
+                                progressSec = timePassed % 60; // ignore minutes
+                                updateStartCarTimeout(progressMin, progressSec);
+                            }
 
-                        public void onFinish() {
-                            // If time up, return to Remote Key Activity
-                            // Change toolbar to normal mode
-                            switchToolbarStartCar(false);
-                            countDownTimer = null;
-                        }
-                    }.start();
+                            public void onFinish() {
+                                // If time up, return to Remote Key Activity
+                                // Change toolbar to normal mode
+                                switchToolbarStartCar(false);
+                                countDownTimer = null;
+                            }
+                        }.start();
+                    }
                 }
                 return false;
             }
