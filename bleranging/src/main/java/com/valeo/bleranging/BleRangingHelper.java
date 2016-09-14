@@ -68,7 +68,7 @@ public class BleRangingHelper implements SensorEventListener {
     private final String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
     public boolean smartphoneIsInPocket = false;
     public boolean smartphoneIsLaidDownLAcc = false;
-    private Integer rangingPredictionInt;
+    private Integer rangingPredictionInt = -1;
     private LinkedList<Integer> predictionHistoric;
     private boolean isLockStrategyValid = false;
     private int isUnlockStrategyValid = 0;
@@ -443,7 +443,7 @@ public class BleRangingHelper implements SensorEventListener {
             if (max == null || e.getValue() > max.getValue())
                 max = e;
         }
-        return max == null ? null : max.getKey();
+        return max == null ? -1 : max.getKey();
     }
 
     /**
@@ -748,11 +748,13 @@ public class BleRangingHelper implements SensorEventListener {
     }
 
     public void closeApp() {
+        mBluetoothManager.suspendLeScan();
+        mBluetoothManager.disconnect();
         // increase the file number use for logs files name
         SdkPreferencesHelper.getInstance().setRssiLogNumber(SdkPreferencesHelper.getInstance().getRssiLogNumber() + 1);
         isLoggable = false;
-        if(mLockStatusChangedHandler != null)
+        if (mLockStatusChangedHandler != null) {
             mLockStatusChangedHandler.removeCallbacks(mManageIsLockStatusChangedPeriodicTimer);
-        mBluetoothManager.disconnect();
+        }
     }
 }

@@ -115,12 +115,16 @@ public class BluetoothManagement {
         if (isFullyConnected()) {
             try {
                 mBluetoothLeService.disconnect();
-                mContext.unbindService(mServiceConnection);
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                mContext.unregisterReceiver(mTrxUpdateReceiver);
             }
+        }
+        try {
+            mContext.unbindService(mServiceConnection);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            mContext.unregisterReceiver(mTrxUpdateReceiver);
         }
     }
 
