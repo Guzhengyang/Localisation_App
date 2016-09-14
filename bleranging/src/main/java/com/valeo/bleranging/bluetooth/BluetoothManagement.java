@@ -144,10 +144,15 @@ public class BluetoothManagement {
                 mContext.registerReceiver(this.mTrxUpdateReceiver, makeTrxUpdateIntentFilter());
                 isReceiverRegistered = true;
             }
-            Log.i("NIH bind", "BluetoothManagement bindService()");
-            Intent gattServiceIntent = new Intent(mContext, BluetoothLeService.class);
-            mContext.bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
-            // the connection will happen onServiceConnected after binding
+            if (!isBound()) {
+                Log.i("NIH bind", "BluetoothManagement bindService()");
+                // the connection will happen onServiceConnected after binding
+                Intent gattServiceIntent = new Intent(mContext, BluetoothLeService.class);
+                mContext.bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+            } else if (mBluetoothLeService != null) {
+                Log.i("NIH bind", "BluetoothManagement connectToDevice: " + SdkPreferencesHelper.getInstance().getTrxAddressConnectable());
+                mBluetoothLeService.connectToDevice(SdkPreferencesHelper.getInstance().getTrxAddressConnectable());
+            }
         }
     }
 
