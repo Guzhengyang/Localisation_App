@@ -15,6 +15,7 @@ import android.util.Log;
 import com.valeo.bleranging.bluetooth.compat.BluetoothAdapterCompat;
 import com.valeo.bleranging.bluetooth.compat.ScanCallbackCompat;
 import com.valeo.bleranging.bluetooth.compat.ScanTask;
+import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -35,7 +36,6 @@ public class BluetoothManagement {
     private boolean isReceiverRegistered = false;
     private ArrayList<BluetoothManagementListener> mBluetoothManagementListeners;
     private BluetoothLeService mBluetoothLeService;
-    private String mConnectableDeviceAddress;
     private IBluetoothLeServiceListener mBLEServiceListener = new IBluetoothLeServiceListener(){
         private Handler mHandler = new Handler();
         @Override
@@ -58,7 +58,7 @@ public class BluetoothManagement {
                 // init error
                 return;
             }
-            mBluetoothLeService.connectToDevice(mConnectableDeviceAddress);
+            mBluetoothLeService.connectToDevice(SdkPreferencesHelper.getInstance().getTrxAddressConnectable());
         }
 
         @Override
@@ -139,10 +139,12 @@ public class BluetoothManagement {
      */
     public void connect(BroadcastReceiver mTrxUpdateReceiver) {
         if (!isFullyConnected()) {
+            if (!isReceiverRegistered) {
+                this.mTrxUpdateReceiver = mTrxUpdateReceiver;
+                mContext.registerReceiver(this.mTrxUpdateReceiver, makeTrxUpdateIntentFilter());
+                isReceiverRegistered = true;
+            }
             Log.i("NIH bind", "BluetoothManagement bindService()");
-            this.mTrxUpdateReceiver = mTrxUpdateReceiver;
-            mContext.registerReceiver(this.mTrxUpdateReceiver, makeTrxUpdateIntentFilter());
-            isReceiverRegistered = true;
             Intent gattServiceIntent = new Intent(mContext, BluetoothLeService.class);
             mContext.bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
             // the connection will happen onServiceConnected after binding
@@ -402,9 +404,5 @@ public class BluetoothManagement {
 
     public boolean isBound() {
         return mBluetoothLeService != null && mBluetoothLeService.isBound();
-    }
-
-    public void setConnectableDeviceAddress(String mConnectableDeviceAddress) {
-        this.mConnectableDeviceAddress = mConnectableDeviceAddress;
     }
 }

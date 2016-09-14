@@ -1,6 +1,5 @@
 package com.valeo.bleranging.bluetooth.compat;
 
-import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.ScanCallback;
@@ -75,34 +74,37 @@ public abstract class ScanCallbackCompat {
     /**
      * Post-Lollipop: initializes the scan callback.
      */
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void initializePostLollipopCallback() {
-        mPostLollipopLeScanCallback = new ScanCallback() {
-            @Override
-            public void onScanResult(final int callbackType, final ScanResult result) {
-                super.onScanResult(callbackType, result);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mPostLollipopLeScanCallback = new ScanCallback() {
+                @Override
+                public void onScanResult(final int callbackType, final ScanResult result) {
+                    super.onScanResult(callbackType, result);
 
-                handleScanResult(result);
-            }
-
-            private void handleScanResult(final ScanResult scanResult) {
-                BluetoothDevice device = scanResult.getDevice();
-                ScanRecord scanRecord = scanResult.getScanRecord();
-                byte[] scanRecordAsBytes = null;
-                byte[] advertisedData = null;
-
-                if (scanRecord != null) {
-                    scanRecordAsBytes = scanRecord.getBytes();
-                    advertisedData = scanRecord.getServiceData(ParcelUuid.fromString("0000ff12-0000-1000-8000-00805f9b34fb"));
+                    handleScanResult(result);
                 }
 
-                ScanCallbackCompat.this.onScanResult(device, scanResult.getRssi(), scanRecordAsBytes, advertisedData);
-            }
+                private void handleScanResult(final ScanResult scanResult) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        BluetoothDevice device = scanResult.getDevice();
+                        ScanRecord scanRecord = scanResult.getScanRecord();
+                        byte[] scanRecordAsBytes = null;
+                        byte[] advertisedData = null;
 
-            public void onScanFailed(int errorCode) {
-                Log.e("NIH", "Scan Failed");
-            }
-        };
+                        if (scanRecord != null) {
+                            scanRecordAsBytes = scanRecord.getBytes();
+                            advertisedData = scanRecord.getServiceData(ParcelUuid.fromString("0000ff12-0000-1000-8000-00805f9b34fb"));
+                        }
+
+                        ScanCallbackCompat.this.onScanResult(device, scanResult.getRssi(), scanRecordAsBytes, advertisedData);
+                    }
+                }
+
+                public void onScanFailed(int errorCode) {
+                    Log.e("NIH", "Scan Failed");
+                }
+            };
+        }
     }
 
     // endregion

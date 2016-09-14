@@ -1,6 +1,5 @@
 package com.valeo.bleranging.bluetooth.compat;
 
-import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
@@ -181,32 +180,31 @@ public final class BluetoothAdapterCompat {
      * @param scanCallbackCompat the callback LE scan results are delivered.
      * @return the start scan status.
      */
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private ScanTask.StartLeScanResult postLollipopStartLeScan(final ScanCallbackCompat scanCallbackCompat) {
-        ScanTask.StartLeScanResult result;
-        BluetoothLeScanner scanner = mBluetoothAdapter.getBluetoothLeScanner();
+        ScanTask.StartLeScanResult result = ScanTask.StartLeScanResult.ERROR_BLUETOOTH_NOT_AVAILABLE;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            BluetoothLeScanner scanner = mBluetoothAdapter.getBluetoothLeScanner();
 
-        if (scanner == null) {
-            result = ScanTask.StartLeScanResult.ERROR_BLUETOOTH_DISABLED;
-        } else {
-            List<ScanFilter> scanFilters = createScanFilters();
-            ScanSettings setting = new ScanSettings.Builder()
-                    .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                    .setReportDelay(0)
-                    .build();
-            ScanTask runningScanTask = mRunningDetections.get(scanCallbackCompat);
-            if (runningScanTask != null) {
-                Log.w(TAG, "Scanning task is not Started, Already Running one found");
+            if (scanner == null) {
+                result = ScanTask.StartLeScanResult.ERROR_BLUETOOTH_DISABLED;
             } else {
-                PostLollipopScanTask scanTask = new PostLollipopScanTask(mBluetoothAdapter, scanFilters, setting, getPostLollipopScanCallback(scanCallbackCompat));
-                scanTask.setScanPeriods(3000, 200);
-                mRunningDetections.put(scanCallbackCompat, scanTask);
-                scanTask.start();
+                List<ScanFilter> scanFilters = createScanFilters();
+                ScanSettings setting = new ScanSettings.Builder()
+                        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                        .setReportDelay(0)
+                        .build();
+                ScanTask runningScanTask = mRunningDetections.get(scanCallbackCompat);
+                if (runningScanTask != null) {
+                    Log.w(TAG, "Scanning task is not Started, Already Running one found");
+                } else {
+                    PostLollipopScanTask scanTask = new PostLollipopScanTask(mBluetoothAdapter, scanFilters, setting, getPostLollipopScanCallback(scanCallbackCompat));
+                    scanTask.setScanPeriods(3000, 200);
+                    mRunningDetections.put(scanCallbackCompat, scanTask);
+                    scanTask.start();
+                }
+                result = ScanTask.StartLeScanResult.SUCCESS;
             }
-
-            result = ScanTask.StartLeScanResult.SUCCESS;
         }
-
         return result;
     }
 
@@ -214,61 +212,62 @@ public final class BluetoothAdapterCompat {
      * Create a filter for each trx
      * @return a list of scanFilter for all trx
      */
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private List<ScanFilter> createScanFilters() {
         List<ScanFilter> scanFilters = new ArrayList<>();
-        ScanFilter scanFilterConnectable = new ScanFilter.Builder()
-                .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())
-                .build();
-        scanFilters.add(scanFilterConnectable);
-        ScanFilter scanFilterLeft = new ScanFilter.Builder()
-                .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressLeft())
-                .build();
-        scanFilters.add(scanFilterLeft);
-        ScanFilter scanFilterMiddle = new ScanFilter.Builder()
-                .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressMiddle())
-                .build();
-        scanFilters.add(scanFilterMiddle);
-        ScanFilter scanFilterRight = new ScanFilter.Builder()
-                .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRight())
-                .build();
-        scanFilters.add(scanFilterRight);
-        ScanFilter scanFilterBack = new ScanFilter.Builder()
-                .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressBack())
-                .build();
-        scanFilters.add(scanFilterBack);
-        ScanFilter scanFilterFrontLeft = new ScanFilter.Builder()
-                .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft())
-                .build();
-        scanFilters.add(scanFilterFrontLeft);
-        ScanFilter scanFilterFrontRight = new ScanFilter.Builder()
-                .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressFrontRight())
-                .build();
-        scanFilters.add(scanFilterFrontRight);
-        ScanFilter scanFilterRearLeft = new ScanFilter.Builder()
-                .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRearLeft())
-                .build();
-        scanFilters.add(scanFilterRearLeft);
-        ScanFilter scanFilterRearRight = new ScanFilter.Builder()
-                .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRearRight())
-                .build();
-        scanFilters.add(scanFilterRearRight);
-        ScanFilter scanFilterLogger = new ScanFilter.Builder()
-                .setServiceUuid(ParcelUuid.fromString("f000ff12-0451-4000-b000-000000000000"))
-                .build();
-        scanFilters.add(scanFilterLogger);
-        ScanFilter scanFilter37 = new ScanFilter.Builder()
-                .setDeviceAddress(SdkPreferencesHelper.BLE_ADDRESS_37)
-                .build();
-        scanFilters.add(scanFilter37);
-        ScanFilter scanFilter38 = new ScanFilter.Builder()
-                .setDeviceAddress(SdkPreferencesHelper.BLE_ADDRESS_38)
-                .build();
-        scanFilters.add(scanFilter38);
-        ScanFilter scanFilter39 = new ScanFilter.Builder()
-                .setDeviceAddress(SdkPreferencesHelper.BLE_ADDRESS_39)
-                .build();
-        scanFilters.add(scanFilter39);
+        if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            ScanFilter scanFilterConnectable = new ScanFilter.Builder()
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())
+                    .build();
+            scanFilters.add(scanFilterConnectable);
+            ScanFilter scanFilterLeft = new ScanFilter.Builder()
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressLeft())
+                    .build();
+            scanFilters.add(scanFilterLeft);
+            ScanFilter scanFilterMiddle = new ScanFilter.Builder()
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressMiddle())
+                    .build();
+            scanFilters.add(scanFilterMiddle);
+            ScanFilter scanFilterRight = new ScanFilter.Builder()
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRight())
+                    .build();
+            scanFilters.add(scanFilterRight);
+            ScanFilter scanFilterBack = new ScanFilter.Builder()
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressBack())
+                    .build();
+            scanFilters.add(scanFilterBack);
+            ScanFilter scanFilterFrontLeft = new ScanFilter.Builder()
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft())
+                    .build();
+            scanFilters.add(scanFilterFrontLeft);
+            ScanFilter scanFilterFrontRight = new ScanFilter.Builder()
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressFrontRight())
+                    .build();
+            scanFilters.add(scanFilterFrontRight);
+            ScanFilter scanFilterRearLeft = new ScanFilter.Builder()
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRearLeft())
+                    .build();
+            scanFilters.add(scanFilterRearLeft);
+            ScanFilter scanFilterRearRight = new ScanFilter.Builder()
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRearRight())
+                    .build();
+            scanFilters.add(scanFilterRearRight);
+            ScanFilter scanFilterLogger = new ScanFilter.Builder()
+                    .setServiceUuid(ParcelUuid.fromString("f000ff12-0451-4000-b000-000000000000"))
+                    .build();
+            scanFilters.add(scanFilterLogger);
+            ScanFilter scanFilter37 = new ScanFilter.Builder()
+                    .setDeviceAddress(SdkPreferencesHelper.BLE_ADDRESS_37)
+                    .build();
+            scanFilters.add(scanFilter37);
+            ScanFilter scanFilter38 = new ScanFilter.Builder()
+                    .setDeviceAddress(SdkPreferencesHelper.BLE_ADDRESS_38)
+                    .build();
+            scanFilters.add(scanFilter38);
+            ScanFilter scanFilter39 = new ScanFilter.Builder()
+                    .setDeviceAddress(SdkPreferencesHelper.BLE_ADDRESS_39)
+                    .build();
+            scanFilters.add(scanFilter39);
+        }
         return scanFilters;
     }
 

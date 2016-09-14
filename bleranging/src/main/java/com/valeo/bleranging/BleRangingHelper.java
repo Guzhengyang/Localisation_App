@@ -57,7 +57,6 @@ public class BleRangingHelper implements SensorEventListener {
     private final BluetoothManagement mBluetoothManager;
     private final float linAccThreshold = SdkPreferencesHelper.getInstance().getCorrectionLinAcc();
     private final int linAccSize = SdkPreferencesHelper.getInstance().getLinAccSize();
-    private final String trxAddressConnectable = SdkPreferencesHelper.getInstance().getTrxAddressConnectable();
 
     public boolean smartphoneIsInPocket = false;
     public boolean smartphoneIsLaidDownLAcc = false;
@@ -392,11 +391,10 @@ public class BleRangingHelper implements SensorEventListener {
                     runFirstConnection(scanResponse);
                     mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
                     mHandlerTimeOut.removeCallbacks(null);
-                } else if (device.getAddress().equals(trxAddressConnectable) && !isTryingToConnect) {
+                } else if (device.getAddress().equals(SdkPreferencesHelper.getInstance().getTrxAddressConnectable()) && !isTryingToConnect) {
                     Log.w(" rssiHistorics", "************************************** isTryingToConnect ************************************************");
                     isTryingToConnect = true;
-                    mHandlerTimeOut.postDelayed(mManageIsTryingToConnectTimer, 5000);
-                    mBluetoothManager.setConnectableDeviceAddress(trxAddressConnectable);
+                    mHandlerTimeOut.postDelayed(mManageIsTryingToConnectTimer, 20000);
                     mBluetoothManager.connect(mTrxUpdateReceiver);
                 }
             } else if (isFullyConnected()) {
