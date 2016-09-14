@@ -48,8 +48,9 @@ public class BluetoothLeService extends Service {
     private static final short MAX_RETRIES_WRITE_CHARACTERISTIC = 5;
     private final ArrayList<IBluetoothLeServiceListener> mListeners = new ArrayList<>();
     private final IBinder mBinder = new LocalBinder();
-    private boolean mIsServiceDiscovered=false;
+    private boolean mIsServiceDiscovered = false;
     private boolean isFullyConnected = false;
+    private boolean isBound = false;
     private int mPacketToWriteCount = 0;
     private Deque<byte[]> mReceiveQueue;
 
@@ -121,8 +122,8 @@ public class BluetoothLeService extends Service {
             String intentAction;
             if (status == 8) {
                 intentAction = ACTION_GATT_CONNECTION_LOSS;
-                broadcastUpdate(intentAction);
                 isFullyConnected = false;
+                broadcastUpdate(intentAction);
             } else if (status != BluetoothGatt.GATT_SUCCESS && status != 19) {
                 // makeNoise when connexion failed
                 final ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_SYSTEM, 70);
@@ -130,6 +131,7 @@ public class BluetoothLeService extends Service {
                 if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                     intentAction = ACTION_GATT_DISCONNECTED;
                     Log.i("NIH", "Error lead to disconnection from GATT server.");
+                    isFullyConnected = false;
                     if (mBSHandler != null) {
                         // Send a message to the right handler
                         // Return the result from the requested action
@@ -137,7 +139,6 @@ public class BluetoothLeService extends Service {
                         mBSHandler.sendMessage(msg);
                     }
                     broadcastUpdate(intentAction);
-                    isFullyConnected = false;
                 } else {
                     Log.i("NIH", "Failed to Connected to GATT server, New State = " + newState);
                     intentAction = ACTION_GATT_SERVICES_FAILED;
@@ -154,6 +155,7 @@ public class BluetoothLeService extends Service {
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 intentAction = ACTION_GATT_DISCONNECTED;
                 Log.i("NIH", "Disconnected from GATT server.");
+                isFullyConnected = false;
                 if (mBSHandler != null) {
                     // Send a message to the right handler
                     // Return the result from the requested action
@@ -161,7 +163,6 @@ public class BluetoothLeService extends Service {
                     mBSHandler.sendMessage(msg);
                 }
                 broadcastUpdate(intentAction);
-                isFullyConnected = false;
             }
         }
 
@@ -246,7 +247,11 @@ public class BluetoothLeService extends Service {
     }
 
     public boolean isFullyConnected() {
-        return isFullyConnected;
+        return isBound && isFullyConnected;
+    }
+
+    public boolean isBound() {
+        return isBound;
     }
 
     public void init() {
@@ -262,6 +267,7 @@ public class BluetoothLeService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.i("NIH", "onBind()");
+        isBound = true;
         return mBinder;
     }
 
@@ -272,7 +278,7 @@ public class BluetoothLeService extends Service {
         // invoked when the UI is disconnected from the Service.
         Log.i("NIH", "onUnbind()");
         close();
-        isFullyConnected = false;
+        isBound = false;
         return super.onUnbind(intent);
     }
 

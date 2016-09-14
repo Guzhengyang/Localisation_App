@@ -32,6 +32,7 @@ public class BluetoothManagement {
     private static final String TAG = BluetoothManagement.class.getSimpleName();
     public static BluetoothAdapterCompat mBluetoothAdapterCompat;
     private final Context mContext;
+    private boolean isReceiverRegistered = false;
     private ArrayList<BluetoothManagementListener> mBluetoothManagementListeners;
     private BluetoothLeService mBluetoothLeService;
     private String mConnectableDeviceAddress;
@@ -112,19 +113,24 @@ public class BluetoothManagement {
      * Close the connection between the phone and the current device
      */
     public void disconnect() {
-        if (isFullyConnected()) {
-            try {
+        try {
+            if (isFullyConnected()) {
                 mBluetoothLeService.disconnect();
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         try {
-            mContext.unbindService(mServiceConnection);
+            if (isBound()) {
+                mContext.unbindService(mServiceConnection);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            mContext.unregisterReceiver(mTrxUpdateReceiver);
+            if (isReceiverRegistered) {
+                mContext.unregisterReceiver(mTrxUpdateReceiver);
+                isReceiverRegistered = false;
+            }
         }
     }
 
@@ -136,6 +142,7 @@ public class BluetoothManagement {
             Log.i("NIH bind", "BluetoothManagement bindService()");
             this.mTrxUpdateReceiver = mTrxUpdateReceiver;
             mContext.registerReceiver(this.mTrxUpdateReceiver, makeTrxUpdateIntentFilter());
+            isReceiverRegistered = true;
             Intent gattServiceIntent = new Intent(mContext, BluetoothLeService.class);
             mContext.bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
             // the connection will happen onServiceConnected after binding
@@ -391,6 +398,10 @@ public class BluetoothManagement {
 
     public boolean isFullyConnected() {
         return mBluetoothLeService != null && mBluetoothLeService.isFullyConnected();
+    }
+
+    public boolean isBound() {
+        return mBluetoothLeService != null && mBluetoothLeService.isBound();
     }
 
     public void setConnectableDeviceAddress(String mConnectableDeviceAddress) {

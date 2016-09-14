@@ -86,6 +86,13 @@ public class BleRangingHelper implements SensorEventListener {
     private boolean newLockStatus;
     private boolean isAbortRunning = false;
     private boolean isFirstConnection = true;
+    private boolean isTryingToConnect = false;
+    private final Runnable mManageIsTryingToConnectTimer = new Runnable() {
+        @Override
+        public void run() {
+            isTryingToConnect = false;
+        }
+    };
     private AtomicBoolean isLockStatusChangedTimerExpired = new AtomicBoolean(true);
     /**
      * Create a handler to detect if the vehicle can do a unlock
@@ -269,10 +276,7 @@ public class BleRangingHelper implements SensorEventListener {
                 restartConnection(false);
             } else if (BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
                 Log.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
-                if (isFullyConnected()) {
-                    Log.d("NIH", "ACTION_GATT_CONNECTION_LOSS disconnect()");
-                    mBluetoothManager.disconnect();
-                }
+                restartConnection(false);
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
                 Log.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
@@ -339,8 +343,14 @@ public class BleRangingHelper implements SensorEventListener {
             lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
             connectedCar = ConnectedCarFactory.getConnectedCar(lastConnectedCarType);
         }
-        mBluetoothManager.connect(mTrxUpdateReceiver);
-        mBluetoothManager.resumeLeScan();
+        // wait to close every connection before creating them again
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mBluetoothManager.connect(mTrxUpdateReceiver);
+                mBluetoothManager.resumeLeScan();
+            }
+        }, 250);
     }
 
     /**
@@ -383,12 +393,19 @@ public class BleRangingHelper implements SensorEventListener {
     private void doPassiveEntry(final BluetoothDevice device, int rssi, ScanResponse scanResponse, byte[] advertisedData) {
         if (device != null && scanResponse != null) {
             rearmWelcome(rssi); // rearm rearmWelcome Boolean
-            Log.d(" rssiHistoric", "BLE_ADDRESS_LOGGER2=" + TextUtils.printBleBytes(advertisedData));
-            if (isFirstConnection && !isFullyConnected() && device.getAddress().equals(trxAddressConnectable)) {
-                runFirstConnection(scanResponse);
-                mBluetoothManager.setConnectableDeviceAddress(trxAddressConnectable);
-                mBluetoothManager.connect(mTrxUpdateReceiver);
-            } else if (!isFirstConnection && isFullyConnected()) {
+            if (isFirstConnection) {
+                if (isFullyConnected()) {
+                    isFirstConnection = false;
+                    runFirstConnection(scanResponse);
+                    mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
+                    mHandlerTimeOut.removeCallbacks(null);
+                } else if (device.getAddress().equals(trxAddressConnectable) && !isTryingToConnect) {
+                    isTryingToConnect = true;
+                    mHandlerTimeOut.postDelayed(mManageIsTryingToConnectTimer, 5000);
+                    mBluetoothManager.setConnectableDeviceAddress(trxAddressConnectable);
+                    mBluetoothManager.connect(mTrxUpdateReceiver);
+                }
+            } else if (isFullyConnected()) {
                 if(device.getAddress().equals(trxAddressLeft)) {
                     connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
                     Log.d(" rssiHistoric", "BLE_ADDRESS_LEFT=" + trxAddressLeft + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
@@ -577,22 +594,18 @@ public class BleRangingHelper implements SensorEventListener {
      * @param scanResponse the scanResponse received
      */
     private void runFirstConnection(final ScanResponse scanResponse) {
-        if(isFirstConnection) {
-            Log.w(" rssiHistorics", "************************************** runFirstConnection ************************************************");
-            newLockStatus = (scanResponse.vehicleState & 0x01)!=0;
-            bleRangingListener.updateCarDoorStatus(newLockStatus);
-            mProtocolManager.setIsLockedToSend(newLockStatus);
-            if (connectedCar != null) {
-                connectedCar.initializeTrx(newLockStatus);
-            }
-            mMainHandler = new Handler(Looper.getMainLooper());
-            mMainHandler.post(checkAntennaRunner);
-            mMainHandler.post(printRunner);
-            mMainHandler.post(logRunner);
-            isFirstConnection = false;
+        Log.w(" rssiHistorics", "************************************** runFirstConnection ************************************************");
+        newLockStatus = (scanResponse.vehicleState & 0x01) != 0;
+        bleRangingListener.updateCarDoorStatus(newLockStatus);
+        mProtocolManager.setIsLockedToSend(newLockStatus);
+        if (connectedCar != null) {
+            connectedCar.initializeTrx(newLockStatus);
         }
+        mMainHandler = new Handler(Looper.getMainLooper());
+        mMainHandler.post(checkAntennaRunner);
+        mMainHandler.post(printRunner);
+        mMainHandler.post(logRunner);
     }
-
 
     public void initializeConnectedCar() {
         if (lastConnectedCarType.equals("")) {
