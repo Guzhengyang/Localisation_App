@@ -57,6 +57,14 @@ public abstract class ConnectedCar {
     protected final static int nearBackDoorRatioThresholdMax = SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMax(SdkPreferencesHelper.getInstance().getConnectedCarType());
     protected final static int nearDoorThresholdMLorMRMin = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMin(SdkPreferencesHelper.getInstance().getConnectedCarType());
     protected final static int nearDoorThresholdMLorMRMax = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMax(SdkPreferencesHelper.getInstance().getConnectedCarType());
+    private final String trxAddressLeft = SdkPreferencesHelper.getInstance().getTrxAddressLeft();
+    private final String trxAddressMiddle = SdkPreferencesHelper.getInstance().getTrxAddressMiddle();
+    private final String trxAddressRight = SdkPreferencesHelper.getInstance().getTrxAddressRight();
+    private final String trxAddressBack = SdkPreferencesHelper.getInstance().getTrxAddressBack();
+    private final String trxAddressFrontLeft = SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft();
+    private final String trxAddressFrontRight = SdkPreferencesHelper.getInstance().getTrxAddressFrontRight();
+    private final String trxAddressRearLeft = SdkPreferencesHelper.getInstance().getTrxAddressRearLeft();
+    private final String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
     protected Trx trxLeft;
     protected Trx trxMiddle;
     protected Trx trxRight;
@@ -510,6 +518,28 @@ public abstract class ConnectedCar {
             ranging.setPocket(0);
         }
         return ranging;
+    }
+
+    public int getTrxNumber(String address) {
+        if (address.equals(trxAddressLeft)) {
+            return ConnectedCar.NUMBER_TRX_LEFT;
+        } else if (address.equals(trxAddressMiddle)) {
+            return ConnectedCar.NUMBER_TRX_MIDDLE;
+        } else if (address.equals(trxAddressRight)) {
+            return ConnectedCar.NUMBER_TRX_RIGHT;
+        } else if (address.equals(trxAddressBack)) {
+            return ConnectedCar.NUMBER_TRX_BACK;
+        } else if (address.equals(trxAddressFrontLeft)) {
+            return ConnectedCar.NUMBER_TRX_FRONT_LEFT;
+        } else if (address.equals(trxAddressFrontRight)) {
+            return ConnectedCar.NUMBER_TRX_FRONT_RIGHT;
+        } else if (address.equals(trxAddressRearLeft)) {
+            return ConnectedCar.NUMBER_TRX_REAR_LEFT;
+        } else if (address.equals(trxAddressRearRight)) {
+            return ConnectedCar.NUMBER_TRX_REAR_RIGHT;
+        } else {
+            return -1;
+        }
     }
 
     protected enum ConnectionNumber {

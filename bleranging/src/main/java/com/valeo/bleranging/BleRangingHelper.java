@@ -58,14 +58,7 @@ public class BleRangingHelper implements SensorEventListener {
     private final float linAccThreshold = SdkPreferencesHelper.getInstance().getCorrectionLinAcc();
     private final int linAccSize = SdkPreferencesHelper.getInstance().getLinAccSize();
     private final String trxAddressConnectable = SdkPreferencesHelper.getInstance().getTrxAddressConnectable();
-    private final String trxAddressLeft = SdkPreferencesHelper.getInstance().getTrxAddressLeft();
-    private final String trxAddressMiddle = SdkPreferencesHelper.getInstance().getTrxAddressMiddle();
-    private final String trxAddressRight = SdkPreferencesHelper.getInstance().getTrxAddressRight();
-    private final String trxAddressBack = SdkPreferencesHelper.getInstance().getTrxAddressBack();
-    private final String trxAddressFrontLeft = SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft();
-    private final String trxAddressFrontRight = SdkPreferencesHelper.getInstance().getTrxAddressFrontRight();
-    private final String trxAddressRearLeft = SdkPreferencesHelper.getInstance().getTrxAddressRearLeft();
-    private final String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
+
     public boolean smartphoneIsInPocket = false;
     public boolean smartphoneIsLaidDownLAcc = false;
     private Integer rangingPredictionInt = -1;
@@ -400,41 +393,21 @@ public class BleRangingHelper implements SensorEventListener {
                     mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
                     mHandlerTimeOut.removeCallbacks(null);
                 } else if (device.getAddress().equals(trxAddressConnectable) && !isTryingToConnect) {
+                    Log.w(" rssiHistorics", "************************************** isTryingToConnect ************************************************");
                     isTryingToConnect = true;
                     mHandlerTimeOut.postDelayed(mManageIsTryingToConnectTimer, 5000);
                     mBluetoothManager.setConnectableDeviceAddress(trxAddressConnectable);
                     mBluetoothManager.connect(mTrxUpdateReceiver);
                 }
             } else if (isFullyConnected()) {
-                if(device.getAddress().equals(trxAddressLeft)) {
-                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_LEFT=" + trxAddressLeft + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
-                } else if (device.getAddress().equals(trxAddressMiddle)) {
-                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_MIDDLE, scanResponse.antennaId, rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_MIDDLE=" + trxAddressMiddle + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
-                } else if (device.getAddress().equals(trxAddressRight)) {
-                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_RIGHT=" + trxAddressRight + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
-                } else if (device.getAddress().equals(trxAddressBack)) {
-                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_BACK=" + trxAddressBack + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
-                } else if (device.getAddress().equals(trxAddressFrontLeft)) {
-                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_FRONT_LEFT=" + trxAddressFrontLeft + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
-                } else if (device.getAddress().equals(trxAddressFrontRight)) {
-                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_FRONT_RIGHT=" + trxAddressFrontRight + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
-                } else if (device.getAddress().equals(trxAddressRearLeft)) {
-                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_REAR_LEFT=" + trxAddressRearLeft + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
-                } else if (device.getAddress().equals(trxAddressRearRight)) {
-                    connectedCar.saveRssi(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_0, rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                    Log.d(" rssiHistoric", "BLE_ADDRESS_REAR_RIGHT=" + trxAddressRearRight + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT) + " " + connectedCar.getRssiAverage(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
-                } else {
-                    if (advertisedData != null && advertisedData.length > 0) {
-                        Log.d(" rssiHistoric", "BLE_ADDRESS_LOGGER=" + TextUtils.printBleBytes(advertisedData));
-                        getAdvertisedBytes(advertisedData);
-                    }
+                int trxNumber = connectedCar.getTrxNumber(device.getAddress());
+                connectedCar.saveRssi(trxNumber, scanResponse.antennaId, rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                Log.d(" rssiHistoric", "BLE_ADDRESS=" + device.getAddress()
+                        + " " + connectedCar.getRssiAverage(trxNumber, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT)
+                        + " " + connectedCar.getRssiAverage(trxNumber, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
+                if (trxNumber == -1 && advertisedData != null && advertisedData.length > 0) {
+                    Log.d(" rssiHistoric", "BLE_ADDRESS_LOGGER=" + TextUtils.printBleBytes(advertisedData));
+                    getAdvertisedBytes(advertisedData);
                 }
                 Ranging ranging = connectedCar.prepareRanging(mContext, smartphoneIsInPocket);
                 if (predictionHistoric.size() == PREDICTION_MAX) {
