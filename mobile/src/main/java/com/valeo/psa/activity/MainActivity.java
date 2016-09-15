@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int REQUEST_ACCESS_FINE_LOCATION_PERMISSION = 25111;
     private static final int REQUEST_BLUETOOTH_PERMISSION = 25112;
     private static final int REQUEST_BLUETOOTH_ADMIN_PERMISSION = 25113;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 25114;
     private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
     private Toolbar toolbar;
     private FrameLayout main_frame;
@@ -178,6 +179,11 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.BLUETOOTH_ADMIN},
                         REQUEST_BLUETOOTH_ADMIN_PERMISSION);
+            }
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION);
             }
         }
         this.mBleRangingHelper = new BleRangingHelper(this, this);

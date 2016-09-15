@@ -325,6 +325,7 @@ public class BleRangingHelper implements SensorEventListener {
             mMainHandler.removeCallbacks(null);
             mMainHandler = null;
         }
+        bleRangingListener.printDebugInfo(null);
         mProtocolManager.restartPacketOneCounter();
         rearmWelcome.set(true);
         isFirstConnection = true;
@@ -391,11 +392,17 @@ public class BleRangingHelper implements SensorEventListener {
                     runFirstConnection(scanResponse);
                     mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
                     mHandlerTimeOut.removeCallbacks(null);
-                } else if (device.getAddress().equals(SdkPreferencesHelper.getInstance().getTrxAddressConnectable()) && !isTryingToConnect) {
+                } else if (device.getAddress().equals(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())) {
                     Log.w(" rssiHistorics", "************************************** isTryingToConnect ************************************************");
-                    isTryingToConnect = true;
-                    mHandlerTimeOut.postDelayed(mManageIsTryingToConnectTimer, 20000);
-                    mBluetoothManager.connect(mTrxUpdateReceiver);
+                    if (!isTryingToConnect) {
+                        isTryingToConnect = true;
+                        mHandlerTimeOut.postDelayed(mManageIsTryingToConnectTimer, 20000);
+                        mBluetoothManager.connect(mTrxUpdateReceiver);
+                    } else {
+                        Log.w(" rssiHistorics", "already trying to connect");
+                    }
+                } else {
+                    Log.w(" rssiHistorics", device.getAddress());
                 }
             } else if (isFullyConnected()) {
                 int trxNumber = connectedCar.getTrxNumber(device.getAddress());
