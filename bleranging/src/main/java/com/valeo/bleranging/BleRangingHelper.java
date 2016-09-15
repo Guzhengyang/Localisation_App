@@ -265,10 +265,24 @@ public class BleRangingHelper implements SensorEventListener {
                 }
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 Log.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
-                restartConnection(false);
+                if (mMainHandler != null) {
+                    mMainHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            restartConnection(false);
+                        }
+                    }, 1000);
+                }
             } else if (BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
                 Log.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
-                restartConnection(false);
+                if (mMainHandler != null) {
+                    mMainHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            restartConnection(false);
+                        }
+                    }, 1000);
+                }
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
                 Log.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
@@ -393,16 +407,17 @@ public class BleRangingHelper implements SensorEventListener {
                     mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
                     mHandlerTimeOut.removeCallbacks(null);
                 } else if (device.getAddress().equals(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())) {
-                    Log.w(" rssiHistorics", "************************************** isTryingToConnect ************************************************");
+                    Log.w(" rssiHistorics", "CONNECTABLE " + device.getAddress());
                     if (!isTryingToConnect) {
+                        Log.w(" rssiHistorics", "************************************** isTryingToConnect ************************************************");
                         isTryingToConnect = true;
-                        mHandlerTimeOut.postDelayed(mManageIsTryingToConnectTimer, 20000);
+                        mHandlerTimeOut.postDelayed(mManageIsTryingToConnectTimer, 1000);
                         mBluetoothManager.connect(mTrxUpdateReceiver);
                     } else {
                         Log.w(" rssiHistorics", "already trying to connect");
                     }
                 } else {
-                    Log.w(" rssiHistorics", device.getAddress());
+                    Log.w(" rssiHistorics", "BEACON " + device.getAddress());
                 }
             } else if (isFullyConnected()) {
                 int trxNumber = connectedCar.getTrxNumber(device.getAddress());
@@ -473,15 +488,19 @@ public class BleRangingHelper implements SensorEventListener {
         float currentVolumeOnHundred =   streamVolumeOnFifteen / maxVolumeOnFifteen;
         currentVolumeOnHundred *= 20;
         currentVolumeOnHundred = currentVolumeOnHundred + 80;
-        final ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_SYSTEM, (int) currentVolumeOnHundred);
-        toneG.startTone(noiseSelected, duration);
-        if(mMainHandler != null) {
-            mMainHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    toneG.release();
-                }
-            }, duration);
+        try {
+            final ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_SYSTEM, (int) currentVolumeOnHundred);
+            toneG.startTone(noiseSelected, duration);
+            if (mMainHandler != null) {
+                mMainHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        toneG.release();
+                    }
+                }, duration);
+            }
+        } catch (RuntimeException e) {
+            // do nothing
         }
     }
 

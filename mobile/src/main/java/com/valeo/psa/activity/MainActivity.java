@@ -235,7 +235,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             case R.id.menu_reconnect_ble:
                 mBleRangingHelper.restartConnection(false);
                 break;
-
         }
         return true;
     }

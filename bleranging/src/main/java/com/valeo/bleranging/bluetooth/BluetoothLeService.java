@@ -126,8 +126,12 @@ public class BluetoothLeService extends Service {
                 broadcastUpdate(intentAction);
             } else if (status != BluetoothGatt.GATT_SUCCESS && status != 19) {
                 // makeNoise when connexion failed
-                final ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_SYSTEM, 70);
-                toneG.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 50);
+                try {
+                    final ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_SYSTEM, 70);
+                    toneG.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 50);
+                } catch (RuntimeException e) {
+                    // do nothing
+                }
                 if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                     intentAction = ACTION_GATT_DISCONNECTED;
                     Log.i("NIH", "Error lead to disconnection from GATT server.");
