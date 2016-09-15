@@ -256,12 +256,14 @@ public class BleRangingHelper implements SensorEventListener {
                 mProtocolManager.setIsLockedFromTrx(newLockStatus);
                 if (checkNewPacketOnlyOneLaunch) {
                     checkNewPacketOnlyOneLaunch = false;
-                    mMainHandler.postDelayed(checkNewPacketsRunner, 1000);
+                    if (mMainHandler != null) {
+                        mMainHandler.postDelayed(checkNewPacketsRunner, 1000);
+                    }
                 }
             } else if (BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED.equals(action)) {
                 Log.d("NIH", "TRX ACTION_GATT_CHARACTERISTIC_SUBSCRIBED");
                 if (mMainHandler != null) {
-                    mMainHandler.post(sendPacketRunner); // send works only after subcribed
+                    mMainHandler.post(sendPacketRunner); // send works only after subscribed
                 }
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 Log.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
@@ -299,6 +301,7 @@ public class BleRangingHelper implements SensorEventListener {
         this.bleRangingListener = bleRangingListener;
         this.predictionHistoric = new LinkedList<>();
         this.mProtocolManager = new InblueProtocolManager();
+        this.mMainHandler = new Handler(Looper.getMainLooper());
         this.mLockStatusChangedHandler = new Handler();
         this.mHandlerTimeOut = new Handler();
         this.mIsLaidTimeOutHandler = new Handler();
@@ -337,7 +340,6 @@ public class BleRangingHelper implements SensorEventListener {
             mMainHandler.removeCallbacks(sendPacketRunner);
             mMainHandler.removeCallbacks(checkNewPacketsRunner);
             mMainHandler.removeCallbacks(null);
-            mMainHandler = null;
         }
         bleRangingListener.printDebugInfo(null);
         mProtocolManager.restartPacketOneCounter();
@@ -411,8 +413,10 @@ public class BleRangingHelper implements SensorEventListener {
                     if (!isTryingToConnect) {
                         Log.w(" rssiHistorics", "************************************** isTryingToConnect ************************************************");
                         isTryingToConnect = true;
-                        mHandlerTimeOut.postDelayed(mManageIsTryingToConnectTimer, 1000);
+                        mBluetoothManager.suspendLeScan();
+                        mHandlerTimeOut.postDelayed(mManageIsTryingToConnectTimer, 3000);
                         mBluetoothManager.connect(mTrxUpdateReceiver);
+                        mBluetoothManager.resumeLeScan();
                     } else {
                         Log.w(" rssiHistorics", "already trying to connect");
                     }
@@ -598,10 +602,11 @@ public class BleRangingHelper implements SensorEventListener {
         if (connectedCar != null) {
             connectedCar.initializeTrx(newLockStatus);
         }
-        mMainHandler = new Handler(Looper.getMainLooper());
-        mMainHandler.post(checkAntennaRunner);
-        mMainHandler.post(printRunner);
-        mMainHandler.post(logRunner);
+        if (mMainHandler != null) {
+            mMainHandler.post(checkAntennaRunner);
+            mMainHandler.post(printRunner);
+            mMainHandler.post(logRunner);
+        }
     }
 
     public void initializeConnectedCar() {

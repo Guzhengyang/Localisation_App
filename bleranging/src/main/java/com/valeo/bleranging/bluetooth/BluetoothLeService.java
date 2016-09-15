@@ -93,8 +93,12 @@ public class BluetoothLeService extends Service {
             String intentAction;
             if (status != BluetoothGatt.GATT_SUCCESS) {
                 // makeNoise when connexion failed
-                final ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_SYSTEM, 70);
-                toneG.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 50);
+                try {
+                    final ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_SYSTEM, 70);
+                    toneG.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 50);
+                } catch (RuntimeException e) {
+                    // do nothing
+                }
                 Log.d("NIH", "onMtuChanged mtu request FAILED " + status);
                 intentAction = ACTION_GATT_SERVICES_FAILED;
                 broadcastUpdate(intentAction);
@@ -150,7 +154,7 @@ public class BluetoothLeService extends Service {
                 }
             } else if (newState == BluetoothProfile.STATE_CONNECTED) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    gatt.requestMtu(42);
+                    gatt.requestMtu(23);
                 } else {
                     Log.d("NIH", "onConnectionStateChange no mtu request");
                 }
@@ -216,8 +220,8 @@ public class BluetoothLeService extends Service {
                                             BluetoothGattCharacteristic characteristic) {
             Log.i("NIH", "onCharacteristicChanged(): " + Arrays.toString(characteristic.getValue()));
             mReceiveQueue.add(characteristic.getValue());
-            broadcastUpdate(ACTION_DATA_AVAILABLE);
             isFullyConnected = true;
+            broadcastUpdate(ACTION_DATA_AVAILABLE);
         }
 
         @Override
@@ -225,8 +229,8 @@ public class BluetoothLeService extends Service {
                                       int status) {
             Log.i("NIH", "onDescriptorWrite(): " + status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                broadcastUpdate(ACTION_GATT_CHARACTERISTIC_SUBSCRIBED);
                 isFullyConnected = true;
+                broadcastUpdate(ACTION_GATT_CHARACTERISTIC_SUBSCRIBED);
             }
         }
 
