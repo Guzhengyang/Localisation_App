@@ -131,13 +131,15 @@ public class BleRangingHelper implements SensorEventListener {
         public void run() {
             Log.d("NIH", "checkNewPacketsRunner " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
             if((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
+                Log.e("checkNewPacketsRunner", "disconnect()");
                 mBluetoothManager.disconnect();
+                bleRangingListener.updateBLEStatus();
             } else {
                 lastPacketIdNumber[0] = bytesReceived[0];
                 lastPacketIdNumber[1] = bytesReceived[1];
             }
             if (isFullyConnected() && mMainHandler != null) {
-                mMainHandler.postDelayed(this, 1000);
+                mMainHandler.postDelayed(this, 3000);
             }
         }
     };
@@ -210,30 +212,6 @@ public class BleRangingHelper implements SensorEventListener {
             }
         }
     };
-    private Runnable printRunner = new Runnable() {
-        @Override
-        public void run() {
-            if (isFullyConnected()) {
-                Log.w(" rssiHistorics", "************************************** IHM LOOP START *************************************************");
-                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-                spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder, bleChannel);
-                totalAverage = connectedCar.getAllTrxAverage(Antenna.AVERAGE_DEFAULT);
-                tryStrategies(newLockStatus);
-                spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
-                spannableStringBuilder = connectedCar.createSecondFooterDebugData(spannableStringBuilder,
-                        smartphoneIsInPocket, smartphoneIsLaidDownLAcc, totalAverage, rearmLock.get(), rearmUnlock.get());
-                spannableStringBuilder = connectedCar.createThirdFooterDebugData(spannableStringBuilder,
-                        bytesToSend, bytesReceived, deltaLinAcc, smartphoneIsLaidDownLAcc, mBluetoothManager);
-                updateCarLocalization();
-                bleRangingListener.printDebugInfo(spannableStringBuilder);
-                Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
-            }
-            if (mMainHandler != null) {
-                mMainHandler.postDelayed(this, 500);
-            }
-        }
-    };
-
     /**
      * Handles various events fired by the Service.
      * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
@@ -265,6 +243,14 @@ public class BleRangingHelper implements SensorEventListener {
                 if (mMainHandler != null) {
                     mMainHandler.post(sendPacketRunner); // send works only after subscribed
                 }
+                bleRangingListener.updateBLEStatus();
+                mBluetoothManager.resumeLeScan();
+                if (isFirstConnection && isFullyConnected()) {
+                    isFirstConnection = false;
+                    runFirstConnection(newLockStatus);
+                    mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
+                    mHandlerTimeOut.removeCallbacks(null);
+                }
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 Log.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
                 if (mMainHandler != null) {
@@ -294,6 +280,31 @@ public class BleRangingHelper implements SensorEventListener {
             }
         }
     };
+    private Runnable printRunner = new Runnable() {
+        @Override
+        public void run() {
+            Log.d("printRunner", connectedCar.isInitialized() + " " + isFullyConnected());
+            if (connectedCar.isInitialized() && isFullyConnected()) {
+                Log.w(" rssiHistorics", "************************************** IHM LOOP START *************************************************");
+                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+                spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder, bleChannel);
+                totalAverage = connectedCar.getAllTrxAverage(Antenna.AVERAGE_DEFAULT);
+                tryStrategies(newLockStatus);
+                spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
+                spannableStringBuilder = connectedCar.createSecondFooterDebugData(spannableStringBuilder,
+                        smartphoneIsInPocket, smartphoneIsLaidDownLAcc, totalAverage, rearmLock.get(), rearmUnlock.get());
+                spannableStringBuilder = connectedCar.createThirdFooterDebugData(spannableStringBuilder,
+                        bytesToSend, bytesReceived, deltaLinAcc, smartphoneIsLaidDownLAcc, mBluetoothManager);
+                updateCarLocalization();
+                bleRangingListener.printDebugInfo(spannableStringBuilder);
+                Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
+            }
+            if (mMainHandler != null) {
+                Log.d("printRunner", "relaunch delay printRunner ");
+                mMainHandler.postDelayed(this, 500);
+            }
+        }
+    };
 
     public BleRangingHelper(Context context, BleRangingListener bleRangingListener) {
         this.mContext = context;
@@ -320,6 +331,7 @@ public class BleRangingHelper implements SensorEventListener {
         senSensorManager.registerListener(this, senLinAcceleration, SensorManager.SENSOR_DELAY_UI);
         senSensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
         mBluetoothManager.resumeLeScan();
+        mMainHandler.post(printRunner);
     }
 
     public void setIsPassiveEntryAction(boolean isPassiveEntryAction) {
@@ -333,19 +345,18 @@ public class BleRangingHelper implements SensorEventListener {
         Log.d("NIH", "restartConnection");
         mBluetoothManager.suspendLeScan();
         mBluetoothManager.disconnect();
+        bleRangingListener.updateBLEStatus();
         if (mMainHandler != null) {
             mMainHandler.removeCallbacks(checkAntennaRunner);
-            mMainHandler.removeCallbacks(printRunner);
             mMainHandler.removeCallbacks(logRunner);
             mMainHandler.removeCallbacks(sendPacketRunner);
             mMainHandler.removeCallbacks(checkNewPacketsRunner);
-            mMainHandler.removeCallbacks(null);
         }
-        bleRangingListener.printDebugInfo(null);
         mProtocolManager.restartPacketOneCounter();
         rearmWelcome.set(true);
         isFirstConnection = true;
         checkNewPacketOnlyOneLaunch = true;
+        lastPacketIdNumber = new byte[2];
         makeNoise(ToneGenerator.TONE_CDMA_NETWORK_USA_RINGBACK, 100);
         if (createConnectedCar) {
             connectedCar = null;
@@ -357,7 +368,6 @@ public class BleRangingHelper implements SensorEventListener {
             @Override
             public void run() {
                 mBluetoothManager.connect(mTrxUpdateReceiver);
-                mBluetoothManager.resumeLeScan();
             }
         }, 250);
     }
@@ -403,20 +413,15 @@ public class BleRangingHelper implements SensorEventListener {
         if (device != null && scanResponse != null) {
             rearmWelcome(rssi); // rearm rearmWelcome Boolean
             if (isFirstConnection) {
-                if (isFullyConnected()) {
-                    isFirstConnection = false;
-                    runFirstConnection(scanResponse);
-                    mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
-                    mHandlerTimeOut.removeCallbacks(null);
-                } else if (device.getAddress().equals(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())) {
+                if (device.getAddress().equals(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())) {
                     Log.w(" rssiHistorics", "CONNECTABLE " + device.getAddress());
                     if (!isTryingToConnect) {
                         Log.w(" rssiHistorics", "************************************** isTryingToConnect ************************************************");
                         isTryingToConnect = true;
                         mBluetoothManager.suspendLeScan();
+                        newLockStatus = (scanResponse.vehicleState & 0x01) != 0; // get lock status for initialization later
                         mHandlerTimeOut.postDelayed(mManageIsTryingToConnectTimer, 3000);
                         mBluetoothManager.connect(mTrxUpdateReceiver);
-                        mBluetoothManager.resumeLeScan();
                     } else {
                         Log.w(" rssiHistorics", "already trying to connect");
                     }
@@ -445,7 +450,7 @@ public class BleRangingHelper implements SensorEventListener {
 
     public Integer mostCommon(List<Integer> list) {
         if (list.size() == 0) {
-            return null;
+            return -1;
         }
         Map<Integer, Integer> map = new LinkedHashMap<>();
         for (Integer t : list) {
@@ -592,11 +597,10 @@ public class BleRangingHelper implements SensorEventListener {
 
     /**
      * Initialize Trx and antenna then launch IHM looper and antenna active check loop
-     * @param scanResponse the scanResponse received
+     * @param newLockStatus the lock status
      */
-    private void runFirstConnection(final ScanResponse scanResponse) {
+    private void runFirstConnection(final boolean newLockStatus) {
         Log.w(" rssiHistorics", "************************************** runFirstConnection ************************************************");
-        newLockStatus = (scanResponse.vehicleState & 0x01) != 0;
         bleRangingListener.updateCarDoorStatus(newLockStatus);
         mProtocolManager.setIsLockedToSend(newLockStatus);
         if (connectedCar != null) {
@@ -604,7 +608,6 @@ public class BleRangingHelper implements SensorEventListener {
         }
         if (mMainHandler != null) {
             mMainHandler.post(checkAntennaRunner);
-            mMainHandler.post(printRunner);
             mMainHandler.post(logRunner);
         }
     }
@@ -763,8 +766,13 @@ public class BleRangingHelper implements SensorEventListener {
     }
 
     public void closeApp() {
+        if (mMainHandler != null) {
+            mMainHandler.removeCallbacks(printRunner);
+            mMainHandler.removeCallbacks(null);
+        }
         mBluetoothManager.suspendLeScan();
         mBluetoothManager.disconnect();
+        bleRangingListener.updateBLEStatus();
         // increase the file number use for logs files name
         SdkPreferencesHelper.getInstance().setRssiLogNumber(SdkPreferencesHelper.getInstance().getRssiLogNumber() + 1);
         isLoggable = false;

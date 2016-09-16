@@ -75,6 +75,7 @@ public abstract class ConnectedCar {
     protected Trx trxRearRight;
     protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
     protected ConnectionNumber connectionNumber;
+    private boolean initialized = false;
 
     public ConnectedCar(ConnectionNumber connectionNumber) {
         this.connectionNumber = connectionNumber;
@@ -91,6 +92,7 @@ public abstract class ConnectedCar {
         } else {
             initializeTrx(RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE);
         }
+        initialized = true;
     }
 
     /**
@@ -540,6 +542,10 @@ public abstract class ConnectedCar {
         } else {
             return -1;
         }
+    }
+
+    public boolean isInitialized() {
+        return initialized;
     }
 
     protected enum ConnectionNumber {

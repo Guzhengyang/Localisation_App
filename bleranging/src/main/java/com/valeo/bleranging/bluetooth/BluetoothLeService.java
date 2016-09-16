@@ -338,7 +338,7 @@ public class BluetoothLeService extends Service {
         Runnable runFromMainThread = new Runnable() {
             @Override
             public void run() {
-                mBluetoothGatt = mDevice.connectGatt(getApplicationContext(), true, mGattCallback);
+                mBluetoothGatt = mDevice.connectGatt(getApplicationContext(), false, mGattCallback);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     Log.d("NIH", "Android version >= 5.0 --> request HIGH priority (connection interval 7,5ms) 2");
                     if (mBluetoothGatt != null) {

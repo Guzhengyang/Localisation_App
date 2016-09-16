@@ -798,12 +798,16 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 
     @Override
     public void printDebugInfo(SpannableStringBuilder spannableStringBuilder) {
+        debug_info.setText(spannableStringBuilder);
+    }
+
+    @Override
+    public void updateBLEStatus() {
         if (mBleRangingHelper.isFullyConnected()) {
             ble_status.setText(R.string.connected_over_ble);
         } else {
             ble_status.setText(R.string.not_connected_over_ble);
         }
-        debug_info.setText(spannableStringBuilder);
     }
 
     @Override
