@@ -402,12 +402,6 @@ public abstract class ConnectedCar {
         StringBuilder dataStringBuilder = new StringBuilder();
         for (Trx trx : trxLinkedHMap.values()) {
             dataStringBuilder
-                    .append(getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT))
-                    .append("    ");
-        }
-        dataStringBuilder.append('\n');
-        for (Trx trx : trxLinkedHMap.values()) {
-            dataStringBuilder
                     .append(getCurrentOriginalRssi(trx.getTrxNumber(), Trx.ANTENNA_ID_1))
                     .append("    ");
         }
