@@ -75,10 +75,12 @@ public abstract class ConnectedCar {
     protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
     protected ConnectionNumber connectionNumber;
     private boolean initialized = false;
+    private Ranging ranging;
 
-    public ConnectedCar(ConnectionNumber connectionNumber) {
+    public ConnectedCar(Context mContext, ConnectionNumber connectionNumber) {
         this.connectionNumber = connectionNumber;
         this.trxLinkedHMap = new LinkedHashMap<>();
+        initRanging(mContext);
     }
 
     /**
@@ -507,20 +509,6 @@ public abstract class ConnectedCar {
         return ssb;
     }
 
-    public Ranging prepareRanging(Context context, boolean smartphoneIsInPocket) {
-        Ranging ranging = new Ranging(context);
-        ranging.setLeft(getCurrentOriginalRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1));
-        ranging.setMiddle(getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1));
-        ranging.setRight(getCurrentOriginalRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_1));
-        ranging.setBack(getCurrentOriginalRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_1));
-        if (smartphoneIsInPocket) {
-            ranging.setPocket(1);
-        } else {
-            ranging.setPocket(0);
-        }
-        return ranging;
-    }
-
     public int getTrxNumber(String address) {
         if (address.equals(trxAddressLeft)) {
             return ConnectedCar.NUMBER_TRX_LEFT;
@@ -541,6 +529,29 @@ public abstract class ConnectedCar {
         } else {
             return -1;
         }
+    }
+
+    public void initRanging(Context context) {
+        ranging = new Ranging(context);
+    }
+
+    public void prepareRanging(boolean smartphoneIsInPocket) {
+        ranging.setLeft(getCurrentOriginalRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1));
+        ranging.setMiddle(getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1));
+        ranging.setRight(getCurrentOriginalRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_1));
+        ranging.setBack(getCurrentOriginalRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_1));
+        if (smartphoneIsInPocket) {
+            ranging.setPocket(1);
+        } else {
+            ranging.setPocket(0);
+        }
+    }
+
+    public int predict2int() {
+        if (ranging != null) {
+            return ranging.predict2int();
+        }
+        return 0;
     }
 
     public boolean isInitialized() {

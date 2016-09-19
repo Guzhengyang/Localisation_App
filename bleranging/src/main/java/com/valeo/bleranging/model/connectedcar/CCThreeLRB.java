@@ -1,5 +1,6 @@
 package com.valeo.bleranging.model.connectedcar;
 
+import android.content.Context;
 import android.text.SpannableStringBuilder;
 
 import com.valeo.bleranging.model.Trx;
@@ -9,8 +10,8 @@ import com.valeo.bleranging.model.Trx;
  */
 public class CCThreeLRB extends ConnectedCar {
 
-    public CCThreeLRB(ConnectionNumber connectionNumber) {
-        super(connectionNumber);
+    public CCThreeLRB(Context mContext, ConnectionNumber connectionNumber) {
+        super(mContext, connectionNumber);
         trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
         trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);
         trxBack = new Trx(NUMBER_TRX_BACK, TRX_BACK_NAME);

@@ -21,7 +21,6 @@ import com.valeo.bleranging.bluetooth.BluetoothManagementListener;
 import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.ScanResponse;
 import com.valeo.bleranging.model.Antenna;
-import com.valeo.bleranging.model.Ranging;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
@@ -32,10 +31,11 @@ import com.valeo.bleranging.utils.TrxUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -62,6 +62,7 @@ public class BleRangingHelper implements SensorEventListener {
     public boolean smartphoneIsLaidDownLAcc = false;
     private Integer rangingPredictionInt = -1;
     private LinkedList<Integer> predictionHistoric;
+    private Map<Integer, Integer> mostCommon;
     private boolean isLockStrategyValid = false;
     private int isUnlockStrategyValid = 0;
     private boolean isStartStrategyValid = false;
@@ -228,7 +229,7 @@ public class BleRangingHelper implements SensorEventListener {
                 boolean oldLockStatus = newLockStatus;
                 newLockStatus = (bytesReceived[5] & 0x01) != 0;
                 if (isPassiveEntryAction.get() && oldLockStatus != newLockStatus) {
-                    connectedCar.resetWithHysteresis(newLockStatus, isUnlockStrategyValid);
+//                    connectedCar.resetWithHysteresis(newLockStatus, isUnlockStrategyValid); //TODO concurrentModification
                     bleRangingListener.updateCarDoorStatus(newLockStatus);
                 }
                 mProtocolManager.setIsLockedFromTrx(newLockStatus);
@@ -294,14 +295,14 @@ public class BleRangingHelper implements SensorEventListener {
                 spannableStringBuilder = connectedCar.createSecondFooterDebugData(spannableStringBuilder,
                         smartphoneIsInPocket, smartphoneIsLaidDownLAcc, totalAverage, rearmLock.get(), rearmUnlock.get());
                 spannableStringBuilder = connectedCar.createThirdFooterDebugData(spannableStringBuilder,
-                        bytesToSend, bytesReceived, deltaLinAcc, smartphoneIsLaidDownLAcc, mBluetoothManager);
+                        bytesToSend, bytesReceived, deltaLinAcc, smartphoneIsLaidDownLAcc, mBluetoothManager.isFullyConnected());
                 updateCarLocalization();
                 bleRangingListener.printDebugInfo(spannableStringBuilder);
                 Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
             }
             if (mMainHandler != null) {
                 Log.d("printRunner", "relaunch delay printRunner ");
-                mMainHandler.postDelayed(this, 500);
+                mMainHandler.postDelayed(this, 400);
             }
         }
     };
@@ -311,16 +312,24 @@ public class BleRangingHelper implements SensorEventListener {
         this.mBluetoothManager = new BluetoothManagement(context);
         this.bleRangingListener = bleRangingListener;
         this.predictionHistoric = new LinkedList<>();
+        this.mostCommon = new HashMap<>();
         this.mProtocolManager = new InblueProtocolManager();
         this.mMainHandler = new Handler(Looper.getMainLooper());
         this.mLockStatusChangedHandler = new Handler();
         this.mHandlerTimeOut = new Handler();
         this.mIsLaidTimeOutHandler = new Handler();
         mBluetoothManager.addBluetoothManagementListener(new BluetoothManagementListener() {
+            private ExecutorService executorService = Executors.newFixedThreadPool(4);
+
             @Override
-            public void onPassiveEntryTry(BluetoothDevice device, int rssi, ScanResponse scanResponse, byte[] advertisedData) {
+            public void onPassiveEntryTry(final BluetoothDevice device, final int rssi, final ScanResponse scanResponse, final byte[] advertisedData) {
                 bleChannel = getCurrentChannel(device, bleChannel);
-                doPassiveEntry(device, rssi, scanResponse, advertisedData);
+                executorService.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        doPassiveEntry(device, rssi, scanResponse, advertisedData);
+                    }
+                });
             }
         });
         SensorManager senSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
@@ -356,12 +365,13 @@ public class BleRangingHelper implements SensorEventListener {
         rearmWelcome.set(true);
         isFirstConnection = true;
         checkNewPacketOnlyOneLaunch = true;
-        lastPacketIdNumber = new byte[2];
+        lastPacketIdNumber[0] = 0;
+        lastPacketIdNumber[1] = 0;
         makeNoise(ToneGenerator.TONE_CDMA_NETWORK_USA_RINGBACK, 100);
         if (createConnectedCar) {
             connectedCar = null;
             lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-            connectedCar = ConnectedCarFactory.getConnectedCar(lastConnectedCarType);
+            connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
         }
         // wait to close every connection before creating them again
         new Handler().postDelayed(new Runnable() {
@@ -438,25 +448,22 @@ public class BleRangingHelper implements SensorEventListener {
                     Log.d(" rssiHistoric", "BLE_ADDRESS_LOGGER=" + TextUtils.printBleBytes(advertisedData));
                     getAdvertisedBytes(advertisedData);
                 }
-                Ranging ranging = connectedCar.prepareRanging(mContext, smartphoneIsInPocket);
+                connectedCar.prepareRanging(smartphoneIsInPocket);
                 if (predictionHistoric.size() == PREDICTION_MAX) {
+                    int removeEntry = predictionHistoric.get(0);
+                    Integer removeEntryValue = mostCommon.get(removeEntry);
+                    mostCommon.put(removeEntry, removeEntryValue - 1);
                     predictionHistoric.remove(0);
                 }
-                int prediction = ranging.predict2int();
+                int prediction = connectedCar.predict2int();
                 predictionHistoric.add(prediction);
+                Integer val = mostCommon.get(prediction);
+                mostCommon.put(prediction, val == null ? 1 : val + 1);
             }
         }
     }
 
-    public Integer mostCommon(List<Integer> list) {
-        if (list.size() == 0) {
-            return -1;
-        }
-        Map<Integer, Integer> map = new LinkedHashMap<>();
-        for (Integer t : list) {
-            Integer val = map.get(t);
-            map.put(t, val == null ? 1 : val + 1);
-        }
+    public synchronized Integer mostCommon(final Map<Integer, Integer> map) {
         Map.Entry<Integer, Integer> max = null;
         for (Map.Entry<Integer, Integer> e : map.entrySet()) {
             if (max == null || e.getValue() > max.getValue())
@@ -524,7 +531,7 @@ public class BleRangingHelper implements SensorEventListener {
             isUnlockStrategyValid = connectedCar.unlockStrategy(smartphoneIsInPocket);
             isStartStrategyValid = connectedCar.startStrategy(newLockStatus, smartphoneIsInPocket);
             isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus, smartphoneIsInPocket);
-            rangingPredictionInt = mostCommon(predictionHistoric);
+            rangingPredictionInt = mostCommon(mostCommon);
             if (rearmWelcome.get() && isWelcomeStrategyValid) {
                 rearmWelcome.set(false);
                 //TODO Welcome
@@ -616,14 +623,14 @@ public class BleRangingHelper implements SensorEventListener {
         if (lastConnectedCarType.equals("")) {
             // on first run, create a new car
             lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-            connectedCar = ConnectedCarFactory.getConnectedCar(lastConnectedCarType);
+            connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
         } else if (!lastConnectedCarType.equalsIgnoreCase(SdkPreferencesHelper.getInstance().getConnectedCarType())) {
             if (isFullyConnected()) {
                 // if car type has changed, stop connection, create a new car, and restart it
                 restartConnection(true);
             } else {
                 lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-                connectedCar = ConnectedCarFactory.getConnectedCar(lastConnectedCarType);
+                connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
             }
         }
     }

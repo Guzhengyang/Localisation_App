@@ -18,6 +18,10 @@ public class TextUtils {
     private final static int welcomeNbElement = SdkPreferencesHelper.getInstance().getWelcomeNbElement();
     private final static int longNbElement = SdkPreferencesHelper.getInstance().getLongNbElement();
     private final static int shortNbElement = SdkPreferencesHelper.getInstance().getShortNbElement();
+    private static final ForegroundColorSpan fcsWhite = new ForegroundColorSpan(Color.WHITE);
+    private static final ForegroundColorSpan fcsRed = new ForegroundColorSpan(Color.RED);
+    private static final ForegroundColorSpan fcsGreen = new ForegroundColorSpan(Color.GREEN);
+    private static final ForegroundColorSpan fcsCyan = new ForegroundColorSpan(Color.CYAN);
 
     /**
      * Color antenna average with color if comparaisonSign (> or <) threshold, DK_GRAY otherwise
@@ -59,6 +63,21 @@ public class TextUtils {
         return "";
     }
 
+    private static ForegroundColorSpan getForeGroundColorSpan(int color) {
+        switch (color) {
+            case Color.WHITE:
+                return fcsWhite;
+            case Color.RED:
+                return fcsRed;
+            case Color.GREEN:
+                return fcsGreen;
+            case Color.CYAN:
+                return fcsCyan;
+            default:
+                return fcsWhite;
+        }
+    }
+
     /**
      * Color a text with different color if the boolean is true or false
      * @param active the boolean to check to get the right color
@@ -70,9 +89,9 @@ public class TextUtils {
     public static SpannableString colorText(boolean active, String text, int colorActive, int colorInactive) {
         SpannableString spanString = new SpannableString(text);
         if(active) {
-            spanString.setSpan(new ForegroundColorSpan(colorActive), 0, text.length(), 0);
+            spanString.setSpan(getForeGroundColorSpan(colorActive), 0, text.length(), 0);
         } else {
-            spanString.setSpan(new ForegroundColorSpan(colorInactive), 0, text.length(), 0);
+            spanString.setSpan(getForeGroundColorSpan(colorInactive), 0, text.length(), 0);
         }
         return spanString;
     }

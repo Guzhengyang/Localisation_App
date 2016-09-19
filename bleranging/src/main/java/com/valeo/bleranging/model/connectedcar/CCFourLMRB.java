@@ -1,5 +1,6 @@
 package com.valeo.bleranging.model.connectedcar;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.text.SpannableStringBuilder;
 
@@ -26,8 +27,8 @@ public class CCFourLMRB extends ConnectedCar {
     private static final int MODE_ALL_OF_TWO_WITHOUT_BACK_AND_MIDDLE = 11;
     private static final int MODE_ONLY_MIDDLE = 12;
 
-    public CCFourLMRB(ConnectionNumber connectionNumber) {
-        super(connectionNumber);
+    public CCFourLMRB(Context mContext, ConnectionNumber connectionNumber) {
+        super(mContext, connectionNumber);
         trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
         trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
         trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);
