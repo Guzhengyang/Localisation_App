@@ -53,7 +53,6 @@ import android.widget.Toast;
 
 import com.trncic.library.DottedProgressBar;
 import com.valeo.bleranging.BleRangingHelper;
-import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
 import com.valeo.psa.R;
 import com.valeo.psa.model.Car;
@@ -158,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         setSupportActionBar(toolbar);
         setFonts();
         setOnClickListeners();
-        SdkPreferencesHelper.initializeInstance(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {

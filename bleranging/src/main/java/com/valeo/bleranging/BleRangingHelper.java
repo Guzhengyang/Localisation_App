@@ -139,7 +139,7 @@ public class BleRangingHelper implements SensorEventListener {
                 lastPacketIdNumber[1] = bytesReceived[1];
             }
             if (isFullyConnected() && mMainHandler != null) {
-                mMainHandler.postDelayed(this, 3000);
+                mMainHandler.postDelayed(this, 10000);
             }
         }
     };

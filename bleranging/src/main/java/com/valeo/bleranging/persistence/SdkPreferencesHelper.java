@@ -61,11 +61,13 @@ public final class SdkPreferencesHelper {
     public final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
     public final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
     public final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
+    public final static String LOG_FILE_NAME = "sdcard/InBlueRssi/allRssi_0_0000.csv";
     /**
      * Preferences file name.
      */
     public static final String SAVED_LIGHT_CAPTOR = "savedLightCaptor";
     public static final String SAVED_LOGIN_INFO = "savedLoginInfo";
+    public static final String SAVED_LOGGER_INFO = "savedLoggerInfo";
     public static final String SAVED_CC_GENERIC_OPTION = "savedConnectedCarGenericOption";
     /** Key formatter. */
     public static final String ADDRESS_CONNECTABLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE";
@@ -121,6 +123,7 @@ public final class SdkPreferencesHelper {
     public static final String EQUALIZER_REAR_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_REAR_RIGHT";
     private static final String USER_MAIL_PREFERENCES_NAME = "com.inblue.PREFERENCE_USER_MAIL";
     private static final String PASSWORD_PREFERENCES_NAME = "com.inblue.PREFERENCE_PASSWORD";
+    private static final String LOG_FILE_NAME_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOG_FILE_NAME";
 
     /** Single helper instance. */
     private static SdkPreferencesHelper sSingleInstance = null;
@@ -557,6 +560,14 @@ public final class SdkPreferencesHelper {
 
     public void setPassword(String password) {
         saveString(SAVED_LOGIN_INFO, PASSWORD_PREFERENCES_NAME, password);
+    }
+
+    public String getLogFileName() {
+        return readString(SAVED_LOGGER_INFO, LOG_FILE_NAME_PREFERENCES_NAME, LOG_FILE_NAME);
+    }
+
+    public void setLogFileName(String logFileName) {
+        saveString(SAVED_LOGGER_INFO, LOG_FILE_NAME_PREFERENCES_NAME, logFileName);
     }
 
     // region Internal methods

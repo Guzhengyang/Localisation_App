@@ -1,5 +1,7 @@
 package com.valeo.bleranging.utils;
 
+import android.util.Log;
+
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
@@ -17,6 +19,7 @@ import java.util.Locale;
  * Created by l-avaratha on 08/06/2016.
  */
 public class TrxUtils {
+    private static final File logFile = new File(SdkPreferencesHelper.getInstance().getLogFileName());
 
     /**
      * Calculate Next to Door delta rssi
@@ -242,29 +245,7 @@ public class TrxUtils {
      * Function used to debug and write logs into a file.
      */
     private static void appendRssiLog(String text) {
-        File dir = new File("sdcard/InBlueRssi/");
-        //if the folder doesn't exist
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_kk", Locale.FRANCE);
-        String timestampLog = sdf.format(new Date());
-        File logFile = new File("sdcard/InBlueRssi/allRssi_" + SdkPreferencesHelper.getInstance().getRssiLogNumber() + "_" + timestampLog + ".csv");
-        if (!logFile.exists()) {
-            try {
-                //Create file
-                logFile.createNewFile();
-                //Write 1st row with column names
-                //BufferedWriter for performance, true to set append to file flag
-                String ColNames = "TIMESTAMP;RSSI LEFT;RSSI MIDDLE1;RSSI MIDDLE2;RSSI RIGHT;RSSI BACK;RSSI FRONTLEFT;RSSI FRONTRIGHT;RSSI REARLEFT;RSSI REARRIGHT;Z AZIMUTH;X PITCH;Y ROLL;IN POCKET;IS LAID;IS PEPS;IS LOCK STATUS CHANGED TIMER;REARM LOCK;REARM UNLOCK;REARM WELCOME;IS LOCK;WELCOME FLAG;LOCK FLAG;START FLAG;LEFT AREA FLAG; RIGHT AREA FLAG; BACK AREA FLAG;WALK AWAY FLAG;STEADY FLAG;APPROACH FLAG; LEFT TURN FLAG; FULL TURN FLAG; RIGHT TURN FLAG;RECORD FLAG;PREDICTION;LOCK FROM TRX;LOCK TO SEND;START ALLOWED;";
-                BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
-                buf.append(ColNames);
-                buf.newLine();
-                buf.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        Log.d("log", text);
         try {
             SimpleDateFormat s = new SimpleDateFormat("HH:mm:ss:SSS", Locale.FRANCE);
             String timestamp = s.format(new Date());
