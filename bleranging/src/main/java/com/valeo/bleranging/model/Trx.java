@@ -15,11 +15,16 @@ public class Trx {
     private final Antenna antenna2;
     private boolean isEnabled = false;
 
-    public Trx(int trxNumber, String trxName, int historicDefaultValue) {
+    public Trx(int trxNumber, String trxName) {
         this.trxNumber = trxNumber;
         this.trxName = trxName;
-        this.antenna1 = new Antenna(trxNumber, ANTENNA_ID_1, historicDefaultValue);
-        this.antenna2 = new Antenna(trxNumber, ANTENNA_ID_2, historicDefaultValue);
+        this.antenna1 = new Antenna(trxNumber, ANTENNA_ID_1);
+        this.antenna2 = new Antenna(trxNumber, ANTENNA_ID_2);
+    }
+
+    public void init(int historicDefaultValue) {
+        antenna1.init(historicDefaultValue);
+        antenna2.init(historicDefaultValue);
     }
 
     public int getTrxNumber() {

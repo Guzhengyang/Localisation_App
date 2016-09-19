@@ -67,7 +67,6 @@ public class LoginActivity extends AppCompatActivity {
         yesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO save mail and password in Preferences
                 SdkPreferencesHelper.getInstance().setUserMail(usernameEditText.getText().toString());
                 SdkPreferencesHelper.getInstance().setPassword(passwordEditText.getText().toString());
                 finish();

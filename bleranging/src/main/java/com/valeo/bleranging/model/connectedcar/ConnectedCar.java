@@ -6,7 +6,6 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
-import com.valeo.bleranging.bluetooth.BluetoothManagement;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Ranging;
 import com.valeo.bleranging.model.Trx;
@@ -79,6 +78,7 @@ public abstract class ConnectedCar {
 
     public ConnectedCar(ConnectionNumber connectionNumber) {
         this.connectionNumber = connectionNumber;
+        this.trxLinkedHMap = new LinkedHashMap<>();
     }
 
     /**
@@ -86,7 +86,6 @@ public abstract class ConnectedCar {
      * @param newLockStatus the lock status that determines which values to set
      */
     public void initializeTrx(boolean newLockStatus) {
-        trxLinkedHMap = new LinkedHashMap<>();
         if (newLockStatus) {
             initializeTrx(RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE);
         } else {
@@ -446,13 +445,13 @@ public abstract class ConnectedCar {
      * @param bytesReceived            the bytes received
      * @param deltaLinAcc              the delta of linear acceleration
      * @param smartphoneIsLaidDownLAcc the boolean that determine if the smartphone is moving or not
-     * @param mBluetoothManager        the bluetooth manager
+     * @param isFullyConnected         the boolean that determine if the smartphone is connected or not
      * @return the string builder filled with the third footer data
      */
     public SpannableStringBuilder createThirdFooterDebugData(SpannableStringBuilder spannableStringBuilder,
                                                              byte[] bytesToSend, byte[] bytesReceived, double deltaLinAcc,
-                                                             boolean smartphoneIsLaidDownLAcc, BluetoothManagement mBluetoothManager) {
-        if (mBluetoothManager.isFullyConnected()) {
+                                                             boolean smartphoneIsLaidDownLAcc, boolean isFullyConnected) {
+        if (isFullyConnected) {
             spannableStringBuilder.append("Connected").append("\n")
                     .append("       Send:       ").append(TextUtils.printBleBytes((bytesToSend))).append("\n")
                     .append("       Receive: ").append(TextUtils.printBleBytes(bytesReceived)).append("\n");

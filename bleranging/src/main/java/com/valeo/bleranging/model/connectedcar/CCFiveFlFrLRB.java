@@ -11,15 +11,11 @@ public class CCFiveFlFrLRB extends ConnectedCar {
 
     public CCFiveFlFrLRB(ConnectionNumber connectionNumber) {
         super(connectionNumber);
-    }
-
-    @Override
-    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
-        trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME, historicDefaultValuePeriph);
-        trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, TRX_FRONT_RIGHT_NAME, historicDefaultValuePeriph);
-        trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME, historicDefaultValuePeriph);
-        trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME, historicDefaultValuePeriph);
-        trxBack = new Trx(NUMBER_TRX_BACK, TRX_BACK_NAME, historicDefaultValuePeriph);
+        trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME);
+        trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, TRX_FRONT_RIGHT_NAME);
+        trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
+        trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);
+        trxBack = new Trx(NUMBER_TRX_BACK, TRX_BACK_NAME);
         trxFrontLeft.setEnabled(true);
         trxFrontRight.setEnabled(true);
         trxLeft.setEnabled(true);
@@ -30,6 +26,17 @@ public class CCFiveFlFrLRB extends ConnectedCar {
         trxLinkedHMap.put(NUMBER_TRX_LEFT, trxLeft);
         trxLinkedHMap.put(NUMBER_TRX_RIGHT, trxRight);
         trxLinkedHMap.put(NUMBER_TRX_BACK, trxBack);
+    }
+
+    @Override
+    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
+        if (trxLinkedHMap != null) {
+            trxLinkedHMap.get(NUMBER_TRX_FRONT_LEFT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_FRONT_RIGHT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_LEFT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_RIGHT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_BACK).init(historicDefaultValuePeriph);
+        }
     }
 
     @Override

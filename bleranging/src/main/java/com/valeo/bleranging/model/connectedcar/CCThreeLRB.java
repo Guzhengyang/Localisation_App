@@ -11,19 +11,24 @@ public class CCThreeLRB extends ConnectedCar {
 
     public CCThreeLRB(ConnectionNumber connectionNumber) {
         super(connectionNumber);
-    }
-
-    @Override
-    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
-        trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME, historicDefaultValuePeriph);
-        trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME, historicDefaultValuePeriph);
-        trxBack = new Trx(NUMBER_TRX_BACK, TRX_BACK_NAME, historicDefaultValuePeriph);
+        trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
+        trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);
+        trxBack = new Trx(NUMBER_TRX_BACK, TRX_BACK_NAME);
         trxLeft.setEnabled(true);
         trxRight.setEnabled(true);
         trxBack.setEnabled(true);
         trxLinkedHMap.put(NUMBER_TRX_LEFT, trxLeft);
         trxLinkedHMap.put(NUMBER_TRX_RIGHT, trxRight);
         trxLinkedHMap.put(NUMBER_TRX_BACK, trxBack);
+    }
+
+    @Override
+    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
+        if (trxLinkedHMap != null) {
+            trxLinkedHMap.get(NUMBER_TRX_LEFT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_RIGHT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_BACK).init(historicDefaultValuePeriph);
+        }
     }
 
     @Override

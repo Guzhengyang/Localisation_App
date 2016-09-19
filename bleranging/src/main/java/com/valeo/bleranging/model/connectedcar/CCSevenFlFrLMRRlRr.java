@@ -30,17 +30,13 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
 
     public CCSevenFlFrLMRRlRr(ConnectionNumber connectionNumber) {
         super(connectionNumber);
-    }
-
-    @Override
-    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
-        trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME, historicDefaultValuePeriph);
-        trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, TRX_FRONT_RIGHT_NAME, historicDefaultValuePeriph);
-        trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME, historicDefaultValuePeriph);
-        trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME, historicDefaultValueCentral);
-        trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME, historicDefaultValuePeriph);
-        trxRearLeft = new Trx(NUMBER_TRX_REAR_LEFT, TRX_REAR_LEFT_NAME, historicDefaultValuePeriph);
-        trxRearRight = new Trx(NUMBER_TRX_REAR_RIGHT, TRX_REAR_RIGHT_NAME, historicDefaultValuePeriph);
+        trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME);
+        trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, TRX_FRONT_RIGHT_NAME);
+        trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
+        trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
+        trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);
+        trxRearLeft = new Trx(NUMBER_TRX_REAR_LEFT, TRX_REAR_LEFT_NAME);
+        trxRearRight = new Trx(NUMBER_TRX_REAR_RIGHT, TRX_REAR_RIGHT_NAME);
         trxFrontLeft.setEnabled(true);
         trxFrontRight.setEnabled(true);
         trxLeft.setEnabled(true);
@@ -55,6 +51,19 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
         trxLinkedHMap.put(NUMBER_TRX_RIGHT, trxRight);
         trxLinkedHMap.put(NUMBER_TRX_REAR_LEFT, trxRearLeft);
         trxLinkedHMap.put(NUMBER_TRX_REAR_RIGHT, trxRearRight);
+    }
+
+    @Override
+    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
+        if (trxLinkedHMap != null) {
+            trxLinkedHMap.get(NUMBER_TRX_FRONT_LEFT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_FRONT_RIGHT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_LEFT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_MIDDLE).init(historicDefaultValueCentral);
+            trxLinkedHMap.get(NUMBER_TRX_RIGHT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_REAR_LEFT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_REAR_RIGHT).init(historicDefaultValuePeriph);
+        }
     }
 
     @Override
@@ -223,77 +232,88 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
                                                               int totalAverage, boolean rearmLock, boolean rearmUnlock) {
         // WELCOME
         spannableStringBuilder.append("welcome ");
-        StringBuilder welcomeStringBuilder = new StringBuilder().append("rssi > (")
+        StringBuilder footerSB = new StringBuilder();
+        footerSB.append("rssi > (")
                 .append(TrxUtils.getCurrentLockThreshold(welcomeThreshold, smartphoneIsInPocket))
                 .append("): ").append(totalAverage).append("\n");
         spannableStringBuilder.append(TextUtils.colorText(
                 totalAverage > TrxUtils.getCurrentLockThreshold(welcomeThreshold, smartphoneIsInPocket),
-                welcomeStringBuilder.toString(), Color.WHITE, Color.DKGRAY));
+                footerSB.toString(), Color.WHITE, Color.DKGRAY));
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_WELCOME, Color.WHITE,
                 TrxUtils.getCurrentLockThreshold(welcomeThreshold, smartphoneIsInPocket), ">", smartphoneIsLaidDownLAcc, this));
         // LOCK
         spannableStringBuilder.append("lock").append("  mode : ").append(String.valueOf(lockMode)).append(" ");
-        StringBuilder averageLSDeltaLockStringBuilder = new StringBuilder().append(String.valueOf(TrxUtils.getAverageLSDelta(this))).append(" ");
+        footerSB.setLength(0);
+        footerSB.append(String.valueOf(TrxUtils.getAverageLSDelta(this))).append(" ");
         spannableStringBuilder.append(TextUtils.colorText(
                 TrxUtils.getAverageLSDeltaGreaterThanThreshold(this, TrxUtils.getCurrentLockThreshold(averageDeltaLockThreshold, smartphoneIsInPocket)),
-                averageLSDeltaLockStringBuilder.toString(), Color.RED, Color.DKGRAY));
-        StringBuilder lockStringBuilder = new StringBuilder().append("rssi < (").append(TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket)).append(") ");
+                footerSB.toString(), Color.RED, Color.DKGRAY));
+        footerSB.setLength(0);
+        footerSB.append("rssi < (").append(TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket)).append(") ");
         spannableStringBuilder.append(TextUtils.colorText(
                 isInLockArea(TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket)),
-                lockStringBuilder.toString(), Color.RED, Color.DKGRAY));
-        StringBuilder rearmLockStringBuilder = new StringBuilder().append("rearm Lock: ").append(rearmLock).append("\n");
+                footerSB.toString(), Color.RED, Color.DKGRAY));
+        footerSB.setLength(0);
+        footerSB.append("rearm Lock: ").append(rearmLock).append("\n");
         spannableStringBuilder.append(TextUtils.colorText(
                 rearmLock,
-                rearmLockStringBuilder.toString(), Color.RED, Color.DKGRAY));
+                footerSB.toString(), Color.RED, Color.DKGRAY));
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_LOCK, Color.RED,
                 TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket), "<", smartphoneIsLaidDownLAcc, this));
         // UNLOCK
         spannableStringBuilder.append("unlock").append("  mode : ").append(String.valueOf(unlockMode)).append(" ");
-        StringBuilder averageLSDeltaUnlockStringBuilder = new StringBuilder().append(String.valueOf(TrxUtils.getAverageLSDelta(this))).append(" ");
+        footerSB.setLength(0);
+        footerSB.append(String.valueOf(TrxUtils.getAverageLSDelta(this))).append(" ");
         spannableStringBuilder.append(TextUtils.colorText(
                 TrxUtils.getAverageLSDeltaLowerThanThreshold(this, TrxUtils.getCurrentUnlockThreshold(averageDeltaUnlockThreshold, smartphoneIsInPocket)),
-                averageLSDeltaUnlockStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
-        StringBuilder unlockStringBuilder = new StringBuilder().append("rssi > (").append(TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket)).append(") ");
+                footerSB.toString(), Color.GREEN, Color.DKGRAY));
+        footerSB.setLength(0);
+        footerSB.append("rssi > (").append(TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket)).append(") ");
         spannableStringBuilder.append(TextUtils.colorText(
                 isInUnlockArea(TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket)),
-                unlockStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
-        StringBuilder rearmUnlockStringBuilder = new StringBuilder().append("rearm Unlock: ").append(rearmUnlock).append("\n");
+                footerSB.toString(), Color.GREEN, Color.DKGRAY));
+        footerSB.setLength(0);
+        footerSB.append("rearm Unlock: ").append(rearmUnlock).append("\n");
         spannableStringBuilder.append(TextUtils.colorText(
                 rearmUnlock,
-                rearmUnlockStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
+                footerSB.toString(), Color.GREEN, Color.DKGRAY));
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_UNLOCK, Color.GREEN,
                 TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket), ">", smartphoneIsLaidDownLAcc, this));
-        StringBuilder ratioLRStringBuilder = new StringBuilder().append("       ratio L/R > (+/-")
+        footerSB.setLength(0);
+        footerSB.append("       ratio L/R > (+/-")
                 .append(nearDoorRatioThreshold)
                 .append("): ").append(getRatioNearDoor(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT)).append("\n");
         spannableStringBuilder.append(TextUtils.colorText(
                 isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, nearDoorRatioThreshold)
                         || isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -nearDoorRatioThreshold),
-                ratioLRStringBuilder.toString(), Color.GREEN, Color.DKGRAY));
+                footerSB.toString(), Color.GREEN, Color.DKGRAY));
         // START
         spannableStringBuilder.append("start").append("  mode : ").append(String.valueOf(startMode)).append(" ");
-        StringBuilder startStringBuilder = new StringBuilder().append("rssi > (").append(TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket)).append(")\n");
+        footerSB.setLength(0);
+        footerSB.append("rssi > (").append(TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket)).append(")\n");
         spannableStringBuilder.append(TextUtils.colorText(
                 isInStartArea(TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket)),
-                startStringBuilder.toString(), Color.CYAN, Color.DKGRAY));
+                footerSB.toString(), Color.CYAN, Color.DKGRAY));
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_START, Color.CYAN,
                 TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket), ">", smartphoneIsLaidDownLAcc, this));
-        StringBuilder ratioMLMRMaxStringBuilder = new StringBuilder().append("       ratio M/L OR M/R Max > (")
+        footerSB.setLength(0);
+        footerSB.append("       ratio M/L OR M/R Max > (")
                 .append(nearDoorThresholdMLorMRMax)
                 .append("): ").append(getRatioNearDoor(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_LEFT))
                 .append(" | ").append(getRatioNearDoor(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_RIGHT)).append("\n");
         spannableStringBuilder.append(TextUtils.colorText(
                 getRatioNearDoor(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_LEFT) > nearDoorThresholdMLorMRMax
                         || getRatioNearDoor(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_RIGHT) > nearDoorThresholdMLorMRMax,
-                ratioMLMRMaxStringBuilder.toString(), Color.CYAN, Color.DKGRAY));
-        StringBuilder ratioMLMRMinStringBuilder = new StringBuilder().append("       ratio M/L AND M/R Min > (")
+                footerSB.toString(), Color.CYAN, Color.DKGRAY));
+        footerSB.setLength(0);
+        footerSB.append("       ratio M/L AND M/R Min > (")
                 .append(nearDoorThresholdMLorMRMin)
                 .append("): ").append(getRatioNearDoor(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_LEFT))
                 .append(" & ").append(getRatioNearDoor(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_RIGHT)).append("\n");
         spannableStringBuilder.append(TextUtils.colorText(
                 getRatioNearDoor(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_LEFT) > nearDoorThresholdMLorMRMin
                         && getRatioNearDoor(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_RIGHT) > nearDoorThresholdMLorMRMin,
-                ratioMLMRMinStringBuilder.toString(), Color.CYAN, Color.DKGRAY));
+                footerSB.toString(), Color.CYAN, Color.DKGRAY));
         return spannableStringBuilder;
     }
 

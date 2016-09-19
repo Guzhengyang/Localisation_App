@@ -412,8 +412,9 @@ public class BluetoothLeService extends Service {
 
     private void writeCharacteristicBatch(byte[][] value){
         mPacketToWriteCount = value.length;
+        short retriesCounter;
         for (byte[] aValue : value) {
-            short retriesCounter = 0;
+            retriesCounter = 0;
             boolean bReturnFunctionCall;
             do {
                 retriesCounter++;

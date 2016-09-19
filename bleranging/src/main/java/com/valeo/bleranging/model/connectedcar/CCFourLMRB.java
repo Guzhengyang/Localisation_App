@@ -2,7 +2,6 @@ package com.valeo.bleranging.model.connectedcar;
 
 import android.graphics.Color;
 import android.text.SpannableStringBuilder;
-import android.util.Log;
 
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
@@ -29,15 +28,10 @@ public class CCFourLMRB extends ConnectedCar {
 
     public CCFourLMRB(ConnectionNumber connectionNumber) {
         super(connectionNumber);
-        Log.d("create car", "four type A");
-    }
-
-    @Override
-    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
-        trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME, historicDefaultValuePeriph);
-        trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME, historicDefaultValueCentral);
-        trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME, historicDefaultValuePeriph);
-        trxBack = new Trx(NUMBER_TRX_BACK, TRX_BACK_NAME, historicDefaultValuePeriph);
+        trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
+        trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
+        trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);
+        trxBack = new Trx(NUMBER_TRX_BACK, TRX_BACK_NAME);
         trxLeft.setEnabled(true);
         trxMiddle.setEnabled(true);
         trxRight.setEnabled(true);
@@ -46,6 +40,16 @@ public class CCFourLMRB extends ConnectedCar {
         trxLinkedHMap.put(NUMBER_TRX_MIDDLE, trxMiddle);
         trxLinkedHMap.put(NUMBER_TRX_RIGHT, trxRight);
         trxLinkedHMap.put(NUMBER_TRX_BACK, trxBack);
+    }
+
+    @Override
+    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
+        if (trxLinkedHMap != null) {
+            trxLinkedHMap.get(NUMBER_TRX_LEFT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_MIDDLE).init(historicDefaultValueCentral);
+            trxLinkedHMap.get(NUMBER_TRX_RIGHT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_BACK).init(historicDefaultValuePeriph);
+        }
     }
 
     @Override

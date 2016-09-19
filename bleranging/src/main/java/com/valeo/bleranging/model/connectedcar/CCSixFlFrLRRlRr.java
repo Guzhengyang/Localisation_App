@@ -11,16 +11,12 @@ public class CCSixFlFrLRRlRr extends ConnectedCar {
 
     public CCSixFlFrLRRlRr(ConnectionNumber connectionNumber) {
         super(connectionNumber);
-    }
-
-    @Override
-    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
-        trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME, historicDefaultValuePeriph);
-        trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, TRX_FRONT_RIGHT_NAME, historicDefaultValuePeriph);
-        trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME, historicDefaultValuePeriph);
-        trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME, historicDefaultValuePeriph);
-        trxRearLeft = new Trx(NUMBER_TRX_REAR_LEFT, TRX_REAR_LEFT_NAME, historicDefaultValuePeriph);
-        trxRearRight = new Trx(NUMBER_TRX_REAR_RIGHT, TRX_REAR_RIGHT_NAME, historicDefaultValuePeriph);
+        trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME);
+        trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, TRX_FRONT_RIGHT_NAME);
+        trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
+        trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);
+        trxRearLeft = new Trx(NUMBER_TRX_REAR_LEFT, TRX_REAR_LEFT_NAME);
+        trxRearRight = new Trx(NUMBER_TRX_REAR_RIGHT, TRX_REAR_RIGHT_NAME);
         trxFrontLeft.setEnabled(true);
         trxFrontRight.setEnabled(true);
         trxLeft.setEnabled(true);
@@ -33,6 +29,18 @@ public class CCSixFlFrLRRlRr extends ConnectedCar {
         trxLinkedHMap.put(NUMBER_TRX_RIGHT, trxRight);
         trxLinkedHMap.put(NUMBER_TRX_REAR_LEFT, trxRearLeft);
         trxLinkedHMap.put(NUMBER_TRX_REAR_RIGHT, trxRearRight);
+    }
+
+    @Override
+    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
+        if (trxLinkedHMap != null) {
+            trxLinkedHMap.get(NUMBER_TRX_FRONT_LEFT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_FRONT_RIGHT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_LEFT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_RIGHT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_REAR_LEFT).init(historicDefaultValuePeriph);
+            trxLinkedHMap.get(NUMBER_TRX_REAR_RIGHT).init(historicDefaultValuePeriph);
+        }
     }
 
     @Override
