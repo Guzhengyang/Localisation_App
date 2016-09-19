@@ -22,6 +22,7 @@ public class TextUtils {
     private static final ForegroundColorSpan fcsRed = new ForegroundColorSpan(Color.RED);
     private static final ForegroundColorSpan fcsGreen = new ForegroundColorSpan(Color.GREEN);
     private static final ForegroundColorSpan fcsCyan = new ForegroundColorSpan(Color.CYAN);
+    private static final ForegroundColorSpan fcsDarkGray = new ForegroundColorSpan(Color.DKGRAY);
 
     /**
      * Color antenna average with color if comparaisonSign (> or <) threshold, DK_GRAY otherwise
@@ -73,6 +74,8 @@ public class TextUtils {
                 return fcsGreen;
             case Color.CYAN:
                 return fcsCyan;
+            case Color.DKGRAY:
+                return fcsDarkGray;
             default:
                 return fcsWhite;
         }

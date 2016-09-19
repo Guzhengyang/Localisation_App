@@ -64,6 +64,7 @@ public abstract class ConnectedCar {
     private final String trxAddressFrontRight = SdkPreferencesHelper.getInstance().getTrxAddressFrontRight();
     private final String trxAddressRearLeft = SdkPreferencesHelper.getInstance().getTrxAddressRearLeft();
     private final String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
+    private final Ranging ranging;
     protected Trx trxLeft;
     protected Trx trxMiddle;
     protected Trx trxRight;
@@ -75,12 +76,11 @@ public abstract class ConnectedCar {
     protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
     protected ConnectionNumber connectionNumber;
     private boolean initialized = false;
-    private Ranging ranging;
 
     public ConnectedCar(Context mContext, ConnectionNumber connectionNumber) {
         this.connectionNumber = connectionNumber;
         this.trxLinkedHMap = new LinkedHashMap<>();
-        initRanging(mContext);
+        this.ranging = new Ranging(mContext);
     }
 
     /**
@@ -529,10 +529,6 @@ public abstract class ConnectedCar {
         } else {
             return -1;
         }
-    }
-
-    public void initRanging(Context context) {
-        ranging = new Ranging(context);
     }
 
     public void prepareRanging(boolean smartphoneIsInPocket) {
