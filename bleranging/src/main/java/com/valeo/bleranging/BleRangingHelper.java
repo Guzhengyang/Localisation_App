@@ -285,23 +285,20 @@ public class BleRangingHelper implements SensorEventListener {
         @Override
         public void run() {
             Log.d("printRunner", connectedCar.isInitialized() + " " + isFullyConnected());
-            if (connectedCar.isInitialized() && isFullyConnected()) {
-                Log.w(" rssiHistorics", "************************************** IHM LOOP START *************************************************");
-                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-                spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder, bleChannel);
-                totalAverage = connectedCar.getAllTrxAverage(Antenna.AVERAGE_DEFAULT);
-                tryStrategies(newLockStatus);
-                spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
-                spannableStringBuilder = connectedCar.createSecondFooterDebugData(spannableStringBuilder,
-                        smartphoneIsInPocket, smartphoneIsLaidDownLAcc, totalAverage, rearmLock.get(), rearmUnlock.get());
-                spannableStringBuilder = connectedCar.createThirdFooterDebugData(spannableStringBuilder,
-                        bytesToSend, bytesReceived, deltaLinAcc, smartphoneIsLaidDownLAcc, mBluetoothManager.isFullyConnected());
-                updateCarLocalization();
-                bleRangingListener.printDebugInfo(spannableStringBuilder);
-                Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
-            }
+            Log.w(" rssiHistorics", "************************************** IHM LOOP START *************************************************");
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+            spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder, bleChannel);
+            totalAverage = connectedCar.getAllTrxAverage(Antenna.AVERAGE_DEFAULT);
+            tryStrategies(newLockStatus);
+            spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
+            spannableStringBuilder = connectedCar.createSecondFooterDebugData(spannableStringBuilder,
+                    smartphoneIsInPocket, smartphoneIsLaidDownLAcc, totalAverage, rearmLock.get(), rearmUnlock.get());
+            spannableStringBuilder = connectedCar.createThirdFooterDebugData(spannableStringBuilder,
+                    bytesToSend, bytesReceived, deltaLinAcc, smartphoneIsLaidDownLAcc, mBluetoothManager.isFullyConnected());
+            updateCarLocalization();
+            bleRangingListener.printDebugInfo(spannableStringBuilder);
+            Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
             if (mMainHandler != null) {
-                Log.d("printRunner", "relaunch delay printRunner ");
                 mMainHandler.postDelayed(this, 400);
             }
         }

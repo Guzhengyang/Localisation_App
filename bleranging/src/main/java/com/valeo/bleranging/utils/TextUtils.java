@@ -27,8 +27,8 @@ public class TextUtils {
      * @param comparaisonSign the comparaison sign
      * @return a colored average string
      */
-    public static SpannableString colorAntennaAverage(int average, int color, int threshold, String comparaisonSign) {
-        StringBuilder averageStringBuilder = new StringBuilder().append(average).append("     ");
+    public static SpannableString colorAntennaAverage(int average, int color, int threshold, String comparaisonSign, String space) {
+        StringBuilder averageStringBuilder = new StringBuilder().append(space).append(average).append(space);
         SpannableString spanString = new SpannableString(averageStringBuilder.toString());
         if(comparaisonSign.equals(">")) {
             if(average <= threshold) {

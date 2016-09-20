@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private FrameLayout main_frame;
     private NestedScrollView content_main;
     private CoordinatorLayout main_scroll;
+    private AppBarLayout main_appbar;
     private ImageView blur_on_touch;
     private RelativeLayout content_start_car_dialog;
     private ReverseProgressBar start_car_timeout;
@@ -157,6 +159,31 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         setSupportActionBar(toolbar);
         setFonts();
         setOnClickListeners();
+        main_appbar.setExpanded(false, false);
+        getPermissions();
+        this.mBleRangingHelper = new BleRangingHelper(this, this);
+        pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.pulse);
+        pulseAnimation2 = AnimationUtils.loadAnimation(this, R.anim.pulse);
+        NfcManager manager = (NfcManager) getSystemService(Context.NFC_SERVICE);
+        NfcAdapter adapter = manager.getDefaultAdapter();
+        if (adapter != null && adapter.isEnabled()) {
+            tips.setVisibility(View.VISIBLE);
+            nfc_disclaimer.setVisibility(View.VISIBLE);
+            nfc_logo.setVisibility(View.VISIBLE);
+        }
+        mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+        if (!mKeyguardManager.isKeyguardSecure()) {
+            // Show a message that the user hasn't set up a lock screen.
+            Toast.makeText(this, getString(R.string.set_security_lock), Toast.LENGTH_LONG).show();
+            return;
+        }
+//        showAuthenticationScreen();
+    }
+
+    /**
+     * Get permission by asking user
+     */
+    private void getPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -184,23 +211,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                         REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION);
             }
         }
-        this.mBleRangingHelper = new BleRangingHelper(this, this);
-        pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.pulse);
-        pulseAnimation2 = AnimationUtils.loadAnimation(this, R.anim.pulse);
-        NfcManager manager = (NfcManager) getSystemService(Context.NFC_SERVICE);
-        NfcAdapter adapter = manager.getDefaultAdapter();
-        if (adapter != null && adapter.isEnabled()) {
-            tips.setVisibility(View.VISIBLE);
-            nfc_disclaimer.setVisibility(View.VISIBLE);
-            nfc_logo.setVisibility(View.VISIBLE);
-        }
-        mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-        if (!mKeyguardManager.isKeyguardSecure()) {
-            // Show a message that the user hasn't set up a lock screen.
-            Toast.makeText(this, getString(R.string.set_security_lock), Toast.LENGTH_LONG).show();
-            return;
-        }
-//        showAuthenticationScreen();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -391,6 +401,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         main_frame = (FrameLayout) findViewById(R.id.main_frame);
         content_main = (NestedScrollView) findViewById(R.id.content_main);
         main_scroll = (CoordinatorLayout) findViewById(R.id.main_scroll);
+        main_appbar = (AppBarLayout) findViewById(R.id.main_appbar);
         blur_on_touch = (ImageView) findViewById(R.id.blur_on_touch);
         content_start_car_dialog = (RelativeLayout) findViewById(R.id.content_start_car_dialog);
         start_car_timeout = (ReverseProgressBar) findViewById(R.id.start_car_timeout);

@@ -9,6 +9,8 @@ import com.valeo.bleranging.model.Trx;
  * Created by l-avaratha on 07/09/2016.
  */
 public class CCThreeLMR extends ConnectedCar {
+    private static final String SPACE_ONE = "  ";
+    private static final String SPACE_TWO = "      ";
 
     public CCThreeLMR(Context mContext, ConnectionNumber connectionNumber) {
         super(mContext, connectionNumber);
@@ -70,6 +72,11 @@ public class CCThreeLMR extends ConnectedCar {
     @Override
     public boolean numberOfTrxValid(int mode, boolean trxL, boolean trxM, boolean trxR, boolean trxB, boolean trxFL, boolean trxRL, boolean trxFR, boolean trxRR) {
         return false;
+    }
+
+    @Override
+    public SpannableStringBuilder createFirstFooterDebugData(SpannableStringBuilder spannableStringBuilder) {
+        return createFirstFooterDebugData(spannableStringBuilder, SPACE_ONE, SPACE_TWO);
     }
 
     @Override
