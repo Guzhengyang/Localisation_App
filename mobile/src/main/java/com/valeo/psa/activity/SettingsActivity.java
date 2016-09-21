@@ -133,6 +133,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class SpecificPreferenceFragment extends PreferenceFragment {
+        private EditTextPreference ratio_max_min_thr;
+        private EditTextPreference near_door_thr;
+        private EditTextPreference equally_near_door_thr;
+        private EditTextPreference nearer_door_thr;
         private EditTextPreference offset_pocket_start;
         private EditTextPreference offset_pocket_lock;
         private EditTextPreference offset_pocket_unlock;
@@ -182,6 +186,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         private void setViews() {
+            ratio_max_min_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.RATIO_MAX_MIN_THR_PREFERENCES_NAME));
+            near_door_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEAR_DOOR_THR_PREFERENCES_NAME));
+            equally_near_door_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME));
+            nearer_door_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEARER_DOOR_THR_PREFERENCES_NAME));
             offset_pocket_start = ((EditTextPreference) findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_START_PREFERENCES_NAME));
             offset_pocket_lock = ((EditTextPreference) findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME));
             offset_pocket_unlock = ((EditTextPreference) findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME));
@@ -214,6 +222,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         private void setDefaultValues() {
+            ratio_max_min_thr.setText(ratio_max_min_thr.getSummary().toString());
+            near_door_thr.setText(near_door_thr.getSummary().toString());
+            equally_near_door_thr.setText(equally_near_door_thr.getSummary().toString());
+            nearer_door_thr.setText(nearer_door_thr.getSummary().toString());
             offset_pocket_start.setText(offset_pocket_start.getSummary().toString());
             offset_pocket_lock.setText(offset_pocket_lock.getSummary().toString());
             offset_pocket_unlock.setText(offset_pocket_unlock.getSummary().toString());
@@ -250,6 +262,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // updated to reflect the new value, per the Android Design
         // guidelines.
         private void bindSummaries() {
+            bindPreferenceSummaryToValue(ratio_max_min_thr, String.valueOf(SdkPreferencesHelper.RATIO_MAX_MIN_THR));
+            bindPreferenceSummaryToValue(near_door_thr, String.valueOf(SdkPreferencesHelper.NEAR_DOOR_THR));
+            bindPreferenceSummaryToValue(equally_near_door_thr, String.valueOf(SdkPreferencesHelper.EQUALLY_NEAR_DOOR_THR));
+            bindPreferenceSummaryToValue(nearer_door_thr, String.valueOf(SdkPreferencesHelper.NEARER_DOOR_THR));
             bindPreferenceSummaryToValue(offset_pocket_start, String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_START));
             bindPreferenceSummaryToValue(offset_pocket_lock, String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_LOCK));
             bindPreferenceSummaryToValue(offset_pocket_unlock, String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_UNLOCK));

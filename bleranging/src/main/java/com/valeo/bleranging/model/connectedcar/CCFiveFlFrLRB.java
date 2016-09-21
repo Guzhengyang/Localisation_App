@@ -5,6 +5,8 @@ import android.text.SpannableStringBuilder;
 
 import com.valeo.bleranging.model.Trx;
 
+import java.util.List;
+
 /**
  * Created by l-avaratha on 07/09/2016.
  */
@@ -53,8 +55,8 @@ public class CCFiveFlFrLRB extends ConnectedCar {
     }
 
     @Override
-    public int unlockStrategy(boolean smartphoneIsInPocket) {
-        return 0;
+    public List<Integer> unlockStrategy(boolean smartphoneIsInPocket) {
+        return null;
     }
 
     @Override

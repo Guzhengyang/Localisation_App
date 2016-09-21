@@ -9,6 +9,9 @@ import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.utils.TextUtils;
 import com.valeo.bleranging.utils.TrxUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by l-avaratha on 07/09/2016.
  */
@@ -26,7 +29,7 @@ public class CCFourLMRB extends ConnectedCar {
     private static final int MODE_ALL_OF_TWO_WITHOUT_BACK_AND_MIDDLE = 11;
     private static final int MODE_ONLY_MIDDLE = 12;
     private static final String SPACE_ONE = "        ";
-    private static final String SPACE_TWO = "           ";
+    private static final String SPACE_TWO = "        ";
 
     public CCFourLMRB(Context mContext, ConnectionNumber connectionNumber) {
         super(mContext, connectionNumber);
@@ -78,7 +81,7 @@ public class CCFourLMRB extends ConnectedCar {
     }
 
     @Override
-    public int unlockStrategy(boolean smartphoneIsInPocket) {
+    public List<Integer> unlockStrategy(boolean smartphoneIsInPocket) {
         boolean isInUnlockArea = isInUnlockArea(TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket));
         boolean isNearDoorLRMax = isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, nearDoorRatioThreshold);
         boolean isNearDoorLRMin = isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -nearDoorRatioThreshold);
@@ -88,15 +91,22 @@ public class CCFourLMRB extends ConnectedCar {
         boolean isNearDoorRBMin = isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_RIGHT, NUMBER_TRX_BACK, nearBackDoorRatioThresholdMin);
         boolean isApproaching = TrxUtils.getAverageLSDeltaLowerThanThreshold(this, TrxUtils.getCurrentUnlockThreshold(averageDeltaUnlockThreshold, smartphoneIsInPocket));
         if (isInUnlockArea && isApproaching) {
+            List<Integer> result = new ArrayList<>();
             if (isNearDoorLRMax && isNearDoorLBMax) {
-                return NUMBER_TRX_LEFT;
-            } else if (isNearDoorLRMin && isNearDoorRBMax) {
-                return NUMBER_TRX_RIGHT;
-            } else if (isNearDoorLBMin && isNearDoorRBMin) {
-                return NUMBER_TRX_BACK;
+                result.add(NUMBER_TRX_LEFT);
             }
+            if (isNearDoorLRMin && isNearDoorRBMax) {
+                result.add(NUMBER_TRX_RIGHT);
+            }
+            if (isNearDoorLBMin && isNearDoorRBMin) {
+                result.add(NUMBER_TRX_BACK);
+            }
+            if(result.size() == 0) {
+                return null;
+            }
+            return result;
         }
-        return 0;
+        return null;
     }
 
     @Override

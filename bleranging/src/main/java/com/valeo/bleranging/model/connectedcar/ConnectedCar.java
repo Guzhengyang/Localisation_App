@@ -14,58 +14,59 @@ import com.valeo.bleranging.utils.TextUtils;
 import com.valeo.bleranging.utils.TrxUtils;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 
 /**
  * Created by l-avaratha on 05/09/2016.
  */
 public abstract class ConnectedCar {
-    public static final int NUMBER_TRX_FRONT_LEFT = 1;
-    public static final int NUMBER_TRX_FRONT_RIGHT = 2;
-    public static final int NUMBER_TRX_LEFT = 3;
-    public static final int NUMBER_TRX_MIDDLE = 4;
-    public static final int NUMBER_TRX_RIGHT = 5;
-    public static final int NUMBER_TRX_REAR_LEFT = 6;
-    public static final int NUMBER_TRX_BACK = 7;
-    public static final int NUMBER_TRX_REAR_RIGHT = 8;
-    public static final String TRX_FRONT_LEFT_NAME = "FLeft";
-    public static final String TRX_FRONT_RIGHT_NAME = "FRight";
-    public static final String TRX_LEFT_NAME = "Left";
-    public static final String TRX_MIDDLE_NAME = "Mid";
-    public static final String TRX_RIGHT_NAME = "Right";
-    public static final String TRX_REAR_LEFT_NAME = "RLeft";
-    public static final String TRX_BACK_NAME = "Back";
-    public static final String TRX_REAR_RIGHT_NAME = "RRight";
+    public final static int NUMBER_TRX_FRONT_LEFT = 1;
+    public final static int NUMBER_TRX_FRONT_RIGHT = 2;
+    public final static int NUMBER_TRX_LEFT = 3;
+    public final static int NUMBER_TRX_MIDDLE = 4;
+    public final static int NUMBER_TRX_RIGHT = 5;
+    public final static int NUMBER_TRX_REAR_LEFT = 6;
+    public final static int NUMBER_TRX_BACK = 7;
+    public final static int NUMBER_TRX_REAR_RIGHT = 8;
+    public final static String TRX_FRONT_LEFT_NAME = "FLeft";
+    public final static String TRX_FRONT_RIGHT_NAME = "FRight";
+    public final static String TRX_LEFT_NAME = "Left";
+    public final static String TRX_MIDDLE_NAME = "Mid";
+    public final static String TRX_RIGHT_NAME = "Right";
+    public final static String TRX_REAR_LEFT_NAME = "RLeft";
+    public final static String TRX_BACK_NAME = "Back";
+    public final static String TRX_REAR_RIGHT_NAME = "RRight";
     public final static int RSSI_LOCK_DEFAULT_VALUE = -120;
     public final static int RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE = -50;
     public final static int RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE = -30;
     public final static int RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE = -70;
     public final static int RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE = -80;
-    protected final static float linAccThreshold = SdkPreferencesHelper.getInstance().getCorrectionLinAcc();
-    private static final String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-    protected final static int welcomeThreshold = SdkPreferencesHelper.getInstance().getWelcomeThreshold(connectedCarType);
-    protected final static int lockThreshold = SdkPreferencesHelper.getInstance().getLockThreshold(connectedCarType);
-    protected final static int unlockThreshold = SdkPreferencesHelper.getInstance().getUnlockThreshold(connectedCarType);
-    protected final static int startThreshold = SdkPreferencesHelper.getInstance().getStartThreshold(connectedCarType);
-    protected final static int averageDeltaLockThreshold = SdkPreferencesHelper.getInstance().getAverageDeltaLockThreshold(connectedCarType);
-    protected final static int averageDeltaUnlockThreshold = SdkPreferencesHelper.getInstance().getAverageDeltaUnlockThreshold(connectedCarType);
-    protected final static int lockMode = SdkPreferencesHelper.getInstance().getLockMode(connectedCarType);
-    protected final static int unlockMode = SdkPreferencesHelper.getInstance().getUnlockMode(connectedCarType);
-    protected final static int startMode = SdkPreferencesHelper.getInstance().getStartMode(connectedCarType);
-    protected final static int nearDoorRatioThreshold = SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(connectedCarType);
-    protected final static int nearBackDoorRatioThresholdMin = SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMin(connectedCarType);
-    protected final static int nearBackDoorRatioThresholdMax = SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMax(connectedCarType);
-    protected final static int nearDoorThresholdMLorMRMin = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMin(connectedCarType);
-    protected final static int nearDoorThresholdMLorMRMax = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMax(connectedCarType);
-    private final String trxAddressLeft = SdkPreferencesHelper.getInstance().getTrxAddressLeft();
-    private final String trxAddressMiddle = SdkPreferencesHelper.getInstance().getTrxAddressMiddle();
-    private final String trxAddressRight = SdkPreferencesHelper.getInstance().getTrxAddressRight();
-    private final String trxAddressBack = SdkPreferencesHelper.getInstance().getTrxAddressBack();
-    private final String trxAddressFrontLeft = SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft();
-    private final String trxAddressFrontRight = SdkPreferencesHelper.getInstance().getTrxAddressFrontRight();
-    private final String trxAddressRearLeft = SdkPreferencesHelper.getInstance().getTrxAddressRearLeft();
-    private final String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
+    private final static String trxAddressLeft = SdkPreferencesHelper.getInstance().getTrxAddressLeft();
+    private final static String trxAddressMiddle = SdkPreferencesHelper.getInstance().getTrxAddressMiddle();
+    private final static String trxAddressRight = SdkPreferencesHelper.getInstance().getTrxAddressRight();
+    private final static String trxAddressBack = SdkPreferencesHelper.getInstance().getTrxAddressBack();
+    private final static String trxAddressFrontLeft = SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft();
+    private final static String trxAddressFrontRight = SdkPreferencesHelper.getInstance().getTrxAddressFrontRight();
+    private final static String trxAddressRearLeft = SdkPreferencesHelper.getInstance().getTrxAddressRearLeft();
+    private final static String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
     private final Ranging ranging;
+    protected String connectedCarType;
+    protected float linAccThreshold;
+    protected int welcomeThreshold;
+    protected int lockThreshold;
+    protected int unlockThreshold;
+    protected int startThreshold;
+    protected int averageDeltaLockThreshold;
+    protected int averageDeltaUnlockThreshold;
+    protected int lockMode;
+    protected int unlockMode;
+    protected int startMode;
+    protected int nearDoorRatioThreshold;
+    protected int nearBackDoorRatioThresholdMin;
+    protected int nearBackDoorRatioThresholdMax;
+    protected int nearDoorThresholdMLorMRMin;
+    protected int nearDoorThresholdMLorMRMax;
     protected Trx trxLeft;
     protected Trx trxMiddle;
     protected Trx trxRight;
@@ -74,14 +75,34 @@ public abstract class ConnectedCar {
     protected Trx trxRearLeft;
     protected Trx trxFrontRight;
     protected Trx trxRearRight;
-    protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
     protected ConnectionNumber connectionNumber;
+    protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
     private boolean initialized = false;
 
     public ConnectedCar(Context mContext, ConnectionNumber connectionNumber) {
         this.connectionNumber = connectionNumber;
         this.trxLinkedHMap = new LinkedHashMap<>();
         this.ranging = new Ranging(mContext);
+        resetSettings();
+    }
+
+    public void resetSettings() {
+        this.connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
+        this.linAccThreshold = SdkPreferencesHelper.getInstance().getCorrectionLinAcc();
+        this.welcomeThreshold = SdkPreferencesHelper.getInstance().getWelcomeThreshold(connectedCarType);
+        this.lockThreshold = SdkPreferencesHelper.getInstance().getLockThreshold(connectedCarType);
+        this.unlockThreshold = SdkPreferencesHelper.getInstance().getUnlockThreshold(connectedCarType);
+        this.startThreshold = SdkPreferencesHelper.getInstance().getStartThreshold(connectedCarType);
+        this.averageDeltaLockThreshold = SdkPreferencesHelper.getInstance().getAverageDeltaLockThreshold(connectedCarType);
+        this.averageDeltaUnlockThreshold = SdkPreferencesHelper.getInstance().getAverageDeltaUnlockThreshold(connectedCarType);
+        this.lockMode = SdkPreferencesHelper.getInstance().getLockMode(connectedCarType);
+        this.unlockMode = SdkPreferencesHelper.getInstance().getUnlockMode(connectedCarType);
+        this.startMode = SdkPreferencesHelper.getInstance().getStartMode(connectedCarType);
+        this.nearDoorRatioThreshold = SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(connectedCarType);
+        this.nearBackDoorRatioThresholdMin = SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMin(connectedCarType);
+        this.nearBackDoorRatioThresholdMax = SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMax(connectedCarType);
+        this.nearDoorThresholdMLorMRMin = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMin(connectedCarType);
+        this.nearDoorThresholdMLorMRMax = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMax(connectedCarType);
     }
 
     /**
@@ -328,7 +349,7 @@ public abstract class ConnectedCar {
      * @param smartphoneIsInPocket the "is in pocket" status
      * @return true if the strategy is verified, false otherwise
      */
-    public abstract int unlockStrategy(boolean smartphoneIsInPocket);
+    public abstract List<Integer> unlockStrategy(boolean smartphoneIsInPocket);
 
     /**
      * Check if we are in unlock area
@@ -409,24 +430,34 @@ public abstract class ConnectedCar {
                     .append(space1);
         }
         spannableStringBuilder.append("\n");
-        StringBuilder dataStringBuilder = new StringBuilder();
         for (Trx trx : trxLinkedHMap.values()) {
-            dataStringBuilder
+            spannableStringBuilder
                     .append(space2)
-                    .append(getCurrentOriginalRssi(trx.getTrxNumber(), Trx.ANTENNA_ID_1))
+                    .append(String.format(Locale.FRANCE, "%1$03d", getCurrentOriginalRssi(trx.getTrxNumber(), Trx.ANTENNA_ID_1)))
                     .append(space2);
         }
-        dataStringBuilder.append('\n');
+        spannableStringBuilder.append('\n');
         for (Trx trx : trxLinkedHMap.values()) {
-            dataStringBuilder
+            spannableStringBuilder
                     .append(space2)
-                    .append(getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_0, Antenna.AVERAGE_DEFAULT))
+                    .append(String.format(Locale.FRANCE, "%1$03d", getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_0, Antenna.AVERAGE_DEFAULT)))
                     .append(space2);
         }
-        dataStringBuilder.append('\n');
-        dataStringBuilder.append("                               ")
-                .append("Total :").append(" ").append(getAllTrxAverage(Antenna.AVERAGE_DEFAULT)).append("\n");
-        spannableStringBuilder.append(dataStringBuilder.toString());
+        spannableStringBuilder.append('\n');
+        spannableStringBuilder
+                .append("                               ").append("Total :").append(" ")
+                .append(String.format(Locale.FRANCE, "%1$03d", getAllTrxAverage(Antenna.AVERAGE_DEFAULT)))
+                .append("\n");
+        spannableStringBuilder.append("-------------------------------------------------------------------------\n");
+        spannableStringBuilder.append("offset channel 38 :\n");
+        for (Trx trx : trxLinkedHMap.values()) {
+            spannableStringBuilder
+                    .append(space2)
+                    .append(String.format(Locale.FRANCE, "%1$03d", getOffsetBleChannel38(trx.getTrxNumber(), Trx.ANTENNA_ID_1)))
+                    .append(space2);
+        }
+        spannableStringBuilder.append('\n');
+        spannableStringBuilder.append("-------------------------------------------------------------------------\n");
         return spannableStringBuilder;
     }
 
@@ -474,17 +505,6 @@ public abstract class ConnectedCar {
         spannableStringBuilder.append(TextUtils.colorText(
                 smartphoneIsLaidDownLAcc,
                 lAccStringBuilder.toString(), Color.WHITE, Color.DKGRAY));
-        spannableStringBuilder.append("-------------------------------------------------------------------------\n");
-        spannableStringBuilder.append("offset channel 38 :\n");
-        StringBuilder offset38StringBuilder = new StringBuilder();
-        for (Trx trx : trxLinkedHMap.values()) {
-            offset38StringBuilder
-                    .append(getOffsetBleChannel38(trx.getTrxNumber(), Trx.ANTENNA_ID_1))
-                    .append("    ");
-        }
-        offset38StringBuilder.append('\n');
-        spannableStringBuilder.append(offset38StringBuilder.toString());
-        spannableStringBuilder.append("-------------------------------------------------------------------------");
         return spannableStringBuilder;
     }
 
@@ -510,8 +530,7 @@ public abstract class ConnectedCar {
                                                     String comparaisonSign, String space) {
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         for (Trx trx : trxLinkedHMap.values()) {
-            ssb.append(TextUtils.colorAntennaAverage(
-                    getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_0, mode),
+            ssb.append(TextUtils.colorAntennaAverage(getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_0, mode),
                     color, threshold, comparaisonSign, space));
         }
         ssb.append("\n");

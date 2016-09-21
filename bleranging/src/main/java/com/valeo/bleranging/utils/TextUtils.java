@@ -7,6 +7,8 @@ import android.text.style.ForegroundColorSpan;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
+import java.util.Locale;
+
 /**
  * Created by l-avaratha on 20/07/2016.
  */
@@ -28,7 +30,7 @@ public class TextUtils {
      * @return a colored average string
      */
     public static SpannableString colorAntennaAverage(int average, int color, int threshold, String comparaisonSign, String space) {
-        StringBuilder averageStringBuilder = new StringBuilder().append(space).append(average).append(space);
+        StringBuilder averageStringBuilder = new StringBuilder().append(space).append(String.format(Locale.FRANCE, "%1$03d", average)).append(space);
         SpannableString spanString = new SpannableString(averageStringBuilder.toString());
         if(comparaisonSign.equals(">")) {
             if(average <= threshold) {

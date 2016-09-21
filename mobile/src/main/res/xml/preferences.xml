@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_near_door">
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_RATIO_MAX_MIN_THR"
+            android:title="@string/pref_ratio_max_min_thr" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_NEAR_DOOR_THR"
+            android:title="@string/pref_near_door_thr" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_EQUALLY_NEAR_DOOR_THR"
+            android:title="@string/pref_equally_near_door_thr" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_NEARER_DOOR_THR"
+            android:title="@string/pref_nearer_door_thr" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_offset">
         <EditTextPreference
             android:key="com.inblue.PREFERENCE_OFFSET_POCKET_FOR_START"

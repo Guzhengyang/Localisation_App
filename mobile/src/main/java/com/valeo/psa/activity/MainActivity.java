@@ -115,8 +115,12 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private GradientDrawable welcome_area;
     private GradientDrawable start_area;
     private GradientDrawable lock_area;
+    private GradientDrawable unlock_area_front_left;
     private GradientDrawable unlock_area_left;
+    private GradientDrawable unlock_area_rear_left;
+    private GradientDrawable unlock_area_front_right;
     private GradientDrawable unlock_area_right;
+    private GradientDrawable unlock_area_rear_right;
     private GradientDrawable unlock_area_back;
     private DottedProgressBar little_round_progressBar;
     private TextView debug_info;
@@ -425,8 +429,12 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         welcome_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.welcome_area);
         start_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area);
         lock_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.lock_area);
+        unlock_area_front_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_left);
         unlock_area_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_left);
+        unlock_area_rear_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_left);
+        unlock_area_front_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_right);
         unlock_area_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_right);
+        unlock_area_rear_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_right);
         unlock_area_back = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_back);
         little_round_progressBar = (DottedProgressBar) findViewById(R.id.little_round_progressBar);
         debug_info = (TextView) findViewById(R.id.debug_info);
@@ -770,6 +778,18 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             case BleRangingHelper.UNLOCK_RIGHT_AREA:
                 unlock_area_right.setColor(Color.GREEN);
                 break;
+            case BleRangingHelper.UNLOCK_FRONT_LEFT_AREA:
+                unlock_area_front_left.setColor(Color.GREEN);
+                break;
+            case BleRangingHelper.UNLOCK_FRONT_RIGHT_AREA:
+                unlock_area_front_right.setColor(Color.GREEN);
+                break;
+            case BleRangingHelper.UNLOCK_REAR_LEFT_AREA:
+                unlock_area_rear_left.setColor(Color.GREEN);
+                break;
+            case BleRangingHelper.UNLOCK_REAR_RIGHT_AREA:
+                unlock_area_rear_right.setColor(Color.GREEN);
+                break;
             case BleRangingHelper.UNLOCK_BACK_AREA:
                 unlock_area_back.setColor(Color.GREEN);
                 break;
@@ -794,6 +814,18 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 break;
             case BleRangingHelper.UNLOCK_RIGHT_AREA:
                 unlock_area_right.setColor(Color.BLACK);
+                break;
+            case BleRangingHelper.UNLOCK_FRONT_LEFT_AREA:
+                unlock_area_front_left.setColor(Color.BLACK);
+                break;
+            case BleRangingHelper.UNLOCK_FRONT_RIGHT_AREA:
+                unlock_area_front_right.setColor(Color.BLACK);
+                break;
+            case BleRangingHelper.UNLOCK_REAR_LEFT_AREA:
+                unlock_area_rear_left.setColor(Color.BLACK);
+                break;
+            case BleRangingHelper.UNLOCK_REAR_RIGHT_AREA:
+                unlock_area_rear_right.setColor(Color.BLACK);
                 break;
             case BleRangingHelper.UNLOCK_BACK_AREA:
                 unlock_area_back.setColor(Color.BLACK);

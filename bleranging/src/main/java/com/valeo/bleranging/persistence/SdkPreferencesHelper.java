@@ -49,6 +49,10 @@ public final class SdkPreferencesHelper {
     public final static int EQUALIZER_FRONT_RIGHT = 5;
     public final static int EQUALIZER_REAR_LEFT = 5;
     public final static int EQUALIZER_REAR_RIGHT = 5;
+    public static final int NEAR_DOOR_THR = 10;
+    public static final int EQUALLY_NEAR_DOOR_THR = 10;
+    public static final int NEARER_DOOR_THR = 10;
+    public static final int RATIO_MAX_MIN_THR = 8;
     public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:73:88";
     public final static String BLE_ADDRESS_LEFT = "D4:F5:13:56:39:A5";
     public final static String BLE_ADDRESS_MIDDLE = "D4:F5:13:56:6B:65";
@@ -121,6 +125,10 @@ public final class SdkPreferencesHelper {
     public static final String EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_FRONT_RIGHT";
     public static final String EQUALIZER_REAR_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_REAR_LEFT";
     public static final String EQUALIZER_REAR_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_REAR_RIGHT";
+    public static final String NEAR_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_THR";
+    public static final String EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALLY_NEAR_DOOR_THR";
+    public static final String NEARER_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEARER_DOOR_THR";
+    public static final String RATIO_MAX_MIN_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_RATIO_MAX_MIN_THR";
     private static final String USER_MAIL_PREFERENCES_NAME = "com.inblue.PREFERENCE_USER_MAIL";
     private static final String PASSWORD_PREFERENCES_NAME = "com.inblue.PREFERENCE_PASSWORD";
     private static final String LOG_FILE_NAME_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOG_FILE_NAME";
@@ -156,6 +164,31 @@ public final class SdkPreferencesHelper {
      */
     public static SdkPreferencesHelper getInstance() {
         return sSingleInstance;
+    }
+
+    public void setNearDoorThreshold(final String fileName, int nearDoorThreshold) {
+        saveInt(fileName, NEAR_DOOR_THR_PREFERENCES_NAME, nearDoorThreshold);
+    }
+    public void setEquallyNearThreshold(final String fileName, int equallyNearDoorThreshold) {
+        saveInt(fileName, EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME, equallyNearDoorThreshold);
+    }
+    public void setNearerThreshold(final String fileName, int nearerDoorThreshold) {
+        saveInt(fileName, NEARER_DOOR_THR_PREFERENCES_NAME, nearerDoorThreshold);
+    }
+    public void setRatioMaxMinThreshold(final String fileName, int ratioMaxMinThreshold) {
+        saveInt(fileName, RATIO_MAX_MIN_THR_PREFERENCES_NAME, ratioMaxMinThreshold);
+    }
+    public int getNearDoorThreshold(final String fileName) {
+        return readInt(fileName, NEAR_DOOR_THR_PREFERENCES_NAME, NEAR_DOOR_THR);
+    }
+    public int getEquallyNearThreshold(final String fileName) {
+        return readInt(fileName, EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME, EQUALLY_NEAR_DOOR_THR);
+    }
+    public int getNearerThreshold(final String fileName) {
+        return readInt(fileName, NEARER_DOOR_THR_PREFERENCES_NAME, NEARER_DOOR_THR);
+    }
+    public int getRatioMaxMinThreshold(final String fileName) {
+        return readInt(fileName, RATIO_MAX_MIN_THR_PREFERENCES_NAME, RATIO_MAX_MIN_THR);
     }
 
     public void setNearDoorThresholdLMorMRMax(final String fileName, int nearDoorRatioThreshold) {

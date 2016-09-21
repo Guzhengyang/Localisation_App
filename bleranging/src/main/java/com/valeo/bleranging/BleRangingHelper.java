@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,15 +49,17 @@ public class BleRangingHelper implements SensorEventListener {
     public final static int UNLOCK_RIGHT_AREA = 4;
     public final static int UNLOCK_BACK_AREA = 5;
     public final static int START_AREA = 6;
+    public final static int UNLOCK_FRONT_LEFT_AREA = 7;
+    public final static int UNLOCK_REAR_LEFT_AREA = 8;
+    public final static int UNLOCK_FRONT_RIGHT_AREA = 9;
+    public final static int UNLOCK_REAR_RIGHT_AREA = 10;
     public final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
     public final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
     public final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
-    private static final int LOCK_STATUS_CHANGED_TIMEOUT = 3000;
-    private static final int PREDICTION_MAX = 16;
+    private final static int LOCK_STATUS_CHANGED_TIMEOUT = 3000;
+    private final static int PREDICTION_MAX = 16;
     private final Context mContext;
     private final BluetoothManagement mBluetoothManager;
-    private final float linAccThreshold = SdkPreferencesHelper.getInstance().getCorrectionLinAcc();
-    private final int linAccSize = SdkPreferencesHelper.getInstance().getLinAccSize();
 
     public boolean smartphoneIsInPocket = false;
     public boolean smartphoneIsLaidDownLAcc = false;
@@ -64,10 +67,9 @@ public class BleRangingHelper implements SensorEventListener {
     private LinkedList<Integer> predictionHistoric;
     private Map<Integer, Integer> mostCommon;
     private boolean isLockStrategyValid = false;
-    private int isUnlockStrategyValid = 0;
+    private List<Integer> isUnlockStrategyValid;
     private boolean isStartStrategyValid = false;
     private boolean isWelcomeStrategyValid = false;
-    private boolean isLightCaptorEnabled = SdkPreferencesHelper.getInstance().isLightCaptorEnabled();
     private boolean checkNewPacketOnlyOneLaunch = true;
     private byte[] bytesToSend;
     private byte[] bytesReceived;
@@ -121,7 +123,7 @@ public class BleRangingHelper implements SensorEventListener {
     private byte recordByte = 0;
     private InblueProtocolManager mProtocolManager;
     private BleRangingListener bleRangingListener;
-    private ArrayList<Double> lAccHistoric = new ArrayList<>(linAccSize);
+    private ArrayList<Double> lAccHistoric = new ArrayList<>(SdkPreferencesHelper.getInstance().getLinAccSize());
     private double deltaLinAcc = 0;
     private boolean isLaidRunnableAlreadyLaunched = false;
     private float[] mGravity;
@@ -526,18 +528,20 @@ public class BleRangingHelper implements SensorEventListener {
             boolean isStartAllowed = false;
             isLockStrategyValid = connectedCar.lockStrategy(smartphoneIsInPocket);
             isUnlockStrategyValid = connectedCar.unlockStrategy(smartphoneIsInPocket);
-            isStartStrategyValid = connectedCar.startStrategy(newLockStatus, smartphoneIsInPocket);
+            isStartStrategyValid = connectedCar.startStrategy(mProtocolManager.isLockedToSend(), smartphoneIsInPocket);
             isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus, smartphoneIsInPocket);
             rangingPredictionInt = mostCommon(mostCommon);
             if (rearmWelcome.get() && isWelcomeStrategyValid) {
                 rearmWelcome.set(false);
                 //TODO Welcome
-            } else if (isLockStatusChangedTimerExpired.get() && rearmLock.get() && isLockStrategyValid && isUnlockStrategyValid == 0) {
+            } else if (isLockStatusChangedTimerExpired.get() && rearmLock.get() && isLockStrategyValid
+                    && isUnlockStrategyValid == null) {
                 // DO NOT check if !newLockStatus to let the rearm algorithm in performLockVehicle work
                 Log.d(" rssiHistorics", "lock");
                 isPassiveEntryAction.set(true);
                 performLockVehicleRequest(true);
-            } else if (isLockStatusChangedTimerExpired.get() && rearmUnlock.get() && isUnlockStrategyValid != 0 && !isLockStrategyValid) {
+            } else if (isLockStatusChangedTimerExpired.get() && rearmUnlock.get() && !isLockStrategyValid
+                    && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= 3) {
                 // DO NOT check if newLockStatus to let the rearm algorithm in performLockVehicle work
                 Log.d(" rssiHistorics", "unlock");
                 isPassiveEntryAction.set(true);
@@ -545,7 +549,7 @@ public class BleRangingHelper implements SensorEventListener {
             } else if (isStartStrategyValid) {
                 isStartAllowed = true;
                 //Perform the connection
-                if (isLightCaptorEnabled) {
+                if (SdkPreferencesHelper.getInstance().isLightCaptorEnabled()) {
                     makeNoise(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 350);
                 }
             }
@@ -564,32 +568,64 @@ public class BleRangingHelper implements SensorEventListener {
             bleRangingListener.darkenArea(START_AREA);
         }
         //UNLOCK
-        bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
-        bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
-        bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
-        if(!isLockStrategyValid) {
-            switch (isUnlockStrategyValid) {
-                case ConnectedCar.NUMBER_TRX_LEFT:
-                    bleRangingListener.lightUpArea(UNLOCK_LEFT_AREA);
-                    break;
-                case ConnectedCar.NUMBER_TRX_RIGHT:
-                    bleRangingListener.lightUpArea(UNLOCK_RIGHT_AREA);
-                    break;
-                case ConnectedCar.NUMBER_TRX_BACK:
-                    bleRangingListener.lightUpArea(UNLOCK_BACK_AREA);
-                    break;
-                default:
-                    bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
-                    bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
-                    bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
-                    break;
-            }
-        }
-        // LOCK
-        if(isLockStrategyValid && isUnlockStrategyValid == 0) {
-            bleRangingListener.lightUpArea(LOCK_AREA);
+        if ((isLockStrategyValid && isUnlockStrategyValid != null)
+                || (!isLockStrategyValid && isUnlockStrategyValid == null)) {
+            // do nothing
         } else {
-            bleRangingListener.darkenArea(LOCK_AREA);
+            if (!isLockStrategyValid) {
+                bleRangingListener.darkenArea(LOCK_AREA);
+                bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
+                bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
+                bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
+                bleRangingListener.darkenArea(UNLOCK_FRONT_LEFT_AREA);
+                bleRangingListener.darkenArea(UNLOCK_REAR_LEFT_AREA);
+                bleRangingListener.darkenArea(UNLOCK_FRONT_RIGHT_AREA);
+                bleRangingListener.darkenArea(UNLOCK_REAR_RIGHT_AREA);
+                for (Integer integer : isUnlockStrategyValid) {
+                    switch (integer) {
+                        case ConnectedCar.NUMBER_TRX_LEFT:
+                            bleRangingListener.lightUpArea(UNLOCK_LEFT_AREA);
+                            break;
+                        case ConnectedCar.NUMBER_TRX_RIGHT:
+                            bleRangingListener.lightUpArea(UNLOCK_RIGHT_AREA);
+                            break;
+                        case ConnectedCar.NUMBER_TRX_BACK:
+                            bleRangingListener.lightUpArea(UNLOCK_BACK_AREA);
+                            break;
+                        case ConnectedCar.NUMBER_TRX_FRONT_LEFT:
+                            bleRangingListener.lightUpArea(UNLOCK_FRONT_LEFT_AREA);
+                            break;
+                        case ConnectedCar.NUMBER_TRX_REAR_LEFT:
+                            bleRangingListener.lightUpArea(UNLOCK_REAR_LEFT_AREA);
+                            break;
+                        case ConnectedCar.NUMBER_TRX_FRONT_RIGHT:
+                            bleRangingListener.lightUpArea(UNLOCK_FRONT_RIGHT_AREA);
+                            break;
+                        case ConnectedCar.NUMBER_TRX_REAR_RIGHT:
+                            bleRangingListener.lightUpArea(UNLOCK_REAR_RIGHT_AREA);
+                            break;
+                        default:
+                            bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
+                            bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
+                            bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
+                            bleRangingListener.darkenArea(UNLOCK_FRONT_LEFT_AREA);
+                            bleRangingListener.darkenArea(UNLOCK_REAR_LEFT_AREA);
+                            bleRangingListener.darkenArea(UNLOCK_FRONT_RIGHT_AREA);
+                            bleRangingListener.darkenArea(UNLOCK_REAR_RIGHT_AREA);
+                            break;
+                    }
+                }
+            } else {
+                // LOCK
+                bleRangingListener.lightUpArea(LOCK_AREA);
+                bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
+                bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
+                bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
+                bleRangingListener.darkenArea(UNLOCK_FRONT_LEFT_AREA);
+                bleRangingListener.darkenArea(UNLOCK_REAR_LEFT_AREA);
+                bleRangingListener.darkenArea(UNLOCK_FRONT_RIGHT_AREA);
+                bleRangingListener.darkenArea(UNLOCK_REAR_RIGHT_AREA);
+            }
         }
         // WELCOME
         if (rearmWelcome.get() && isWelcomeStrategyValid) {
@@ -622,13 +658,18 @@ public class BleRangingHelper implements SensorEventListener {
             lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
             connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
         } else if (!lastConnectedCarType.equalsIgnoreCase(SdkPreferencesHelper.getInstance().getConnectedCarType())) {
+            // if car type has changed,
             if (isFullyConnected()) {
-                // if car type has changed, stop connection, create a new car, and restart it
+                // if connected, stop connection, create a new car, and restart it
                 restartConnection(true);
             } else {
+                // if not connected, create a new car
                 lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
                 connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
             }
+        } else {
+            // car type did not changed, but settings did
+            connectedCar.resetSettings();
         }
     }
 
@@ -667,14 +708,14 @@ public class BleRangingHelper implements SensorEventListener {
         }
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             mGravity = event.values;
-            if (lAccHistoric.size() == linAccSize) {
+            if (lAccHistoric.size() == SdkPreferencesHelper.getInstance().getLinAccSize()) {
                 lAccHistoric.remove(0);
             }
             double currentLinAcc = getQuadratiqueSum(event.values[0], event.values[1], event.values[2]);
             lAccHistoric.add(currentLinAcc);
             double averageLinAcc = getRollingAverageLAcc(lAccHistoric);
             deltaLinAcc = Math.abs(currentLinAcc - averageLinAcc);
-            if (deltaLinAcc < linAccThreshold) {
+            if (deltaLinAcc < SdkPreferencesHelper.getInstance().getCorrectionLinAcc()) {
                 if(!isLaidRunnableAlreadyLaunched) {
                     mIsLaidTimeOutHandler.postDelayed(isLaidRunnable, 8000); // wait before apply stillness
                     isLaidRunnableAlreadyLaunched = true;
@@ -718,13 +759,13 @@ public class BleRangingHelper implements SensorEventListener {
             if (lockVehicle) { // if want to lock, arm unlock
                 rearmStringBuilder.append(" and want to LOCK, then arm unlock");
                 rearmUnlock.set(true);
-                if (isLightCaptorEnabled) {
+                if (SdkPreferencesHelper.getInstance().isLightCaptorEnabled()) {
                     makeNoise(ToneGenerator.TONE_CDMA_REORDER, 200);
                 }
             } else { // if want to unlock, arm lock
                 rearmStringBuilder.append(" and want to UNLOCK, then arm lock");
                 rearmLock.set(true);
-                if (isLightCaptorEnabled) {
+                if (SdkPreferencesHelper.getInstance().isLightCaptorEnabled()) {
                     makeNoise(ToneGenerator.TONE_CDMA_MED_L, 200);
                 }
             }
