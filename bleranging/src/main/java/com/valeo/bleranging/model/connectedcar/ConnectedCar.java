@@ -380,20 +380,23 @@ public abstract class ConnectedCar {
     public abstract boolean welcomeStrategy(int totalAverage, boolean newlockStatus, boolean smartphoneIsInPocket);
 
     /**
-     * Select a mode of validity and check it
-     * @param mode  the mode of validity to check
-     * @param trxL  the left trx status
-     * @param trxM  the middle trx status
-     * @param trxR  the right trx status
-     * @param trxB  the back trx status
-     * @param trxFL the front left trx status
-     * @param trxRL the rear left trx status
-     * @param trxFR the front right trx status
-     * @param trxRR the rear right trx status
-     * @return true if the trx check the condition of validity of the select mode
+     * Check if the number of trx valid is available
+     * @param numberOfTrxNeeded the number of trx needed
+     * @param trxBoolLinkedHMap the list of boolean to check
+     * @return true if the number of trx valid is greater or equal to the number of trx valid needed, false otherwise
      */
-    public abstract boolean numberOfTrxValid(int mode, boolean trxL, boolean trxM, boolean trxR, boolean trxB,
-                                             boolean trxFL, boolean trxRL, boolean trxFR, boolean trxRR);
+    public boolean numberOfTrxValid(int numberOfTrxNeeded, LinkedHashMap<Integer, Boolean> trxBoolLinkedHMap) {
+        if (trxBoolLinkedHMap != null) {
+            int counter = 0;
+            for (Integer trxNumber : trxBoolLinkedHMap.keySet()) {
+                if (trxBoolLinkedHMap.get(trxNumber)) {
+                    counter++;
+                }
+            }
+            return counter >= numberOfTrxNeeded;
+        }
+        return false;
+    }
 
     /**
      * Create a string of header debug
@@ -433,14 +436,18 @@ public abstract class ConnectedCar {
         for (Trx trx : trxLinkedHMap.values()) {
             spannableStringBuilder
                     .append(space2)
-                    .append(String.format(Locale.FRANCE, "%1$03d", getCurrentOriginalRssi(trx.getTrxNumber(), Trx.ANTENNA_ID_1)))
+                    .append(String.format(Locale.FRANCE, "%1$03d",
+                            getCurrentOriginalRssi(trx.getTrxNumber(), Trx.ANTENNA_ID_1)
+                                    - getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1)))
                     .append(space2);
         }
         spannableStringBuilder.append('\n');
         for (Trx trx : trxLinkedHMap.values()) {
             spannableStringBuilder
                     .append(space2)
-                    .append(String.format(Locale.FRANCE, "%1$03d", getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_0, Antenna.AVERAGE_DEFAULT)))
+                    .append(String.format(Locale.FRANCE, "%1$03d",
+                            getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_0, Antenna.AVERAGE_DEFAULT)
+                                    - getRssiAverage(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_0, Antenna.AVERAGE_DEFAULT)))
                     .append(space2);
         }
         spannableStringBuilder.append('\n');

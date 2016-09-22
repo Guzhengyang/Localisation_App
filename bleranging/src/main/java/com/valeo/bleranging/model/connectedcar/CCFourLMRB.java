@@ -10,24 +10,13 @@ import com.valeo.bleranging.utils.TextUtils;
 import com.valeo.bleranging.utils.TrxUtils;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
  * Created by l-avaratha on 07/09/2016.
  */
 public class CCFourLMRB extends ConnectedCar {
-    private static final int MODE_ONE_OF_FOUR = 1;
-    private static final int MODE_TWO_OF_FOUR = 2;
-    private static final int MODE_ALL_FOUR = 3;
-    private static final int MODE_ONE_OF_THREE_WITHOUT_BACK = 4;
-    private static final int MODE_TWO_OF_THREE_WITHOUT_BACK = 5;
-    private static final int MODE_ALL_OF_THREE_WITHOUT_BACK = 6;
-    private static final int MODE_ONE_OF_THREE_WITHOUT_MIDDLE = 7;
-    private static final int MODE_TWO_OF_THREE_WITHOUT_MIDDLE = 8;
-    private static final int MODE_ALL_OF_THREE_WITHOUT_MIDDLE = 9;
-    private static final int MODE_ONE_OF_TWO_WITHOUT_BACK_AND_MIDDLE = 10;
-    private static final int MODE_ALL_OF_TWO_WITHOUT_BACK_AND_MIDDLE = 11;
-    private static final int MODE_ONLY_MIDDLE = 12;
     private static final String SPACE_ONE = "        ";
     private static final String SPACE_TWO = "        ";
 
@@ -73,11 +62,10 @@ public class CCFourLMRB extends ConnectedCar {
 
     @Override
     public boolean isInStartArea(int threshold) {
-        boolean trxL = isTrxGreaterThanThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
         boolean trxM = isTrxGreaterThanThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
-        boolean trxR = isTrxGreaterThanThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
-        boolean trxB = isTrxGreaterThanThreshold(NUMBER_TRX_BACK, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold);
-        return numberOfTrxValid(startMode, trxL, trxM, trxR, trxB, false, false, false, false);
+        LinkedHashMap<Integer, Boolean> result = new LinkedHashMap<>();
+        result.put(NUMBER_TRX_MIDDLE, trxM);
+        return numberOfTrxValid(startMode, result);
     }
 
     @Override
@@ -112,10 +100,13 @@ public class CCFourLMRB extends ConnectedCar {
     @Override
     public boolean isInUnlockArea(int threshold) {
         boolean trxL = isTrxGreaterThanThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
-        boolean trxM = isTrxGreaterThanThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
         boolean trxR = isTrxGreaterThanThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
         boolean trxB = isTrxGreaterThanThreshold(NUMBER_TRX_BACK, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold);
-        return numberOfTrxValid(unlockMode, trxL, trxM, trxR, trxB, false, false, false, false);
+        LinkedHashMap<Integer, Boolean> result = new LinkedHashMap<>();
+        result.put(NUMBER_TRX_LEFT, trxL);
+        result.put(NUMBER_TRX_RIGHT, trxR);
+        result.put(NUMBER_TRX_BACK, trxB);
+        return numberOfTrxValid(unlockMode, result);
     }
 
     @Override
@@ -131,7 +122,12 @@ public class CCFourLMRB extends ConnectedCar {
         boolean trxM = isTrxLowerThanThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
         boolean trxR = isTrxLowerThanThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
         boolean trxB = isTrxLowerThanThreshold(NUMBER_TRX_BACK, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
-        return numberOfTrxValid(lockMode, trxL, trxM, trxR, trxB, false, false, false, false)
+        LinkedHashMap<Integer, Boolean> result = new LinkedHashMap<>();
+        result.put(NUMBER_TRX_LEFT, trxL);
+        result.put(NUMBER_TRX_MIDDLE, trxM);
+        result.put(NUMBER_TRX_RIGHT, trxR);
+        result.put(NUMBER_TRX_BACK, trxB);
+        return numberOfTrxValid(lockMode, result)
                 || (trxM && (isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_LOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, nearDoorRatioThreshold)
                 || isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_LOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -nearDoorRatioThreshold)));
 
@@ -141,38 +137,6 @@ public class CCFourLMRB extends ConnectedCar {
     public boolean welcomeStrategy(int totalAverage, boolean newLockStatus, boolean smartphoneIsInPocket) {
         int threshold = TrxUtils.getCurrentLockThreshold(welcomeThreshold, smartphoneIsInPocket);
         return (totalAverage >= threshold) && newLockStatus;
-    }
-
-    @Override
-    public boolean numberOfTrxValid(int mode, boolean trxL, boolean trxM, boolean trxR, boolean trxB, boolean trxFL, boolean trxRL, boolean trxFR, boolean trxRR) {
-        switch (mode) {
-            case MODE_ONE_OF_FOUR:
-                return (trxL || trxM || trxR || trxB);
-            case MODE_TWO_OF_FOUR:
-                return (trxL && trxM) || (trxL && trxR) || (trxL && trxB) || (trxM && trxR) || (trxM && trxB) || (trxR && trxB);
-            case MODE_ALL_FOUR:
-                return trxL && trxM && trxR && trxB;
-            case MODE_ONE_OF_THREE_WITHOUT_BACK:
-                return (trxL || trxM || trxR);
-            case MODE_TWO_OF_THREE_WITHOUT_BACK:
-                return (trxL && trxM) || (trxL && trxR) || (trxM && trxR);
-            case MODE_ALL_OF_THREE_WITHOUT_BACK:
-                return trxL && trxM && trxR;
-            case MODE_ONE_OF_THREE_WITHOUT_MIDDLE:
-                return (trxL || trxR || trxB);
-            case MODE_TWO_OF_THREE_WITHOUT_MIDDLE:
-                return (trxL && trxR) || (trxL && trxB) || (trxR && trxB);
-            case MODE_ALL_OF_THREE_WITHOUT_MIDDLE:
-                return trxL && trxR && trxB;
-            case MODE_ONE_OF_TWO_WITHOUT_BACK_AND_MIDDLE:
-                return (trxL || trxR);
-            case MODE_ALL_OF_TWO_WITHOUT_BACK_AND_MIDDLE:
-                return (trxL && trxR);
-            case MODE_ONLY_MIDDLE:
-                return trxM;
-            default:
-                return false;
-        }
     }
 
     @Override

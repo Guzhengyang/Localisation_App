@@ -76,11 +76,6 @@ public class CCFourLRRlRr extends ConnectedCar {
     }
 
     @Override
-    public boolean numberOfTrxValid(int mode, boolean trxL, boolean trxM, boolean trxR, boolean trxB, boolean trxFL, boolean trxRL, boolean trxFR, boolean trxRR) {
-        return false;
-    }
-
-    @Override
     public SpannableStringBuilder createFirstFooterDebugData(SpannableStringBuilder spannableStringBuilder) {
         return createFirstFooterDebugData(spannableStringBuilder, SPACE_ONE, SPACE_TWO);
     }
