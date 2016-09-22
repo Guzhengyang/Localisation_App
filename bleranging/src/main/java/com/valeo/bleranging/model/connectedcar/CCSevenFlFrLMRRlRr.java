@@ -268,10 +268,7 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
         boolean trxR = isTrxLowerThanThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
         boolean trxRL = isTrxLowerThanThreshold(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
         boolean trxRR = isTrxLowerThanThreshold(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold);
-        return numberOfTrxValid(lockMode, trxL, trxM, trxR, false, trxFL, trxRL, trxFR, trxRR)
-                || (trxM && (isRatioNearDoorLowerThanThreshold(Antenna.AVERAGE_LOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, nearDoorRatioThreshold)
-                || isRatioNearDoorGreaterThanThreshold(Antenna.AVERAGE_LOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -nearDoorRatioThreshold)));
-
+        return numberOfTrxValid(lockMode, trxL, trxM, trxR, false, trxFL, trxRL, trxFR, trxRR);
     }
 
     @Override

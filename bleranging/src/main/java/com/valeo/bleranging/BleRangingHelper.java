@@ -717,7 +717,7 @@ public class BleRangingHelper implements SensorEventListener {
             deltaLinAcc = Math.abs(currentLinAcc - averageLinAcc);
             if (deltaLinAcc < SdkPreferencesHelper.getInstance().getCorrectionLinAcc()) {
                 if(!isLaidRunnableAlreadyLaunched) {
-                    mIsLaidTimeOutHandler.postDelayed(isLaidRunnable, 8000); // wait before apply stillness
+                    mIsLaidTimeOutHandler.postDelayed(isLaidRunnable, 3000); // wait before apply stillness
                     isLaidRunnableAlreadyLaunched = true;
                 }
             } else {
