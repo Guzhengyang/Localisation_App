@@ -52,7 +52,8 @@ public final class SdkPreferencesHelper {
     public static final int NEAR_DOOR_THR = 10;
     public static final int EQUALLY_NEAR_DOOR_THR = 10;
     public static final int NEARER_DOOR_THR = 10;
-    public static final int RATIO_MAX_MIN_THR = 8;
+    public static final int RATIO_MAX_MIN_THR = 20;
+    public static final int RATIO_CLOSE_TO_CAR_THR = 30;
     public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:73:88";
     public final static String BLE_ADDRESS_LEFT = "D4:F5:13:56:39:A5";
     public final static String BLE_ADDRESS_MIDDLE = "D4:F5:13:56:6B:65";
@@ -129,6 +130,7 @@ public final class SdkPreferencesHelper {
     public static final String EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALLY_NEAR_DOOR_THR";
     public static final String NEARER_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEARER_DOOR_THR";
     public static final String RATIO_MAX_MIN_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_RATIO_MAX_MIN_THR";
+    public static final String RATIO_CLOSE_TO_CAR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_CLOSE_TO_CAR_THR";
     private static final String USER_MAIL_PREFERENCES_NAME = "com.inblue.PREFERENCE_USER_MAIL";
     private static final String PASSWORD_PREFERENCES_NAME = "com.inblue.PREFERENCE_PASSWORD";
     private static final String LOG_FILE_NAME_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOG_FILE_NAME";
@@ -178,6 +180,10 @@ public final class SdkPreferencesHelper {
     public void setRatioMaxMinThreshold(final String fileName, int ratioMaxMinThreshold) {
         saveInt(fileName, RATIO_MAX_MIN_THR_PREFERENCES_NAME, ratioMaxMinThreshold);
     }
+
+    public void setRatioCloseToCarThreshold(final String fileName, int ratioCloseToCarThreshold) {
+        saveInt(fileName, RATIO_CLOSE_TO_CAR_THR_PREFERENCES_NAME, ratioCloseToCarThreshold);
+    }
     public int getNearDoorThreshold(final String fileName) {
         return readInt(fileName, NEAR_DOOR_THR_PREFERENCES_NAME, NEAR_DOOR_THR);
     }
@@ -189,6 +195,10 @@ public final class SdkPreferencesHelper {
     }
     public int getRatioMaxMinThreshold(final String fileName) {
         return readInt(fileName, RATIO_MAX_MIN_THR_PREFERENCES_NAME, RATIO_MAX_MIN_THR);
+    }
+
+    public int getRatioCloseToCarThreshold(final String fileName) {
+        return readInt(fileName, RATIO_CLOSE_TO_CAR_THR_PREFERENCES_NAME, RATIO_CLOSE_TO_CAR_THR);
     }
 
     public void setNearDoorThresholdLMorMRMax(final String fileName, int nearDoorRatioThreshold) {

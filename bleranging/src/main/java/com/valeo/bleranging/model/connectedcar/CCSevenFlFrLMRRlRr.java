@@ -194,8 +194,27 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
         return 0;
     }
 
-    private boolean isRatioMaxMinGreaterThanThreshold(int ratio, int threshold) {
+    private boolean isRatioGreaterThanThreshold(int ratio, int threshold) {
         return ratio > threshold;
+    }
+
+    private int getRatioCloseToCar(int trxNumber, int mode) {
+        if (trxLinkedHMap != null) {
+            return (trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode) - getMinAverageRssi(trxNumber, mode));
+        }
+        return 0;
+    }
+
+    private int getMinAverageRssi(int trxNumberToIgnore, int mode) {
+        int min = 0;
+        if (trxLinkedHMap != null) {
+            for (Integer trxNumber : trxLinkedHMap.keySet()) {
+                if (trxNumber != trxNumberToIgnore) {
+                    min = Math.min(min, trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode));
+                }
+            }
+        }
+        return min;
     }
 
     @Override
@@ -206,29 +225,36 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
         boolean isApproaching = true;
         if (isInUnlockArea && isApproaching) {
             int thresholdMaxMin = SdkPreferencesHelper.getInstance().getRatioMaxMinThreshold(connectedCarType);
-            boolean maxMinLeft = isRatioMaxMinGreaterThanThreshold(getRatioMaxMin(NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin);
-            boolean maxMinRearLeft = isRatioMaxMinGreaterThanThreshold(getRatioMaxMin(NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin);
-            boolean maxMinRearRight = isRatioMaxMinGreaterThanThreshold(getRatioMaxMin(NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin);
-            boolean maxMinRight = isRatioMaxMinGreaterThanThreshold(getRatioMaxMin(NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin);
-            boolean maxMinFrontRight = isRatioMaxMinGreaterThanThreshold(getRatioMaxMin(NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin);
-            boolean maxMinFrontLeft = isRatioMaxMinGreaterThanThreshold(getRatioMaxMin(NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin);
+            boolean maxMinLeft = isRatioGreaterThanThreshold(getRatioMaxMin(NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin);
+            boolean maxMinRearLeft = isRatioGreaterThanThreshold(getRatioMaxMin(NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin);
+            boolean maxMinRearRight = isRatioGreaterThanThreshold(getRatioMaxMin(NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin);
+            boolean maxMinRight = isRatioGreaterThanThreshold(getRatioMaxMin(NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin);
+            boolean maxMinFrontRight = isRatioGreaterThanThreshold(getRatioMaxMin(NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin);
+            boolean maxMinFrontLeft = isRatioGreaterThanThreshold(getRatioMaxMin(NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin);
+            int thresholdCloseToCar = SdkPreferencesHelper.getInstance().getRatioCloseToCarThreshold(connectedCarType);
+            boolean closeToCarFrontLeft = isRatioGreaterThanThreshold(getRatioCloseToCar(NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_UNLOCK), thresholdCloseToCar);
+            boolean closeToCarLeft = isRatioGreaterThanThreshold(getRatioCloseToCar(NUMBER_TRX_LEFT, Antenna.AVERAGE_UNLOCK), thresholdCloseToCar);
+            boolean closeToCarRearLeft = isRatioGreaterThanThreshold(getRatioCloseToCar(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK), thresholdCloseToCar);
+            boolean closeToCarRearRight = isRatioGreaterThanThreshold(getRatioCloseToCar(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdCloseToCar);
+            boolean closeToCarRight = isRatioGreaterThanThreshold(getRatioCloseToCar(NUMBER_TRX_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdCloseToCar);
+            boolean closeToCarFrontRight = isRatioGreaterThanThreshold(getRatioCloseToCar(NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdCloseToCar);
             List<Integer> result = new ArrayList<>();
-            if (maxMinFrontLeft) {
+            if (maxMinFrontLeft || closeToCarFrontLeft) {
                 result.add(NUMBER_TRX_FRONT_LEFT);
             }
-            if (maxMinLeft) {
+            if (maxMinLeft || closeToCarLeft) {
                 result.add(NUMBER_TRX_LEFT);
             }
-            if (maxMinRearLeft) {
+            if (maxMinRearLeft || closeToCarRearLeft) {
                 result.add(NUMBER_TRX_REAR_LEFT);
             }
-            if (maxMinFrontRight) {
+            if (maxMinFrontRight || closeToCarFrontRight) {
                 result.add(NUMBER_TRX_FRONT_RIGHT);
             }
-            if (maxMinRight) {
+            if (maxMinRight || closeToCarRight) {
                 result.add(NUMBER_TRX_RIGHT);
             }
-            if (maxMinRearRight) {
+            if (maxMinRearRight || closeToCarRearRight) {
                 result.add(NUMBER_TRX_REAR_RIGHT);
             }
             if (result.size() == 0) {

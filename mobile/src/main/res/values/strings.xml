@@ -63,6 +63,7 @@
     <string name="dialog_title_list_preference">Available connected car type</string>
     <string name="pref_near_door">NEAR DOOR THR</string>
     <string name="pref_ratio_max_min_thr">Ratio Max Min Thr</string>
+    <string name="pref_ratio_close_to_car_thr">Ratio Close to car Thr</string>
     <string name="pref_near_door_thr">Near Door Thr</string>
     <string name="pref_equally_near_door_thr">Equally Near Door Thr</string>
     <string name="pref_nearer_door_thr">Nearer Door Thr</string>

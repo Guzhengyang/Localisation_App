@@ -541,7 +541,7 @@ public class BleRangingHelper implements SensorEventListener {
                 isPassiveEntryAction.set(true);
                 performLockVehicleRequest(true);
             } else if (isLockStatusChangedTimerExpired.get() && rearmUnlock.get() && !isLockStrategyValid
-                    && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= 3) {
+                    && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= 2) {
                 // DO NOT check if newLockStatus to let the rearm algorithm in performLockVehicle work
                 Log.d(" rssiHistorics", "unlock");
                 isPassiveEntryAction.set(true);

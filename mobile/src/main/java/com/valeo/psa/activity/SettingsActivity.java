@@ -134,6 +134,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class SpecificPreferenceFragment extends PreferenceFragment {
         private EditTextPreference ratio_max_min_thr;
+        private EditTextPreference ratio_close_to_car_thr;
         private EditTextPreference near_door_thr;
         private EditTextPreference equally_near_door_thr;
         private EditTextPreference nearer_door_thr;
@@ -187,6 +188,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         private void setViews() {
             ratio_max_min_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.RATIO_MAX_MIN_THR_PREFERENCES_NAME));
+            ratio_close_to_car_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.RATIO_CLOSE_TO_CAR_THR_PREFERENCES_NAME));
             near_door_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEAR_DOOR_THR_PREFERENCES_NAME));
             equally_near_door_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME));
             nearer_door_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEARER_DOOR_THR_PREFERENCES_NAME));
@@ -223,6 +225,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         private void setDefaultValues() {
             ratio_max_min_thr.setText(ratio_max_min_thr.getSummary().toString());
+            ratio_close_to_car_thr.setText(ratio_close_to_car_thr.getSummary().toString());
             near_door_thr.setText(near_door_thr.getSummary().toString());
             equally_near_door_thr.setText(equally_near_door_thr.getSummary().toString());
             nearer_door_thr.setText(nearer_door_thr.getSummary().toString());
@@ -263,6 +266,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // guidelines.
         private void bindSummaries() {
             bindPreferenceSummaryToValue(ratio_max_min_thr, String.valueOf(SdkPreferencesHelper.RATIO_MAX_MIN_THR));
+            bindPreferenceSummaryToValue(ratio_close_to_car_thr, String.valueOf(SdkPreferencesHelper.RATIO_CLOSE_TO_CAR_THR));
             bindPreferenceSummaryToValue(near_door_thr, String.valueOf(SdkPreferencesHelper.NEAR_DOOR_THR));
             bindPreferenceSummaryToValue(equally_near_door_thr, String.valueOf(SdkPreferencesHelper.EQUALLY_NEAR_DOOR_THR));
             bindPreferenceSummaryToValue(nearer_door_thr, String.valueOf(SdkPreferencesHelper.NEARER_DOOR_THR));
