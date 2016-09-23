@@ -329,21 +329,22 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         vehicle_locked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (carDoorStatus == CarDoorStatus.DRIVER_DOOR_OPEN) {
+//                if (carDoorStatus == CarDoorStatus.DRIVER_DOOR_OPEN) {
                     car_door_status.setText(getString(R.string.vehicle_locked));
                     carDoorStatus = CarDoorStatus.LOCKED;
                     vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
                     driver_s_door_unlocked.setBackgroundResource(0);
+                    vehicle_unlocked.setBackgroundResource(0);
                     startButtonAnimation(false);
                     mBleRangingHelper.setIsPassiveEntryAction(false);
                     mBleRangingHelper.performLockVehicleRequest(true); //lockVehicle
-                }
+//                }
             }
         });
         driver_s_door_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (carDoorStatus == CarDoorStatus.LOCKED || carDoorStatus == CarDoorStatus.UNLOCKED) {
+//                if (carDoorStatus == CarDoorStatus.LOCKED || carDoorStatus == CarDoorStatus.UNLOCKED) {
                     car_door_status.setText(getString(R.string.driver_s_door_unlocked));
                     carDoorStatus = CarDoorStatus.DRIVER_DOOR_OPEN;
                     driver_s_door_unlocked.setBackgroundResource(R.mipmap.slider_button);
@@ -353,21 +354,22 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     startButtonAnimation(false);
                     mBleRangingHelper.setIsPassiveEntryAction(false);
                     mBleRangingHelper.performLockVehicleRequest(false); //unlockVehicle
-                }
+//                }
             }
         });
         vehicle_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (carDoorStatus == CarDoorStatus.DRIVER_DOOR_OPEN) {
+//                if (carDoorStatus == CarDoorStatus.DRIVER_DOOR_OPEN) {
                     car_door_status.setText(getString(R.string.vehicle_unlocked));
                     carDoorStatus = CarDoorStatus.UNLOCKED;
                     vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
                     driver_s_door_unlocked.setBackgroundResource(0);
+                    vehicle_locked.setBackgroundResource(0);
                     startButtonAnimation(true);
                     mBleRangingHelper.setIsPassiveEntryAction(false);
                     mBleRangingHelper.performLockVehicleRequest(false); //unlockVehicle
-                }
+//                }
             }
         });
     }

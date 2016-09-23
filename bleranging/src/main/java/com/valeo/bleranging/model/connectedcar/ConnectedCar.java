@@ -466,12 +466,22 @@ public abstract class ConnectedCar {
     /**
      * Create a string of header debug
      * @param spannableStringBuilder the spannable string builder to fill
-     * @param bleChannel the ble channel used
+     * @param bytesToSend              the bytes to send
+     * @param bytesReceived            the bytes received
+     * @param isFullyConnected         the boolean that determine if the smartphone is connected or not
      * @return the spannable string builder filled with the header
      */
     public SpannableStringBuilder createHeaderDebugData(
-            SpannableStringBuilder spannableStringBuilder, Antenna.BLEChannel bleChannel) {
-        spannableStringBuilder.append("Scanning on channel: ").append(bleChannel.toString()).append("\n");
+            SpannableStringBuilder spannableStringBuilder, byte[] bytesToSend, byte[] bytesReceived, boolean isFullyConnected) {
+        if (isFullyConnected) {
+            spannableStringBuilder
+                    .append("       Send:       ").append(TextUtils.printBleBytes((bytesToSend))).append("\n")
+                    .append("       Receive: ").append(TextUtils.printBleBytes(bytesReceived)).append("\n");
+        } else {
+            SpannableString disconnectedSpanString = new SpannableString("Disconnected\n");
+            disconnectedSpanString.setSpan(new ForegroundColorSpan(Color.DKGRAY), 0, "Disconnected\n".length(), 0);
+            spannableStringBuilder.append(disconnectedSpanString);
+        }
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
         return spannableStringBuilder;
     }
@@ -550,25 +560,16 @@ public abstract class ConnectedCar {
      * Get the string from the third footer
      *
      * @param spannableStringBuilder   the string builder to fill
-     * @param bytesToSend              the bytes to send
-     * @param bytesReceived            the bytes received
+     * @param bleChannel the ble channel used
      * @param deltaLinAcc              the delta of linear acceleration
      * @param smartphoneIsLaidDownLAcc the boolean that determine if the smartphone is moving or not
-     * @param isFullyConnected         the boolean that determine if the smartphone is connected or not
      * @return the string builder filled with the third footer data
      */
     public SpannableStringBuilder createThirdFooterDebugData(SpannableStringBuilder spannableStringBuilder,
-                                                             byte[] bytesToSend, byte[] bytesReceived, double deltaLinAcc,
-                                                             boolean smartphoneIsLaidDownLAcc, boolean isFullyConnected) {
-        if (isFullyConnected) {
-            spannableStringBuilder.append("Connected").append("\n")
-                    .append("       Send:       ").append(TextUtils.printBleBytes((bytesToSend))).append("\n")
-                    .append("       Receive: ").append(TextUtils.printBleBytes(bytesReceived)).append("\n");
-        } else {
-            SpannableString disconnectedSpanString = new SpannableString("Disconnected\n");
-            disconnectedSpanString.setSpan(new ForegroundColorSpan(Color.DKGRAY), 0, "Disconnected\n".length(), 0);
-            spannableStringBuilder.append(disconnectedSpanString);
-        }
+                                                             Antenna.BLEChannel bleChannel, double deltaLinAcc,
+                                                             boolean smartphoneIsLaidDownLAcc) {
+        spannableStringBuilder.append("-------------------------------------------------------------------------\n");
+        spannableStringBuilder.append("Scanning on channel: ").append(bleChannel.toString()).append("\n");
         StringBuilder lAccStringBuilder = new StringBuilder().append("Linear Acceleration < (")
                 .append(linAccThreshold)
                 .append("): ").append(String.format(Locale.FRANCE, "%1$.4f", deltaLinAcc)).append("\n");

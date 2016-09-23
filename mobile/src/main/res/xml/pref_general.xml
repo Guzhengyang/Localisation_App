@@ -39,35 +39,45 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_nb_element">
         <EditTextPreference
+            android:inputType="number"
             android:key="com.inblue.PREFERENCE_RSSI_LOG_NUMBER"
             android:title="@string/pref_nb_element_rssi_log_number" />
         <EditTextPreference
+            android:inputType="number"
             android:key="com.inblue.PREFERENCE_ROLLING_AV_ELEMENT"
             android:title="@string/pref_nb_element_rolling_average" />
         <EditTextPreference
+            android:inputType="number"
             android:key="com.inblue.PREFERENCE_START_NB_ELEMENT"
             android:title="@string/pref_nb_element_start" />
         <EditTextPreference
+            android:inputType="number"
             android:key="com.inblue.PREFERENCE_LOCK_NB_ELEMENT"
             android:title="@string/pref_nb_element_lock" />
         <EditTextPreference
+            android:inputType="number"
             android:key="com.inblue.PREFERENCE_UNLOCK_NB_ELEMENT"
             android:title="@string/pref_nb_element_unlock" />
         <EditTextPreference
+            android:inputType="number"
             android:key="com.inblue.PREFERENCE_WELCOME_NB_ELEMENT"
             android:title="@string/pref_nb_element_welcome" />
         <EditTextPreference
+            android:inputType="number"
             android:key="com.inblue.PREFERENCE_LONG_NB_ELEMENT"
             android:title="@string/pref_nb_element_long" />
         <EditTextPreference
+            android:inputType="number"
             android:key="com.inblue.PREFERENCE_SHORT_NB_ELEMENT"
             android:title="@string/pref_nb_element_short" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_acc">
         <EditTextPreference
+            android:inputType="number"
             android:key="com.inblue.PREFERENCE_LIN_ACC_SIZE"
             android:title="@string/pref_acc_size" />
         <EditTextPreference
+            android:inputType="number|numberDecimal"
             android:key="com.inblue.PREFERENCE_CORRECTION_LIN_ACC"
             android:title="@string/pref_acc_correction" />
     </PreferenceCategory>

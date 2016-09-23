@@ -23,7 +23,7 @@
         android:layout_alignParentBottom="true"
         android:gravity="center"
         android:paddingBottom="@dimen/vertical_padding"
-        android:text="@string/peugeot_208"
+        android:text="@string/ds5"
         android:textColor="@color/psa_car_model"
         android:textSize="@dimen/psa_70_px"
         android:textStyle="italic"

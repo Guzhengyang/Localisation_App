@@ -294,14 +294,15 @@ public class BleRangingHelper implements SensorEventListener {
             Log.d("printRunner", connectedCar.isInitialized() + " " + isFullyConnected());
             Log.w(" rssiHistorics", "************************************** IHM LOOP START *************************************************");
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-            spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder, bleChannel);
+            spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder,
+                    bytesToSend, bytesReceived, mBluetoothManager.isFullyConnected());
             totalAverage = connectedCar.getAllTrxAverage(Antenna.AVERAGE_DEFAULT);
             tryStrategies(newLockStatus);
             spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
             spannableStringBuilder = connectedCar.createSecondFooterDebugData(spannableStringBuilder,
                     smartphoneIsInPocket, smartphoneIsLaidDownLAcc, totalAverage, rearmLock.get(), rearmUnlock.get());
             spannableStringBuilder = connectedCar.createThirdFooterDebugData(spannableStringBuilder,
-                    bytesToSend, bytesReceived, deltaLinAcc, smartphoneIsLaidDownLAcc, mBluetoothManager.isFullyConnected());
+                    bleChannel, deltaLinAcc, smartphoneIsLaidDownLAcc);
             updateCarLocalization();
             bleRangingListener.printDebugInfo(spannableStringBuilder);
             Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
