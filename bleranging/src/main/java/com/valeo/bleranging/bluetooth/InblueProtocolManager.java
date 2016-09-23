@@ -10,12 +10,9 @@ public class InblueProtocolManager {
     private boolean isStartRequested;
     private boolean isLockedFromTrx;
     private boolean isLockedToSend;
+    private boolean isThatcham;
 
     public InblueProtocolManager() {
-    }
-
-    public void setIsStartRequested(boolean isStartRequested) {
-        this.isStartRequested = isStartRequested;
     }
 
     public boolean isStartRequested() {
@@ -28,6 +25,18 @@ public class InblueProtocolManager {
 
     public boolean isLockedFromTrx() {
         return isLockedFromTrx;
+    }
+
+    public boolean isThatcham() {
+        return isThatcham;
+    }
+
+    public void setThatcham(boolean thatcham) {
+        this.isThatcham = thatcham;
+    }
+
+    public void setIsStartRequested(boolean isStartRequested) {
+        this.isStartRequested = isStartRequested;
     }
 
     public void setIsLockedFromTrx(boolean isLockedFromTrx) {
@@ -49,7 +58,9 @@ public class InblueProtocolManager {
         payload[2] = (0x01);
         payload[5] = (byte) (isLockedToSend?0x01:0x02);
         payload[5] |= isStartRequested?0x04:0x00;
+        payload[5] |= isThatcham ? 0x08 : 0x00;
         packetOneCounter++;
         return payload;
     }
+
 }

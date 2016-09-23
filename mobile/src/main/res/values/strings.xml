@@ -16,8 +16,8 @@
     <string name="connected_over_ble">connected over Bluetooth</string>
     <string name="not_connected_over_ble">not connected over Bluetooth</string>
     <string name="car_model_type">Car Model Type</string>
+    <string name="ds5">DS 5 DC-917-NY</string>
     <string name="peugeot_208">Peugeot 208</string>
-    <string name="peugeot_209">Peugeot 209</string>
     <string name="slider_and_start_button">Slider and Start button</string>
     <string name="door_status_bg">door status bg</string>
     <string name="vehicle_locked">Vehicle locked</string>

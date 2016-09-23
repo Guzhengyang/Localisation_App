@@ -1,5 +1,7 @@
 package com.valeo.bleranging.model;
 
+import com.valeo.bleranging.utils.TrxUtils;
+
 /**
  * Created by l-avaratha on 08/06/2016.
  */
@@ -98,37 +100,20 @@ public class Trx {
     /**
      * Calculate the TRX RSSI and compare with thresold
      * @param mode the mode to use to compare with threshold (&& or ||)
+     * @param averageMode the mode of average
      * @param threshold the threshold to compare with
+     * @param isGreater true if compare sign is >, false if it is <
      * @return true if the rssi of each antenna is greater than the threshold, false otherwise
      */
-    public boolean trxGreaterThanThreshold(int mode, int averageMode, int threshold) {
+    public boolean compareTrxWithThreshold(int mode, int averageMode, int threshold, boolean isGreater) {
         if(isActive()) {
             switch (mode) {
                 case ANTENNA_OR:
-                    return ((antenna1.getAntennaRssiAverage(averageMode) > threshold) || (antenna2.getAntennaRssiAverage(averageMode) > threshold));
+                    return TrxUtils.compareWithThreshold(antenna1.getAntennaRssiAverage(averageMode), threshold, isGreater) ||
+                            TrxUtils.compareWithThreshold(antenna2.getAntennaRssiAverage(averageMode), threshold, isGreater);
                 case ANTENNA_AND:
-                    return ((antenna1.getAntennaRssiAverage(averageMode) > threshold) && (antenna2.getAntennaRssiAverage(averageMode) > threshold));
-                default:
-                    return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Calculate the TRX RSSI and compare with thresold
-     * @param mode the mode to use to compare with threshold (&& or ||)
-     * @param threshold the threshold to compare with
-     * @return true if the rssi of each antenna is lower than the threshold, false otherwise
-     */
-    public boolean trxLowerThanThreshold(int mode, int averageMode, int threshold) {
-        if(isActive()) {
-            switch (mode) {
-                case ANTENNA_OR:
-                    return ((antenna1.getAntennaRssiAverage(averageMode) < threshold) || (antenna2.getAntennaRssiAverage(averageMode) < threshold));
-                case ANTENNA_AND:
-                    return ((antenna1.getAntennaRssiAverage(averageMode) < threshold) && (antenna2.getAntennaRssiAverage(averageMode) < threshold));
+                    return TrxUtils.compareWithThreshold(antenna1.getAntennaRssiAverage(averageMode), threshold, isGreater) &&
+                            TrxUtils.compareWithThreshold(antenna2.getAntennaRssiAverage(averageMode), threshold, isGreater);
                 default:
                     return false;
             }

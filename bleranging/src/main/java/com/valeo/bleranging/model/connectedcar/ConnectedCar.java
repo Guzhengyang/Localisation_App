@@ -243,6 +243,8 @@ public abstract class ConnectedCar {
         }
     }
 
+    // GET AVERAGES AND RATIOS
+
     /**
      * Calculate all the trx average
      * @param averageMode the average mode
@@ -273,41 +275,104 @@ public abstract class ConnectedCar {
         return totalAverage;
     }
 
-    public int getRatioNearDoor(int mode, int trx1, int trx2) {
-        if (trxLinkedHMap.get(trx1) != null && trxLinkedHMap.get(trx2) != null) {
-            return TrxUtils.getRatioNearDoor(mode, trxLinkedHMap.get(trx1), trxLinkedHMap.get(trx2));
+    /**
+     * Calculate Next to Door delta rssi
+     *
+     * @param mode the average mode of calculation
+     * @param trx1 the first trx
+     * @param trx2 the second trx
+     * @return the delta between both trx average rssi
+     */
+    protected int getRatioBetweenTwoTrx(int mode, int trx1, int trx2) {
+        if (trxLinkedHMap != null) {
+            Trx trxOne = trxLinkedHMap.get(trx1);
+            Trx trxTwo = trxLinkedHMap.get(trx2);
+            if (trxOne != null && trxTwo != null) {
+                if (trxOne.isActive() && trxTwo.isActive()) {
+                    int trxAverageRssi1 = trxOne.getTrxRssiAverage(mode);
+                    int trxAverageRssi2 = trxTwo.getTrxRssiAverage(mode);
+                    return trxAverageRssi1 - trxAverageRssi2;
+                }
+                return 0;
+            }
+            return 0;
         } else {
             return 0;
         }
     }
 
-    public boolean isRatioNearDoorGreaterThanThreshold(int mode, int trx1, int trx2, int threshold) {
-        if (trxLinkedHMap.get(trx1) != null && trxLinkedHMap.get(trx2) != null) {
-            return TrxUtils.getRatioNearDoorGreaterThanThreshold(mode, trxLinkedHMap.get(trx1), trxLinkedHMap.get(trx2), threshold);
-        } else {
-            return false;
+    protected int getRatioMaxMin(int trxNumber1, int trxNumber2, int trxNumber3,
+                                 int trxNumber4, int trxNumber5, int trxNumber6, int mode) {
+        if (trxLinkedHMap != null) {
+            int max = Math.max(Math.max(trxLinkedHMap.get(trxNumber1).getTrxRssiAverage(mode),
+                    trxLinkedHMap.get(trxNumber2).getTrxRssiAverage(mode)),
+                    trxLinkedHMap.get(trxNumber3).getTrxRssiAverage(mode));
+            int min = Math.min(Math.min(trxLinkedHMap.get(trxNumber4).getTrxRssiAverage(mode),
+                    trxLinkedHMap.get(trxNumber5).getTrxRssiAverage(mode)),
+                    trxLinkedHMap.get(trxNumber6).getTrxRssiAverage(mode));
+            return max - min;
         }
+        return 0;
     }
 
-    public boolean isRatioNearDoorLowerThanThreshold(int mode, int trx1, int trx2, int threshold) {
-        if (trxLinkedHMap.get(trx1) != null && trxLinkedHMap.get(trx2) != null) {
-            return TrxUtils.getRatioNearDoorLowerThanThreshold(mode, trxLinkedHMap.get(trx1), trxLinkedHMap.get(trx2), threshold);
-        } else {
-            return false;
+    protected int getRatioCloseToCar(int trxNumber, int mode) {
+        if (trxLinkedHMap != null) {
+            return (trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode) - getMinAverageRssi(trxNumber, mode));
         }
+        return 0;
     }
 
-    public boolean isTrxGreaterThanThreshold(int trxNumber, int antennaMode, int averageMode, int threshold) {
+    protected int getMinAverageRssi(int trxNumberToIgnore, int mode) {
+        int min = 0;
+        if (trxLinkedHMap != null) {
+            for (Integer trxNumber : trxLinkedHMap.keySet()) {
+                if (trxNumber != trxNumberToIgnore) {
+                    min = Math.min(min, trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode));
+                }
+            }
+        }
+        return min;
+    }
+
+    /**
+     * Calculate the delta between the average (Long and Short) of trx 's averages
+     *
+     * @return the delta between the average(L&S) of trx s average
+     */
+    protected int getAverageLSDelta() {
+        int averageLong = getAllTrxAverage(Antenna.AVERAGE_LONG);
+        int averageShort = getAllTrxAverage(Antenna.AVERAGE_SHORT);
+        return (averageLong - averageShort);
+    }
+
+    // COMPARE UTILS
+
+    /**
+     * Calculate two TRX average RSSI and compare their difference with thresold
+     *
+     * @param mode      the average mode of calculation
+     * @param trx1      the first trx
+     * @param trx2      the second trx
+     * @param threshold the threshold to compare with
+     * @param isGreater true to compare with >, false to compare with <
+     * @return true if the difference of the two average rssi is greater than the threshold, false otherwise
+     */
+    public boolean compareRatioWithThreshold(int mode, int trx1, int trx2, int threshold, boolean isGreater) {
+        return TrxUtils.compareWithThreshold(getRatioBetweenTwoTrx(mode, trx1, trx2), threshold, isGreater);
+    }
+
+    /**
+     * Calculate the TRX RSSI and compare with thresold
+     *
+     * @param trxNumber   the trx number to compare
+     * @param averageMode the mode of average
+     * @param threshold   the threshold to compare with
+     * @param isGreater   true if compare sign is >, false if it is <
+     * @return true if the rssi of each antenna is greater than the threshold, false otherwise
+     */
+    public boolean compareTrxWithThreshold(int trxNumber, int antennaMode, int averageMode, int threshold, boolean isGreater) {
         if (trxLinkedHMap.get(trxNumber) != null) {
-            return trxLinkedHMap.get(trxNumber).trxGreaterThanThreshold(antennaMode, averageMode, threshold);
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isTrxLowerThanThreshold(int trxNumber, int antennaMode, int averageMode, int threshold) {
-        if (trxLinkedHMap.get(trxNumber) != null) {
-            return trxLinkedHMap.get(trxNumber).trxLowerThanThreshold(antennaMode, averageMode, threshold);
+            return trxLinkedHMap.get(trxNumber).compareTrxWithThreshold(antennaMode, averageMode, threshold, isGreater);
         } else {
             return false;
         }
@@ -437,8 +502,7 @@ public abstract class ConnectedCar {
             spannableStringBuilder
                     .append(space2)
                     .append(String.format(Locale.FRANCE, "%1$03d",
-                            getCurrentOriginalRssi(trx.getTrxNumber(), Trx.ANTENNA_ID_1)
-                                    - getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1)))
+                            getCurrentOriginalRssi(trx.getTrxNumber(), Trx.ANTENNA_ID_1)))
                     .append(space2);
         }
         spannableStringBuilder.append('\n');
@@ -446,8 +510,7 @@ public abstract class ConnectedCar {
             spannableStringBuilder
                     .append(space2)
                     .append(String.format(Locale.FRANCE, "%1$03d",
-                            getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_0, Antenna.AVERAGE_DEFAULT)
-                                    - getRssiAverage(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_0, Antenna.AVERAGE_DEFAULT)))
+                            getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_0, Antenna.AVERAGE_DEFAULT)))
                     .append(space2);
         }
         spannableStringBuilder.append('\n');

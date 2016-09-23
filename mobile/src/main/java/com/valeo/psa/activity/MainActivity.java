@@ -517,8 +517,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      */
     private List<Car> createCarList() {
         List<Car> resultList = new ArrayList<>(3);
-        resultList.add(new Car(R.mipmap.car_model_208, "1", getString(R.string.peugeot_208), getString(R.string.VIN)));
-        resultList.add(new Car(R.drawable.car_logo, "2", getString(R.string.peugeot_209), getString(R.string.VIN2)));
+        resultList.add(new Car(R.mipmap.car_model_208, "1", getString(R.string.ds5), getString(R.string.VIN)));
+        resultList.add(new Car(R.drawable.car_logo, "2", getString(R.string.peugeot_208), getString(R.string.VIN2)));
         return resultList;
     }
 

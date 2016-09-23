@@ -2,9 +2,6 @@ package com.valeo.bleranging.utils;
 
 import android.util.Log;
 
-import com.valeo.bleranging.model.Antenna;
-import com.valeo.bleranging.model.Trx;
-import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.io.BufferedWriter;
@@ -21,84 +18,6 @@ import java.util.Locale;
 public class TrxUtils {
     private static final File logFile = new File(SdkPreferencesHelper.getInstance().getLogFileName());
 
-    /**
-     * Calculate Next to Door delta rssi
-     * @param mode the average mode of calculation
-     * @param trx1 the first trx
-     * @param trx2 the second trx
-     * @return the delta between both trx average rssi
-     */
-    public static int getRatioNearDoor(int mode, Trx trx1, Trx trx2) {
-        int trxAverageRssi1 = trx1.getTrxRssiAverage(mode);
-        int trxAverageRssi2 = trx2.getTrxRssiAverage(mode);
-        return trxAverageRssi1 - trxAverageRssi2;
-    }
-
-    /**
-     * Calculate two TRX average RSSI and compare their difference with thresold
-     * @param mode the average mode of calculation
-     * @param trx1 the first trx
-     * @param trx2 the second trx
-     * @param threshold the threshold to compare with
-     * @return true if the difference of the two average rssi is greater than the threshold, false otherwise
-     */
-    public static boolean getRatioNearDoorGreaterThanThreshold(int mode, Trx trx1, Trx trx2, int threshold) {
-        if(trx1.isActive() && trx2.isActive()) {
-            int ratioValue = getRatioNearDoor(mode, trx1, trx2);
-            return (ratioValue > threshold);
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * Calculate two TRX average RSSI and compare their difference with thresold
-     * @param mode the average mode of calculation
-     * @param trx1 the first trx
-     * @param trx2 the second trx
-     * @param threshold the threshold to compare with
-     * @return true if the difference of the two average rssi is greater than the threshold, false otherwise
-     */
-    public static boolean getRatioNearDoorLowerThanThreshold(int mode, Trx trx1, Trx trx2, int threshold) {
-        if(trx1.isActive() && trx2.isActive()) {
-            int ratioValue = getRatioNearDoor(mode, trx1, trx2);
-            return (ratioValue < threshold);
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * Calculate the delta between the average (Long and Short) of trx 's averages
-     * @param connectedCar the connected car
-     * @return the delta between the average(L&S) of trx s average
-     */
-    public static int getAverageLSDelta(ConnectedCar connectedCar) {
-        int averageLong = connectedCar.getAllTrxAverage(Antenna.AVERAGE_LONG);
-        int averageShort = connectedCar.getAllTrxAverage(Antenna.AVERAGE_SHORT);
-        return (averageLong - averageShort);
-    }
-
-    /**
-     * Calculate all TRX delta of (L&S) average and compare with thresold
-     * @param connectedCar the connected car
-     * @param threshold the threshold to compare with
-     * @return true if the difference of the two average rssi is greater than the threshold, false otherwise
-     */
-    public static boolean getAverageLSDeltaGreaterThanThreshold(ConnectedCar connectedCar, int threshold) {
-        return getAverageLSDelta(connectedCar) > threshold;
-    }
-
-    /**
-     * Calculate all TRX delta of (L&S) average and compare with thresold
-     * @param connectedCar the connected car
-     * @param threshold the threshold to compare with
-     * @return true if the difference of the two average rssi is lower than the threshold, false otherwise
-     */
-    public static boolean getAverageLSDeltaLowerThanThreshold(ConnectedCar connectedCar, int threshold) {
-        return getAverageLSDelta(connectedCar) < threshold;
-    }
-
 //    /**
 //     * Calculate the threshold to use for lock
 //     * @param mode the mode of average
@@ -107,34 +26,51 @@ public class TrxUtils {
 //     */
 //    public static int getCurrentThreshold(int mode, boolean smartphoneIsInPocket) {
 //        int threshold = 0;
+//        String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
 //        switch (mode) {
 //            case Antenna.AVERAGE_START:
-//                threshold = SdkPreferencesHelper.getInstance().getStartThreshold();
+//                threshold = SdkPreferencesHelper.getInstance().getStartThreshold(connectedCarType);
 //                if(smartphoneIsInPocket) {
-//                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForStart();
+//                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForStart(connectedCarType);
 //                }
 //                break;
 //            case Antenna.AVERAGE_LOCK:
-//                threshold = SdkPreferencesHelper.getInstance().getLockThreshold();
+//                threshold = SdkPreferencesHelper.getInstance().getLockThreshold(connectedCarType);
 //                if(smartphoneIsInPocket) {
-//                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock();
+//                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType);
 //                }
 //                break;
 //            case Antenna.AVERAGE_UNLOCK:
-//                threshold = SdkPreferencesHelper.getInstance().getUnlockThreshold();
+//                threshold = SdkPreferencesHelper.getInstance().getUnlockThreshold(connectedCarType);
 //                if(smartphoneIsInPocket) {
-//                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock();
+//                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(connectedCarType);
 //                }
 //                break;
 //            case Antenna.AVERAGE_WELCOME:
-//                threshold = SdkPreferencesHelper.getInstance().getWelcomeThreshold();
+//                threshold = SdkPreferencesHelper.getInstance().getWelcomeThreshold(connectedCarType);
 //                if(smartphoneIsInPocket) {
-//                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForWelcome();
+//                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForWelcome(connectedCarType);
 //                }
 //                break;
 //        }
 //        return threshold;
 //    }
+
+    /**
+     * Compare value with threshold
+     *
+     * @param value     the value to compare
+     * @param threshold the threshold to compare to
+     * @param isGreater true if compare sign is greater than, false if it is lower than
+     * @return true if isGreater is true and value greater than threshold, false otherwise, inverse if isGreater is false
+     */
+    public static boolean compareWithThreshold(int value, int threshold, boolean isGreater) {
+        if (isGreater) {
+            return value > threshold;
+        } else {
+            return value < threshold;
+        }
+    }
 
     /**
      * Calculate the threshold to use for lock

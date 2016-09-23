@@ -79,6 +79,7 @@ public class BleRangingHelper implements SensorEventListener {
     private String lastConnectedCarType = "";
     private int totalAverage;
     private boolean newLockStatus;
+    private boolean lastCommandFromTrx;
     private boolean isAbortRunning = false;
     private boolean isFirstConnection = true;
     private boolean isTryingToConnect = false;
@@ -235,6 +236,10 @@ public class BleRangingHelper implements SensorEventListener {
                     bleRangingListener.updateCarDoorStatus(newLockStatus);
                 }
                 mProtocolManager.setIsLockedFromTrx(newLockStatus);
+                if (lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
+                    mProtocolManager.setIsLockedToSend(mProtocolManager.isLockedFromTrx());
+                    lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
+                }
                 if (checkNewPacketOnlyOneLaunch) {
                     checkNewPacketOnlyOneLaunch = false;
                     if (mMainHandler != null) {
@@ -534,18 +539,24 @@ public class BleRangingHelper implements SensorEventListener {
             if (rearmWelcome.get() && isWelcomeStrategyValid) {
                 rearmWelcome.set(false);
                 //TODO Welcome
-            } else if (isLockStatusChangedTimerExpired.get() && rearmLock.get() && isLockStrategyValid
-                    && (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < 2)) {
-                // DO NOT check if !newLockStatus to let the rearm algorithm in performLockVehicle work
-                Log.d(" rssiHistorics", "lock");
-                isPassiveEntryAction.set(true);
-                performLockVehicleRequest(true);
-            } else if (isLockStatusChangedTimerExpired.get() && rearmUnlock.get() && !isLockStrategyValid
-                    && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= 2) {
+            }
+//            else if (isLockStatusChangedTimerExpired.get() && rearmLock.get() && isLockStrategyValid
+//                    && (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < 1)) {
+//                // DO NOT check if !newLockStatus to let the rearm algorithm in performLockVehicle work
+//                Log.d(" rssiHistorics", "lock");
+//                isPassiveEntryAction.set(true);
+//                mProtocolManager.setThatcham(false);
+//                performLockVehicleRequest(true);
+//            }
+            else if (isLockStatusChangedTimerExpired.get() && rearmUnlock.get() && !isLockStrategyValid
+                    && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= 1) {
                 // DO NOT check if newLockStatus to let the rearm algorithm in performLockVehicle work
                 Log.d(" rssiHistorics", "unlock");
                 isPassiveEntryAction.set(true);
-                performLockVehicleRequest(false);
+                mProtocolManager.setThatcham(true);
+//                performLockVehicleRequest(false);
+            } else if (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < 1) {
+                mProtocolManager.setThatcham(false);
             } else if (isStartStrategyValid) {
                 isStartAllowed = true;
                 //Perform the connection
@@ -643,6 +654,7 @@ public class BleRangingHelper implements SensorEventListener {
         Log.w(" rssiHistorics", "************************************** runFirstConnection ************************************************");
         bleRangingListener.updateCarDoorStatus(newLockStatus);
         mProtocolManager.setIsLockedToSend(newLockStatus);
+        lastCommandFromTrx = newLockStatus;
         if (connectedCar != null) {
             connectedCar.initializeTrx(newLockStatus);
         }
