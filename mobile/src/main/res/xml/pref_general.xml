@@ -7,6 +7,12 @@
             android:entryValues="@array/entryvalues_list_preference"
             android:key="com.inblue.PREFERENCE_CONNECTED_CAR_TYPE"
             android:title="@string/pref_car_type_title" />
+        <ListPreference
+            android:dialogTitle="@string/base_title_list_preference"
+            android:entries="@array/base_list_preference"
+            android:entryValues="@array/base_entryvalues_list_preference"
+            android:key="com.inblue.PREFERENCE_CONNECTED_CAR_BASE"
+            android:title="@string/pref_car_base_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_ble_address">
         <EditTextPreference

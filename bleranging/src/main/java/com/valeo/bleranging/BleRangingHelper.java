@@ -377,6 +377,7 @@ public class BleRangingHelper implements SensorEventListener {
             connectedCar = null;
             lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
             connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
+            mProtocolManager.setCarBase(SdkPreferencesHelper.getInstance().getConnectedCarBase());
         }
         // wait to close every connection before creating them again
         new Handler().postDelayed(new Runnable() {
@@ -670,6 +671,7 @@ public class BleRangingHelper implements SensorEventListener {
             // on first run, create a new car
             lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
             connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
+            mProtocolManager.setCarBase(SdkPreferencesHelper.getInstance().getConnectedCarBase());
         } else if (!lastConnectedCarType.equalsIgnoreCase(SdkPreferencesHelper.getInstance().getConnectedCarType())) {
             // if car type has changed,
             if (isFullyConnected()) {
@@ -679,10 +681,12 @@ public class BleRangingHelper implements SensorEventListener {
                 // if not connected, create a new car
                 lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
                 connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
+                mProtocolManager.setCarBase(SdkPreferencesHelper.getInstance().getConnectedCarBase());
             }
         } else {
             // car type did not changed, but settings did
             connectedCar.resetSettings();
+            mProtocolManager.setCarBase(SdkPreferencesHelper.getInstance().getConnectedCarBase());
         }
     }
 

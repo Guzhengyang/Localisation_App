@@ -12,6 +12,16 @@
         <item>TYPE_7_A</item>
         <item>TYPE_7_B</item>
     </string-array>
+    <string-array name="base_list_preference">
+        <item>PSU lock,unlock</item>
+        <item>PSU unlock &amp; WAL</item>
+        <item>UIR &amp; WAL</item>
+    </string-array>
+    <string-array name="base_entryvalues_list_preference">
+        <item>Base_1</item>
+        <item>Base_2</item>
+        <item>Base_3</item>
+    </string-array>
     <string-array name="entryvalues_list_preference">
         <item>"threeLMR"        </item>
         <item>"threeLRB"        </item>

@@ -319,6 +319,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
         private ListPreference connected_car_type;
+        private ListPreference connected_car_base;
         private EditTextPreference rssi_log_number;
         private EditTextPreference rolling_av_element;
         private EditTextPreference start_nb_element;
@@ -359,6 +360,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         private void setViews() {
             connected_car_type = ((ListPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_TYPE_PREFERENCES_NAME));
+            connected_car_base = ((ListPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_BASE_PREFERENCES_NAME));
             rssi_log_number = ((EditTextPreference) findPreference(SdkPreferencesHelper.RSSI_LOG_NUMBER_PREFERENCES_NAME));
             rolling_av_element = ((EditTextPreference) findPreference(SdkPreferencesHelper.ROLLING_AV_ELEMENT_PREFERENCES_NAME));
             start_nb_element = ((EditTextPreference) findPreference(SdkPreferencesHelper.START_NB_ELEMENT_PREFERENCES_NAME));
@@ -408,6 +410,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // guidelines.
         private void bindSummaries() {
             bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_A);
+            bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
             bindPreferenceSummaryToValue(rssi_log_number, String.valueOf(SdkPreferencesHelper.RSSI_LOG_NUMBER));
             bindPreferenceSummaryToValue(rolling_av_element, String.valueOf(SdkPreferencesHelper.ROLLING_AVERAGE_ELEMENTS));
             bindPreferenceSummaryToValue(start_nb_element, String.valueOf(SdkPreferencesHelper.START_NB_ELEMENT));

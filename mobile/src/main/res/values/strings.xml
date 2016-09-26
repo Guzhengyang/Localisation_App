@@ -60,7 +60,9 @@
     <string name="menu_connect">Connect</string>
     <string name="pref_car_type">Connected Car Option</string>
     <string name="pref_car_type_title">Car Type</string>
+    <string name="pref_car_base_title">Car Base</string>
     <string name="dialog_title_list_preference">Available connected car type</string>
+    <string name="base_title_list_preference">Available base type</string>
     <string name="pref_near_door">NEAR DOOR THR</string>
     <string name="pref_ratio_max_min_thr">Ratio Max Min Thr</string>
     <string name="pref_ratio_close_to_car_thr">Ratio Close to car Thr</string>
@@ -131,4 +133,7 @@
     <string name="sign_in_message_alert_title"><b>Do you want My Peugeot to keep you logged in ?</b></string>
     <string name="sign_in_message_alert">We recommend you to accept only\nif you password protect your phone.\n
     You can always modify your choice\n in My Peugeot settings.</string>
+    <string name="security_questions_subtitle">Please answer your security questions.\nThese question help us verify your identity.</string>
+    <string name="security_question_one">What was the model of your first car ?</string>
+    <string name="security_question_two">What is the first name of the person you first kissed ?</string>
 </resources>
