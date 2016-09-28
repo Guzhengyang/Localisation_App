@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int REQUEST_BLUETOOTH_ADMIN_PERMISSION = 25113;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 25114;
     private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
-    private static final int NOTIFICATION_ID_1 = 001;
+    private static final int NOTIFICATION_ID_1 = 1;
     private Toolbar toolbar;
     private FrameLayout main_frame;
     private NestedScrollView content_main;
@@ -386,11 +386,14 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         PendingIntent actionPendingIntent =
                 PendingIntent.getActivity(this, 0, actionIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
+        CarListAdapter.ViewHolder viewHolder = (CarListAdapter.ViewHolder) car_model_recyclerView.
+                findContainingViewHolder(car_model_recyclerView.getFocusedChild());
+        int position = viewHolder != null ? viewHolder.getAdapterPosition() : 0;
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(MainActivity.this)
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle(mCarListAdapter.getCars()
-                                .get(mCarListAdapter.getCurrentPosition()).getBrandCar())
+                                .get(position).getBrandCar())
                         .setContentText(message);
         NotificationCompat.Action action =
                 new NotificationCompat.Action.Builder(largeIcon,

@@ -53,9 +53,9 @@ public class BleRangingHelper implements SensorEventListener {
     public final static int UNLOCK_REAR_LEFT_AREA = 8;
     public final static int UNLOCK_FRONT_RIGHT_AREA = 9;
     public final static int UNLOCK_REAR_RIGHT_AREA = 10;
-    public final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
-    public final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
-    public final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
+    private final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
+    private final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
+    private final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
     private final static int LOCK_STATUS_CHANGED_TIMEOUT = 3000;
     private final static int PREDICTION_MAX = 16;
     private final Context mContext;
