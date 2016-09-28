@@ -50,11 +50,6 @@ public abstract class ConnectedCar {
     private final static String trxAddressFrontRight = SdkPreferencesHelper.getInstance().getTrxAddressFrontRight();
     private final static String trxAddressRearLeft = SdkPreferencesHelper.getInstance().getTrxAddressRearLeft();
     private final static String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
-    //    protected AtomicBoolean isLockStatusChangedTimerExpired = new AtomicBoolean(true);
-//    protected AtomicBoolean rearmWelcome = new AtomicBoolean(true);
-//    protected AtomicBoolean rearmLock = new AtomicBoolean(true);
-//    protected AtomicBoolean rearmUnlock = new AtomicBoolean(true);
-//    protected AtomicBoolean isPassiveEntryAction = new AtomicBoolean(false);
     private final Ranging ranging;
     protected String connectedCarType;
     protected float linAccThreshold;

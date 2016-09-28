@@ -53,6 +53,7 @@ public class BleRangingHelper implements SensorEventListener {
     public final static int UNLOCK_REAR_LEFT_AREA = 8;
     public final static int UNLOCK_FRONT_RIGHT_AREA = 9;
     public final static int UNLOCK_REAR_RIGHT_AREA = 10;
+    public final static int THATCHAM_AREA = 11;
     private final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
     private final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
     private final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
@@ -532,17 +533,8 @@ public class BleRangingHelper implements SensorEventListener {
     private void tryStrategies(boolean newLockStatus) {
         if (isFullyConnected()) {
             boolean isStartAllowed = false;
+            String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
             isStartStrategyValid = connectedCar.startStrategy(mProtocolManager.isLockedToSend(), smartphoneIsInPocket);
-            if (isStartStrategyValid) {
-                isStartAllowed = true;
-                mProtocolManager.setThatcham(true);
-                //Perform the connection
-                if (SdkPreferencesHelper.getInstance().isLightCaptorEnabled()) {
-                    makeNoise(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 350);
-                }
-            }
-            mProtocolManager.setIsStartRequested(isStartAllowed);
-
             isLockStrategyValid = connectedCar.lockStrategy(smartphoneIsInPocket);
             isUnlockStrategyValid = connectedCar.unlockStrategy(smartphoneIsInPocket);
             isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus, smartphoneIsInPocket);
@@ -560,15 +552,24 @@ public class BleRangingHelper implements SensorEventListener {
 //                performLockVehicleRequest(true);
 //            }
             else if (isLockStatusChangedTimerExpired.get() && rearmUnlock.get() && !isLockStrategyValid
-                    && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= 1) {
+                    && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)) {
                 // DO NOT check if newLockStatus to let the rearm algorithm in performLockVehicle work
                 Log.d(" rssiHistorics", "unlock");
                 isPassiveEntryAction.set(true);
                 mProtocolManager.setThatcham(true);
 //                performLockVehicleRequest(false);
-            } else if (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < 1) {
+            } else if (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)) {
                 mProtocolManager.setThatcham(false);
             }
+            if (isStartStrategyValid) {
+                isStartAllowed = true;
+                mProtocolManager.setThatcham(true);
+                //Perform the connection
+                if (SdkPreferencesHelper.getInstance().isLightCaptorEnabled()) {
+                    makeNoise(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 350);
+                }
+            }
+            mProtocolManager.setIsStartRequested(isStartAllowed);
         }
     }
 
@@ -576,6 +577,12 @@ public class BleRangingHelper implements SensorEventListener {
      * Update the mini map with our location around the car
      */
     private void updateCarLocalization() {
+        //THATCHAM
+        if (mProtocolManager.isThatcham()) {
+            bleRangingListener.lightUpArea(THATCHAM_AREA);
+        } else {
+            bleRangingListener.darkenArea(THATCHAM_AREA);
+        }
         //START
         if(isStartStrategyValid) {
             bleRangingListener.lightUpArea(START_AREA);

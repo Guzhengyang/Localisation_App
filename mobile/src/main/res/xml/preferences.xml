@@ -85,6 +85,10 @@
             android:inputType="numberSigned"
             android:key="com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD"
             android:title="@string/pref_threshold_average_delta_unlock" />
+        <EditTextPreference
+            android:inputType="number"
+            android:key="com.inblue.PREFERENCE_UNLOCK_VALID_NB_ELEMENT"
+            android:title="@string/pref_unlock_valid_nb" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_mode">
         <EditTextPreference

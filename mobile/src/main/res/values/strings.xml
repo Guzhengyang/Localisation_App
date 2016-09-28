@@ -86,6 +86,7 @@
     <string name="pref_threshold_near_door_ratio_ml_mr_min">Near Door Ratio ML MR Min Threshold</string>
     <string name="pref_threshold_average_delta_lock">Average Delta Lock Threshold</string>
     <string name="pref_threshold_average_delta_unlock">Average Delta Unlock Threshold</string>
+    <string name="pref_unlock_valid_nb">Unlock Valid Number</string>
     <string name="pref_nb_element">NUMBER OF ELEMENT</string>
     <string name="pref_nb_element_rssi_log_number">Rssi Log Number Element</string>
     <string name="pref_nb_element_rolling_average">Rolling Average Number Element</string>

@@ -46,44 +46,6 @@ public class CCFourLMRB extends ConnectedCar {
         }
     }
 
-//    public void tryStrategies(boolean newLockStatus, boolean smartphoneIsInPocket, int totalAverage, InblueProtocolManager mProtocolManager, boolean isFullyConnected) {
-//        if (isFullyConnected) {
-//            boolean isStartAllowed = false;
-//            boolean isStartStrategyValid = startStrategy(mProtocolManager.isLockedToSend(), smartphoneIsInPocket);
-//            if (isStartStrategyValid) {
-//                isStartAllowed = true;
-//                mProtocolManager.setThatcham(true);
-//            }
-//            mProtocolManager.setIsStartRequested(isStartAllowed);
-//
-//            boolean isLockStrategyValid = lockStrategy(smartphoneIsInPocket);
-//            List<Integer> isUnlockStrategyValid = unlockStrategy(smartphoneIsInPocket);
-//            boolean isWelcomeStrategyValid = welcomeStrategy(totalAverage, newLockStatus, smartphoneIsInPocket);
-//            if (rearmWelcome.get() && isWelcomeStrategyValid) {
-//                rearmWelcome.set(false);
-//                //TODO Welcome
-//            }
-////            else if (isLockStatusChangedTimerExpired.get() && rearmLock.get() && isLockStrategyValid
-////                    && (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < 1)) {
-////                // DO NOT check if !newLockStatus to let the rearm algorithm in performLockVehicle work
-////                Log.d(" rssiHistorics", "lock");
-////                isPassiveEntryAction.set(true);
-////                mProtocolManager.setThatcham(false);
-////                performLockVehicleRequest(true);
-////            }
-//            else if (isLockStatusChangedTimerExpired.get() && rearmUnlock.get() && !isLockStrategyValid
-//                    && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= 1) {
-//                // DO NOT check if newLockStatus to let the rearm algorithm in performLockVehicle work
-//                Log.d(" rssiHistorics", "unlock");
-//                isPassiveEntryAction.set(true);
-//                mProtocolManager.setThatcham(true);
-////                performLockVehicleRequest(false);
-//            } else if (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < 1) {
-//                mProtocolManager.setThatcham(false);
-//            }
-//        }
-//    }
-
     @Override
     public boolean startStrategy(boolean newLockStatus, boolean smartphoneIsInPocket) {
         boolean isInStartArea = isInStartArea(TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket));

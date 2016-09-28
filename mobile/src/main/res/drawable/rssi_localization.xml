@@ -81,4 +81,18 @@
             <stroke android:width="1dp" android:color="#FF000000" />
         </shape>
     </item>
+    <!-- back entry -->
+    <item
+        android:id="@+id/thatcham_area"
+        android:bottom="120dp"
+        android:left="10dp"
+        android:right="240dp"
+        android:top="10dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FF000000" />
+            <stroke
+                android:width="1dp"
+                android:color="#FF000000" />
+        </shape>
+    </item>
 </layer-list>

@@ -33,6 +33,7 @@ public final class SdkPreferencesHelper {
     public final static int WELCOME_NB_ELEMENT = 10;
     public final static int LONG_NB_ELEMENT = 20;
     public final static int SHORT_NB_ELEMENT = 2;
+    public final static int UNLOCK_VALID_NB = 1;
     public final static int UNLOCK_MODE = 7;
     public final static int LOCK_MODE = 3;
     public final static int START_MODE = 12;
@@ -102,6 +103,7 @@ public final class SdkPreferencesHelper {
     public static final String NEAR_DOOR_RATIO_THR_MB_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_MB";
     public static final String AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_LOCK_THRESHOLD";
     public static final String AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD";
+    public static final String UNLOCK_VALID_NB_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_VALID_NB_ELEMENT";
     public static final String RSSI_LOG_NUMBER_PREFERENCES_NAME = "com.inblue.PREFERENCE_RSSI_LOG_NUMBER";
     public static final String ROLLING_AV_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_ROLLING_AV_ELEMENT";
     public static final String START_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_START_NB_ELEMENT";
@@ -364,6 +366,14 @@ public final class SdkPreferencesHelper {
         saveInt(fileName, AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
     }
 
+    public int getUnlockValidNb(final String fileName) {
+        return readInt(fileName, UNLOCK_VALID_NB_PREFERENCES_NAME, UNLOCK_VALID_NB);
+    }
+
+    public void setUnlockValidNb(final String fileName, int unlockValidNb) {
+        saveInt(fileName, UNLOCK_VALID_NB_PREFERENCES_NAME, unlockValidNb);
+    }
+
     public int getUnlockMode(final String fileName) {
         return readInt(fileName, UNLOCK_MODE_PREFERENCES_NAME, UNLOCK_MODE);
     }
@@ -463,7 +473,6 @@ public final class SdkPreferencesHelper {
     public String getConnectedCarType() {
         return readString(SAVED_CC_GENERIC_OPTION, CONNECTED_CAR_TYPE_PREFERENCES_NAME, ConnectedCarFactory.TYPE_4_A);
     }
-
 
     public String getConnectedCarBase() {
         return readString(SAVED_CC_GENERIC_OPTION, CONNECTED_CAR_BASE_PREFERENCES_NAME, ConnectedCarFactory.BASE_3);
