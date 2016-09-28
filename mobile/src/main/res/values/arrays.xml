@@ -16,11 +16,13 @@
         <item>PSU lock,unlock</item>
         <item>PSU unlock &amp; WAL</item>
         <item>UIR &amp; WAL</item>
+        <item>PSU lock &amp; UIR</item>
     </string-array>
     <string-array name="base_entryvalues_list_preference">
         <item>Base_1</item>
         <item>Base_2</item>
         <item>Base_3</item>
+        <item>Base_4</item>
     </string-array>
     <string-array name="entryvalues_list_preference">
         <item>"threeLMR"        </item>

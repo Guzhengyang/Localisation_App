@@ -67,6 +67,10 @@
             android:title="@string/pref_threshold_back_door_ratio_max" />
         <EditTextPreference
             android:inputType="numberSigned"
+            android:key="com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_MB"
+            android:title="@string/pref_threshold_near_door_ratio_mb" />
+        <EditTextPreference
+            android:inputType="numberSigned"
             android:key="com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_ML_MR_MAX"
             android:title="@string/pref_threshold_near_door_ratio_ml_mr_max" />
         <EditTextPreference

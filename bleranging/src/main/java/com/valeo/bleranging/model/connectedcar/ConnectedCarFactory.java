@@ -19,6 +19,7 @@ public class ConnectedCarFactory {
     public final static String BASE_1 = "Base_1";
     public final static String BASE_2 = "Base_2";
     public final static String BASE_3 = "Base_3";
+    public final static String BASE_4 = "Base_4";
 
     /**
      * Return a connected car

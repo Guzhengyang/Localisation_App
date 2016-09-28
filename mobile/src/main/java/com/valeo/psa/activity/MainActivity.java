@@ -3,11 +3,13 @@ package com.valeo.psa.activity;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.KeyguardManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -23,6 +25,8 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -84,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int REQUEST_BLUETOOTH_ADMIN_PERMISSION = 25113;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 25114;
     private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
+    private static final int NOTIFICATION_ID_1 = 001;
     private Toolbar toolbar;
     private FrameLayout main_frame;
     private NestedScrollView content_main;
@@ -369,9 +374,36 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     startButtonAnimation(true);
                     mBleRangingHelper.setIsPassiveEntryAction(false);
                     mBleRangingHelper.performLockVehicleRequest(false); //unlockVehicle
+                createNotification(NOTIFICATION_ID_1, getString(R.string.notif_unlock_it),
+                        R.mipmap.car_all_doors_button, getString(R.string.vehicle_unlocked));
 //                }
             }
         });
+    }
+
+    private void createNotification(int notifId, String message, int largeIcon, String secondSubText) {
+        Intent actionIntent = new Intent(this, MainActivity.class);
+        PendingIntent actionPendingIntent =
+                PendingIntent.getActivity(this, 0, actionIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(MainActivity.this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(mCarListAdapter.getCars()
+                                .get(mCarListAdapter.getCurrentPosition()).getBrandCar())
+                        .setContentText(message);
+        NotificationCompat.Action action =
+                new NotificationCompat.Action.Builder(largeIcon,
+                        secondSubText, actionPendingIntent)
+                        .build();
+        notificationBuilder.extend(
+                new NotificationCompat.WearableExtender()
+                        .addAction(action)
+                        .setBackground(BitmapFactory
+                                .decodeResource(getResources(), R.mipmap.car_model_208)));
+        NotificationManagerCompat notificationManager =
+                NotificationManagerCompat.from(MainActivity.this);
+        notificationManager.notify(notifId, notificationBuilder.build());
     }
 
     /**

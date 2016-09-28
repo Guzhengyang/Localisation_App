@@ -81,6 +81,7 @@
     <string name="pref_threshold_near_door_ratio">Near Door Ratio Threshold</string>
     <string name="pref_threshold_back_door_ratio_min">Back Door Ratio Min Threshold</string>
     <string name="pref_threshold_back_door_ratio_max">Back Door Ratio Max Threshold</string>
+    <string name="pref_threshold_near_door_ratio_mb">Near Door Ratio MB Threshold</string>
     <string name="pref_threshold_near_door_ratio_ml_mr_max">Near Door Ratio ML MR Max Threshold</string>
     <string name="pref_threshold_near_door_ratio_ml_mr_min">Near Door Ratio ML MR Min Threshold</string>
     <string name="pref_threshold_average_delta_lock">Average Delta Lock Threshold</string>
@@ -136,4 +137,11 @@
     <string name="security_questions_subtitle">Please answer your security questions.\nThese question help us verify your identity.</string>
     <string name="security_question_one">What was the model of your first car ?</string>
     <string name="security_question_two">What is the first name of the person you first kissed ?</string>
+    <string name="notif_unlock_it">Unlock it?</string>
+    <string name="notif_lock_it">Lock it?</string>
+    <string name="notif_ready_start_engine">Ready to start engine ?</string>
+    <string name="ab_unlock">Unlock all doors</string>
+    <string name="ab_lock">Lock it</string>
+    <string name="ab_turn_power_on">Turn power on</string>
+    <string name="ab_start_engine_now">Start engine now</string>
 </resources>

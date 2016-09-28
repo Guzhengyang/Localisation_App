@@ -291,7 +291,6 @@ public class BleRangingHelper implements SensorEventListener {
     private Runnable printRunner = new Runnable() {
         @Override
         public void run() {
-            Log.d("printRunner", connectedCar.isInitialized() + " " + isFullyConnected());
             Log.w(" rssiHistorics", "************************************** IHM LOOP START *************************************************");
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
             spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder,
@@ -533,9 +532,19 @@ public class BleRangingHelper implements SensorEventListener {
     private void tryStrategies(boolean newLockStatus) {
         if (isFullyConnected()) {
             boolean isStartAllowed = false;
+            isStartStrategyValid = connectedCar.startStrategy(mProtocolManager.isLockedToSend(), smartphoneIsInPocket);
+            if (isStartStrategyValid) {
+                isStartAllowed = true;
+                mProtocolManager.setThatcham(true);
+                //Perform the connection
+                if (SdkPreferencesHelper.getInstance().isLightCaptorEnabled()) {
+                    makeNoise(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 350);
+                }
+            }
+            mProtocolManager.setIsStartRequested(isStartAllowed);
+
             isLockStrategyValid = connectedCar.lockStrategy(smartphoneIsInPocket);
             isUnlockStrategyValid = connectedCar.unlockStrategy(smartphoneIsInPocket);
-            isStartStrategyValid = connectedCar.startStrategy(mProtocolManager.isLockedToSend(), smartphoneIsInPocket);
             isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus, smartphoneIsInPocket);
             rangingPredictionInt = mostCommon(mostCommon);
             if (rearmWelcome.get() && isWelcomeStrategyValid) {
@@ -559,14 +568,7 @@ public class BleRangingHelper implements SensorEventListener {
 //                performLockVehicleRequest(false);
             } else if (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < 1) {
                 mProtocolManager.setThatcham(false);
-            } else if (isStartStrategyValid) {
-                isStartAllowed = true;
-                //Perform the connection
-                if (SdkPreferencesHelper.getInstance().isLightCaptorEnabled()) {
-                    makeNoise(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 350);
-                }
             }
-            mProtocolManager.setIsStartRequested(isStartAllowed);
         }
     }
 

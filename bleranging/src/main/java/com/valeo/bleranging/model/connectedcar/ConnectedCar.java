@@ -50,6 +50,11 @@ public abstract class ConnectedCar {
     private final static String trxAddressFrontRight = SdkPreferencesHelper.getInstance().getTrxAddressFrontRight();
     private final static String trxAddressRearLeft = SdkPreferencesHelper.getInstance().getTrxAddressRearLeft();
     private final static String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
+    //    protected AtomicBoolean isLockStatusChangedTimerExpired = new AtomicBoolean(true);
+//    protected AtomicBoolean rearmWelcome = new AtomicBoolean(true);
+//    protected AtomicBoolean rearmLock = new AtomicBoolean(true);
+//    protected AtomicBoolean rearmUnlock = new AtomicBoolean(true);
+//    protected AtomicBoolean isPassiveEntryAction = new AtomicBoolean(false);
     private final Ranging ranging;
     protected String connectedCarType;
     protected float linAccThreshold;
@@ -67,6 +72,7 @@ public abstract class ConnectedCar {
     protected int nearBackDoorRatioThresholdMax;
     protected int nearDoorThresholdMLorMRMin;
     protected int nearDoorThresholdMLorMRMax;
+    protected int nearDoorThresholdMB;
     protected Trx trxLeft;
     protected Trx trxMiddle;
     protected Trx trxRight;
@@ -77,7 +83,6 @@ public abstract class ConnectedCar {
     protected Trx trxRearRight;
     protected ConnectionNumber connectionNumber;
     protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
-    private boolean initialized = false;
 
     public ConnectedCar(Context mContext, ConnectionNumber connectionNumber) {
         this.connectionNumber = connectionNumber;
@@ -103,6 +108,7 @@ public abstract class ConnectedCar {
         this.nearBackDoorRatioThresholdMax = SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMax(connectedCarType);
         this.nearDoorThresholdMLorMRMin = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMin(connectedCarType);
         this.nearDoorThresholdMLorMRMax = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMax(connectedCarType);
+        this.nearDoorThresholdMB = SdkPreferencesHelper.getInstance().getNearDoorThresholdMB(connectedCarType);
     }
 
     /**
@@ -115,7 +121,6 @@ public abstract class ConnectedCar {
         } else {
             initializeTrx(RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE);
         }
-        initialized = true;
     }
 
     /**
@@ -450,7 +455,7 @@ public abstract class ConnectedCar {
      * @param trxBoolLinkedHMap the list of boolean to check
      * @return true if the number of trx valid is greater or equal to the number of trx valid needed, false otherwise
      */
-    public boolean numberOfTrxValid(int numberOfTrxNeeded, LinkedHashMap<Integer, Boolean> trxBoolLinkedHMap) {
+    protected boolean numberOfTrxValid(int numberOfTrxNeeded, LinkedHashMap<Integer, Boolean> trxBoolLinkedHMap) {
         if (trxBoolLinkedHMap != null) {
             int counter = 0;
             for (Integer trxNumber : trxBoolLinkedHMap.keySet()) {
@@ -647,10 +652,6 @@ public abstract class ConnectedCar {
             return ranging.predict2int();
         }
         return 0;
-    }
-
-    public boolean isInitialized() {
-        return initialized;
     }
 
     protected enum ConnectionNumber {

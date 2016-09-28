@@ -20,6 +20,7 @@ public final class SdkPreferencesHelper {
     public final static int NEAR_DOOR_RATIO_THRESHOLD = 8;
     public final static int NEAR_BACKDOOR_RATIO_THRESHOLD_MIN = -5;
     public final static int NEAR_BACKDOOR_RATIO_THRESHOLD_MAX = 5;
+    public final static int NEAR_DOOR_RATIO_THRESHOLD_MB = 0;
     public final static int NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MAX = 12;
     public final static int NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MIN = 2;
     public final static int AVERAGE_DELTA_UNLOCK_THRESHOLD = 10;
@@ -98,6 +99,7 @@ public final class SdkPreferencesHelper {
     public static final String NEAR_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_BACKDOOR_RATIO_THR_MAX";
     public static final String NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_ML_MR_MAX";
     public static final String NEAR_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_ML_MR_MIN";
+    public static final String NEAR_DOOR_RATIO_THR_MB_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_MB";
     public static final String AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_LOCK_THRESHOLD";
     public static final String AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD";
     public static final String RSSI_LOG_NUMBER_PREFERENCES_NAME = "com.inblue.PREFERENCE_RSSI_LOG_NUMBER";
@@ -204,6 +206,10 @@ public final class SdkPreferencesHelper {
 
     public void setNearDoorThresholdLMorMRMax(final String fileName, int nearDoorRatioThreshold) {
         saveInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME, nearDoorRatioThreshold);
+    }
+
+    public void setNearDoorThresholdMB(final String fileName, int nearDoorRatioThreshold) {
+        saveInt(fileName, NEAR_DOOR_RATIO_THR_MB_PREFERENCES_NAME, nearDoorRatioThreshold);
     }
 
     public void setNearDoorThresholdLMorMRMin(final String fileName, int nearDoorRatioThreshold) {
@@ -332,6 +338,10 @@ public final class SdkPreferencesHelper {
 
     public int getNearDoorThresholdMLorMRMax(final String fileName) {
         return readInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MAX);
+    }
+
+    public int getNearDoorThresholdMB(final String fileName) {
+        return readInt(fileName, NEAR_DOOR_RATIO_THR_MB_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_MB);
     }
 
     public int getNearDoorThresholdMLorMRMin(final String fileName) {

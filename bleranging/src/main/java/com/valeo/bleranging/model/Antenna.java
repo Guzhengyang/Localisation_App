@@ -17,26 +17,6 @@ public class Antenna {
     public static final int AVERAGE_WELCOME = 4;
     public static final int AVERAGE_LONG = 5;
     public static final int AVERAGE_SHORT = 6;
-    private static final String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-    private static final int equalizerFrontLeft = SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontLeft(connectedCarType);
-    private static final int equalizerFrontRight = SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontRight(connectedCarType);
-    private static final int equalizerLeft = SdkPreferencesHelper.getInstance().getTrxRssiEqualizerLeft(connectedCarType);
-    private static final int equalizerMiddle = SdkPreferencesHelper.getInstance().getTrxRssiEqualizerMiddle(connectedCarType);
-    private static final int equalizerRight = SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRight(connectedCarType);
-    private static final int equalizerRearLeft = SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearLeft(connectedCarType);
-    private static final int equalizerBack = SdkPreferencesHelper.getInstance().getTrxRssiEqualizerBack(connectedCarType);
-    private static final int equalizerRearRight = SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearRight(connectedCarType);
-    private final static int rollingAvElement = SdkPreferencesHelper.getInstance().getRollingAvElement();
-    private final static int startNbElement = SdkPreferencesHelper.getInstance().getStartNbElement();
-    private final static int lockNbElement = SdkPreferencesHelper.getInstance().getLockNbElement();
-    private final static int unlockNbElement = SdkPreferencesHelper.getInstance().getUnlockNbElement();
-    private final static int welcomeNbElement = SdkPreferencesHelper.getInstance().getWelcomeNbElement();
-    private final static int longNbElement = SdkPreferencesHelper.getInstance().getLongNbElement();
-    private final static int shortNbElement = SdkPreferencesHelper.getInstance().getShortNbElement();
-    private final static float ecretage70_100 = SdkPreferencesHelper.getInstance().getEcretage70_100(connectedCarType);
-    private final static float ecretage50_70 = SdkPreferencesHelper.getInstance().getEcretage50_70(connectedCarType);
-    private final static float ecretage30_50 = SdkPreferencesHelper.getInstance().getEcretage30_50(connectedCarType);
-    private final static float ecretage30_30 = SdkPreferencesHelper.getInstance().getEcretage30_30(connectedCarType);
     private final AtomicBoolean isAntennaActive;
     private final AtomicBoolean hasReceivedRssi;
     private final ArrayList<Integer> rssiPente;
@@ -62,7 +42,7 @@ public class Antenna {
         this.antennaId = antennaId;
         this.isAntennaActive = new AtomicBoolean(true);
         this.hasReceivedRssi = new AtomicBoolean(false);
-        this.rssiHistoric = new ArrayList<>(rollingAvElement);
+        this.rssiHistoric = new ArrayList<>(SdkPreferencesHelper.getInstance().getRollingAvElement());
         this.rssiPente = new ArrayList<>(10);
     }
 
@@ -81,7 +61,7 @@ public class Antenna {
      * Init with Hysteresis over all saved rssi
      */
     public synchronized void initWithHysteresis(int defaultValue) {
-        for (int i = 0; i < rollingAvElement; i++) {
+        for (int i = 0; i < SdkPreferencesHelper.getInstance().getRollingAvElement(); i++) {
             rssiHistoric.add(i, defaultValue);
         }
     }
@@ -90,20 +70,20 @@ public class Antenna {
      * Reset with Hysteresis over all saved rssi
      */
     public synchronized void resetWithHysteresis(int defaultValue) {
-        for (int i = 0; i < rollingAvElement; i++) {
+        for (int i = 0; i < SdkPreferencesHelper.getInstance().getRollingAvElement(); i++) {
             rssiHistoric.set(i, defaultValue);
         }
     }
 
     private float getEcretageValue(int lastN2Rssi) {
         if (lastN2Rssi >= -170 && lastN2Rssi < -70) {
-            return ecretage70_100;
+            return SdkPreferencesHelper.getInstance().getEcretage70_100(SdkPreferencesHelper.getInstance().getConnectedCarType());
         } else if (lastN2Rssi >= -70 && lastN2Rssi < -50) {
-            return ecretage50_70;
+            return SdkPreferencesHelper.getInstance().getEcretage50_70(SdkPreferencesHelper.getInstance().getConnectedCarType());
         } else if (lastN2Rssi >= -50 && lastN2Rssi < -30) {
-            return ecretage30_50;
+            return SdkPreferencesHelper.getInstance().getEcretage30_50(SdkPreferencesHelper.getInstance().getConnectedCarType());
         } else if (lastN2Rssi >= -30 && lastN2Rssi < +30) {
-            return ecretage30_30;
+            return SdkPreferencesHelper.getInstance().getEcretage30_30(SdkPreferencesHelper.getInstance().getConnectedCarType());
         }
         return 0;
     }
@@ -246,7 +226,7 @@ public class Antenna {
         lastOriginalRssi = currentOriginalRssi;
         rssi += getTrxRssiEqualizer(numberTrx); // add trx rssi antenna power Equalizer
         rssi = getCorrectedRssi(rssi, bleChannel); // Correct the rssi value with an ecretage on the last N-2 rssi seen
-        if (rssiHistoric.size() == rollingAvElement) {
+        if (rssiHistoric.size() == SdkPreferencesHelper.getInstance().getRollingAvElement()) {
             rssiHistoric.remove(0);
         }
         this.rssiHistoric.add(rssi);
@@ -267,21 +247,21 @@ public class Antenna {
     private int getTrxRssiEqualizer(int numberTrx) {
         switch (numberTrx) {
             case ConnectedCar.NUMBER_TRX_FRONT_LEFT:
-                return equalizerFrontLeft;
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontLeft(SdkPreferencesHelper.getInstance().getConnectedCarType());
             case ConnectedCar.NUMBER_TRX_FRONT_RIGHT:
-                return equalizerFrontRight;
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontRight(SdkPreferencesHelper.getInstance().getConnectedCarType());
             case ConnectedCar.NUMBER_TRX_LEFT:
-                return equalizerLeft;
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerLeft(SdkPreferencesHelper.getInstance().getConnectedCarType());
             case ConnectedCar.NUMBER_TRX_MIDDLE:
-                return equalizerMiddle;
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerMiddle(SdkPreferencesHelper.getInstance().getConnectedCarType());
             case ConnectedCar.NUMBER_TRX_RIGHT:
-                return equalizerRight;
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRight(SdkPreferencesHelper.getInstance().getConnectedCarType());
             case ConnectedCar.NUMBER_TRX_REAR_LEFT:
-                return equalizerRearLeft;
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearLeft(SdkPreferencesHelper.getInstance().getConnectedCarType());
             case ConnectedCar.NUMBER_TRX_BACK:
-                return equalizerBack;
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerBack(SdkPreferencesHelper.getInstance().getConnectedCarType());
             case ConnectedCar.NUMBER_TRX_REAR_RIGHT:
-                return equalizerRearRight;
+                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearRight(SdkPreferencesHelper.getInstance().getConnectedCarType());
             default:
                 return 0;
         }
@@ -302,17 +282,17 @@ public class Antenna {
             case AVERAGE_DEFAULT:
                 return 0;
             case AVERAGE_START:
-                return rssiHistoric.size() - startNbElement;
+                return rssiHistoric.size() - SdkPreferencesHelper.getInstance().getStartNbElement();
             case AVERAGE_LOCK:
-                return rssiHistoric.size() - lockNbElement;
+                return rssiHistoric.size() - SdkPreferencesHelper.getInstance().getLockNbElement();
             case AVERAGE_UNLOCK:
-                return rssiHistoric.size() - unlockNbElement;
+                return rssiHistoric.size() - SdkPreferencesHelper.getInstance().getUnlockNbElement();
             case AVERAGE_WELCOME:
-                return rssiHistoric.size() - welcomeNbElement;
+                return rssiHistoric.size() - SdkPreferencesHelper.getInstance().getWelcomeNbElement();
             case AVERAGE_LONG:
-                return rssiHistoric.size() - longNbElement;
+                return rssiHistoric.size() - SdkPreferencesHelper.getInstance().getLongNbElement();
             case AVERAGE_SHORT:
-                return rssiHistoric.size() - shortNbElement;
+                return rssiHistoric.size() - SdkPreferencesHelper.getInstance().getShortNbElement();
             default:
                 return 0;
         }
