@@ -63,7 +63,6 @@ public class InblueProtocolManager {
         payload[0] = (byte) ((packetOneCounter>>8)&0xFF);
         payload[1] = (byte) ((packetOneCounter)&0xFF);
         payload[2] = (0x01);
-        payload[4] = (byte) (isThatcham ? 0x01 : 0x00);
         payload[5] = (byte) 0;
         payload[5] |= isLockedToSend ? 0x01 : 0x02;
         payload[5] |= isStartRequested ? 0x04 : 0x00;
