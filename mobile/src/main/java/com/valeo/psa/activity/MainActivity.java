@@ -69,7 +69,6 @@ import com.valeo.psa.view.DividerItemDecoration;
 import com.valeo.psa.view.MyRecyclerAdapter;
 import com.valeo.psa.view.ReverseProgressBar;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -186,7 +185,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         if (!mKeyguardManager.isKeyguardSecure()) {
             // Show a message that the user hasn't set up a lock screen.
             Toast.makeText(this, getString(R.string.set_security_lock), Toast.LENGTH_LONG).show();
-            return;
         }
 //        showAuthenticationScreen();
     }
@@ -483,8 +481,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      */
     private void setRecyclerView() {
         control_trunk_windows_lights.setHasFixedSize(true);
-        control_trunk_windows_lights.setAdapter(new MyRecyclerAdapter(MainActivity.this,
-                new WeakReference<>(control_trunk_windows_lights), createActionControlList(),
+        control_trunk_windows_lights.setAdapter(new MyRecyclerAdapter(createActionControlList(),
                 R.layout.psa_control_row, lightTypeFace, this, this));
         control_trunk_windows_lights.setLayoutManager(new LinearLayoutManager(this));
         control_trunk_windows_lights.setItemAnimator(new DefaultItemAnimator());

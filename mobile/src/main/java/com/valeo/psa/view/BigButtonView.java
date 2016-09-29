@@ -21,13 +21,13 @@ import com.valeo.psa.R;
  * Created by Weiping on 2016/3/16.
  */
 public class BigButtonView extends FrameLayout {
-    private FrameLayout frameLayout;
-    private View clickEffect;
-    private TextView text;
-    private TextView subText;
+    private final FrameLayout frameLayout;
+    private final View clickEffect;
+    private final TextView text;
+    private final TextView subText;
+    private final ObjectAnimator clickEffectAnimator;
     private String textString = "";
     private String subTextString = "";
-    private ObjectAnimator clickEffectAnimator;
     private int duration = 500;
     private OnPressListener onPressListener;
 
@@ -201,7 +201,7 @@ public class BigButtonView extends FrameLayout {
      * Perform the click effect.
      *
      * @param event MotionEvent.
-     * @return
+     * @return true if the touch was dispatch, false otherwise
      */
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {

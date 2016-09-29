@@ -62,7 +62,7 @@ public class Indicator extends LinearLayout {
      */
     public void clear() {
         number = 0;
-        for (int i = 0; i < dots.length; i++) dots[i].setSelected(false);
+        for (Dot dot : dots) dot.setSelected(false);
     }
 
 }

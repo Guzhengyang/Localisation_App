@@ -9,8 +9,6 @@ import android.widget.ImageView;
  * Created by l-avaratha on 31/08/2016.
  */
 public class ScalableImageView extends ImageView {
-    public boolean isMeasured = true;
-
     public ScalableImageView(Context context) {
         super(context);
     }
@@ -35,7 +33,6 @@ public class ScalableImageView extends ImageView {
                 setMeasuredDimension(width, height);
             }
         } catch (Exception e) {
-            isMeasured = false;
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
     }

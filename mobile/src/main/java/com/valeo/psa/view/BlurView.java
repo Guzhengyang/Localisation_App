@@ -11,6 +11,7 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -21,21 +22,19 @@ import com.valeo.psa.R;
  */
 public class BlurView extends View {
 
+    private final int[] mBlurredViewXY = new int[2];
+    private final int[] mBlurringViewXY = new int[2];
     private int mBlurRadius;
     private int mDownsampleFactor;
     private int mOverlayColor;
-
     private View mBlurredView;
     private int mBlurredViewWidth, mBlurredViewHeight;
-
     private boolean mDownsampleFactorChanged;
     private Bitmap mBitmapToBlur, mBlurredBitmap;
     private Canvas mBlurringCanvas;
     private RenderScript mRenderScript;
     private ScriptIntrinsicBlur mBlurScript;
     private Allocation mBlurInput, mBlurOutput;
-    private int[] mBlurredViewXY = new int[2];
-    private int[] mBlurringViewXY = new int[2];
 
     public BlurView(Context context) {
         this(context, null);
@@ -47,7 +46,7 @@ public class BlurView extends View {
         final Resources res = getResources();
         final int defaultBlurRadius = (int) res.getDimension(R.dimen.default_blur_radius);
         final int defaultDownsampleFactor = (int) res.getDimension(R.dimen.default_downsample_factor);
-        final int defaultOverlayColor = res.getColor(R.color.default_overlay_color);
+        final int defaultOverlayColor = ResourcesCompat.getColor(getResources(), R.color.default_overlay_color, null);
 
         initializeRenderScript(context);
 
@@ -103,7 +102,7 @@ public class BlurView extends View {
         return mBlurRadius;
     }
 
-    public void setBlurRadius(int radius) {
+    private void setBlurRadius(int radius) {
         mBlurRadius = radius;
         mBlurScript.setRadius(mBlurRadius);
     }
@@ -112,7 +111,7 @@ public class BlurView extends View {
         return mDownsampleFactor;
     }
 
-    public void setDownsampleFactor(int factor) {
+    private void setDownsampleFactor(int factor) {
         if (factor <= 0) {
             throw new IllegalArgumentException("Downsample factor must be greater than 0.");
         }
@@ -123,7 +122,7 @@ public class BlurView extends View {
         }
     }
 
-    public void setOverlayColor(int color) {
+    private void setOverlayColor(int color) {
         mOverlayColor = color;
     }
 
@@ -136,7 +135,7 @@ public class BlurView extends View {
         mBlurScript = ScriptIntrinsicBlur.create(mRenderScript, Element.U8_4(mRenderScript));
     }
 
-    protected boolean prepare() {
+    private boolean prepare() {
         final int width = mBlurredView.getWidth();
         final int height = mBlurredView.getHeight();
 
@@ -179,7 +178,7 @@ public class BlurView extends View {
         return true;
     }
 
-    protected void blur() {
+    private void blur() {
         mBlurInput.copyFrom(mBitmapToBlur);
         mBlurScript.setInput(mBlurInput);
         mBlurScript.forEach(mBlurOutput);

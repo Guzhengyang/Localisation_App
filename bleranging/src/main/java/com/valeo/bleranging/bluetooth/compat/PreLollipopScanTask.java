@@ -17,28 +17,25 @@ class PreLollipopScanTask implements ScanTask {
     private static final String TAG = PreLollipopScanTask.class.getName();
 
     /** Start/ stop scan messages handler; */
-    private Handler mScanHandler = new Handler();
+    private final Handler mScanHandler = new Handler();
 
     /** Bluetooth adapter. */
-    private BluetoothAdapter mBluetoothAdapter;
-
+    private final BluetoothAdapter mBluetoothAdapter;
+    /**
+     * Scan callback.
+     */
+    private final BluetoothAdapter.LeScanCallback mScanCallback;
     /** Active scanning period. */
     private int mActiveScanningPeriod = DEFAULT_SCAN_INTERVAL_MS;
-
     /** Inactive scanning period. */
     private int mInactiveScanningPeriod = DEFAULT_SCAN_INTERVAL_MS;
-
     /** Current status. */
     private boolean mIsScanning;
-
-    /** Scan callback. */
-    private BluetoothAdapter.LeScanCallback mScanCallback;
-
     /** Flag used to suspend the start/stop mechanism */
     private boolean bIsScanningSuspended = false;
 
     /** Scan execution runnable. */
-    private Runnable mScanRunnable = new Runnable() {
+    private final Runnable mScanRunnable = new Runnable() {
         @Override
         public void run() {
             toggleScan();
@@ -69,6 +66,7 @@ class PreLollipopScanTask implements ScanTask {
         mScanHandler.removeCallbacks(mScanRunnable);
 
         if (mBluetoothAdapter.isEnabled()) {
+            //noinspection deprecation
             mBluetoothAdapter.stopLeScan(mScanCallback);
         } else {
             Log.w(TAG, "Bluetooth adapter is disabled, cannot perform the stopScan call");
@@ -118,11 +116,13 @@ class PreLollipopScanTask implements ScanTask {
                 long nextToggleDelay;
 
                 if (mIsScanning) {
+                    //noinspection deprecation
                     mBluetoothAdapter.stopLeScan(mScanCallback);
                     Log.d("ACH", "stopLeScan");
                     nextToggleDelay = mInactiveScanningPeriod;
                     result = StartLeScanResult.SUCCESS;
                 } else {
+                    //noinspection deprecation
                     if (mBluetoothAdapter.startLeScan(mScanCallback)) {
                         Log.d("ACH","startLeScan");
                         result = StartLeScanResult.SUCCESS;

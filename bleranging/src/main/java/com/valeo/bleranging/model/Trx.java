@@ -6,11 +6,11 @@ import com.valeo.bleranging.utils.TrxUtils;
  * Created by l-avaratha on 08/06/2016.
  */
 public class Trx {
-    public static final int ANTENNA_OR = 1;
     public static final int ANTENNA_AND = 2;
     public final static int ANTENNA_ID_0 = 0;
     public final static int ANTENNA_ID_1 = 4;
     public final static int ANTENNA_ID_2 = 8;
+    private static final int ANTENNA_OR = 1;
     private final int trxNumber;
     private final String trxName;
     private final Antenna antenna1;

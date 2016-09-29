@@ -29,7 +29,7 @@ public final class BluetoothAdapterCompat {
     /**
      * Bluetooth adapter.
      */
-    private BluetoothAdapter mBluetoothAdapter;
+    private final BluetoothAdapter mBluetoothAdapter;
 
 
     /**

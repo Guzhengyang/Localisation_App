@@ -21,13 +21,13 @@ import java.util.HashMap;
 /**
  * Lists all the services and characteristics used during the application lifecycle 
  */
-public class SampleGattAttributes {
-    private static HashMap<String, String> attributes = new HashMap<>();
+class SampleGattAttributes {
     //RKE
-    public static String VALEO_GENERIC_SERVICE = "f000ff10-0451-4000-b000-000000000000";
-    public static String VALEO_IN_CHARACTERISTIC = "f000ff11-0451-4000-b000-000000000000";
-    public static String VALEO_OUT_CHARACTERISTIC = "f000ff12-0451-4000-b000-000000000000";
-    public static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
+    public final static String VALEO_GENERIC_SERVICE = "f000ff10-0451-4000-b000-000000000000";
+    public final static String VALEO_IN_CHARACTERISTIC = "f000ff11-0451-4000-b000-000000000000";
+    public final static String VALEO_OUT_CHARACTERISTIC = "f000ff12-0451-4000-b000-000000000000";
+    public final static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
+    private final static HashMap<String, String> attributes = new HashMap<>();
 
     static {
         // Services.

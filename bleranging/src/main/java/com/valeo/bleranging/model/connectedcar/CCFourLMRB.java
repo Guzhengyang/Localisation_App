@@ -20,8 +20,8 @@ public class CCFourLMRB extends ConnectedCar {
     private static final String SPACE_ONE = "        ";
     private static final String SPACE_TWO = "        ";
 
-    public CCFourLMRB(Context mContext, ConnectionNumber connectionNumber) {
-        super(mContext, connectionNumber);
+    public CCFourLMRB(Context mContext) {
+        super(mContext, ConnectionNumber.FOUR_CONNECTION);
         trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
         trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
         trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);

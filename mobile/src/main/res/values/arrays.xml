@@ -24,7 +24,7 @@
         <item>Base_3</item>
         <item>Base_4</item>
     </string-array>
-    <string-array name="entryvalues_list_preference">
+    <string-array name="entry_values_list_preference">
         <item>"threeLMR"        </item>
         <item>"threeLRB"        </item>
         <item>"fourLMRB"        </item>

@@ -4,7 +4,7 @@
         <ListPreference
             android:dialogTitle="@string/dialog_title_list_preference"
             android:entries="@array/entries_list_preference"
-            android:entryValues="@array/entryvalues_list_preference"
+            android:entryValues="@array/entry_values_list_preference"
             android:key="com.inblue.PREFERENCE_CONNECTED_CAR_TYPE"
             android:title="@string/pref_car_type_title" />
         <ListPreference

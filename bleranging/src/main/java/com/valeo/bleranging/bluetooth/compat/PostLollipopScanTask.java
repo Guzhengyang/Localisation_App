@@ -27,43 +27,38 @@ class PostLollipopScanTask implements ScanTask {
     /**
      * Start/ stop scan messages handler;
      */
-    private Handler mScanHandler = new Handler();
+    private final Handler mScanHandler = new Handler();
 
     /**
      * Bluetooth adapter.
      */
-    private BluetoothAdapter mBluetoothAdapter;
+    private final BluetoothAdapter mBluetoothAdapter;
 
     /**
      * Scan Filters.
      */
-    private List<ScanFilter> mListOfScanFilter;
+    private final List<ScanFilter> mListOfScanFilter;
 
     /**
      * Scan settings.
      */
-    private ScanSettings mScanSettings;
-
+    private final ScanSettings mScanSettings;
+    /**
+     * Scan callback.
+     */
+    private final ScanCallback mScanCallback;
     /**
      * Active scanning period.
      */
     private int mActiveScanningPeriod = 3000;
-
     /**
      * Inactive scanning period.
      */
     private int mInactiveScanningPeriod = 200;
-
     /**
      * Current status.
      */
     private boolean mIsScanning;
-
-    /**
-     * Scan callback.
-     */
-    private ScanCallback mScanCallback;
-
     /**
      * Boolean to stop the scanning periodic task
      */
@@ -71,18 +66,17 @@ class PostLollipopScanTask implements ScanTask {
 
     /** Flag used to suspend the start/stop mechanism */
     private boolean bIsScanningSuspended = false;
-
+    private BluetoothLeScanner bluetoothLeScanner;
     /**
      * Scan execution runnable.
      */
-    private Runnable mScanRunnable = new Runnable() {
+    private final Runnable mScanRunnable = new Runnable() {
         @Override
         public void run() {
             if (!stopScanTask)
                 toggleScan();
         }
     };
-    private BluetoothLeScanner bluetoothLeScanner;
 
     /**
      * Create a periodic scan task.

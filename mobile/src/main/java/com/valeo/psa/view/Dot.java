@@ -14,8 +14,8 @@ import com.valeo.psa.R;
  */
 public class Dot extends FrameLayout {
 
-    private View selected;
-    private View unselected;
+    private final View selected;
+    private final View unselected;
 
     private ObjectAnimator selectedAnimator;
     private ObjectAnimator unselectedAnimator;
@@ -43,7 +43,7 @@ public class Dot extends FrameLayout {
      * @param isSelected Selected or not.
      */
     public void setSelected(boolean isSelected) {
-        if (!(this.isSelected ^ isSelected)) return;
+        if (this.isSelected == isSelected) return;
         this.isSelected = isSelected;
         if (isSelected) {
             // change to selected
@@ -79,7 +79,7 @@ public class Dot extends FrameLayout {
     /**
      * Clear the dot.
      */
-    public void clear() {
+    private void clear() {
         selected.setAlpha(0);
         unselected.setAlpha(1);
     }

@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:contentDescription="@string/door_status_bg"
-                android:paddingTop="@dimen/imageview_vertical_padding"
+                android:paddingTop="@dimen/image_view_vertical_padding"
                 android:src="@mipmap/slider_backgrd" />
 
             <ImageButton
@@ -188,7 +188,7 @@
             android:layout_below="@id/nfc_disclaimer"
             android:layout_centerHorizontal="true"
             android:contentDescription="@string/nfc_logo"
-            android:paddingTop="@dimen/imageview_vertical_padding"
+            android:paddingTop="@dimen/image_view_vertical_padding"
             android:src="@mipmap/nfc_logo"
             android:visibility="gone" />
 

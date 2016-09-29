@@ -42,9 +42,9 @@ public class BluetoothLeService extends Service {
     public final static String ACTION_GATT_CONNECTION_LOSS = "com.inblue.ACTION_GATT_CONNECTION_LOSS";
     public final static String ACTION_GATT_CHARACTERISTIC_SUBSCRIBED = "com.inblue.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED";
     //Bluetooth SERVICES and CHARACTERISTICS UUIDs
-    public final static String VALEO_GENERIC_SERVICE = SampleGattAttributes.VALEO_GENERIC_SERVICE;
-    public final static String VALEO_IN_CHARACTERISTIC = SampleGattAttributes.VALEO_IN_CHARACTERISTIC;
-    public final static String VALEO_OUT_CHARACTERISTIC = SampleGattAttributes.VALEO_OUT_CHARACTERISTIC;
+    private final static String VALEO_GENERIC_SERVICE = SampleGattAttributes.VALEO_GENERIC_SERVICE;
+    private final static String VALEO_IN_CHARACTERISTIC = SampleGattAttributes.VALEO_IN_CHARACTERISTIC;
+    private final static String VALEO_OUT_CHARACTERISTIC = SampleGattAttributes.VALEO_OUT_CHARACTERISTIC;
     private static final short MAX_RETRIES_WRITE_CHARACTERISTIC = 5;
     private final ArrayList<IBluetoothLeServiceListener> mListeners = new ArrayList<>();
     private final IBinder mBinder = new LocalBinder();
@@ -262,7 +262,7 @@ public class BluetoothLeService extends Service {
         return isBound;
     }
 
-    public void init() {
+    private void init() {
         mBSHandler = new Handler();
         mReceiveQueue = new ArrayDeque<>();
     }
@@ -376,7 +376,7 @@ public class BluetoothLeService extends Service {
      * After using a given BLE device, the app must call this method to ensure resources are
      * released properly.
      */
-    public void close() {
+    private void close() {
         Log.i("NIH", "BluetoothLeService.close()");
         if (mBluetoothGatt == null) {
             return;
@@ -386,7 +386,7 @@ public class BluetoothLeService extends Service {
         mBluetoothGatt = null;
     }
 
-    public void subscribeToReadCharacteristic(boolean enabled){
+    private void subscribeToReadCharacteristic(boolean enabled) {
         Log.d("NIH", "subscribeToReadCharacteristic()");
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
             Log.w("NIH", "BluetoothAdapter not initialized 2");

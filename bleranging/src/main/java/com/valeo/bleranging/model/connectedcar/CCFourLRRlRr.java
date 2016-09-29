@@ -14,8 +14,8 @@ public class CCFourLRRlRr extends ConnectedCar {
     private static final String SPACE_ONE = "  ";
     private static final String SPACE_TWO = "      ";
 
-    public CCFourLRRlRr(Context mContext, ConnectionNumber connectionNumber) {
-        super(mContext, connectionNumber);
+    public CCFourLRRlRr(Context mContext) {
+        super(mContext, ConnectionNumber.FOUR_CONNECTION);
         trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
         trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);
         trxRearLeft = new Trx(NUMBER_TRX_REAR_LEFT, TRX_REAR_LEFT_NAME);

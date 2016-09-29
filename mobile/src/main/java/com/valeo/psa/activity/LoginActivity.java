@@ -20,9 +20,7 @@ import java.util.regex.Pattern;
  */
 public class LoginActivity extends AppCompatActivity {
     private static final String EMAIL_PATTERN = "^[a-zA-Z0-9#_~!$&'()*+,;=:.\"<>@\\[\\]\\\\]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*$";
-    private Pattern pattern = Pattern.compile(EMAIL_PATTERN);
-    private Matcher matcher;
-    private Button sign_in;
+    private final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
     private TextInputLayout usernameWrapper;
     private TextInputLayout passwordWrapper;
     private TextInputEditText usernameEditText;
@@ -36,21 +34,25 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = (TextInputEditText) findViewById(R.id.password_tiet);
         usernameWrapper = (TextInputLayout) findViewById(R.id.mail_til);
         passwordWrapper = (TextInputLayout) findViewById(R.id.password_til);
-        sign_in = (Button) findViewById(R.id.sign_in);
+        Button sign_in = (Button) findViewById(R.id.sign_in);
         sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String username = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
-                if (!validateEmail(username)) {
-                    usernameWrapper.setError(getString(R.string.not_valid_mail));
-                } else if (!validatePassword(password)) {
-                    passwordWrapper.setError(getString(R.string.not_valid_password));
-                } else {
+                if (validateEmail(username)) {
                     usernameWrapper.setError(null);
-                    passwordWrapper.setError(null);
-                    doLogin();
+                } else {
+                    usernameWrapper.setError(getString(R.string.not_valid_mail));
+                    return;
                 }
+                if (validatePassword(password)) {
+                    passwordWrapper.setError(null);
+                } else {
+                    passwordWrapper.setError(getString(R.string.not_valid_password));
+                    return;
+                }
+                doLogin();
             }
         });
     }
@@ -82,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public boolean validateEmail(String email) {
-        matcher = pattern.matcher(email);
+        Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
 

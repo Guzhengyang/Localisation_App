@@ -21,8 +21,8 @@ public class Antenna {
     private final AtomicBoolean hasReceivedRssi;
     private final ArrayList<Integer> rssiPente;
     private final ArrayList<Integer> rssiHistoric;
-    private int numberTrx;
-    private int antennaId;
+    private final int numberTrx;
+    private final int antennaId;
     private int lastOriginalRssi;
     private int currentOriginalRssi;
     private BLEChannel lastBleChannel;
@@ -46,6 +46,10 @@ public class Antenna {
         this.rssiPente = new ArrayList<>(10);
     }
 
+    public int getAntennaId() {
+        return antennaId;
+    }
+
     public void init(int historicDefaultValue) {
         this.antennaRssiAverage = historicDefaultValue;
         this.antennaRssiAverageStart = historicDefaultValue;
@@ -60,7 +64,7 @@ public class Antenna {
     /**
      * Init with Hysteresis over all saved rssi
      */
-    public synchronized void initWithHysteresis(int defaultValue) {
+    private synchronized void initWithHysteresis(int defaultValue) {
         for (int i = 0; i < SdkPreferencesHelper.getInstance().getRollingAvElement(); i++) {
             rssiHistoric.add(i, defaultValue);
         }
@@ -69,7 +73,7 @@ public class Antenna {
     /**
      * Reset with Hysteresis over all saved rssi
      */
-    public synchronized void resetWithHysteresis(int defaultValue) {
+    synchronized void resetWithHysteresis(int defaultValue) {
         for (int i = 0; i < SdkPreferencesHelper.getInstance().getRollingAvElement(); i++) {
             rssiHistoric.set(i, defaultValue);
         }
@@ -95,7 +99,7 @@ public class Antenna {
      * @param bleChannel the ble channel from which the rssi come
      * @return the corrected rssi
      */
-    public int getCorrectedRssi(int rssi, BLEChannel bleChannel) {
+    private int getCorrectedRssi(int rssi, BLEChannel bleChannel) {
         int borneInf = (int) (antennaRssiAverageWelcome - getEcretageValue(antennaRssiAverageWelcome));
         int borneSup = (int) (antennaRssiAverageWelcome + getEcretageValue(antennaRssiAverageWelcome));
         switch (bleChannel) {

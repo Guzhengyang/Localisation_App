@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingBottom="@dimen/vertical_padding"
-    android:paddingLeft="@dimen/imageview_vertical_padding"
-    android:paddingRight="@dimen/imageview_vertical_padding"
+    android:paddingLeft="@dimen/image_view_vertical_padding"
+    android:paddingRight="@dimen/image_view_vertical_padding"
     android:paddingTop="@dimen/vertical_padding">
 
     <ImageView

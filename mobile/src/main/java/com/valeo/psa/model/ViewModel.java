@@ -3,9 +3,9 @@ package com.valeo.psa.model;
 import android.graphics.drawable.Drawable;
 
 public class ViewModel {
-    private Drawable icon;
-    private String actionTitle;
+    private final String actionTitle;
     private final ViewModelId viewModelId;
+    private Drawable icon;
 
     public ViewModel(Drawable icon, String actionTitle, ViewModelId viewModelId) {
         this.icon = icon;

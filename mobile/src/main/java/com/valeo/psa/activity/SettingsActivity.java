@@ -36,14 +36,11 @@ import java.util.List;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
-    private static SharedPreferences sharedPreferences;
-    private static PreferenceManager manager;
-
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+    private final static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
@@ -54,6 +51,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return true;
         }
     };
+    private static SharedPreferences sharedPreferences;
+    private static PreferenceManager manager;
 
     /**
      * Helper method to determine if the device has an extra-large screen. For

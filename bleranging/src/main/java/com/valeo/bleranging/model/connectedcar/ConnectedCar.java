@@ -29,19 +29,19 @@ public abstract class ConnectedCar {
     public final static int NUMBER_TRX_REAR_LEFT = 6;
     public final static int NUMBER_TRX_BACK = 7;
     public final static int NUMBER_TRX_REAR_RIGHT = 8;
-    public final static String TRX_FRONT_LEFT_NAME = "FLeft";
-    public final static String TRX_FRONT_RIGHT_NAME = "FRight";
-    public final static String TRX_LEFT_NAME = "Left";
-    public final static String TRX_MIDDLE_NAME = "Mid";
-    public final static String TRX_RIGHT_NAME = "Right";
-    public final static String TRX_REAR_LEFT_NAME = "RLeft";
-    public final static String TRX_BACK_NAME = "Back";
-    public final static String TRX_REAR_RIGHT_NAME = "RRight";
-    public final static int RSSI_LOCK_DEFAULT_VALUE = -120;
-    public final static int RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE = -50;
-    public final static int RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE = -30;
-    public final static int RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE = -70;
-    public final static int RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE = -80;
+    final static String TRX_FRONT_LEFT_NAME = "FLeft";
+    final static String TRX_FRONT_RIGHT_NAME = "FRight";
+    final static String TRX_LEFT_NAME = "Left";
+    final static String TRX_MIDDLE_NAME = "Mid";
+    final static String TRX_RIGHT_NAME = "Right";
+    final static String TRX_REAR_LEFT_NAME = "RLeft";
+    final static String TRX_BACK_NAME = "Back";
+    final static String TRX_REAR_RIGHT_NAME = "RRight";
+    private final static int RSSI_LOCK_DEFAULT_VALUE = -120;
+    private final static int RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE = -50;
+    private final static int RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE = -30;
+    private final static int RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE = -70;
+    private final static int RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE = -80;
     private final static String trxAddressLeft = SdkPreferencesHelper.getInstance().getTrxAddressLeft();
     private final static String trxAddressMiddle = SdkPreferencesHelper.getInstance().getTrxAddressMiddle();
     private final static String trxAddressRight = SdkPreferencesHelper.getInstance().getTrxAddressRight();
@@ -50,36 +50,36 @@ public abstract class ConnectedCar {
     private final static String trxAddressFrontRight = SdkPreferencesHelper.getInstance().getTrxAddressFrontRight();
     private final static String trxAddressRearLeft = SdkPreferencesHelper.getInstance().getTrxAddressRearLeft();
     private final static String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
+    final LinkedHashMap<Integer, Trx> trxLinkedHMap;
     private final Ranging ranging;
-    protected String connectedCarType;
-    protected float linAccThreshold;
-    protected int welcomeThreshold;
-    protected int lockThreshold;
-    protected int unlockThreshold;
-    protected int startThreshold;
-    protected int averageDeltaLockThreshold;
-    protected int averageDeltaUnlockThreshold;
-    protected int lockMode;
-    protected int unlockMode;
-    protected int startMode;
-    protected int nearDoorRatioThreshold;
-    protected int nearBackDoorRatioThresholdMin;
-    protected int nearBackDoorRatioThresholdMax;
-    protected int nearDoorThresholdMLorMRMin;
-    protected int nearDoorThresholdMLorMRMax;
-    protected int nearDoorThresholdMB;
-    protected Trx trxLeft;
-    protected Trx trxMiddle;
-    protected Trx trxRight;
-    protected Trx trxBack;
-    protected Trx trxFrontLeft;
-    protected Trx trxRearLeft;
-    protected Trx trxFrontRight;
-    protected Trx trxRearRight;
-    protected ConnectionNumber connectionNumber;
-    protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
+    private final ConnectionNumber connectionNumber;
+    String connectedCarType;
+    int welcomeThreshold;
+    int lockThreshold;
+    int unlockThreshold;
+    int startThreshold;
+    int averageDeltaLockThreshold;
+    int averageDeltaUnlockThreshold;
+    int lockMode;
+    int unlockMode;
+    int startMode;
+    int nearDoorRatioThreshold;
+    int nearBackDoorRatioThresholdMin;
+    int nearBackDoorRatioThresholdMax;
+    int nearDoorThresholdMLorMRMin;
+    int nearDoorThresholdMLorMRMax;
+    int nearDoorThresholdMB;
+    Trx trxLeft;
+    Trx trxMiddle;
+    Trx trxRight;
+    Trx trxBack;
+    Trx trxFrontLeft;
+    Trx trxRearLeft;
+    Trx trxFrontRight;
+    Trx trxRearRight;
+    private float linAccThreshold;
 
-    public ConnectedCar(Context mContext, ConnectionNumber connectionNumber) {
+    ConnectedCar(Context mContext, ConnectionNumber connectionNumber) {
         this.connectionNumber = connectionNumber;
         this.trxLinkedHMap = new LinkedHashMap<>();
         this.ranging = new Ranging(mContext);
@@ -283,7 +283,7 @@ public abstract class ConnectedCar {
      * @param trx2 the second trx
      * @return the delta between both trx average rssi
      */
-    protected int getRatioBetweenTwoTrx(int mode, int trx1, int trx2) {
+    int getRatioBetweenTwoTrx(int mode, int trx1, int trx2) {
         if (trxLinkedHMap != null) {
             Trx trxOne = trxLinkedHMap.get(trx1);
             Trx trxTwo = trxLinkedHMap.get(trx2);
@@ -315,14 +315,14 @@ public abstract class ConnectedCar {
         return 0;
     }
 
-    protected int getRatioCloseToCar(int trxNumber, int mode) {
+    int getRatioCloseToCar(int trxNumber, int mode) {
         if (trxLinkedHMap != null) {
             return (trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode) - getMinAverageRssi(trxNumber, mode));
         }
         return 0;
     }
 
-    protected int getMinAverageRssi(int trxNumberToIgnore, int mode) {
+    private int getMinAverageRssi(int trxNumberToIgnore, int mode) {
         int min = 0;
         if (trxLinkedHMap != null) {
             for (Integer trxNumber : trxLinkedHMap.keySet()) {
@@ -339,7 +339,7 @@ public abstract class ConnectedCar {
      *
      * @return the delta between the average(L&S) of trx s average
      */
-    protected int getAverageLSDelta() {
+    int getAverageLSDelta() {
         int averageLong = getAllTrxAverage(Antenna.AVERAGE_LONG);
         int averageShort = getAllTrxAverage(Antenna.AVERAGE_SHORT);
         return (averageLong - averageShort);
@@ -357,7 +357,7 @@ public abstract class ConnectedCar {
      * @param isGreater true to compare with >, false to compare with <
      * @return true if the difference of the two average rssi is greater than the threshold, false otherwise
      */
-    public boolean compareRatioWithThreshold(int mode, int trx1, int trx2, int threshold, boolean isGreater) {
+    boolean compareRatioWithThreshold(int mode, int trx1, int trx2, int threshold, boolean isGreater) {
         return TrxUtils.compareWithThreshold(getRatioBetweenTwoTrx(mode, trx1, trx2), threshold, isGreater);
     }
 
@@ -370,23 +370,15 @@ public abstract class ConnectedCar {
      * @param isGreater   true if compare sign is >, false if it is <
      * @return true if the rssi of each antenna is greater than the threshold, false otherwise
      */
-    public boolean compareTrxWithThreshold(int trxNumber, int antennaMode, int averageMode, int threshold, boolean isGreater) {
-        if (trxLinkedHMap.get(trxNumber) != null) {
-            return trxLinkedHMap.get(trxNumber).compareTrxWithThreshold(antennaMode, averageMode, threshold, isGreater);
-        } else {
-            return false;
-        }
+    boolean compareTrxWithThreshold(int trxNumber, int antennaMode, int averageMode, int threshold, boolean isGreater) {
+        return trxLinkedHMap.get(trxNumber) != null && trxLinkedHMap.get(trxNumber).compareTrxWithThreshold(antennaMode, averageMode, threshold, isGreater);
     }
 
-    public boolean isActive(int trxNumber) {
-        if (trxLinkedHMap.get(trxNumber) != null) {
-            return trxLinkedHMap.get(trxNumber).isActive();
-        } else {
-            return false;
-        }
+    private boolean isActive(int trxNumber) {
+        return trxLinkedHMap.get(trxNumber) != null && trxLinkedHMap.get(trxNumber).isActive();
     }
 
-    public int getOffsetBleChannel38(int trxNumber, int antennaId) {
+    private int getOffsetBleChannel38(int trxNumber, int antennaId) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getOffset38(antennaId);
         } else {
@@ -449,7 +441,7 @@ public abstract class ConnectedCar {
      * @param trxBoolLinkedHMap the list of boolean to check
      * @return true if the number of trx valid is greater or equal to the number of trx valid needed, false otherwise
      */
-    protected boolean numberOfTrxValid(int numberOfTrxNeeded, LinkedHashMap<Integer, Boolean> trxBoolLinkedHMap) {
+    boolean numberOfTrxValid(int numberOfTrxNeeded, LinkedHashMap<Integer, Boolean> trxBoolLinkedHMap) {
         if (trxBoolLinkedHMap != null) {
             int counter = 0;
             for (Integer trxNumber : trxBoolLinkedHMap.keySet()) {
@@ -499,7 +491,7 @@ public abstract class ConnectedCar {
      * @param spannableStringBuilder the spannable string builder to fill
      * @return the spannable string builder filled with the first footer
      */
-    public SpannableStringBuilder createFirstFooterDebugData(SpannableStringBuilder spannableStringBuilder, String space1, String space2) {
+    SpannableStringBuilder createFirstFooterDebugData(SpannableStringBuilder spannableStringBuilder, String space1, String space2) {
         for (Trx trx : trxLinkedHMap.values()) {
             spannableStringBuilder
                     .append(space1)
@@ -584,7 +576,7 @@ public abstract class ConnectedCar {
      * @param historicDefaultValuePeriph  the peripheral trx default value
      * @param historicDefaultValueCentral the central trx default value
      */
-    public abstract void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral);
+    protected abstract void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral);
 
 
     /**
@@ -596,8 +588,8 @@ public abstract class ConnectedCar {
      * @param comparaisonSign the comparaison sign
      * @return a colored spannablestringbuilder with all the trx's average
      */
-    public SpannableStringBuilder printModedAverage(int mode, int color, int threshold,
-                                                    String comparaisonSign, String space) {
+    SpannableStringBuilder printModedAverage(int mode, int color, int threshold,
+                                             String comparaisonSign, String space) {
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         for (Trx trx : trxLinkedHMap.values()) {
             ssb.append(TextUtils.colorAntennaAverage(getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_0, mode),

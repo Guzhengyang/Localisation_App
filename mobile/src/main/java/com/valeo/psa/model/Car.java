@@ -14,10 +14,10 @@ public class Car {
     /**
      * Class constructor
      *
-     * @param imgCarId
-     * @param regPlate
-     * @param brandCar
-     * @param vin
+     * @param imgCarId the car image id
+     * @param regPlate the registration plate
+     * @param brandCar the car brand
+     * @param vin the car vin
      */
     public Car(int imgCarId, String regPlate, String brandCar, String vin) {
         mImgCarId = imgCarId;

@@ -38,7 +38,7 @@ public class BlurBuilder {
      * @param image the source image.
      * @return the generated blurred image.
      */
-    public static Bitmap blur(final Context ctx, final Bitmap image) {
+    private static Bitmap blur(final Context ctx, final Bitmap image) {
         int width = Math.round(image.getWidth() * BITMAP_SCALE);
         int height = Math.round(image.getHeight() * BITMAP_SCALE);
 

@@ -29,15 +29,13 @@ import java.util.ArrayList;
  * - Handle notification action
  */
 public class BluetoothManagement {
-    public static final int MESSAGE_COMMAND_SENT_SUCCESS = 27;
+    private static final int MESSAGE_COMMAND_SENT_SUCCESS = 27;
     private static final String TAG = BluetoothManagement.class.getSimpleName();
-    public static BluetoothAdapterCompat mBluetoothAdapterCompat;
+    private static BluetoothAdapterCompat mBluetoothAdapterCompat;
     private final Context mContext;
-    private boolean isReceiverRegistered = false;
-    private ArrayList<BluetoothManagementListener> mBluetoothManagementListeners;
-    private BluetoothLeService mBluetoothLeService;
-    private IBluetoothLeServiceListener mBLEServiceListener = new IBluetoothLeServiceListener(){
-        private Handler mHandler = new Handler();
+    private final ArrayList<BluetoothManagementListener> mBluetoothManagementListeners;
+    private final IBluetoothLeServiceListener mBLEServiceListener = new IBluetoothLeServiceListener() {
+        private final Handler mHandler = new Handler();
         @Override
         public void onSendPacketSuccess() {
             Message msg = mHandler.obtainMessage();
@@ -45,6 +43,24 @@ public class BluetoothManagement {
             mHandler.sendMessage(msg);
         }
     };
+    /**
+     * - Increase counters
+     * - Update current devices list
+     * - Detect PEPS
+     * - Handle connection to last saved device
+     */
+    private final ScanCallbackCompat mLeScanCallbackMain =
+            new ScanCallbackCompat() {
+                @Override
+                public void onScanResult(final BluetoothDevice device, final int rssi, final byte[] scanRecord, final byte[] advertisedData) {
+                    if (scanRecord != null) {
+                        // Check if the passive entry service is available
+                        onScanRecordsGet(device, rssi, scanRecord, advertisedData);
+                    }
+                }
+            };
+    private boolean isReceiverRegistered = false;
+    private BluetoothLeService mBluetoothLeService;
     /**
      * Code to manage Service lifecycle.
      */
@@ -54,11 +70,9 @@ public class BluetoothManagement {
             Log.i("NIH bind", "onServiceConnected()");
             mBluetoothLeService = (((BluetoothLeService.LocalBinder) service).getService());
             mBluetoothLeService.registerListener(mBLEServiceListener);
-            if (!mBluetoothLeService.initialize()) {
-                // init error
-                return;
+            if (mBluetoothLeService.initialize()) {
+                mBluetoothLeService.connectToDevice(SdkPreferencesHelper.getInstance().getTrxAddressConnectable());
             }
-            mBluetoothLeService.connectToDevice(SdkPreferencesHelper.getInstance().getTrxAddressConnectable());
         }
 
         @Override
@@ -69,22 +83,6 @@ public class BluetoothManagement {
         }
     };
     private BroadcastReceiver mTrxUpdateReceiver;
-    /**
-     * - Increase counters
-     * - Update current devices list
-     * - Detect PEPS
-     * - Handle connection to last saved device
-     */
-    private ScanCallbackCompat mLeScanCallbackMain =
-            new ScanCallbackCompat() {
-                @Override
-                public void onScanResult(final BluetoothDevice device, final int rssi, final byte[] scanRecord, final byte[] advertisedData) {
-                    if (scanRecord != null) {
-                        // Check if the passive entry service is available
-                        onScanRecordsGet(device, rssi, scanRecord, advertisedData);
-                    }
-                }
-            };
 
     /**
      * Class constructor
@@ -161,7 +159,7 @@ public class BluetoothManagement {
      *
      * @param enable: indicates if we want to enable or disable the BLE adapter
      */
-    public void scanLeDevice(final boolean enable) {
+    private void scanLeDevice(final boolean enable) {
         if (enable) {
             Log.i(TAG, "Start scanning for LE device");
             ScanTask.StartLeScanResult result = mBluetoothAdapterCompat.startLeScan(mLeScanCallbackMain);
@@ -397,7 +395,7 @@ public class BluetoothManagement {
         }
     }
 
-    public void firePassiveEntryTry(BluetoothDevice device, int rssi, ScanResponse scanResponse, byte[] advertisedData) {
+    private void firePassiveEntryTry(BluetoothDevice device, int rssi, ScanResponse scanResponse, byte[] advertisedData) {
         for(BluetoothManagementListener listener : mBluetoothManagementListeners) {
             listener.onPassiveEntryTry(device, rssi, scanResponse, advertisedData);
         }
@@ -407,7 +405,7 @@ public class BluetoothManagement {
         return mBluetoothLeService != null && mBluetoothLeService.isFullyConnected();
     }
 
-    public boolean isBound() {
+    private boolean isBound() {
         return mBluetoothLeService != null && mBluetoothLeService.isBound();
     }
 }

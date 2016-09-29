@@ -1,6 +1,5 @@
 package com.valeo.psa.view;
 
-import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
@@ -14,35 +13,25 @@ import android.widget.TextView;
 import com.valeo.psa.R;
 import com.valeo.psa.model.ViewModel;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder> {
-    private List<ViewModel> items;
-    private int itemLayout;
-    private Typeface typeface;
+    private final List<ViewModel> items;
+    private final int itemLayout;
+    private final Typeface typeface;
     private final OnStartDragListener mDragStartListener;
     private final View.OnTouchListener mTouchListener;
     //private final OnIconLongPressedListener onIconLongPressedListener;
     //private final GestureDetectorCompat mDetector;
 
-    public MyRecyclerAdapter(Context context, final WeakReference<RecyclerView> recyclerViewWeakReference, List<ViewModel> items, int itemLayout,
-                             Typeface typeface, OnStartDragListener mDragStartListener, //OnIconLongPressedListener onIconLongPressedListener,
+    public MyRecyclerAdapter(List<ViewModel> items, int itemLayout,
+                             Typeface typeface, OnStartDragListener mDragStartListener,
                              View.OnTouchListener mTouchListener) {
         this.items = items;
         this.itemLayout = itemLayout;
         this.typeface = typeface;
         this.mDragStartListener = mDragStartListener;
         this.mTouchListener = mTouchListener;
-        //this.onIconLongPressedListener = onIconLongPressedListener;
-        /*this.mDetector = new GestureDetectorCompat(context, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public void onLongPress(MotionEvent e) {
-                View childView = recyclerViewWeakReference.get().findChildViewUnder(e.getX(), e.getY());
-                MyRecyclerAdapter.this.onIconLongPressedListener.onIconLongPressed(recyclerViewWeakReference.get().getChildAdapterPosition(childView));
-                super.onLongPress(e);
-            }
-        });*/
     }
 
     public List<ViewModel> getItems() {
@@ -70,10 +59,18 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
         return items.size();
     }
 
+    public interface OnStartDragListener {
+        void onStartDrag(RecyclerView.ViewHolder viewHolder);
+    }
+
+    public interface OnIconLongPressedListener {
+        void onIconLongPressed(int position);
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageView icon;
-        public TextView text;
-        public ImageView drag;
+        public final ImageView icon;
+        public final TextView text;
+        public final ImageView drag;
 
         public ViewHolder(View itemView, final OnStartDragListener mDragStartListener, final View.OnTouchListener mTouchListener){//, final GestureDetectorCompat mDetector) {
             super(itemView);
@@ -106,13 +103,5 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
                 }
             });
         }
-    }
-
-    public interface OnStartDragListener {
-        void onStartDrag(RecyclerView.ViewHolder viewHolder);
-    }
-
-    public interface OnIconLongPressedListener {
-        void onIconLongPressed(int position);
     }
 }

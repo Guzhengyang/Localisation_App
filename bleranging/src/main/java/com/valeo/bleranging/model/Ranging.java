@@ -14,18 +14,16 @@ import weka.core.converters.ConverterUtils;
  * Created by Zhengyang on 29/08/2016.
  */
 public class Ranging {
-    private Context mContext;
+    private final Instance instance;
     private Instances testSet;
-    private Instance instance;
     private RandomForest rf;
     private String[] classValues;
 
     public Ranging(Context context) {
         try {
-            mContext = context;
-            rf = (RandomForest) SerializationHelper.read(mContext.getResources().openRawResource(R.raw.rf));
-            classValues = (String[]) SerializationHelper.read(mContext.getResources().openRawResource(R.raw.classvalues));
-            testSet = ConverterUtils.DataSource.read(mContext.getResources().openRawResource(R.raw.test));
+            rf = (RandomForest) SerializationHelper.read(context.getResources().openRawResource(R.raw.rf));
+            classValues = (String[]) SerializationHelper.read(context.getResources().openRawResource(R.raw.classvalues));
+            testSet = ConverterUtils.DataSource.read(context.getResources().openRawResource(R.raw.test));
         } catch (Exception e) {
             e.printStackTrace();
         }

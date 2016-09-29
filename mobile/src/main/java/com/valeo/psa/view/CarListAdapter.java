@@ -74,9 +74,9 @@ public class CarListAdapter extends RecyclerView.Adapter<CarListAdapter.ViewHold
      * @author GMAMESSI
      */
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private ImageView imgCar;
-        private TextView brandCar;
-        private OnCarSelectionListener mListener;
+        private final ImageView imgCar;
+        private final TextView brandCar;
+        private final OnCarSelectionListener mListener;
 
         public ViewHolder(View itemView, OnCarSelectionListener onCarSelectionListener) {
             super(itemView);

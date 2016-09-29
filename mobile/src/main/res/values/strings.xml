@@ -4,7 +4,7 @@
     <string name="title_activity_main">Remote key</string>
     <string name="title_activity_login">Connect to My Peugeot</string>
     <string name="title_activity_security_questions">Security Questions</string>
-    <string name="set_security_lock">Secure lock screen hasn\'t set up.\nGo to \'Settings -> Security -> Screenlock\' to set up a lock screen</string>
+    <string name="set_security_lock">Secure lock screen hasn\'t set up.\nGo to \'Settings -> Security -> ScreenLock\' to set up a lock screen</string>
     <string name="cancel_start_car">Cancel</string>
     <string name="validate_lock_pin">OK</string>
     <string name="cancel_lock_pin">Cancel</string>

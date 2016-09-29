@@ -6,13 +6,13 @@ import java.util.Arrays;
  * Created by nhaan on 24/08/2015.
  */
 public class ScanResponse {
-    public byte[] random;
-    public byte[] cryptedCidpu;
-    public byte protocolVersion;
-    public byte antennaId;
-    public byte mode;
-    public int reSynchro;
-    public byte vehicleState;
+    public final byte antennaId;
+    public final byte vehicleState;
+    private final byte[] random;
+    private final byte[] cryptedCidpu;
+    private final byte protocolVersion;
+    private final byte mode;
+    private final int reSynchro;
 
     public ScanResponse(byte[] random, byte[] cryptedID, byte protocolVersion, byte antennaId, byte mode, int reSynchro, byte vehicleState) {
         this.random = random;

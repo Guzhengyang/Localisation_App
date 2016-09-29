@@ -16,7 +16,7 @@
     <dimen name="default_downsample_factor">6px</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="imageview_padding">4dp</dimen>
-    <dimen name="imageview_vertical_padding">16dp</dimen>
+    <dimen name="image_view_vertical_padding">16dp</dimen>
     <dimen name="control_row_imageview_vertical_padding">8dp</dimen>
     <dimen name="control_row_imageview_size">70dp</dimen>
     <dimen name="tips_vertical_padding">16dp</dimen>

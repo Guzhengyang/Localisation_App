@@ -69,13 +69,6 @@ public final class SdkPreferencesHelper {
     public final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
     public final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
     public final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
-    public final static String LOG_FILE_NAME = "sdcard/InBlueRssi/allRssi_0_0000.csv";
-    /**
-     * Preferences file name.
-     */
-    public static final String SAVED_LIGHT_CAPTOR = "savedLightCaptor";
-    public static final String SAVED_LOGIN_INFO = "savedLoginInfo";
-    public static final String SAVED_LOGGER_INFO = "savedLoggerInfo";
     public static final String SAVED_CC_GENERIC_OPTION = "savedConnectedCarGenericOption";
     /** Key formatter. */
     public static final String ADDRESS_CONNECTABLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE";
@@ -121,8 +114,6 @@ public final class SdkPreferencesHelper {
     public static final String ECRETAGE_50_70_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_50_70";
     public static final String ECRETAGE_30_50_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_30_50";
     public static final String ECRETAGE_30_30_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_30_30";
-    public static final String LIGHT_CAPTOR_PREFERENCES_NAME = "com.inblue.PREFERENCE_LIGHT_CAPTOR";
-    public static final String SELECTED_LOCATION_PREFERENCES_NAME = "com.inblue.PREFERENCE_SELECTED_LOCATION";
     public static final String LIN_ACC_SIZE_PREFERENCES_NAME = "com.inblue.PREFERENCE_LIN_ACC_SIZE";
     public static final String CORRECTION_LIN_ACC_PREFERENCES_NAME = "com.inblue.PREFERENCE_CORRECTION_LIN_ACC";
     public static final String EQUALIZER_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_LEFT";
@@ -138,6 +129,15 @@ public final class SdkPreferencesHelper {
     public static final String NEARER_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEARER_DOOR_THR";
     public static final String RATIO_MAX_MIN_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_RATIO_MAX_MIN_THR";
     public static final String RATIO_CLOSE_TO_CAR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_CLOSE_TO_CAR_THR";
+    private final static String LOG_FILE_NAME = "sdcard/InBlueRssi/allRssi_0_0000.csv";
+    /**
+     * Preferences file name.
+     */
+    private static final String SAVED_LIGHT_CAPTOR = "savedLightCaptor";
+    private static final String SAVED_LOGIN_INFO = "savedLoginInfo";
+    private static final String SAVED_LOGGER_INFO = "savedLoggerInfo";
+    private static final String LIGHT_CAPTOR_PREFERENCES_NAME = "com.inblue.PREFERENCE_LIGHT_CAPTOR";
+    private static final String SELECTED_LOCATION_PREFERENCES_NAME = "com.inblue.PREFERENCE_SELECTED_LOCATION";
     private static final String USER_MAIL_PREFERENCES_NAME = "com.inblue.PREFERENCE_USER_MAIL";
     private static final String PASSWORD_PREFERENCES_NAME = "com.inblue.PREFERENCE_PASSWORD";
     private static final String LOG_FILE_NAME_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOG_FILE_NAME";
@@ -146,7 +146,7 @@ public final class SdkPreferencesHelper {
     private static SdkPreferencesHelper sSingleInstance = null;
 
     /** Application context. */
-    private Context mApplicationContext;
+    private final Context mApplicationContext;
 
     /**
      * Private constructor.
