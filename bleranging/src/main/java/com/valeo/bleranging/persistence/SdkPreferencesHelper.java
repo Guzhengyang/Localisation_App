@@ -25,6 +25,7 @@ public final class SdkPreferencesHelper {
     public final static int NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MIN = 2;
     public final static int AVERAGE_DELTA_UNLOCK_THRESHOLD = 10;
     public final static int AVERAGE_DELTA_LOCK_THRESHOLD = -10;
+    public final static float THATCHAM_TIMEOUT = 3.5f;
     public final static int RSSI_LOG_NUMBER = 0;
     public final static int ROLLING_AVERAGE_ELEMENTS = 50;
     public final static int START_NB_ELEMENT = 10;
@@ -104,6 +105,7 @@ public final class SdkPreferencesHelper {
     public static final String AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_LOCK_THRESHOLD";
     public static final String AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD";
     public static final String UNLOCK_VALID_NB_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_VALID_NB_ELEMENT";
+    public static final String THATCHAM_TIMEOUT_PREFERENCES_NAME = "com.inblue.PREFERENCE_THATCHAM_TIMEOUT";
     public static final String RSSI_LOG_NUMBER_PREFERENCES_NAME = "com.inblue.PREFERENCE_RSSI_LOG_NUMBER";
     public static final String ROLLING_AV_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_ROLLING_AV_ELEMENT";
     public static final String START_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_START_NB_ELEMENT";
@@ -478,6 +480,14 @@ public final class SdkPreferencesHelper {
         return readString(SAVED_CC_GENERIC_OPTION, CONNECTED_CAR_BASE_PREFERENCES_NAME, ConnectedCarFactory.BASE_3);
     }
 
+    public float getThatchamTimeout() {
+        return readFloat(SAVED_CC_GENERIC_OPTION, THATCHAM_TIMEOUT_PREFERENCES_NAME, THATCHAM_TIMEOUT);
+    }
+
+    public void setThatchamTimeout(float thatchamTimeout) {
+        saveFloat(SAVED_CC_GENERIC_OPTION, THATCHAM_TIMEOUT_PREFERENCES_NAME, thatchamTimeout);
+    }
+
     public int getRssiLogNumber() {
         return readInt(SAVED_CC_GENERIC_OPTION, RSSI_LOG_NUMBER_PREFERENCES_NAME, RSSI_LOG_NUMBER);
     }
@@ -664,6 +674,7 @@ public final class SdkPreferencesHelper {
         SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(keyName, value);
+        editor.apply();
         editor.commit();
     }
 
@@ -691,6 +702,7 @@ public final class SdkPreferencesHelper {
         SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(keyName, String.valueOf(value));
+        editor.apply();
         editor.commit();
     }
 
@@ -718,6 +730,7 @@ public final class SdkPreferencesHelper {
         SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(keyName, String.valueOf(value));
+        editor.apply();
         editor.commit();
     }
 
@@ -745,6 +758,7 @@ public final class SdkPreferencesHelper {
         SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(keyName, String.valueOf(value));
+        editor.apply();
         editor.commit();
     }
 

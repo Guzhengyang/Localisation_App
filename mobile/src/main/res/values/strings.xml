@@ -3,9 +3,10 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">Remote key</string>
     <string name="title_activity_login">Connect to My Peugeot</string>
+    <string name="title_activity_security_questions">Security Questions</string>
     <string name="set_security_lock">Secure lock screen hasn\'t set up.\nGo to \'Settings -> Security -> Screenlock\' to set up a lock screen</string>
     <string name="cancel_start_car">Cancel</string>
-    <string name="validate_lock_pin">Ok</string>
+    <string name="validate_lock_pin">OK</string>
     <string name="cancel_lock_pin">Cancel</string>
     <string name="you_can_start_tv">You can start your car !</string>
     <string name="car_start_countdown_min_sec">%1$02d : %2$02d</string>
@@ -96,6 +97,8 @@
     <string name="pref_nb_element_welcome">Welcome Number Element</string>
     <string name="pref_nb_element_long">Long Number Element</string>
     <string name="pref_nb_element_short">Short Number Element</string>
+    <string name="pref_timeout">TIMEOUT</string>
+    <string name="pref_thatcham_timeout">Thatcham Timeout</string>
     <string name="pref_mode">MODE</string>
     <string name="pref_mode_unlock">Unlock Mode</string>
     <string name="pref_mode_lock">Lock Mode</string>

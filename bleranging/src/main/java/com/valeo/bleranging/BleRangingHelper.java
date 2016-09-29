@@ -100,6 +100,13 @@ public class BleRangingHelper implements SensorEventListener {
             isLockStatusChangedTimerExpired.set(true);
         }
     };
+    private AtomicBoolean thatchamIsChanging = new AtomicBoolean(false);
+    private final Runnable mHasThatchamChanged = new Runnable() {
+        @Override
+        public void run() {
+            thatchamIsChanging.set(false);
+        }
+    };
     private AtomicBoolean rearmWelcome = new AtomicBoolean(true);
     private AtomicBoolean rearmLock = new AtomicBoolean(true);
     private AtomicBoolean rearmUnlock = new AtomicBoolean(true);
@@ -108,6 +115,7 @@ public class BleRangingHelper implements SensorEventListener {
     private Handler mMainHandler;
     private Handler mLockStatusChangedHandler;
     private Handler mHandlerTimeOut;
+    private Handler mHandlerThatchamTimeOut;
     private Handler mIsLaidTimeOutHandler;
     private ConnectedCar connectedCar;
     private byte welcomeByte = 0;
@@ -327,6 +335,7 @@ public class BleRangingHelper implements SensorEventListener {
         this.mMainHandler = new Handler(Looper.getMainLooper());
         this.mLockStatusChangedHandler = new Handler();
         this.mHandlerTimeOut = new Handler();
+        this.mHandlerThatchamTimeOut = new Handler();
         this.mIsLaidTimeOutHandler = new Handler();
         mBluetoothManager.addBluetoothManagementListener(new BluetoothManagementListener() {
             private ExecutorService executorService = Executors.newFixedThreadPool(4);
@@ -561,16 +570,18 @@ public class BleRangingHelper implements SensorEventListener {
                 // DO NOT check if newLockStatus to let the rearm algorithm in performLockVehicle work
                 Log.d(" rssiHistorics", "unlock");
                 isPassiveEntryAction.set(true);
-                mProtocolManager.setThatcham(true);
+                launchThatchamValidityTimeOut();
                 performLockVehicleRequest(false);
             } else if (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)) {
                 isPassiveEntryAction.set(true);
-                mProtocolManager.setThatcham(false);
+                if (!thatchamIsChanging.get()) { // if thatcham is not changing
+                    mProtocolManager.setThatcham(false);
+                }
                 performLockVehicleRequest(true);
             }
             if (isStartStrategyValid) {
                 isStartAllowed = true;
-                mProtocolManager.setThatcham(true);
+                launchThatchamValidityTimeOut();
                 //Perform the connection
                 if (SdkPreferencesHelper.getInstance().isLightCaptorEnabled()) {
                     makeNoise(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 350);
@@ -578,6 +589,18 @@ public class BleRangingHelper implements SensorEventListener {
             }
             mProtocolManager.setIsStartRequested(isStartAllowed);
         }
+    }
+
+    private void launchThatchamValidityTimeOut() {
+        mProtocolManager.setThatcham(true);
+        if (thatchamIsChanging.get()) {
+            mHandlerThatchamTimeOut.removeCallbacks(mHasThatchamChanged);
+            mHandlerThatchamTimeOut.removeCallbacks(null);
+        } else {
+            thatchamIsChanging.set(true);
+        }
+        mHandlerThatchamTimeOut.postDelayed(mHasThatchamChanged,
+                (long) (SdkPreferencesHelper.getInstance().getThatchamTimeout() * 1000));
     }
 
     /**

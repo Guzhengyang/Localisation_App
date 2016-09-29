@@ -77,6 +77,12 @@
             android:key="com.inblue.PREFERENCE_SHORT_NB_ELEMENT"
             android:title="@string/pref_nb_element_short" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_timeout">
+        <EditTextPreference
+            android:inputType="number|numberDecimal"
+            android:key="com.inblue.PREFERENCE_THATCHAM_TIMEOUT"
+            android:title="@string/pref_thatcham_timeout" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_acc">
         <EditTextPreference
             android:inputType="number"
