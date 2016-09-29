@@ -37,7 +37,7 @@ public class CCThreeLMR extends ConnectedCar {
     }
 
     @Override
-    public boolean startStrategy(boolean newLockStatus, boolean smartphoneIsInPocket) {
+    public boolean startStrategy(boolean smartphoneIsInPocket) {
         return false;
     }
 

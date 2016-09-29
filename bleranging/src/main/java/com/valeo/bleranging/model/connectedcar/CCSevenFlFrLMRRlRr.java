@@ -60,10 +60,9 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
     }
 
     @Override
-    public boolean startStrategy(boolean newLockStatus, boolean smartphoneIsInPocket) {
+    public boolean startStrategy(boolean smartphoneIsInPocket) {
         boolean isInStartArea = isInStartArea(TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket));
         return (isInStartArea
-                && (!newLockStatus)
                 && (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -nearDoorRatioThreshold, true)
                 || compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, nearDoorRatioThreshold, false))
                 && (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_LEFT, nearDoorThresholdMLorMRMax, true)

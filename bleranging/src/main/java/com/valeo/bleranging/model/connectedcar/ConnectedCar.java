@@ -396,11 +396,10 @@ public abstract class ConnectedCar {
 
     /**
      * Condition to enable Start action
-     * @param newLockStatus        the car lock status
      * @param smartphoneIsInPocket the "is in pocket" status
      * @return true if the strategy is verified, false otherwise
      */
-    public abstract boolean startStrategy(boolean newLockStatus, boolean smartphoneIsInPocket);
+    public abstract boolean startStrategy(boolean smartphoneIsInPocket);
 
     /**
      * Check if we are in start area

@@ -8,11 +8,11 @@ import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
  */
 public class InblueProtocolManager {
 
-    private int packetOneCounter;
-    private boolean isStartRequested;
-    private boolean isLockedFromTrx;
-    private boolean isLockedToSend;
-    private boolean isThatcham;
+    private int packetOneCounter = 0;
+    private boolean isStartRequested = false;
+    private boolean isLockedFromTrx = false;
+    private boolean isLockedToSend = false;
+    private boolean isThatcham = false;
     private String carBase;
 
     public InblueProtocolManager() {
@@ -58,13 +58,17 @@ public class InblueProtocolManager {
         this.carBase = carBase;
     }
 
-    public byte[] getPacketOnePayload(){
+    public byte[] getPacketOnePayload(boolean isPassiveEntry) {
         byte[] payload = new byte[6];
         payload[0] = (byte) ((packetOneCounter>>8)&0xFF);
         payload[1] = (byte) ((packetOneCounter)&0xFF);
         payload[2] = (0x01);
         payload[5] = (byte) 0;
-        payload[5] |= isLockedToSend ? 0x01 : 0x02;
+        if (isPassiveEntry) {
+            payload[5] |= 0x00;
+        } else {
+            payload[5] |= isLockedToSend ? 0x01 : 0x02;
+        }
         payload[5] |= isStartRequested ? 0x04 : 0x00;
         payload[5] |= isThatcham ? 0x08 : 0x00;
         switch (carBase) {

@@ -103,7 +103,7 @@ public class BleRangingHelper implements SensorEventListener {
     private AtomicBoolean rearmWelcome = new AtomicBoolean(true);
     private AtomicBoolean rearmLock = new AtomicBoolean(true);
     private AtomicBoolean rearmUnlock = new AtomicBoolean(true);
-    private AtomicBoolean isPassiveEntryAction = new AtomicBoolean(false);
+    private AtomicBoolean isPassiveEntryAction = new AtomicBoolean(true);
     private Antenna.BLEChannel bleChannel = Antenna.BLEChannel.BLE_CHANNEL_37;
     private Handler mMainHandler;
     private Handler mLockStatusChangedHandler;
@@ -166,6 +166,7 @@ public class BleRangingHelper implements SensorEventListener {
             Log.d("NIH rearm", "abortCommandRunner");
             if(mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) {
                 mProtocolManager.setIsLockedToSend(mProtocolManager.isLockedFromTrx());
+                isPassiveEntryAction.set(true);
                 bleRangingListener.updateCarDoorStatus(mProtocolManager.isLockedFromTrx());
                 rearmLock.set(false);
             }
@@ -176,7 +177,7 @@ public class BleRangingHelper implements SensorEventListener {
         @Override
         public void run() {
             Log.d("NIH", "getPacketOnePayload then sendPackets");
-            bytesToSend = mProtocolManager.getPacketOnePayload();
+            bytesToSend = mProtocolManager.getPacketOnePayload(isPassiveEntryAction.get());
             mBluetoothManager.sendPackets(new byte[][]{bytesToSend});
             if (isFullyConnected() && mMainHandler != null) {
                 mMainHandler.postDelayed(this, 200);
@@ -237,8 +238,12 @@ public class BleRangingHelper implements SensorEventListener {
                     bleRangingListener.updateCarDoorStatus(newLockStatus);
                 }
                 mProtocolManager.setIsLockedFromTrx(newLockStatus);
-                if (lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
-                    mProtocolManager.setIsLockedToSend(mProtocolManager.isLockedFromTrx());
+                if (!isPassiveEntryAction.get() && lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
+                    if (mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) {
+                        isPassiveEntryAction.set(false);
+                    } else {
+                        isPassiveEntryAction.set(true);
+                    }
                     lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
                 }
                 if (checkNewPacketOnlyOneLaunch) {
@@ -469,7 +474,7 @@ public class BleRangingHelper implements SensorEventListener {
         }
     }
 
-    public synchronized Integer mostCommon(final Map<Integer, Integer> map) {
+    private synchronized Integer mostCommon(final Map<Integer, Integer> map) {
         Map.Entry<Integer, Integer> max = null;
         for (Map.Entry<Integer, Integer> e : map.entrySet()) {
             if (max == null || e.getValue() > max.getValue())
@@ -534,7 +539,7 @@ public class BleRangingHelper implements SensorEventListener {
         if (isFullyConnected()) {
             boolean isStartAllowed = false;
             String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-            isStartStrategyValid = connectedCar.startStrategy(mProtocolManager.isLockedToSend(), smartphoneIsInPocket);
+            isStartStrategyValid = connectedCar.startStrategy(smartphoneIsInPocket);
             isLockStrategyValid = connectedCar.lockStrategy(smartphoneIsInPocket);
             isUnlockStrategyValid = connectedCar.unlockStrategy(smartphoneIsInPocket);
             isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus, smartphoneIsInPocket);
@@ -557,9 +562,11 @@ public class BleRangingHelper implements SensorEventListener {
                 Log.d(" rssiHistorics", "unlock");
                 isPassiveEntryAction.set(true);
                 mProtocolManager.setThatcham(true);
-//                performLockVehicleRequest(false);
+                performLockVehicleRequest(false);
             } else if (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)) {
+                isPassiveEntryAction.set(true);
                 mProtocolManager.setThatcham(false);
+                performLockVehicleRequest(true);
             }
             if (isStartStrategyValid) {
                 isStartAllowed = true;
@@ -665,6 +672,7 @@ public class BleRangingHelper implements SensorEventListener {
         Log.w(" rssiHistorics", "************************************** runFirstConnection ************************************************");
         bleRangingListener.updateCarDoorStatus(newLockStatus);
         mProtocolManager.setIsLockedToSend(newLockStatus);
+        isPassiveEntryAction.set(true);
         lastCommandFromTrx = newLockStatus;
         if (connectedCar != null) {
             connectedCar.initializeTrx(newLockStatus);
@@ -812,7 +820,10 @@ public class BleRangingHelper implements SensorEventListener {
             isLockStatusChangedTimerExpired.set(false);
             //Launch timeout
             mLockStatusChangedHandler.postDelayed(mManageIsLockStatusChangedPeriodicTimer, LOCK_STATUS_CHANGED_TIMEOUT);
-            Log.e("NIH rearm", rearmStringBuilder.toString() + " and isAbortRunning = " + isAbortRunning + " and (LockTrx,LockSend) = (" + mProtocolManager.isLockedFromTrx() + "," + mProtocolManager.isLockedToSend() + ")");
+            Log.e("NIH rearm", rearmStringBuilder.toString() + " and isAbortRunning = "
+                    + isAbortRunning + " and (LockTrx,LockSend) = ("
+                    + mProtocolManager.isLockedFromTrx() + ","
+                    + mProtocolManager.isLockedToSend() + ")");
             if (mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) {
                 if (isAbortRunning) {
                     Log.e("NIH rearm", "isAbortRunning canceled");
