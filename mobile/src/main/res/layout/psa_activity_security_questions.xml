@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
 
     <TextView
         android:id="@+id/security_questions_subtitle"
@@ -13,9 +11,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="26dp"
-        android:text="TextView"
-        android:textAlignment="center"
-        tools:text="@string/security_questions_subtitle" />
+        android:text="@string/security_questions_subtitle"
+        android:textAlignment="center" />
 
     <TextView
         android:id="@+id/security_question_one"
@@ -27,9 +24,9 @@
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="45dp"
-        android:text="TextView"
-        android:textStyle="normal|bold"
-        tools:text="@string/security_question_one" />
+        android:labelFor="@+id/security_question_answer_one"
+        android:text="@string/security_question_one"
+        android:textStyle="normal|bold" />
 
     <TextView
         android:id="@+id/security_question_two"
@@ -40,6 +37,7 @@
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="26dp"
         android:contentDescription="@string/security_question_two"
+        android:labelFor="@+id/security_question_answer_two"
         android:text="@string/security_question_two"
         android:textStyle="normal|bold" />
 

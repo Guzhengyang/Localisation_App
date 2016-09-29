@@ -23,7 +23,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal|bottom"
-            android:text="5"
             android:textSize="35sp" />
 
         <TextView
@@ -31,8 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="-8dp"
-            android:gravity="center_horizontal|top"
-            android:text="ABC" />
+            android:gravity="center_horizontal|top" />
     </LinearLayout>
 
 </FrameLayout>

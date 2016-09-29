@@ -30,6 +30,12 @@
             android:label="@string/title_activity_login"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SecurityQuestionsActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_security_questions"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

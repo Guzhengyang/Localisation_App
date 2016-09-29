@@ -34,6 +34,8 @@ public class BlurView extends View {
     private RenderScript mRenderScript;
     private ScriptIntrinsicBlur mBlurScript;
     private Allocation mBlurInput, mBlurOutput;
+    private int[] mBlurredViewXY = new int[2];
+    private int[] mBlurringViewXY = new int[2];
 
     public BlurView(Context context) {
         this(context, null);
@@ -75,9 +77,11 @@ public class BlurView extends View {
                     mBitmapToBlur.eraseColor(Color.TRANSPARENT);
                 }
 
-                int[] mBlurredViewXY = new int[2];
+                mBlurredViewXY[0] = 0;
+                mBlurredViewXY[1] = 0;
                 mBlurredView.getLocationOnScreen(mBlurredViewXY);
-                int[] mBlurringViewXY = new int[2];
+                mBlurringViewXY[0] = 0;
+                mBlurringViewXY[1] = 0;
                 getLocationOnScreen(mBlurringViewXY);
 
                 mBlurredView.draw(mBlurringCanvas);

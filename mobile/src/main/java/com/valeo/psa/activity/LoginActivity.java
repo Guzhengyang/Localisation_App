@@ -6,7 +6,6 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
@@ -57,8 +56,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void doLogin() {
-        LayoutInflater factory = LayoutInflater.from(this);
-        final View dialogView = factory.inflate(R.layout.psa_sign_in_alert_dialog, null);
+        final View dialogView = View.inflate(this, R.layout.psa_sign_in_alert_dialog, null);
         final AlertDialog alertDialog = new AlertDialog.Builder(this, R.style.MyDialog).create();
         alertDialog.setView(dialogView);
         alertDialog.setCancelable(false);
