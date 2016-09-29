@@ -147,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private BleRangingHelper mBleRangingHelper;
     private boolean showMenu = true;
     private KeyguardManager mKeyguardManager;
+    private Car selectedCar = null;
 
     /**
      * Get the status bar height
@@ -387,14 +388,12 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         PendingIntent actionPendingIntent =
                 PendingIntent.getActivity(this, 0, actionIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
-        CarListAdapter.ViewHolder viewHolder = (CarListAdapter.ViewHolder) car_model_recyclerView.
-                findContainingViewHolder(car_model_recyclerView.getFocusedChild());
-        int position = viewHolder != null ? viewHolder.getAdapterPosition() : 0;
+        String carBrand = selectedCar == null ? mCarListAdapter.getCars()
+                .get(0).getBrandCar() : selectedCar.getBrandCar();
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(MainActivity.this)
                         .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(mCarListAdapter.getCars()
-                                .get(position).getBrandCar())
+                        .setContentTitle(carBrand)
                         .setContentText(message);
         NotificationCompat.Action action =
                 new NotificationCompat.Action.Builder(largeIcon,
@@ -484,7 +483,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      */
     private void setRecyclerView() {
         control_trunk_windows_lights.setHasFixedSize(true);
-        control_trunk_windows_lights.setAdapter(new MyRecyclerAdapter(MainActivity.this, new WeakReference<>(control_trunk_windows_lights), createActionControlList(), R.layout.psa_control_row, lightTypeFace, this, this));
+        control_trunk_windows_lights.setAdapter(new MyRecyclerAdapter(MainActivity.this,
+                new WeakReference<>(control_trunk_windows_lights), createActionControlList(),
+                R.layout.psa_control_row, lightTypeFace, this, this));
         control_trunk_windows_lights.setLayoutManager(new LinearLayoutManager(this));
         control_trunk_windows_lights.setItemAnimator(new DefaultItemAnimator());
         control_trunk_windows_lights.addItemDecoration(new DividerItemDecoration(this, R.drawable.divider_line));
@@ -528,7 +529,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         CarListAdapter.OnCarSelectionListener mCarSelectionListener = new CarListAdapter.OnCarSelectionListener() {
             @Override
             public void onCarSelection(View carSelected, int position) {
-                Car selectedCar = mCarListAdapter.getCars().get(position);
+                selectedCar = mCarListAdapter.getCars().get(position);
                 mCarListAdapter.setSelectedCarRegistrationPlate(selectedCar.getRegPlate());
             }
         };
