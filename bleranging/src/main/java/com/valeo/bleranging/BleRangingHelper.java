@@ -117,7 +117,7 @@ public class BleRangingHelper implements SensorEventListener {
             Log.d("NIH", "getPacketOnePayload then sendPackets");
             bytesToSend = mProtocolManager.getPacketOnePayload(isPassiveEntryAction.get());
             mBluetoothManager.sendPackets(new byte[][]{bytesToSend});
-            if (isFullyConnected() && mMainHandler != null) {
+            if (isFullyConnected()) {
                 mMainHandler.postDelayed(this, 200);
             }
         }
@@ -135,7 +135,7 @@ public class BleRangingHelper implements SensorEventListener {
                 lastPacketIdNumber[0] = bytesReceived[0];
                 lastPacketIdNumber[1] = bytesReceived[1];
             }
-            if (isFullyConnected() && mMainHandler != null) {
+            if (isFullyConnected()) {
                 mMainHandler.postDelayed(this, 10000);
             }
         }
@@ -176,74 +176,6 @@ public class BleRangingHelper implements SensorEventListener {
                 connectedCar.compareCheckerAndSetAntennaActive();
             }
             mMainHandler.postDelayed(this, 2500);
-        }
-    };
-    /**
-     * Handles various events fired by the Service.
-     * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
-     * ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
-     * or notification operations.
-     */
-    private final BroadcastReceiver mTrxUpdateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-                bytesReceived = mBluetoothManager.getBytesReceived();
-                Log.d("NIH", "TRX ACTION_DATA_AVAILABLE");
-                boolean oldLockStatus = newLockStatus;
-                newLockStatus = (bytesReceived[5] & 0x01) != 0;
-                if (isPassiveEntryAction.get() && oldLockStatus != newLockStatus) {
-//                    connectedCar.resetWithHysteresis(newLockStatus, isUnlockStrategyValid); //TODO concurrentModification
-                    bleRangingListener.updateCarDoorStatus(newLockStatus);
-                }
-                mProtocolManager.setIsLockedFromTrx(newLockStatus);
-                if (!isPassiveEntryAction.get() && lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
-                    if (mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) {
-                        isPassiveEntryAction.set(false);
-                    } else {
-                        isPassiveEntryAction.set(true);
-                    }
-                    lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
-                }
-                if (checkNewPacketOnlyOneLaunch) {
-                    checkNewPacketOnlyOneLaunch = false;
-                    mMainHandler.postDelayed(checkNewPacketsRunner, 1000);
-                }
-            } else if (BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED.equals(action)) {
-                Log.d("NIH", "TRX ACTION_GATT_CHARACTERISTIC_SUBSCRIBED");
-                mMainHandler.post(sendPacketRunner); // send works only after subscribed
-                bleRangingListener.updateBLEStatus();
-                mBluetoothManager.resumeLeScan();
-                if (isFirstConnection && isFullyConnected()) {
-                    isFirstConnection = false;
-                    runFirstConnection(newLockStatus);
-                    mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
-                    mHandlerTimeOut.removeCallbacks(null);
-                }
-            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
-                Log.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
-                    mMainHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            restartConnection(false);
-                        }
-                    }, 1000);
-            } else if (BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
-                Log.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
-                    mMainHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            restartConnection(false);
-                        }
-                    }, 1000);
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
-                Log.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                Log.d("NIH", "TRX ACTION_GATT_SERVICES_DISCOVERED");
-            } else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
-                Log.d("NIH", "TRX ACTION_GATT_CONNECTED");
-            }
         }
     };
     private byte welcomeByte = 0;
@@ -305,8 +237,76 @@ public class BleRangingHelper implements SensorEventListener {
                         fullTurnByte, rightTurnByte, recordByte, rangingPredictionInt,
                         mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(), mProtocolManager.isStartRequested());
             }
-            if (isFullyConnected() && mMainHandler != null) {
+            if (isFullyConnected()) {
                 mMainHandler.postDelayed(this, 105);
+            }
+        }
+    };
+    /**
+     * Handles various events fired by the Service.
+     * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
+     * ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
+     * or notification operations.
+     */
+    private final BroadcastReceiver mTrxUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                bytesReceived = mBluetoothManager.getBytesReceived();
+                Log.d("NIH", "TRX ACTION_DATA_AVAILABLE");
+                boolean oldLockStatus = newLockStatus;
+                newLockStatus = (bytesReceived[5] & 0x01) != 0;
+                if (isPassiveEntryAction.get() && oldLockStatus != newLockStatus) {
+//                    connectedCar.resetWithHysteresis(newLockStatus, isUnlockStrategyValid); //TODO concurrentModification
+                    bleRangingListener.updateCarDoorStatus(newLockStatus);
+                }
+                mProtocolManager.setIsLockedFromTrx(newLockStatus);
+                if (!isPassiveEntryAction.get() && lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
+                    if (mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) {
+                        isPassiveEntryAction.set(false);
+                    } else {
+                        isPassiveEntryAction.set(true);
+                    }
+                    lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
+                }
+                if (checkNewPacketOnlyOneLaunch) {
+                    checkNewPacketOnlyOneLaunch = false;
+                    mMainHandler.postDelayed(checkNewPacketsRunner, 1000);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED.equals(action)) {
+                Log.d("NIH", "TRX ACTION_GATT_CHARACTERISTIC_SUBSCRIBED");
+                mMainHandler.post(sendPacketRunner); // send works only after subscribed
+                bleRangingListener.updateBLEStatus();
+                mBluetoothManager.resumeLeScan();
+                if (isFirstConnection && isFullyConnected()) {
+                    isFirstConnection = false;
+                    runFirstConnection(newLockStatus);
+                    mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
+                    mHandlerTimeOut.removeCallbacks(null);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                Log.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
+                mMainHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        restartConnection(false);
+                    }
+                }, 1000);
+            } else if (BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
+                Log.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
+                mMainHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        restartConnection(false);
+                    }
+                }, 1000);
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
+                Log.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                Log.d("NIH", "TRX ACTION_GATT_SERVICES_DISCOVERED");
+            } else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                Log.d("NIH", "TRX ACTION_GATT_CONNECTED");
             }
         }
     };
@@ -374,10 +374,7 @@ public class BleRangingHelper implements SensorEventListener {
         lastPacketIdNumber[1] = 0;
         makeNoise(ToneGenerator.TONE_CDMA_NETWORK_USA_RINGBACK, 100);
         if (createConnectedCar) {
-            connectedCar = null;
-            lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-            connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
-            mProtocolManager.setCarBase(SdkPreferencesHelper.getInstance().getConnectedCarBase());
+            createConnectedCar();
         }
         // wait to close every connection before creating them again
         new Handler().postDelayed(new Runnable() {
@@ -608,71 +605,66 @@ public class BleRangingHelper implements SensorEventListener {
         } else {
             bleRangingListener.darkenArea(START_AREA);
         }
-        //UNLOCK
-        if ((isLockStrategyValid && isUnlockStrategyValid != null)
-                || (!isLockStrategyValid && isUnlockStrategyValid == null)) {
-            // do nothing
-        } else {
-            if (!isLockStrategyValid) {
-                bleRangingListener.darkenArea(LOCK_AREA);
-                bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
-                bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
-                bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
-                bleRangingListener.darkenArea(UNLOCK_FRONT_LEFT_AREA);
-                bleRangingListener.darkenArea(UNLOCK_REAR_LEFT_AREA);
-                bleRangingListener.darkenArea(UNLOCK_FRONT_RIGHT_AREA);
-                bleRangingListener.darkenArea(UNLOCK_REAR_RIGHT_AREA);
-                for (Integer integer : isUnlockStrategyValid) {
-                    switch (integer) {
-                        case ConnectedCar.NUMBER_TRX_LEFT:
-                            bleRangingListener.lightUpArea(UNLOCK_LEFT_AREA);
-                            break;
-                        case ConnectedCar.NUMBER_TRX_RIGHT:
-                            bleRangingListener.lightUpArea(UNLOCK_RIGHT_AREA);
-                            break;
-                        case ConnectedCar.NUMBER_TRX_BACK:
-                            bleRangingListener.lightUpArea(UNLOCK_BACK_AREA);
-                            break;
-                        case ConnectedCar.NUMBER_TRX_FRONT_LEFT:
-                            bleRangingListener.lightUpArea(UNLOCK_FRONT_LEFT_AREA);
-                            break;
-                        case ConnectedCar.NUMBER_TRX_REAR_LEFT:
-                            bleRangingListener.lightUpArea(UNLOCK_REAR_LEFT_AREA);
-                            break;
-                        case ConnectedCar.NUMBER_TRX_FRONT_RIGHT:
-                            bleRangingListener.lightUpArea(UNLOCK_FRONT_RIGHT_AREA);
-                            break;
-                        case ConnectedCar.NUMBER_TRX_REAR_RIGHT:
-                            bleRangingListener.lightUpArea(UNLOCK_REAR_RIGHT_AREA);
-                            break;
-                        default:
-                            bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
-                            bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
-                            bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
-                            bleRangingListener.darkenArea(UNLOCK_FRONT_LEFT_AREA);
-                            bleRangingListener.darkenArea(UNLOCK_REAR_LEFT_AREA);
-                            bleRangingListener.darkenArea(UNLOCK_FRONT_RIGHT_AREA);
-                            bleRangingListener.darkenArea(UNLOCK_REAR_RIGHT_AREA);
-                            break;
-                    }
-                }
-            } else {
-                // LOCK
-                bleRangingListener.lightUpArea(LOCK_AREA);
-                bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
-                bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
-                bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
-                bleRangingListener.darkenArea(UNLOCK_FRONT_LEFT_AREA);
-                bleRangingListener.darkenArea(UNLOCK_REAR_LEFT_AREA);
-                bleRangingListener.darkenArea(UNLOCK_FRONT_RIGHT_AREA);
-                bleRangingListener.darkenArea(UNLOCK_REAR_RIGHT_AREA);
-            }
-        }
         // WELCOME
         if (rearmWelcome.get() && isWelcomeStrategyValid) {
             bleRangingListener.lightUpArea(WELCOME_AREA);
         } else {
             bleRangingListener.darkenArea(WELCOME_AREA);
+        }
+        if (!isLockStrategyValid && isUnlockStrategyValid != null) {
+            //UNLOCK
+            bleRangingListener.darkenArea(LOCK_AREA);
+            bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
+            bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
+            bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
+            bleRangingListener.darkenArea(UNLOCK_FRONT_LEFT_AREA);
+            bleRangingListener.darkenArea(UNLOCK_REAR_LEFT_AREA);
+            bleRangingListener.darkenArea(UNLOCK_FRONT_RIGHT_AREA);
+            bleRangingListener.darkenArea(UNLOCK_REAR_RIGHT_AREA);
+            for (Integer integer : isUnlockStrategyValid) {
+                switch (integer) {
+                    case ConnectedCar.NUMBER_TRX_LEFT:
+                        bleRangingListener.lightUpArea(UNLOCK_LEFT_AREA);
+                        break;
+                    case ConnectedCar.NUMBER_TRX_RIGHT:
+                        bleRangingListener.lightUpArea(UNLOCK_RIGHT_AREA);
+                        break;
+                    case ConnectedCar.NUMBER_TRX_BACK:
+                        bleRangingListener.lightUpArea(UNLOCK_BACK_AREA);
+                        break;
+                    case ConnectedCar.NUMBER_TRX_FRONT_LEFT:
+                        bleRangingListener.lightUpArea(UNLOCK_FRONT_LEFT_AREA);
+                        break;
+                    case ConnectedCar.NUMBER_TRX_REAR_LEFT:
+                        bleRangingListener.lightUpArea(UNLOCK_REAR_LEFT_AREA);
+                        break;
+                    case ConnectedCar.NUMBER_TRX_FRONT_RIGHT:
+                        bleRangingListener.lightUpArea(UNLOCK_FRONT_RIGHT_AREA);
+                        break;
+                    case ConnectedCar.NUMBER_TRX_REAR_RIGHT:
+                        bleRangingListener.lightUpArea(UNLOCK_REAR_RIGHT_AREA);
+                        break;
+                    default:
+                        bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
+                        bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
+                        bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
+                        bleRangingListener.darkenArea(UNLOCK_FRONT_LEFT_AREA);
+                        bleRangingListener.darkenArea(UNLOCK_REAR_LEFT_AREA);
+                        bleRangingListener.darkenArea(UNLOCK_FRONT_RIGHT_AREA);
+                        bleRangingListener.darkenArea(UNLOCK_REAR_RIGHT_AREA);
+                        break;
+                }
+            }
+        } else if (isLockStrategyValid && isUnlockStrategyValid == null) {
+            // LOCK
+            bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
+            bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
+            bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
+            bleRangingListener.darkenArea(UNLOCK_FRONT_LEFT_AREA);
+            bleRangingListener.darkenArea(UNLOCK_REAR_LEFT_AREA);
+            bleRangingListener.darkenArea(UNLOCK_FRONT_RIGHT_AREA);
+            bleRangingListener.darkenArea(UNLOCK_REAR_RIGHT_AREA);
+            bleRangingListener.lightUpArea(LOCK_AREA);
         }
     }
 
@@ -698,9 +690,7 @@ public class BleRangingHelper implements SensorEventListener {
     public void initializeConnectedCar() {
         if (lastConnectedCarType.equals("")) {
             // on first run, create a new car
-            lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-            connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
-            mProtocolManager.setCarBase(SdkPreferencesHelper.getInstance().getConnectedCarBase());
+            createConnectedCar();
         } else if (!lastConnectedCarType.equalsIgnoreCase(SdkPreferencesHelper.getInstance().getConnectedCarType())) {
             // if car type has changed,
             if (isFullyConnected()) {
@@ -708,15 +698,20 @@ public class BleRangingHelper implements SensorEventListener {
                 restartConnection(true);
             } else {
                 // if not connected, create a new car
-                lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-                connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
-                mProtocolManager.setCarBase(SdkPreferencesHelper.getInstance().getConnectedCarBase());
+                createConnectedCar();
             }
         } else {
             // car type did not changed, but settings did
             connectedCar.resetSettings();
             mProtocolManager.setCarBase(SdkPreferencesHelper.getInstance().getConnectedCarBase());
         }
+    }
+
+    private void createConnectedCar() {
+        connectedCar = null;
+        lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
+        connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
+        mProtocolManager.setCarBase(SdkPreferencesHelper.getInstance().getConnectedCarBase());
     }
 
     /**

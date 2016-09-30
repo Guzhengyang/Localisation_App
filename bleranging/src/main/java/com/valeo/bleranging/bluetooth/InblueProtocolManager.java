@@ -65,8 +65,21 @@ public class InblueProtocolManager {
         payload[2] = (0x01);
         payload[5] = (byte) 0;
         if (isPassiveEntry) {
-            payload[5] |= 0x00;
+            // if PSU or PEPS
+            if ((carBase.equalsIgnoreCase(ConnectedCarFactory.BASE_2) || carBase.equalsIgnoreCase(ConnectedCarFactory.BASE_3))
+                    && isLockedToSend) {
+                // WAL base 2 et 3
+                payload[5] |= 0x01;
+            } else if ((carBase.equalsIgnoreCase(ConnectedCarFactory.BASE_3) || carBase.equalsIgnoreCase(ConnectedCarFactory.BASE_4))
+                    && !isLockedToSend) {
+                // UIR base 3 et 4
+                payload[5] |= 0x02;
+            } else {
+                // PSU base 1 et 2 et 4
+                payload[5] |= 0x00;
+            }
         } else {
+            // if RKE
             payload[5] |= isLockedToSend ? 0x01 : 0x02;
         }
         payload[5] |= isStartRequested ? 0x04 : 0x00;
