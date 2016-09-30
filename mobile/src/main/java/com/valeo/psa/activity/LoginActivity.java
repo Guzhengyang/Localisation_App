@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by l-avaratha on 02/09/2016.
+ * Created by l-avaratha on 02/09/2016
  */
 public class LoginActivity extends AppCompatActivity {
     private static final String EMAIL_PATTERN = "^[a-zA-Z0-9#_~!$&'()*+,;=:.\"<>@\\[\\]\\\\]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*$";
@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void doLogin() {
+    private void doLogin() {
         final View dialogView = View.inflate(this, R.layout.psa_sign_in_alert_dialog, null);
         final AlertDialog alertDialog = new AlertDialog.Builder(this, R.style.MyDialog).create();
         alertDialog.setView(dialogView);
@@ -83,12 +83,12 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public boolean validateEmail(String email) {
+    private boolean validateEmail(String email) {
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
 
-    public boolean validatePassword(String password) {
+    private boolean validatePassword(String password) {
         return password.length() > 5;
     }
 }

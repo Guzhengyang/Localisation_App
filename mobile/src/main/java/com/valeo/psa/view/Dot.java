@@ -10,7 +10,7 @@ import android.widget.FrameLayout;
 import com.valeo.psa.R;
 
 /**
- * Created by Weiping on 2016/3/17.
+ * Created by Weiping on 2016/3/17
  */
 public class Dot extends FrameLayout {
 

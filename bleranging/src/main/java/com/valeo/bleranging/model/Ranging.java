@@ -11,7 +11,7 @@ import weka.core.SerializationHelper;
 import weka.core.converters.ConverterUtils;
 
 /**
- * Created by Zhengyang on 29/08/2016.
+ * Created by Zhengyang on 29/08/2016
  */
 public class Ranging {
     private final Instance instance;

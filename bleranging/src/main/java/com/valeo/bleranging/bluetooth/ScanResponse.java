@@ -3,7 +3,7 @@ package com.valeo.bleranging.bluetooth;
 import java.util.Arrays;
 
 /**
- * Created by nhaan on 24/08/2015.
+ * Created by nhaan on 24/08/2015
  */
 public class ScanResponse {
     public final byte antennaId;

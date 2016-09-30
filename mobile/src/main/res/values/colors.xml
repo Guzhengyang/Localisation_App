@@ -9,7 +9,6 @@
     <color name="ble_status">#595766</color>
     <color name="tips">#FF9E9E9E</color>
     <color name="car_not_selected_button">#8f929b</color>
-    <color name="car_slider_inactive_bg">#f3f3f1</color>
     <color name="content_start_car_dialog">#FA333333</color>
     <color name="countdown_past">#258f929b</color>
     <color name="default_big_button_text_color">#ffffff</color>

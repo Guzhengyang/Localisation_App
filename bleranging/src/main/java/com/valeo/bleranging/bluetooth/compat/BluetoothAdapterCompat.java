@@ -271,13 +271,5 @@ public final class BluetoothAdapterCompat {
         return scanFilters;
     }
 
-    public boolean enable() {
-        return mBluetoothAdapter.enable();
-    }
-
-    public boolean disable() {
-        return mBluetoothAdapter.disable();
-    }
-
     // endregion
 }

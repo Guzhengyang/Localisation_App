@@ -28,8 +28,6 @@
     <dimen name="psa_56_px">56px</dimen>
     <dimen name="psa_70_px">70px</dimen>
     <dimen name="psa_header_padding">60dp</dimen>
-    <dimen name="psa_header_ble_padding">80dp</dimen>
-    <dimen name="psa_header_ble_model_padding">130dp</dimen>
     <dimen name="psa_header_icon_right_padding">10dp</dimen>
     <dimen name="status_bar_height">24dp</dimen>
     <dimen name="car_model_type_margin">24dp</dimen>

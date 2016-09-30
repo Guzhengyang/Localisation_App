@@ -3,7 +3,7 @@ package com.valeo.bleranging.model.connectedcar;
 import android.content.Context;
 
 /**
- * Created by l-avaratha on 07/09/2016.
+ * Created by l-avaratha on 07/09/2016
  */
 public class ConnectedCarFactory {
     public final static String TYPE_4_A = "fourLMRB";

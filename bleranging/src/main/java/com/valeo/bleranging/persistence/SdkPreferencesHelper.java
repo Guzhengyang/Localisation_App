@@ -175,31 +175,47 @@ public final class SdkPreferencesHelper {
         return sSingleInstance;
     }
 
-    public void setNearDoorThreshold(final String fileName, int nearDoorThreshold) {
-        saveInt(fileName, NEAR_DOOR_THR_PREFERENCES_NAME, nearDoorThreshold);
-    }
-    public void setEquallyNearThreshold(final String fileName, int equallyNearDoorThreshold) {
-        saveInt(fileName, EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME, equallyNearDoorThreshold);
-    }
-    public void setNearerThreshold(final String fileName, int nearerDoorThreshold) {
-        saveInt(fileName, NEARER_DOOR_THR_PREFERENCES_NAME, nearerDoorThreshold);
-    }
-    public void setRatioMaxMinThreshold(final String fileName, int ratioMaxMinThreshold) {
-        saveInt(fileName, RATIO_MAX_MIN_THR_PREFERENCES_NAME, ratioMaxMinThreshold);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setNearDoorThreshold(final String fileName, int nearDoorThreshold) {
+//        saveInt(fileName, NEAR_DOOR_THR_PREFERENCES_NAME, nearDoorThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setEquallyNearThreshold(final String fileName, int equallyNearDoorThreshold) {
+//        saveInt(fileName, EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME, equallyNearDoorThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setNearerThreshold(final String fileName, int nearerDoorThreshold) {
+//        saveInt(fileName, NEARER_DOOR_THR_PREFERENCES_NAME, nearerDoorThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setRatioMaxMinThreshold(final String fileName, int ratioMaxMinThreshold) {
+//        saveInt(fileName, RATIO_MAX_MIN_THR_PREFERENCES_NAME, ratioMaxMinThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
-    public void setRatioCloseToCarThreshold(final String fileName, int ratioCloseToCarThreshold) {
-        saveInt(fileName, RATIO_CLOSE_TO_CAR_THR_PREFERENCES_NAME, ratioCloseToCarThreshold);
-    }
-    public int getNearDoorThreshold(final String fileName) {
-        return readInt(fileName, NEAR_DOOR_THR_PREFERENCES_NAME, NEAR_DOOR_THR);
-    }
-    public int getEquallyNearThreshold(final String fileName) {
-        return readInt(fileName, EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME, EQUALLY_NEAR_DOOR_THR);
-    }
-    public int getNearerThreshold(final String fileName) {
-        return readInt(fileName, NEARER_DOOR_THR_PREFERENCES_NAME, NEARER_DOOR_THR);
-    }
+    // --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setRatioCloseToCarThreshold(final String fileName, int ratioCloseToCarThreshold) {
+//        saveInt(fileName, RATIO_CLOSE_TO_CAR_THR_PREFERENCES_NAME, ratioCloseToCarThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public int getNearDoorThreshold(final String fileName) {
+//        return readInt(fileName, NEAR_DOOR_THR_PREFERENCES_NAME, NEAR_DOOR_THR);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public int getEquallyNearThreshold(final String fileName) {
+//        return readInt(fileName, EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME, EQUALLY_NEAR_DOOR_THR);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public int getNearerThreshold(final String fileName) {
+//        return readInt(fileName, NEARER_DOOR_THR_PREFERENCES_NAME, NEARER_DOOR_THR);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
     public int getRatioMaxMinThreshold(final String fileName) {
         return readInt(fileName, RATIO_MAX_MIN_THR_PREFERENCES_NAME, RATIO_MAX_MIN_THR);
     }
@@ -208,137 +224,183 @@ public final class SdkPreferencesHelper {
         return readInt(fileName, RATIO_CLOSE_TO_CAR_THR_PREFERENCES_NAME, RATIO_CLOSE_TO_CAR_THR);
     }
 
-    public void setNearDoorThresholdLMorMRMax(final String fileName, int nearDoorRatioThreshold) {
-        saveInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME, nearDoorRatioThreshold);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setNearDoorThresholdLMorMRMax(final String fileName, int nearDoorRatioThreshold) {
+//        saveInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME, nearDoorRatioThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
-    public void setNearDoorThresholdMB(final String fileName, int nearDoorRatioThreshold) {
-        saveInt(fileName, NEAR_DOOR_RATIO_THR_MB_PREFERENCES_NAME, nearDoorRatioThreshold);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setNearDoorThresholdMB(final String fileName, int nearDoorRatioThreshold) {
+//        saveInt(fileName, NEAR_DOOR_RATIO_THR_MB_PREFERENCES_NAME, nearDoorRatioThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
-    public void setNearDoorThresholdLMorMRMin(final String fileName, int nearDoorRatioThreshold) {
-        saveInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME, nearDoorRatioThreshold);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setNearDoorThresholdLMorMRMin(final String fileName, int nearDoorRatioThreshold) {
+//        saveInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME, nearDoorRatioThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
-    public void setEqualizerLeft(final String fileName, int equalizer) {
-        saveInt(fileName, EQUALIZER_LEFT_PREFERENCES_NAME, equalizer);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setEqualizerLeft(final String fileName, int equalizer) {
+//        saveInt(fileName, EQUALIZER_LEFT_PREFERENCES_NAME, equalizer);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
-    public void setEqualizerMiddle(final String fileName, int equalizer) {
-        saveInt(fileName, EQUALIZER_MIDDLE_PREFERENCES_NAME, equalizer);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setEqualizerMiddle(final String fileName, int equalizer) {
+//        saveInt(fileName, EQUALIZER_MIDDLE_PREFERENCES_NAME, equalizer);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
-    public void setEqualizerRight(final String fileName, int equalizer) {
-        saveInt(fileName, EQUALIZER_RIGHT_PREFERENCES_NAME, equalizer);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setEqualizerRight(final String fileName, int equalizer) {
+//        saveInt(fileName, EQUALIZER_RIGHT_PREFERENCES_NAME, equalizer);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
-    public void setEqualizerBack(final String fileName, int equalizer) {
-        saveInt(fileName, EQUALIZER_BACK_PREFERENCES_NAME, equalizer);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setEqualizerBack(final String fileName, int equalizer) {
+//        saveInt(fileName, EQUALIZER_BACK_PREFERENCES_NAME, equalizer);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
-    public void setEqualizerFrontLeft(final String fileName, int equalizer) {
-        saveInt(fileName, EQUALIZER_FRONT_LEFT_PREFERENCES_NAME, equalizer);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setEqualizerFrontLeft(final String fileName, int equalizer) {
+//        saveInt(fileName, EQUALIZER_FRONT_LEFT_PREFERENCES_NAME, equalizer);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
-    public void setEqualizerFrontRight(final String fileName, int equalizer) {
-        saveInt(fileName, EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME, equalizer);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setEqualizerFrontRight(final String fileName, int equalizer) {
+//        saveInt(fileName, EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME, equalizer);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
-    public void setEqualizerRearLeft(final String fileName, int equalizer) {
-        saveInt(fileName, EQUALIZER_REAR_LEFT_PREFERENCES_NAME, equalizer);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setEqualizerRearLeft(final String fileName, int equalizer) {
+//        saveInt(fileName, EQUALIZER_REAR_LEFT_PREFERENCES_NAME, equalizer);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
-    public void setEqualizerRearRight(final String fileName, int equalizer) {
-        saveInt(fileName, EQUALIZER_REAR_RIGHT_PREFERENCES_NAME, equalizer);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setEqualizerRearRight(final String fileName, int equalizer) {
+//        saveInt(fileName, EQUALIZER_REAR_RIGHT_PREFERENCES_NAME, equalizer);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
-    public void setSelectedLocation(final String fileName, final String selectedLocation) {
-        saveString(fileName, SELECTED_LOCATION_PREFERENCES_NAME, selectedLocation);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setSelectedLocation(final String fileName, final String selectedLocation) {
+//        saveString(fileName, SELECTED_LOCATION_PREFERENCES_NAME, selectedLocation);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
-    public String getSelectedLocation(final String fileName, final String defaultValue) {
-        return readString(fileName, SELECTED_LOCATION_PREFERENCES_NAME, defaultValue);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public String getSelectedLocation(final String fileName, final String defaultValue) {
+//        return readString(fileName, SELECTED_LOCATION_PREFERENCES_NAME, defaultValue);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getOffsetPocketForStart(final String fileName) {
         return readInt(fileName, OFFSET_POCKET_FOR_START_PREFERENCES_NAME, OFFSET_POCKET_FOR_START);
     }
 
-    public void setOffsetPocketForStart(final String fileName, int offsetPocket) {
-        saveInt(fileName, OFFSET_POCKET_FOR_START_PREFERENCES_NAME, offsetPocket);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setOffsetPocketForStart(final String fileName, int offsetPocket) {
+//        saveInt(fileName, OFFSET_POCKET_FOR_START_PREFERENCES_NAME, offsetPocket);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getOffsetPocketForLock(final String fileName) {
         return readInt(fileName, OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME, OFFSET_POCKET_FOR_LOCK);
     }
 
-    public void setOffsetPocketForLock(final String fileName, int offsetPocket) {
-        saveInt(fileName, OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME, offsetPocket);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setOffsetPocketForLock(final String fileName, int offsetPocket) {
+//        saveInt(fileName, OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME, offsetPocket);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getOffsetPocketForUnlock(final String fileName) {
         return readInt(fileName, OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME, OFFSET_POCKET_FOR_UNLOCK);
     }
 
-    public void setOffsetPocketForUnlock(final String fileName, int offsetPocket) {
-        saveInt(fileName, OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME, offsetPocket);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setOffsetPocketForUnlock(final String fileName, int offsetPocket) {
+//        saveInt(fileName, OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME, offsetPocket);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getStartThreshold(final String fileName) {
         return readInt(fileName, START_THR_PREFERENCES_NAME, START_THRESHOLD);
     }
 
-    public void setStartThreshold(final String fileName, int startThreshold) {
-        saveInt(fileName, START_THR_PREFERENCES_NAME, startThreshold);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setStartThreshold(final String fileName, int startThreshold) {
+//        saveInt(fileName, START_THR_PREFERENCES_NAME, startThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getUnlockThreshold(final String fileName) {
         return readInt(fileName, UNLOCK_THR_PREFERENCES_NAME, UNLOCK_IN_THE_RUN_THRESHOLD);
     }
 
-    public void setUnlockThreshold(final String fileName, int unlockThreshold) {
-        saveInt(fileName, UNLOCK_THR_PREFERENCES_NAME, unlockThreshold);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setUnlockThreshold(final String fileName, int unlockThreshold) {
+//        saveInt(fileName, UNLOCK_THR_PREFERENCES_NAME, unlockThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getLockThreshold(final String fileName) {
         return readInt(fileName, LOCK_THR_PREFERENCES_NAME, WALK_AWAY_LOCKING_THRESHOLD);
     }
 
-    public void setLockThreshold(final String fileName, int lockThreshold) {
-        saveInt(fileName, LOCK_THR_PREFERENCES_NAME, lockThreshold);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setLockThreshold(final String fileName, int lockThreshold) {
+//        saveInt(fileName, LOCK_THR_PREFERENCES_NAME, lockThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getWelcomeThreshold(final String fileName) {
         return readInt(fileName, WELCOME_THR_PREFERENCES_NAME, WELCOME_THRESHOLD);
     }
 
-    public void setWelcomeThreshold(final String fileName, int welcomeThreshold) {
-        saveInt(fileName, WELCOME_THR_PREFERENCES_NAME, welcomeThreshold);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setWelcomeThreshold(final String fileName, int welcomeThreshold) {
+//        saveInt(fileName, WELCOME_THR_PREFERENCES_NAME, welcomeThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getNearDoorRatioThreshold(final String fileName) {
         return readInt(fileName, NEAR_DOOR_RATIO_THR_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD);
     }
 
-    public void setNearDoorRatioThreshold(final String fileName, int nearDoorRatioThreshold) {
-        saveInt(fileName, NEAR_DOOR_RATIO_THR_PREFERENCES_NAME, nearDoorRatioThreshold);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setNearDoorRatioThreshold(final String fileName, int nearDoorRatioThreshold) {
+//        saveInt(fileName, NEAR_DOOR_RATIO_THR_PREFERENCES_NAME, nearDoorRatioThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getNearBackDoorRatioThresholdMin(final String fileName) {
         return readInt(fileName, NEAR_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME, NEAR_BACKDOOR_RATIO_THRESHOLD_MIN);
     }
 
-    public void setNearBackDoorRatioThresholdMin(final String fileName, int nearBackDoorRatioThresholdMin) {
-        saveInt(fileName, NEAR_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME, nearBackDoorRatioThresholdMin);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setNearBackDoorRatioThresholdMin(final String fileName, int nearBackDoorRatioThresholdMin) {
+//        saveInt(fileName, NEAR_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME, nearBackDoorRatioThresholdMin);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getNearBackDoorRatioThresholdMax(final String fileName) {
         return readInt(fileName, NEAR_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME, NEAR_BACKDOOR_RATIO_THRESHOLD_MAX);
     }
 
-    public void setNearBackDoorRatioThresholdMax(final String fileName, int nearBackDoorRatioThresholdMax) {
-        saveInt(fileName, NEAR_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME, nearBackDoorRatioThresholdMax);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setNearBackDoorRatioThresholdMax(final String fileName, int nearBackDoorRatioThresholdMax) {
+//        saveInt(fileName, NEAR_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME, nearBackDoorRatioThresholdMax);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getNearDoorThresholdMLorMRMax(final String fileName) {
         return readInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MAX);
@@ -356,81 +418,101 @@ public final class SdkPreferencesHelper {
         return readInt(fileName, AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME, AVERAGE_DELTA_UNLOCK_THRESHOLD);
     }
 
-    public void setAverageDeltaUnlockThreshold(final String fileName, int averageDeltaThreshold) {
-        saveInt(fileName, AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setAverageDeltaUnlockThreshold(final String fileName, int averageDeltaThreshold) {
+//        saveInt(fileName, AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getAverageDeltaLockThreshold(final String fileName) {
         return readInt(fileName, AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME, AVERAGE_DELTA_LOCK_THRESHOLD);
     }
 
-    public void setAverageDeltaLockThreshold(final String fileName, int averageDeltaThreshold) {
-        saveInt(fileName, AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setAverageDeltaLockThreshold(final String fileName, int averageDeltaThreshold) {
+//        saveInt(fileName, AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getUnlockValidNb(final String fileName) {
         return readInt(fileName, UNLOCK_VALID_NB_PREFERENCES_NAME, UNLOCK_VALID_NB);
     }
 
-    public void setUnlockValidNb(final String fileName, int unlockValidNb) {
-        saveInt(fileName, UNLOCK_VALID_NB_PREFERENCES_NAME, unlockValidNb);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setUnlockValidNb(final String fileName, int unlockValidNb) {
+//        saveInt(fileName, UNLOCK_VALID_NB_PREFERENCES_NAME, unlockValidNb);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getUnlockMode(final String fileName) {
         return readInt(fileName, UNLOCK_MODE_PREFERENCES_NAME, UNLOCK_MODE);
     }
 
-    public void setUnlockMode(final String fileName, int unlockMode) {
-        saveInt(fileName, UNLOCK_MODE_PREFERENCES_NAME, unlockMode);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setUnlockMode(final String fileName, int unlockMode) {
+//        saveInt(fileName, UNLOCK_MODE_PREFERENCES_NAME, unlockMode);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getLockMode(final String fileName) {
         return readInt(fileName, LOCK_MODE_PREFERENCES_NAME, LOCK_MODE);
     }
 
-    public void setLockMode(final String fileName, int lockMode) {
-        saveInt(fileName, LOCK_MODE_PREFERENCES_NAME, lockMode);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setLockMode(final String fileName, int lockMode) {
+//        saveInt(fileName, LOCK_MODE_PREFERENCES_NAME, lockMode);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getStartMode(final String fileName) {
         return readInt(fileName, START_MODE_PREFERENCES_NAME, START_MODE);
     }
 
-    public void setStartMode(final String fileName, int startMode) {
-        saveInt(fileName, START_MODE_PREFERENCES_NAME, startMode);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setStartMode(final String fileName, int startMode) {
+//        saveInt(fileName, START_MODE_PREFERENCES_NAME, startMode);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public float getEcretage70_100(final String fileName) {
         return readFloat(fileName, ECRETAGE_70_100_PREFERENCES_NAME, ECRETAGE_70_100);
     }
 
-    public void setEcretage70_100(final String fileName, float ecretage) {
-        saveFloat(fileName, ECRETAGE_70_100_PREFERENCES_NAME, ecretage);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setEcretage70_100(final String fileName, float ecretage) {
+//        saveFloat(fileName, ECRETAGE_70_100_PREFERENCES_NAME, ecretage);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public float getEcretage50_70(final String fileName) {
         return readFloat(fileName, ECRETAGE_50_70_PREFERENCES_NAME, ECRETAGE_50_70);
     }
 
-    public void setEcretage50_70(final String fileName, float ecretage) {
-        saveFloat(fileName, ECRETAGE_50_70_PREFERENCES_NAME, ecretage);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setEcretage50_70(final String fileName, float ecretage) {
+//        saveFloat(fileName, ECRETAGE_50_70_PREFERENCES_NAME, ecretage);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public float getEcretage30_50(final String fileName) {
         return readFloat(fileName, ECRETAGE_30_50_PREFERENCES_NAME, ECRETAGE_30_50);
     }
 
-    public void setEcretage30_50(final String fileName, float ecretage) {
-        saveFloat(fileName, ECRETAGE_30_50_PREFERENCES_NAME, ecretage);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setEcretage30_50(final String fileName, float ecretage) {
+//        saveFloat(fileName, ECRETAGE_30_50_PREFERENCES_NAME, ecretage);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public float getEcretage30_30(final String fileName) {
         return readFloat(fileName, ECRETAGE_30_30_PREFERENCES_NAME, ECRETAGE_30_30);
     }
 
-    public void setEcretage30_30(final String fileName, float ecretage) {
-        saveFloat(fileName, ECRETAGE_30_30_PREFERENCES_NAME, ecretage);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setEcretage30_30(final String fileName, float ecretage) {
+//        saveFloat(fileName, ECRETAGE_30_30_PREFERENCES_NAME, ecretage);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getTrxRssiEqualizerLeft(final String fileName) {
         return readInt(fileName, EQUALIZER_LEFT_PREFERENCES_NAME, EQUALIZER_LEFT);
@@ -468,9 +550,11 @@ public final class SdkPreferencesHelper {
         return readBoolean(SAVED_LIGHT_CAPTOR, LIGHT_CAPTOR_PREFERENCES_NAME, false);
     }
 
-    public void enableLightCaptorEnabled(final boolean enable) {
-        saveBoolean(SAVED_LIGHT_CAPTOR, LIGHT_CAPTOR_PREFERENCES_NAME, enable);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void enableLightCaptorEnabled(final boolean enable) {
+//        saveBoolean(SAVED_LIGHT_CAPTOR, LIGHT_CAPTOR_PREFERENCES_NAME, enable);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public String getConnectedCarType() {
         return readString(SAVED_CC_GENERIC_OPTION, CONNECTED_CAR_TYPE_PREFERENCES_NAME, ConnectedCarFactory.TYPE_4_A);
@@ -484,9 +568,11 @@ public final class SdkPreferencesHelper {
         return readFloat(SAVED_CC_GENERIC_OPTION, THATCHAM_TIMEOUT_PREFERENCES_NAME, THATCHAM_TIMEOUT);
     }
 
-    public void setThatchamTimeout(float thatchamTimeout) {
-        saveFloat(SAVED_CC_GENERIC_OPTION, THATCHAM_TIMEOUT_PREFERENCES_NAME, thatchamTimeout);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setThatchamTimeout(float thatchamTimeout) {
+//        saveFloat(SAVED_CC_GENERIC_OPTION, THATCHAM_TIMEOUT_PREFERENCES_NAME, thatchamTimeout);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getRssiLogNumber() {
         return readInt(SAVED_CC_GENERIC_OPTION, RSSI_LOG_NUMBER_PREFERENCES_NAME, RSSI_LOG_NUMBER);
@@ -500,97 +586,121 @@ public final class SdkPreferencesHelper {
         return readInt(SAVED_CC_GENERIC_OPTION, ROLLING_AV_ELEMENT_PREFERENCES_NAME, ROLLING_AVERAGE_ELEMENTS);
     }
 
-    public void setRollingAvElement(int rollingAvElement) {
-        saveInt(SAVED_CC_GENERIC_OPTION, ROLLING_AV_ELEMENT_PREFERENCES_NAME, rollingAvElement);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setRollingAvElement(int rollingAvElement) {
+//        saveInt(SAVED_CC_GENERIC_OPTION, ROLLING_AV_ELEMENT_PREFERENCES_NAME, rollingAvElement);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getStartNbElement() {
         return readInt(SAVED_CC_GENERIC_OPTION, START_NB_ELEMENT_PREFERENCES_NAME, START_NB_ELEMENT);
     }
 
-    public void setStartNbElement(int startNbElement) {
-        saveInt(SAVED_CC_GENERIC_OPTION, START_NB_ELEMENT_PREFERENCES_NAME, startNbElement);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setStartNbElement(int startNbElement) {
+//        saveInt(SAVED_CC_GENERIC_OPTION, START_NB_ELEMENT_PREFERENCES_NAME, startNbElement);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getLockNbElement() {
         return readInt(SAVED_CC_GENERIC_OPTION, LOCK_NB_ELEMENT_PREFERENCES_NAME, LOCK_NB_ELEMENT);
     }
 
-    public void setLockNbElement(int lockNbElement) {
-        saveInt(SAVED_CC_GENERIC_OPTION, LOCK_NB_ELEMENT_PREFERENCES_NAME, lockNbElement);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setLockNbElement(int lockNbElement) {
+//        saveInt(SAVED_CC_GENERIC_OPTION, LOCK_NB_ELEMENT_PREFERENCES_NAME, lockNbElement);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getUnlockNbElement() {
         return readInt(SAVED_CC_GENERIC_OPTION, UNLOCK_NB_ELEMENT_PREFERENCES_NAME, UNLOCK_NB_ELEMENT);
     }
 
-    public void setUnlockNbElement(int unlockNbElement) {
-        saveInt(SAVED_CC_GENERIC_OPTION, UNLOCK_NB_ELEMENT_PREFERENCES_NAME, unlockNbElement);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setUnlockNbElement(int unlockNbElement) {
+//        saveInt(SAVED_CC_GENERIC_OPTION, UNLOCK_NB_ELEMENT_PREFERENCES_NAME, unlockNbElement);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getWelcomeNbElement() {
         return readInt(SAVED_CC_GENERIC_OPTION, WELCOME_NB_ELEMENT_PREFERENCES_NAME, WELCOME_NB_ELEMENT);
     }
 
-    public void setWelcomeNbElement(int welcomeNbElement) {
-        saveInt(SAVED_CC_GENERIC_OPTION, WELCOME_NB_ELEMENT_PREFERENCES_NAME, welcomeNbElement);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setWelcomeNbElement(int welcomeNbElement) {
+//        saveInt(SAVED_CC_GENERIC_OPTION, WELCOME_NB_ELEMENT_PREFERENCES_NAME, welcomeNbElement);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getLongNbElement() {
         return readInt(SAVED_CC_GENERIC_OPTION, LONG_NB_ELEMENT_PREFERENCES_NAME, LONG_NB_ELEMENT);
     }
 
-    public void setLongNbElement(int longNbElement) {
-        saveInt(SAVED_CC_GENERIC_OPTION, LONG_NB_ELEMENT_PREFERENCES_NAME, longNbElement);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setLongNbElement(int longNbElement) {
+//        saveInt(SAVED_CC_GENERIC_OPTION, LONG_NB_ELEMENT_PREFERENCES_NAME, longNbElement);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getShortNbElement() {
         return readInt(SAVED_CC_GENERIC_OPTION, SHORT_NB_ELEMENT_PREFERENCES_NAME, SHORT_NB_ELEMENT);
     }
 
-    public void setShortNbElement(int shortNbElement) {
-        saveInt(SAVED_CC_GENERIC_OPTION, SHORT_NB_ELEMENT_PREFERENCES_NAME, shortNbElement);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setShortNbElement(int shortNbElement) {
+//        saveInt(SAVED_CC_GENERIC_OPTION, SHORT_NB_ELEMENT_PREFERENCES_NAME, shortNbElement);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public String getTrxAddressConnectable() {
         return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, BLE_ADDRESS_CONNECTABLE);
     }
 
-    public void setTrxAddressConnectable(String address) {
-        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, address);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setTrxAddressConnectable(String address) {
+//        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, address);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public String getTrxAddressLeft() {
         return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_LEFT_PREFERENCE_NAME, BLE_ADDRESS_LEFT);
     }
 
-    public void setTrxAddressLeft(String address) {
-        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_LEFT_PREFERENCE_NAME, address);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setTrxAddressLeft(String address) {
+//        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_LEFT_PREFERENCE_NAME, address);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public String getTrxAddressMiddle() {
         return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_MIDDLE_PREFERENCE_NAME, BLE_ADDRESS_MIDDLE);
     }
 
-    public void setTrxAddressMiddle(String address) {
-        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_MIDDLE_PREFERENCE_NAME, address);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setTrxAddressMiddle(String address) {
+//        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_MIDDLE_PREFERENCE_NAME, address);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public String getTrxAddressRight() {
         return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_RIGHT_PREFERENCE_NAME, BLE_ADDRESS_RIGHT);
     }
 
-    public void setTrxAddressRight(String address) {
-        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_RIGHT_PREFERENCE_NAME, address);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setTrxAddressRight(String address) {
+//        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_RIGHT_PREFERENCE_NAME, address);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public String getTrxAddressBack() {
         return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_BACK_PREFERENCE_NAME, BLE_ADDRESS_BACK);
     }
 
-    public void setTrxAddressBack(String address) {
-        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_BACK_PREFERENCE_NAME, address);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setTrxAddressBack(String address) {
+//        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_BACK_PREFERENCE_NAME, address);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public String getTrxAddressFrontLeft() {
         return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_FRONT_LEFT_PREFERENCE_NAME, BLE_ADDRESS_FRONT_LEFT);
@@ -612,29 +722,37 @@ public final class SdkPreferencesHelper {
         return readInt(SAVED_CC_GENERIC_OPTION, LIN_ACC_SIZE_PREFERENCES_NAME, LIN_ACC_SIZE);
     }
 
-    public void setLinAccSize(int linAccSize) {
-        saveInt(SAVED_CC_GENERIC_OPTION, LIN_ACC_SIZE_PREFERENCES_NAME, linAccSize);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setLinAccSize(int linAccSize) {
+//        saveInt(SAVED_CC_GENERIC_OPTION, LIN_ACC_SIZE_PREFERENCES_NAME, linAccSize);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public float getCorrectionLinAcc() {
         return readFloat(SAVED_CC_GENERIC_OPTION, CORRECTION_LIN_ACC_PREFERENCES_NAME, CORRECTION_LIN_ACC);
     }
 
-    public void setCorrectionLinAcc(float correctionLinAcc) {
-        saveFloat(SAVED_CC_GENERIC_OPTION, CORRECTION_LIN_ACC_PREFERENCES_NAME, correctionLinAcc);
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public void setCorrectionLinAcc(float correctionLinAcc) {
+//        saveFloat(SAVED_CC_GENERIC_OPTION, CORRECTION_LIN_ACC_PREFERENCES_NAME, correctionLinAcc);
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
-    public String getUserMail() {
-        return readString(SAVED_LOGIN_INFO, USER_MAIL_PREFERENCES_NAME, "");
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public String getUserMail() {
+//        return readString(SAVED_LOGIN_INFO, USER_MAIL_PREFERENCES_NAME, "");
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public void setUserMail(String userMail) {
         saveString(SAVED_LOGIN_INFO, USER_MAIL_PREFERENCES_NAME, userMail);
     }
 
-    public String getPassword() {
-        return readString(SAVED_LOGIN_INFO, PASSWORD_PREFERENCES_NAME, "");
-    }
+// --Commented out by Inspection START (30/09/2016 11:26):
+//    public String getPassword() {
+//        return readString(SAVED_LOGIN_INFO, PASSWORD_PREFERENCES_NAME, "");
+//    }
+// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public void setPassword(String password) {
         saveString(SAVED_LOGIN_INFO, PASSWORD_PREFERENCES_NAME, password);

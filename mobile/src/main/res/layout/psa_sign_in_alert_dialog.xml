@@ -5,7 +5,6 @@
     android:background="#CC000000">
 
     <TextView
-        android:id="@+id/sign_in_alert_message_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/sign_in_alert_message"

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Created by l-avaratha on 08/06/2016.
+ * Created by l-avaratha on 08/06/2016
  */
 public class Antenna {
     public static final int AVERAGE_DEFAULT = 0;
@@ -37,17 +37,13 @@ public class Antenna {
     private int offsetBleChannel38 = 0;
     private boolean hasBeenInitialized = false;
 
-    public Antenna(int numberTrx, int antennaId) {
+    Antenna(int numberTrx, int antennaId) {
         this.numberTrx = numberTrx;
         this.antennaId = antennaId;
         this.isAntennaActive = new AtomicBoolean(true);
         this.hasReceivedRssi = new AtomicBoolean(false);
         this.rssiHistoric = new ArrayList<>(SdkPreferencesHelper.getInstance().getRollingAvElement());
         this.rssiPente = new ArrayList<>(10);
-    }
-
-    public int getAntennaId() {
-        return antennaId;
     }
 
     public void init(int historicDefaultValue) {

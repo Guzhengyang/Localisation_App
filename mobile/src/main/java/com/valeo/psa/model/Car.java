@@ -6,10 +6,10 @@ package com.valeo.psa.model;
  * @author GMAMESSI
  */
 public class Car {
-    private int mImgCarId;
-    private String mRegPlate;
-    private String mBrandCar;
-    private String mVin;
+    private final int mImgCarId;
+    private final String mRegPlate;
+    private final String mBrandCar;
+    private final String mVin;
 
     /**
      * Class constructor
@@ -41,32 +41,16 @@ public class Car {
         return mImgCarId;
     }
 
-    public void setImgCarId(int imgCarId) {
-        mImgCarId = imgCarId;
-    }
-
     public String getRegPlate() {
         return mRegPlate;
-    }
-
-    public void setRegPlate(String regPlate) {
-        mRegPlate = regPlate;
     }
 
     public String getBrandCar() {
         return mBrandCar;
     }
 
-    public void setBrandCar(String brandCar) {
-        mBrandCar = brandCar;
-    }
-
     public String getVin() {
         return mVin;
-    }
-
-    public void setVin(String vin) {
-        mVin = vin;
     }
 
     @Override

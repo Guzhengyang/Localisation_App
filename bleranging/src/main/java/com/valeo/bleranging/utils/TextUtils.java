@@ -10,7 +10,7 @@ import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import java.util.Locale;
 
 /**
- * Created by l-avaratha on 20/07/2016.
+ * Created by l-avaratha on 20/07/2016
  */
 public class TextUtils {
     private final static int rollingAvElement = SdkPreferencesHelper.getInstance().getRollingAvElement();

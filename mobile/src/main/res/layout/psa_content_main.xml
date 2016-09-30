@@ -9,7 +9,6 @@
     tools:showIn="@layout/psa_activity_main">
 
     <RelativeLayout
-        android:id="@+id/main_relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

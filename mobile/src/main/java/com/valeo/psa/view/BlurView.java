@@ -18,7 +18,7 @@ import android.view.View;
 import com.valeo.psa.R;
 
 /**
- * Created by Weiping on 2016/3/16.
+ * Created by Weiping on 2016/3/16
  */
 public class BlurView extends View {
 

@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Created by l-avaratha on 08/06/2016.
+ * Created by l-avaratha on 08/06/2016
  */
 public class TrxUtils {
     private static final File logFile = new File(SdkPreferencesHelper.getInstance().getLogFileName());
@@ -162,19 +162,18 @@ public class TrxUtils {
                                       byte leftTurnByte, byte fullTurnByte, byte rightTurnByte, byte recordByte, int rangingPredictionInt,
                                       boolean lockFromTrx, boolean lockToSend, boolean startAllowed) {
         final String comma = ";";
-        StringBuilder log = new StringBuilder();
-        log.append(rssiLeft).append(comma).append(rssiMiddle1).append(comma).append(rssiMiddle2).append(comma).append(rssiRight).append(comma).append(rssiBack).append(comma);
-        log.append(rssiFrontLeft).append(comma).append(rssiFrontRight).append(comma).append(rssiRearLeft).append(comma).append(rssiRearRight).append(comma);
-        log.append(z).append(comma).append(x).append(comma).append(y).append(comma);
-        log.append(isSmartphoneInPocket).append(comma).append(isSmartphoneLaid).append(comma).append(isPassiveEntryAction).append(comma).append(isLockStatusChangedTimerExpired).append(comma);
-        log.append(rearmLock).append(comma).append(rearmUnlock).append(comma).append(rearmWelcome).append(comma).append(lockStatus).append(comma);
-        log.append(welcomeByte).append(comma).append(lockByte).append(comma).append(startByte).append(comma);
-        log.append(leftAreaByte).append(comma).append(rightAreaByte).append(comma).append(backAreaByte).append(comma);
-        log.append(walkAwayByte).append(comma).append(steadyByte).append(comma).append(approachByte).append(comma);
-        log.append(leftTurnByte).append(comma).append(fullTurnByte).append(comma).append(rightTurnByte).append(comma);
-        log.append(recordByte).append(comma).append(rangingPredictionInt).append(comma);
-        log.append(lockFromTrx).append(comma).append(lockToSend).append(comma).append(startAllowed).append(comma);
-        appendRssiLog(log.toString());
+        String log = String.valueOf(rssiLeft) + comma + rssiMiddle1 + comma + rssiMiddle2 + comma + rssiRight + comma + rssiBack + comma +
+                rssiFrontLeft + comma + rssiFrontRight + comma + rssiRearLeft + comma + rssiRearRight + comma +
+                z + comma + x + comma + y + comma +
+                isSmartphoneInPocket + comma + isSmartphoneLaid + comma + isPassiveEntryAction + comma + isLockStatusChangedTimerExpired + comma +
+                rearmLock + comma + rearmUnlock + comma + rearmWelcome + comma + lockStatus + comma +
+                welcomeByte + comma + lockByte + comma + startByte + comma +
+                leftAreaByte + comma + rightAreaByte + comma + backAreaByte + comma +
+                walkAwayByte + comma + steadyByte + comma + approachByte + comma +
+                leftTurnByte + comma + fullTurnByte + comma + rightTurnByte + comma +
+                recordByte + comma + rangingPredictionInt + comma +
+                lockFromTrx + comma + lockToSend + comma + startAllowed + comma;
+        appendRssiLog(log);
     }
 
     /**

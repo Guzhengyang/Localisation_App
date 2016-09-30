@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.valeo.psa.R;
 
 /**
- * Created by l-avaratha on 26/09/2016.
+ * Created by l-avaratha on 26/09/2016
  */
 
 public class SecurityQuestionsActivity extends AppCompatActivity {

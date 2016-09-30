@@ -17,11 +17,14 @@ import com.valeo.psa.view.Indicator;
 import java.util.Stack;
 
 /**
- * Created by l-avaratha on 13/09/2016.
+ * Created by l-avaratha on 13/09/2016
  */
 public class LockFragment extends Fragment implements BigButtonView.OnPressListener {
     private final int passwordLength = 4;
     private final String correctPassword = null;
+    private TextView title;
+    private TextView leftButton;
+    private TextView rightButton;
     private Indicator indicator;
     private Stack<String> passwordStack = null;
     private int incorrectInputTimes = 0;
@@ -32,17 +35,18 @@ public class LockFragment extends Fragment implements BigButtonView.OnPressListe
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         init(container);
         passwordStack = new Stack<>();
-
         Resources resources = getResources();
-
-        indicator = (Indicator) container.findViewById(R.id.indicator);
+        if (container != null) {
+            indicator = (Indicator) container.findViewById(R.id.indicator);
+            title = (TextView) container.findViewById(R.id.title);
+            leftButton = (TextView) container.findViewById(R.id.left_button);
+            rightButton = (TextView) container.findViewById(R.id.right_button);
+        } else {
+            getActivity().finish();
+        }
         indicator.setPasswordLength(passwordLength);
-
-        TextView title = (TextView) container.findViewById(R.id.title);
         title.setTextColor(ContextCompat.getColor(getContext(), R.color.default_title_text_color));
         title.setTextSize(resources.getDimension(R.dimen.default_title_text_size));
-
-        TextView leftButton = (TextView) container.findViewById(R.id.left_button);
         leftButton.setTextColor(ContextCompat.getColor(getContext(), R.color.default_left_button_text_color));
         leftButton.setTextSize(resources.getDimension(R.dimen.default_left_button_text_size));
         leftButton.setOnClickListener(new View.OnClickListener() {
@@ -50,8 +54,6 @@ public class LockFragment extends Fragment implements BigButtonView.OnPressListe
             public void onClick(View v) {
             }
         });
-
-        TextView rightButton = (TextView) container.findViewById(R.id.right_button);
         rightButton.setTextColor(ContextCompat.getColor(getContext(), R.color.default_right_button_text_color));
         rightButton.setTextSize(resources.getDimension(R.dimen.default_right_button_text_size));
         rightButton.setOnClickListener(new View.OnClickListener() {

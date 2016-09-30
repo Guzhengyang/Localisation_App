@@ -39,7 +39,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Created by l-avaratha on 19/07/2016.
+ * Created by l-avaratha on 19/07/2016
  */
 public class BleRangingHelper implements SensorEventListener {
     public final static int WELCOME_AREA = 1;
@@ -178,70 +178,6 @@ public class BleRangingHelper implements SensorEventListener {
             mMainHandler.postDelayed(this, 2500);
         }
     };
-    private byte welcomeByte = 0;
-    private byte lockByte = 0;
-    private byte startByte = 0;
-    private byte leftAreaByte = 0;
-    private byte rightAreaByte = 0;
-    private byte backAreaByte = 0;
-    private byte walkAwayByte = 0;
-    private byte steadyByte = 0;
-    private byte approachByte = 0;
-    private byte leftTurnByte = 0;
-    private byte fullTurnByte = 0;
-    private byte rightTurnByte = 0;
-    private byte recordByte = 0;
-    private double deltaLinAcc = 0;
-    private final Runnable printRunner = new Runnable() {
-        @Override
-        public void run() {
-            Log.w(" rssiHistorics", "************************************** IHM LOOP START *************************************************");
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-            spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder,
-                    bytesToSend, bytesReceived, mBluetoothManager.isFullyConnected());
-            totalAverage = connectedCar.getAllTrxAverage(Antenna.AVERAGE_DEFAULT);
-            tryStrategies(newLockStatus);
-            spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
-            spannableStringBuilder = connectedCar.createSecondFooterDebugData(spannableStringBuilder,
-                    smartphoneIsInPocket, smartphoneIsLaidDownLAcc, totalAverage, rearmLock.get(), rearmUnlock.get());
-            spannableStringBuilder = connectedCar.createThirdFooterDebugData(spannableStringBuilder,
-                    bleChannel, deltaLinAcc, smartphoneIsLaidDownLAcc);
-            updateCarLocalization();
-            bleRangingListener.printDebugInfo(spannableStringBuilder);
-            Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
-            mMainHandler.postDelayed(this, 400);
-        }
-    };
-    private boolean isLaidRunnableAlreadyLaunched = false;
-    private float[] mGravity;
-    private float[] mGeomagnetic;
-    private boolean isLoggable = true;
-    private final Runnable logRunner = new Runnable() {
-        @Override
-        public void run() {
-            if (isLoggable) {
-                TrxUtils.appendRssiLogs(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1),
-                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_2),
-                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_0),
-                        orientation[0], orientation[1], orientation[2],
-                        smartphoneIsInPocket, smartphoneIsLaidDownLAcc, isPassiveEntryAction.get(), isLockStatusChangedTimerExpired.get(),
-                        rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), newLockStatus, welcomeByte,
-                        lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
-                        walkAwayByte, steadyByte, approachByte, leftTurnByte,
-                        fullTurnByte, rightTurnByte, recordByte, rangingPredictionInt,
-                        mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(), mProtocolManager.isStartRequested());
-            }
-            if (isFullyConnected()) {
-                mMainHandler.postDelayed(this, 105);
-            }
-        }
-    };
     /**
      * Handles various events fired by the Service.
      * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
@@ -307,6 +243,70 @@ public class BleRangingHelper implements SensorEventListener {
                 Log.d("NIH", "TRX ACTION_GATT_SERVICES_DISCOVERED");
             } else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 Log.d("NIH", "TRX ACTION_GATT_CONNECTED");
+            }
+        }
+    };
+    private byte welcomeByte = 0;
+    private byte lockByte = 0;
+    private byte startByte = 0;
+    private byte leftAreaByte = 0;
+    private byte rightAreaByte = 0;
+    private byte backAreaByte = 0;
+    private byte walkAwayByte = 0;
+    private byte steadyByte = 0;
+    private byte approachByte = 0;
+    private byte leftTurnByte = 0;
+    private byte fullTurnByte = 0;
+    private byte rightTurnByte = 0;
+    private byte recordByte = 0;
+    private double deltaLinAcc = 0;
+    private final Runnable printRunner = new Runnable() {
+        @Override
+        public void run() {
+            Log.w(" rssiHistorics", "************************************** IHM LOOP START *************************************************");
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+            spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder,
+                    bytesToSend, bytesReceived, mBluetoothManager.isFullyConnected());
+            totalAverage = connectedCar.getAllTrxAverage(Antenna.AVERAGE_DEFAULT);
+            tryStrategies(newLockStatus);
+            spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
+            spannableStringBuilder = connectedCar.createSecondFooterDebugData(spannableStringBuilder,
+                    smartphoneIsInPocket, smartphoneIsLaidDownLAcc, totalAverage, rearmLock.get(), rearmUnlock.get());
+            spannableStringBuilder = connectedCar.createThirdFooterDebugData(spannableStringBuilder,
+                    bleChannel, deltaLinAcc, smartphoneIsLaidDownLAcc);
+            updateCarLocalization();
+            bleRangingListener.printDebugInfo(spannableStringBuilder);
+            Log.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
+            mMainHandler.postDelayed(this, 400);
+        }
+    };
+    private boolean isLaidRunnableAlreadyLaunched = false;
+    private float[] mGravity;
+    private float[] mGeomagnetic;
+    private boolean isLoggable = true;
+    private final Runnable logRunner = new Runnable() {
+        @Override
+        public void run() {
+            if (isLoggable) {
+                TrxUtils.appendRssiLogs(connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_LEFT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_2),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_0),
+                        orientation[0], orientation[1], orientation[2],
+                        smartphoneIsInPocket, smartphoneIsLaidDownLAcc, isPassiveEntryAction.get(), isLockStatusChangedTimerExpired.get(),
+                        rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), newLockStatus, welcomeByte,
+                        lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
+                        walkAwayByte, steadyByte, approachByte, leftTurnByte,
+                        fullTurnByte, rightTurnByte, recordByte, rangingPredictionInt,
+                        mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(), mProtocolManager.isStartRequested());
+            }
+            if (isFullyConnected()) {
+                mMainHandler.postDelayed(this, 105);
             }
         }
     };

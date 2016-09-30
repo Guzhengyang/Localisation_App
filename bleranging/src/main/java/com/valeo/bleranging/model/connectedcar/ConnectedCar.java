@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by l-avaratha on 05/09/2016.
+ * Created by l-avaratha on 05/09/2016
  */
 public abstract class ConnectedCar {
     public final static int NUMBER_TRX_FRONT_LEFT = 1;
@@ -561,12 +561,10 @@ public abstract class ConnectedCar {
                                                              boolean smartphoneIsLaidDownLAcc) {
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
         spannableStringBuilder.append("Scanning on channel: ").append(bleChannel.toString()).append("\n");
-        StringBuilder lAccStringBuilder = new StringBuilder().append("Linear Acceleration < (")
-                .append(linAccThreshold)
-                .append("): ").append(String.format(Locale.FRANCE, "%1$.4f", deltaLinAcc)).append("\n");
-        spannableStringBuilder.append(TextUtils.colorText(
-                smartphoneIsLaidDownLAcc,
-                lAccStringBuilder.toString(), Color.WHITE, Color.DKGRAY));
+        String lAccStringBuilder = "Linear Acceleration < (" + linAccThreshold + "): "
+                + String.format(Locale.FRANCE, "%1$.4f", deltaLinAcc) + "\n";
+        spannableStringBuilder.append(TextUtils.colorText(smartphoneIsLaidDownLAcc,
+                lAccStringBuilder, Color.WHITE, Color.DKGRAY));
         return spannableStringBuilder;
     }
 

@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
- * Created by l-avaratha on 31/08/2016.
+ * Created by l-avaratha on 31/08/2016
  */
 public class ScalableImageView extends ImageView {
     public ScalableImageView(Context context) {

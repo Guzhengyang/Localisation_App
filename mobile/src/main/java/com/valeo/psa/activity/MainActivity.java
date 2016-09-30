@@ -525,7 +525,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         car_model_recyclerView.setLayoutManager(llm);
         CarListAdapter.OnCarSelectionListener mCarSelectionListener = new CarListAdapter.OnCarSelectionListener() {
             @Override
-            public void onCarSelection(View carSelected, int position) {
+            public void onCarSelection(int position) {
                 selectedCar = mCarListAdapter.getCars().get(position);
                 mCarListAdapter.setSelectedCarRegistrationPlate(selectedCar.getRegPlate());
             }
@@ -582,7 +582,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      *
      * @param timeout the progress value
      */
-    public void updateStartCarTimeoutBar(int timeout) {
+    private void updateStartCarTimeoutBar(int timeout) {
         start_car_timeout.setProgress(timeout);
     }
 
@@ -592,7 +592,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      * @param progressMin the progress remaining minutes
      * @param progressSec the progress remaining seconds
      */
-    public void updateStartCarTimeout(int progressMin, int progressSec) {
+    private void updateStartCarTimeout(int progressMin, int progressSec) {
         car_start_countdown_min_sec.setText(String.format(
                 getString(R.string.car_start_countdown_min_sec),
                 progressMin, progressSec));
@@ -603,7 +603,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      *
      * @param mainToStart boolean to determine which toolbar to inflate
      */
-    public void switchToolbarStartCar(boolean mainToStart) {
+    private void switchToolbarStartCar(boolean mainToStart) {
         if (mainToStart) {
             content_start_car_dialog.setVisibility(View.VISIBLE);
             ble_status.setVisibility(View.GONE);
@@ -642,7 +642,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      * @param mainToNewToolBar boolean to determine which toolbar to inflate
      * @param resId            the resource id of the new toolbar to show or hide
      */
-    public void switchToolbars(boolean mainToNewToolBar, int resId) {
+    private void switchToolbars(boolean mainToNewToolBar, int resId) {
         if (mainToNewToolBar) {
             showMenu = false;
             invalidateOptionsMenu();

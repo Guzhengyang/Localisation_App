@@ -17,8 +17,6 @@ import com.valeo.bleranging.bluetooth.compat.ScanCallbackCompat;
 import com.valeo.bleranging.bluetooth.compat.ScanTask;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 
 /**
@@ -295,8 +293,6 @@ public class BluetoothManagement {
                 case (byte)0x02: // Partial list of 16-bit UUIDs
                 case (byte)0x03: // Complete list of 16-bit UUIDs
                     while (len > 1) {
-                        int uuid16 = advertisedData[offset++] & 0xff;
-                        uuid16 += ((advertisedData[offset++] & 0xff) << 8);
                         len -= 2;
                     }
                     break;
@@ -304,17 +300,9 @@ public class BluetoothManagement {
                 case (byte)0x07:// Complete list of 128-bit UUIDs
                     // Loop through the advertised 128-bit UUID's.
                     while (len >= 16) {
-                        try {
-                            // Wrap the advertised bits and order them.
-                            ByteBuffer buffer = ByteBuffer.wrap(advertisedData,
-                                    offset++, 16).order(ByteOrder.LITTLE_ENDIAN);
-                        } catch (IndexOutOfBoundsException e) {
-                            // Defensive programming.
-                        } finally {
-                            // Move the offset to read the next uuid.
-                            offset += 15;
-                            len -= 16;
-                        }
+                        // Move the offset to read the next uuid.
+                        offset += 15;
+                        len -= 16;
                     }
                     break;
                 case (byte)0xFF:// GAP_ADTYPE_MANUFACTURER_SPECIFIC
@@ -349,12 +337,6 @@ public class BluetoothManagement {
                             mac[5] = advertisedData[offset+16];
                             mac[6] = advertisedData[offset+17];
                             //ACH DEBUG. Force uuids of extra services
-                            int uuid16 = ((byte)0x10) & 0xff;
-                            uuid16 += (((byte)0xff) << 8);
-	                    /*uuid16 = ((byte)0x10) & 0xff;
-	                    uuid16 += (((byte)0xFF & 0xff) << 8);
-	                    uuids.add(UUID.fromString("f000" + String.format(
-	                            "%08x-0451-4000-b000-000000000000", uuid16)));*/
                         }
                     }
                     offset += (len - 1);

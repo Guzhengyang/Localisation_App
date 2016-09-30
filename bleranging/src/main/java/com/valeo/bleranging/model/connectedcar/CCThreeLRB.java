@@ -8,7 +8,7 @@ import com.valeo.bleranging.model.Trx;
 import java.util.List;
 
 /**
- * Created by l-avaratha on 07/09/2016.
+ * Created by l-avaratha on 07/09/2016
  */
 public class CCThreeLRB extends ConnectedCar {
     private static final String SPACE_ONE = "  ";

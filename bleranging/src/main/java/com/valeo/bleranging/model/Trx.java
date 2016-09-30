@@ -3,7 +3,7 @@ package com.valeo.bleranging.model;
 import com.valeo.bleranging.utils.TrxUtils;
 
 /**
- * Created by l-avaratha on 08/06/2016.
+ * Created by l-avaratha on 08/06/2016
  */
 public class Trx {
     public static final int ANTENNA_AND = 2;

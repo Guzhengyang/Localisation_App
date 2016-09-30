@@ -65,7 +65,7 @@ public class CarListAdapter extends RecyclerView.Adapter<CarListAdapter.ViewHold
     }
 
     public interface OnCarSelectionListener {
-        void onCarSelection(View carSelected, int position);
+        void onCarSelection(int position);
     }
 
     /**
@@ -78,7 +78,7 @@ public class CarListAdapter extends RecyclerView.Adapter<CarListAdapter.ViewHold
         private final TextView brandCar;
         private final OnCarSelectionListener mListener;
 
-        public ViewHolder(View itemView, OnCarSelectionListener onCarSelectionListener) {
+        ViewHolder(View itemView, OnCarSelectionListener onCarSelectionListener) {
             super(itemView);
             this.mListener = onCarSelectionListener;
             brandCar = (TextView) itemView.findViewById(R.id.selected_car_model);
@@ -89,7 +89,7 @@ public class CarListAdapter extends RecyclerView.Adapter<CarListAdapter.ViewHold
 
         @Override
         public void onClick(View v) {
-            mListener.onCarSelection(v, getAdapterPosition());
+            mListener.onCarSelection(getAdapterPosition());
         }
 
         public TextView getBrandCar() {

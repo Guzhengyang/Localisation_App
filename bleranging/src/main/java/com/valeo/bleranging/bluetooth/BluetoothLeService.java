@@ -318,16 +318,15 @@ public class BluetoothLeService extends Service {
      * Connects to the GATT server hosted on the Bluetooth LE device.
      *
      * @param address The device address of the destination device.
-     * @return Return true if the connection is initiated successfully. The connection result
-     * is reported asynchronously through the
+     * The connection result is reported asynchronously through the
      * {@code BluetoothGattCallback#onConnectionStateChange(android.bluetooth.BluetoothGatt, int, int)}
      * callback.
      */
-    public boolean connectToDevice(final String address) {
+    public void connectToDevice(final String address) {
         Log.d("NIH", "connectToDevice.");
         if (mBluetoothAdapter == null || address == null) {
             Log.w("NIH", "BluetoothAdapter not initialized or unspecified address.");
-            return false;
+            return;
         }
         mDevice = mBluetoothAdapter.getRemoteDevice(address);
         //Use a handler to call the bluetooth stack from the main thread.
@@ -348,7 +347,6 @@ public class BluetoothLeService extends Service {
             } // This is your code
         };
         mainHandler.post(runFromMainThread);
-        return true;
     }
 
     /**
