@@ -71,22 +71,29 @@ public class InblueProtocolManager {
                 payload[5] |= (0x10);
                 break;
             case ConnectedCarFactory.BASE_2:
-                if (isLockedToSend) {
+                if (isLockedToSend && !isLockedFromTrx) {
                     payload[5] |= 0x01;
                 } else {
                     payload[5] |= 0x00;
+                }
+                if (!isLockedFromTrx) { // no psu_lock, so if unlock force thatcham to 0, so psu deactivated
+                    payload[5] &= 0xF7;
                 }
                 payload[5] |= (0x20);
                 break;
             case ConnectedCarFactory.BASE_3:
                 payload[5] |= isLockedToSend ? 0x01 : 0x02;
+                payload[5] &= 0xF7;
                 payload[5] |= (0x40);
                 break;
             case ConnectedCarFactory.BASE_4:
-                if (!isLockedToSend) {
+                if (!isLockedToSend && isLockedFromTrx) {
                     payload[5] |= 0x02;
                 } else {
                     payload[5] |= 0x00;
+                }
+                if (isLockedFromTrx) { // no psu_unlock, so if lock force thatcham to 0, so psu deactivated
+                    payload[5] &= 0xF7;
                 }
                 payload[5] |= (0x80);
                 break;
