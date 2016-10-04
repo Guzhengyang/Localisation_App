@@ -127,7 +127,6 @@ public class TrxUtils {
      * @param y the device y position roll
      * @param isSmartphoneInPocket true if the smartphone is in pocket, false otherwise
      * @param isSmartphoneLaid true if the smartphone is moving, false otherwise
-     * @param isPassiveEntryAction true if it is a passive entry action, false otherwise
      * @param isLockStatusChangedTimerExpired true if the lock timeout is expired, false otherwise
      * @param rearmLock true if the lock can be done, false otherwise
      * @param rearmUnlock true if the unlock can be done, false otherwise
@@ -154,7 +153,7 @@ public class TrxUtils {
     public static void appendRssiLogs(int rssiLeft, int rssiMiddle1, int rssiMiddle2, int rssiRight, int rssiBack,
                                       int rssiFrontLeft, int rssiFrontRight, int rssiRearLeft, int rssiRearRight,
                                       float z, float x, float y,
-                                      boolean isSmartphoneInPocket, boolean isSmartphoneLaid, boolean isPassiveEntryAction, boolean isLockStatusChangedTimerExpired,
+                                      boolean isSmartphoneInPocket, boolean isSmartphoneLaid, boolean isLockStatusChangedTimerExpired,
                                       boolean rearmLock, boolean rearmUnlock, boolean rearmWelcome, boolean lockStatus,
                                       byte welcomeByte, byte lockByte, byte startByte,
                                       byte leftAreaByte, byte rightAreaByte, byte backAreaByte,
@@ -165,7 +164,7 @@ public class TrxUtils {
         String log = String.valueOf(rssiLeft) + comma + rssiMiddle1 + comma + rssiMiddle2 + comma + rssiRight + comma + rssiBack + comma +
                 rssiFrontLeft + comma + rssiFrontRight + comma + rssiRearLeft + comma + rssiRearRight + comma +
                 z + comma + x + comma + y + comma +
-                isSmartphoneInPocket + comma + isSmartphoneLaid + comma + isPassiveEntryAction + comma + isLockStatusChangedTimerExpired + comma +
+                isSmartphoneInPocket + comma + isSmartphoneLaid + comma + isLockStatusChangedTimerExpired + comma +
                 rearmLock + comma + rearmUnlock + comma + rearmWelcome + comma + lockStatus + comma +
                 welcomeByte + comma + lockByte + comma + startByte + comma +
                 leftAreaByte + comma + rightAreaByte + comma + backAreaByte + comma +

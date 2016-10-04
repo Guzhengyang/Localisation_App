@@ -250,7 +250,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 startActivityForResult(loginIntent, RESULT_SETTINGS);
                 break;
             case R.id.menu_reconnect_ble:
-                mBleRangingHelper.restartConnection(false);
+                mBleRangingHelper.connectToPC();
+//                mBleRangingHelper.restartConnection(false);
                 break;
         }
         return true;
@@ -334,22 +335,22 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         vehicle_locked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (carDoorStatus == CarDoorStatus.DRIVER_DOOR_OPEN) {
+                if (mBleRangingHelper.isFullyConnected()) {
                     car_door_status.setText(getString(R.string.vehicle_locked));
                     carDoorStatus = CarDoorStatus.LOCKED;
                     vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
                     driver_s_door_unlocked.setBackgroundResource(0);
                     vehicle_unlocked.setBackgroundResource(0);
                     startButtonAnimation(false);
-                    mBleRangingHelper.setIsPassiveEntryAction(false);
+                    mBleRangingHelper.setIsRKE(true);
                     mBleRangingHelper.performLockVehicleRequest(true); //lockVehicle
-//                }
+                }
             }
         });
         driver_s_door_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (carDoorStatus == CarDoorStatus.LOCKED || carDoorStatus == CarDoorStatus.UNLOCKED) {
+                if (mBleRangingHelper.isFullyConnected()) {
                     car_door_status.setText(getString(R.string.driver_s_door_unlocked));
                     carDoorStatus = CarDoorStatus.DRIVER_DOOR_OPEN;
                     driver_s_door_unlocked.setBackgroundResource(R.mipmap.slider_button);
@@ -357,26 +358,26 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     vehicle_unlocked.setBackgroundResource(0);
                     start_button.setBackgroundResource(0);
                     startButtonAnimation(false);
-                    mBleRangingHelper.setIsPassiveEntryAction(false);
+                    mBleRangingHelper.setIsRKE(true);
                     mBleRangingHelper.performLockVehicleRequest(false); //unlockVehicle
-//                }
+                }
             }
         });
         vehicle_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (carDoorStatus == CarDoorStatus.DRIVER_DOOR_OPEN) {
+                if (mBleRangingHelper.isFullyConnected()) {
                     car_door_status.setText(getString(R.string.vehicle_unlocked));
                     carDoorStatus = CarDoorStatus.UNLOCKED;
                     vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
                     driver_s_door_unlocked.setBackgroundResource(0);
                     vehicle_locked.setBackgroundResource(0);
                     startButtonAnimation(true);
-                    mBleRangingHelper.setIsPassiveEntryAction(false);
+                    mBleRangingHelper.setIsRKE(true);
                     mBleRangingHelper.performLockVehicleRequest(false); //unlockVehicle
-                createNotification(NOTIFICATION_ID_1, getString(R.string.notif_unlock_it),
-                        R.mipmap.car_all_doors_button, getString(R.string.vehicle_unlocked));
-//                }
+                    createNotification(NOTIFICATION_ID_1, getString(R.string.notif_unlock_it),
+                            R.mipmap.car_all_doors_button, getString(R.string.vehicle_unlocked));
+                }
             }
         });
     }

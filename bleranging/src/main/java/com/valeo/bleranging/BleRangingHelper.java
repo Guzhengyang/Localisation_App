@@ -85,7 +85,8 @@ public class BleRangingHelper implements SensorEventListener {
     private final AtomicBoolean rearmWelcome = new AtomicBoolean(true);
     private final AtomicBoolean rearmLock = new AtomicBoolean(true);
     private final AtomicBoolean rearmUnlock = new AtomicBoolean(true);
-    private final AtomicBoolean isPassiveEntryAction = new AtomicBoolean(true);
+    private final AtomicBoolean isRKE = new AtomicBoolean(false);
+    private final AtomicBoolean lastThatcham = new AtomicBoolean(false);
     private final Handler mMainHandler;
     private final Handler mLockStatusChangedHandler;
     private final Handler mHandlerTimeOut;
@@ -115,8 +116,11 @@ public class BleRangingHelper implements SensorEventListener {
         @Override
         public void run() {
             Log.d("NIH", "getPacketOnePayload then sendPackets");
-            bytesToSend = mProtocolManager.getPacketOnePayload(isPassiveEntryAction.get());
+            bytesToSend = mProtocolManager.getPacketOnePayload(isRKE.get());
             mBluetoothManager.sendPackets(new byte[][]{bytesToSend});
+            if (isRKE.get()) {
+                setIsRKE(false);
+            }
             if (isFullyConnected()) {
                 mMainHandler.postDelayed(this, 200);
             }
@@ -151,7 +155,6 @@ public class BleRangingHelper implements SensorEventListener {
             Log.d("NIH rearm", "abortCommandRunner");
             if(mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) {
                 mProtocolManager.setIsLockedToSend(mProtocolManager.isLockedFromTrx());
-                isPassiveEntryAction.set(true);
                 bleRangingListener.updateCarDoorStatus(mProtocolManager.isLockedFromTrx());
                 rearmLock.set(false);
             }
@@ -193,18 +196,18 @@ public class BleRangingHelper implements SensorEventListener {
                 Log.d("NIH", "TRX ACTION_DATA_AVAILABLE");
                 boolean oldLockStatus = newLockStatus;
                 newLockStatus = (bytesReceived[5] & 0x01) != 0;
-                if (isPassiveEntryAction.get() && oldLockStatus != newLockStatus) {
+                if (oldLockStatus != newLockStatus) {
 //                    connectedCar.resetWithHysteresis(newLockStatus, isUnlockStrategyValid); //TODO concurrentModification
                     bleRangingListener.updateCarDoorStatus(newLockStatus);
                 }
                 mProtocolManager.setIsLockedFromTrx(newLockStatus);
-                if (!isPassiveEntryAction.get() && lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
-                    if (mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) {
-                        isPassiveEntryAction.set(false);
-                    } else {
-                        isPassiveEntryAction.set(true);
-                    }
+                if (lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
                     lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
+                    manageRearms(lastCommandFromTrx);
+                }
+                if (lastThatcham.get() != mProtocolManager.isThatcham()) {
+                    lastThatcham.set(mProtocolManager.isThatcham());
+                    manageRearms2(lastThatcham.get());
                 }
                 if (checkNewPacketOnlyOneLaunch) {
                     checkNewPacketOnlyOneLaunch = false;
@@ -298,7 +301,7 @@ public class BleRangingHelper implements SensorEventListener {
                         connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_0),
                         connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_0),
                         orientation[0], orientation[1], orientation[2],
-                        smartphoneIsInPocket, smartphoneIsLaidDownLAcc, isPassiveEntryAction.get(), isLockStatusChangedTimerExpired.get(),
+                        smartphoneIsInPocket, smartphoneIsLaidDownLAcc, isLockStatusChangedTimerExpired.get(),
                         rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), newLockStatus, welcomeByte,
                         lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
                         walkAwayByte, steadyByte, approachByte, leftTurnByte,
@@ -348,14 +351,15 @@ public class BleRangingHelper implements SensorEventListener {
         mMainHandler.post(printRunner);
     }
 
-    public void setIsPassiveEntryAction(boolean isPassiveEntryAction) {
-        this.isPassiveEntryAction.set(isPassiveEntryAction);
+    public void connectToPC() {
+//        mBluetoothManager.connectToPC("5C:E0:C5:34:4D:32");
+        mBluetoothManager.connectToPC("7C:7A:91:80:86:02");
     }
 
     /**
      * Suspend scan, stop all loops, reinit all variables, then resume scan to be able to reconnect
      */
-    public void restartConnection(boolean createConnectedCar) {
+    private void restartConnection(boolean createConnectedCar) {
         Log.d("NIH", "restartConnection");
         mBluetoothManager.suspendLeScan();
         mBluetoothManager.disconnect();
@@ -526,6 +530,19 @@ public class BleRangingHelper implements SensorEventListener {
         }
     }
 
+    private void setIsThatcham() {
+        String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
+        if (!isLockStrategyValid && isUnlockStrategyValid != null
+                && isUnlockStrategyValid.size() >= SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)) {
+            launchThatchamValidityTimeOut();
+        } else if (isUnlockStrategyValid == null || isUnlockStrategyValid.size() <
+                SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)) {
+            if (!thatchamIsChanging.get()) { // if thatcham is not changing
+                mProtocolManager.setThatcham(false);
+            }
+        }
+    }
+
     /**
      * Try all strategy based on rssi values
      * @param newLockStatus the lock status of the vehicle
@@ -538,32 +555,22 @@ public class BleRangingHelper implements SensorEventListener {
             isLockStrategyValid = connectedCar.lockStrategy(smartphoneIsInPocket);
             isUnlockStrategyValid = connectedCar.unlockStrategy(smartphoneIsInPocket);
             isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus, smartphoneIsInPocket);
+            setIsThatcham();
             rangingPredictionInt = mostCommon(mostCommon);
             if (rearmWelcome.get() && isWelcomeStrategyValid) {
                 rearmWelcome.set(false);
                 //TODO Welcome
-            }
-//            else if (isLockStatusChangedTimerExpired.get() && rearmLock.get() && isLockStrategyValid
-//                    && (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < 1)) {
-//                // DO NOT check if !newLockStatus to let the rearm algorithm in performLockVehicle work
-//                Log.d(" rssiHistorics", "lock");
-//                isPassiveEntryAction.set(true);
-//                mProtocolManager.setThatcham(false);
-//                performLockVehicleRequest(true);
-//            }
-            else if (isLockStatusChangedTimerExpired.get() && rearmUnlock.get() && !isLockStrategyValid
+            } else if (isLockStatusChangedTimerExpired.get() && rearmLock.get() && isLockStrategyValid
+                    && (isUnlockStrategyValid == null || isUnlockStrategyValid.size() <
+                    SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType))) {
+                // DO NOT check if !newLockStatus to let the rearm algorithm in performLockVehicle work
+                Log.d(" rssiHistorics", "lock");
+                performLockVehicleRequest(true);
+            } else if (isLockStatusChangedTimerExpired.get() && rearmUnlock.get() && !isLockStrategyValid
                     && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)) {
                 // DO NOT check if newLockStatus to let the rearm algorithm in performLockVehicle work
                 Log.d(" rssiHistorics", "unlock");
-                isPassiveEntryAction.set(true);
-                launchThatchamValidityTimeOut();
                 performLockVehicleRequest(false);
-            } else if (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)) {
-                isPassiveEntryAction.set(true);
-                if (!thatchamIsChanging.get()) { // if thatcham is not changing
-                    mProtocolManager.setThatcham(false);
-                }
-                performLockVehicleRequest(true);
             }
             if (isStartStrategyValid) {
                 isStartAllowed = true;
@@ -676,7 +683,6 @@ public class BleRangingHelper implements SensorEventListener {
         Log.w(" rssiHistorics", "************************************** runFirstConnection ************************************************");
         bleRangingListener.updateCarDoorStatus(newLockStatus);
         mProtocolManager.setIsLockedToSend(newLockStatus);
-        isPassiveEntryAction.set(true);
         lastCommandFromTrx = newLockStatus;
         if (connectedCar != null) {
             connectedCar.initializeTrx(newLockStatus);
@@ -703,7 +709,8 @@ public class BleRangingHelper implements SensorEventListener {
         } else {
             // car type did not changed, but settings did
             connectedCar.resetSettings();
-            mProtocolManager.setCarBase(SdkPreferencesHelper.getInstance().getConnectedCarBase());
+            String connectedCarBase = SdkPreferencesHelper.getInstance().getConnectedCarBase();
+            mProtocolManager.setCarBase(connectedCarBase);
         }
     }
 
@@ -711,7 +718,8 @@ public class BleRangingHelper implements SensorEventListener {
         connectedCar = null;
         lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
         connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
-        mProtocolManager.setCarBase(SdkPreferencesHelper.getInstance().getConnectedCarBase());
+        String connectedCarBase = SdkPreferencesHelper.getInstance().getConnectedCarBase();
+        mProtocolManager.setCarBase(connectedCarBase);
     }
 
     /**
@@ -784,6 +792,34 @@ public class BleRangingHelper implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
+    private void manageRearms2(final boolean newThatchamStatus) {
+        if (newThatchamStatus) {
+            rearmLock.set(true);
+        } else {
+            rearmUnlock.set(true);
+        }
+    }
+
+    private void manageRearms(final boolean newVehicleLockStatus) {
+        if (mProtocolManager.isThatcham()) {
+            if (newVehicleLockStatus) { // if has just lock, rearm lock and desarm unlock
+                rearmLock.set(true);
+                rearmUnlock.set(false);
+            } else { // if has just unlock, rearm all
+                rearmLock.set(true);
+                rearmUnlock.set(true);
+            }
+        } else {
+            if (newVehicleLockStatus) { // if has just lock, rearm all
+                rearmLock.set(true);
+                rearmUnlock.set(true);
+            } else { // if has just unlock, desarm lock and rearm unlock
+                rearmLock.set(false);
+                rearmUnlock.set(true);
+            }
+        }
+    }
+
     /**
      * Send the lock / unlock request to the vehicle.
      * @param lockVehicle true to lock the vehicle, false to unlock it.
@@ -794,51 +830,17 @@ public class BleRangingHelper implements SensorEventListener {
         }
         boolean lastLockCommand = mProtocolManager.isLockedToSend();
         mProtocolManager.setIsLockedToSend(lockVehicle);
-        StringBuilder rearmStringBuilder = new StringBuilder("");
-        if (isPassiveEntryAction.get()) { // if PEPS
-            rearmStringBuilder.append("if PEPS");
-            if (lockVehicle) { // if want to lock, arm unlock
-                rearmStringBuilder.append(" and want to LOCK, then arm unlock");
-                rearmUnlock.set(true);
-                if (SdkPreferencesHelper.getInstance().isLightCaptorEnabled()) {
-                    makeNoise(ToneGenerator.TONE_CDMA_REORDER, 200);
-                }
-            } else { // if want to unlock, arm lock
-                rearmStringBuilder.append(" and want to UNLOCK, then arm lock");
-                rearmLock.set(true);
-                if (SdkPreferencesHelper.getInstance().isLightCaptorEnabled()) {
-                    makeNoise(ToneGenerator.TONE_CDMA_MED_L, 200);
-                }
-            }
-        } else { // if RKE
-            rearmStringBuilder.append("if RKE");
-            if (lockVehicle) { // if want to lock, desarm unlock and arm lock
-                rearmStringBuilder.append(" and want to LOCK, then desarm unlock and arm lock");
-                rearmLock.set(true);
-                rearmUnlock.set(false);
-            } else { // if want to unlock, desarm lock and arm unlock
-                rearmStringBuilder.append(" and want to UNLOCK, then desarm lock and arm unlock");
-                rearmUnlock.set(true);
-                rearmLock.set(false);
-            }
-        }
         if(lastLockCommand != mProtocolManager.isLockedToSend()) {
             //Initialize timeout flag which is cleared in the runnable launched in the next instruction
             isLockStatusChangedTimerExpired.set(false);
             //Launch timeout
             mLockStatusChangedHandler.postDelayed(mManageIsLockStatusChangedPeriodicTimer, LOCK_STATUS_CHANGED_TIMEOUT);
-            Log.e("NIH rearm", rearmStringBuilder.toString() + " and isAbortRunning = "
-                    + isAbortRunning + " and (LockTrx,LockSend) = ("
-                    + mProtocolManager.isLockedFromTrx() + ","
-                    + mProtocolManager.isLockedToSend() + ")");
             if (mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) {
                 if (isAbortRunning) {
-                    Log.e("NIH rearm", "isAbortRunning canceled");
                     mHandlerTimeOut.removeCallbacks(abortCommandRunner);
                     mHandlerTimeOut.removeCallbacksAndMessages(null);
                     isAbortRunning = false;
                 } else {
-                    Log.e("NIH rearm", "isAbortRunning just launched");
                     mHandlerTimeOut.postDelayed(abortCommandRunner, 5000);
                     isAbortRunning = true;
                 }
@@ -848,6 +850,10 @@ public class BleRangingHelper implements SensorEventListener {
 
     public boolean isFullyConnected() {
         return mBluetoothManager != null && mBluetoothManager.isFullyConnected();
+    }
+
+    public void setIsRKE(boolean isRKE) {
+        this.isRKE.set(isRKE);
     }
 
     public void closeApp() {

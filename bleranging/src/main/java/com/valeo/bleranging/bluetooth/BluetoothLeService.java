@@ -62,6 +62,7 @@ public class BluetoothLeService extends Service {
 
     /** Bluetooth GATT profile. */
     private BluetoothGatt mBluetoothGatt;
+    private BluetoothGatt mBluetoothGatt2;
 
     /** Bluetooth device we want to connectToDevice to, */
     private BluetoothDevice mDevice;
@@ -328,6 +329,33 @@ public class BluetoothLeService extends Service {
             Log.w("NIH", "BluetoothAdapter not initialized or unspecified address.");
             return;
         }
+        final BluetoothDevice mDevice2 = mBluetoothAdapter.getRemoteDevice(address);
+        //Use a handler to call the bluetooth stack from the main thread.
+        //This is due to an issue on some devices such as the Galaxy S4
+        //Details here: http://stackoverflow.com/questions/20069507/gatt-callback-fails-to-register
+        //How to call something from main thread: http://stackoverflow.com/questions/11123621/running-code-in-main-thread-from-another-thread
+        Handler mainHandler = new Handler(getApplicationContext().getMainLooper());
+        Runnable runFromMainThread = new Runnable() {
+            @Override
+            public void run() {
+                mBluetoothGatt = mDevice2.connectGatt(getApplicationContext(), false, mGattCallback);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Log.d("NIH", "Android version >= 5.0 --> request HIGH priority (connection interval 7,5ms) 2");
+                    if (mBluetoothGatt != null) {
+                        mBluetoothGatt.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH);
+                    }
+                }
+            } // This is your code
+        };
+        mainHandler.post(runFromMainThread);
+    }
+
+    public void connectToPc(final String address) {
+        Log.d("NIH", "connectToPc.");
+        if (mBluetoothAdapter == null || address == null) {
+            Log.w("NIH", "BluetoothAdapter not initialized or unspecified address.");
+            return;
+        }
         mDevice = mBluetoothAdapter.getRemoteDevice(address);
         //Use a handler to call the bluetooth stack from the main thread.
         //This is due to an issue on some devices such as the Galaxy S4
@@ -337,11 +365,77 @@ public class BluetoothLeService extends Service {
         Runnable runFromMainThread = new Runnable() {
             @Override
             public void run() {
-                mBluetoothGatt = mDevice.connectGatt(getApplicationContext(), false, mGattCallback);
+                mBluetoothGatt2 = mDevice.connectGatt(getApplicationContext(), false, new BluetoothGattCallback() {
+                    @Override
+                    public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+                        Log.i("NIH", "onCharacteristicWrite(): status=" + status + " " +
+                                TextUtils.getHexString(characteristic.getValue()));
+                        if (mDevice != null && mBluetoothGatt2 != null) {
+                            //Disconnect after write
+                            mPacketToWriteCount--;
+                            if (mPacketToWriteCount == 0) {
+                                for (int i = 0; i < mListeners.size(); i++) {
+                                    mListeners.get(i).onSendPacketSuccess();
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
+
+                    }
+
+                    @Override
+                    public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+
+                    }
+
+                    /**
+                     * Callback called if a service is discovered during the discovery process.
+                     */
+                    @Override
+                    public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+
+                    }
+
+                    /**
+                     * Callback called when something is read from a readable characteristic
+                     * - Read the challenge
+                     * - Encrypt it
+                     * - Send it back to the car
+                     */
+                    @Override
+                    public void onCharacteristicRead(BluetoothGatt gatt,
+                                                     BluetoothGattCharacteristic characteristic,
+                                                     int status) {
+
+                    }
+
+                    /**
+                     * Callback called when the value of a characteristic with a notify
+                     * action is changed
+                     * - Send the response from the car to the challenge exchange
+                     */
+                    @Override
+                    public void onCharacteristicChanged(BluetoothGatt gatt,
+                                                        BluetoothGattCharacteristic characteristic) {
+                    }
+
+                    @Override
+                    public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor,
+                                                  int status) {
+                    }
+
+                    @Override
+                    public void onReliableWriteCompleted(BluetoothGatt gatt, int status) {
+                    }
+
+                });
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     Log.d("NIH", "Android version >= 5.0 --> request HIGH priority (connection interval 7,5ms) 2");
-                    if (mBluetoothGatt != null) {
-                        mBluetoothGatt.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH);
+                    if (mBluetoothGatt2 != null) {
+                        mBluetoothGatt2.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH);
                     }
                 }
             } // This is your code

@@ -153,6 +153,17 @@ public class BluetoothManagement {
     }
 
     /**
+     * Open the connection between the phone and the pc
+     */
+    public void connectToPC(String address) {
+        if (mBluetoothLeService != null) {
+            Log.i("NIH bind", "BluetoothManagement connectToPC: " + address);
+            mBluetoothLeService.connectToPc(address);
+        }
+    }
+
+
+    /**
      * Start or stop the scan by calling the corresponding callback
      *
      * @param enable: indicates if we want to enable or disable the BLE adapter
