@@ -66,6 +66,7 @@ public class BluetoothLeService extends Service {
 
     /** Bluetooth device we want to connectToDevice to, */
     private BluetoothDevice mDevice;
+    private BluetoothDevice mDevice2;
 
     /** Handler to return to the controller results from the action requested */
     private Handler mBSHandler;
@@ -329,7 +330,7 @@ public class BluetoothLeService extends Service {
             Log.w("NIH", "BluetoothAdapter not initialized or unspecified address.");
             return;
         }
-        final BluetoothDevice mDevice2 = mBluetoothAdapter.getRemoteDevice(address);
+        mDevice = mBluetoothAdapter.getRemoteDevice(address);
         //Use a handler to call the bluetooth stack from the main thread.
         //This is due to an issue on some devices such as the Galaxy S4
         //Details here: http://stackoverflow.com/questions/20069507/gatt-callback-fails-to-register
@@ -338,7 +339,7 @@ public class BluetoothLeService extends Service {
         Runnable runFromMainThread = new Runnable() {
             @Override
             public void run() {
-                mBluetoothGatt = mDevice2.connectGatt(getApplicationContext(), false, mGattCallback);
+                mBluetoothGatt = mDevice.connectGatt(getApplicationContext(), false, mGattCallback);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     Log.d("NIH", "Android version >= 5.0 --> request HIGH priority (connection interval 7,5ms) 2");
                     if (mBluetoothGatt != null) {
@@ -351,12 +352,12 @@ public class BluetoothLeService extends Service {
     }
 
     public void connectToPc(final String address) {
-        Log.d("NIH", "connectToPc.");
+        Log.d("NIH_PC", "connectToPc.");
         if (mBluetoothAdapter == null || address == null) {
-            Log.w("NIH", "BluetoothAdapter not initialized or unspecified address.");
+            Log.w("NIH_PC", "BluetoothAdapter not initialized or unspecified address.");
             return;
         }
-        mDevice = mBluetoothAdapter.getRemoteDevice(address);
+        mDevice2 = mBluetoothAdapter.getRemoteDevice(address);
         //Use a handler to call the bluetooth stack from the main thread.
         //This is due to an issue on some devices such as the Galaxy S4
         //Details here: http://stackoverflow.com/questions/20069507/gatt-callback-fails-to-register
@@ -365,30 +366,52 @@ public class BluetoothLeService extends Service {
         Runnable runFromMainThread = new Runnable() {
             @Override
             public void run() {
-                mBluetoothGatt2 = mDevice.connectGatt(getApplicationContext(), false, new BluetoothGattCallback() {
+                mBluetoothGatt2 = mDevice2.connectGatt(getApplicationContext(), false, new BluetoothGattCallback() {
                     @Override
                     public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-                        Log.i("NIH", "onCharacteristicWrite(): status=" + status + " " +
+                        Log.i("NIH_PC", "onCharacteristicWrite(): status=" + status + " " +
                                 TextUtils.getHexString(characteristic.getValue()));
-                        if (mDevice != null && mBluetoothGatt2 != null) {
-                            //Disconnect after write
-                            mPacketToWriteCount--;
-                            if (mPacketToWriteCount == 0) {
-                                for (int i = 0; i < mListeners.size(); i++) {
-                                    mListeners.get(i).onSendPacketSuccess();
-                                }
-                            }
+                        if (mDevice2 != null && mBluetoothGatt2 != null) {
+                            Log.d("NIH_PC", "onCharacteristicWrite");
                         }
                     }
 
                     @Override
                     public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
-
+                        if (status != BluetoothGatt.GATT_SUCCESS) {
+                            Log.d("NIH_PC", "onMtuChanged mtu request FAILED " + status);
+                        } else {
+                            Log.d("NIH_PC", "onMtuChanged mtu request SUCCESS " + status);
+                        }
                     }
 
                     @Override
                     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-
+                        Log.d("NIH_PC", "onConnectionStateChange, Status =" + status + " , NewState = " + newState);
+                        String intentAction;
+                        if (status == 8) {
+                            Log.i("NIH_PC", "onConnectionStateChange ACTION_GATT_CONNECTION_LOSS");
+                        } else if (status != BluetoothGatt.GATT_SUCCESS && status != 19) {
+                            // makeNoise when connexion failed
+                            if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                                intentAction = ACTION_GATT_DISCONNECTED;
+                                Log.i("NIH_PC", "Error lead to disconnection from GATT server.");
+                            } else {
+                                Log.i("NIH_PC", "Failed to Connected to GATT server, New State = " + newState);
+                                intentAction = ACTION_GATT_SERVICES_FAILED;
+                            }
+                        } else if (newState == BluetoothProfile.STATE_CONNECTED) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                gatt.requestMtu(23);
+                            } else {
+                                Log.d("NIH_PC", "onConnectionStateChange no mtu request");
+                            }
+                            // Result from the requested action: should be 1 or 15 at the end
+                            // Otherwise an error occurred during the process
+                        } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                            intentAction = ACTION_GATT_DISCONNECTED;
+                            Log.i("NIH_PC", "Disconnected from GATT server.");
+                        }
                     }
 
                     /**
@@ -396,7 +419,7 @@ public class BluetoothLeService extends Service {
                      */
                     @Override
                     public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-
+                        Log.i("NIH_PC", "onServicesDiscovered");
                     }
 
                     /**
@@ -409,7 +432,7 @@ public class BluetoothLeService extends Service {
                     public void onCharacteristicRead(BluetoothGatt gatt,
                                                      BluetoothGattCharacteristic characteristic,
                                                      int status) {
-
+                        Log.i("NIH_PC", "onCharacteristicRead");
                     }
 
                     /**
@@ -420,20 +443,23 @@ public class BluetoothLeService extends Service {
                     @Override
                     public void onCharacteristicChanged(BluetoothGatt gatt,
                                                         BluetoothGattCharacteristic characteristic) {
+                        Log.i("NIH_PC", "onCharacteristicChanged");
                     }
 
                     @Override
                     public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor,
                                                   int status) {
+                        Log.i("NIH_PC", "onDescriptorWrite");
                     }
 
                     @Override
                     public void onReliableWriteCompleted(BluetoothGatt gatt, int status) {
+                        Log.i("NIH_PC", "onReliableWriteCompleted");
                     }
 
                 });
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    Log.d("NIH", "Android version >= 5.0 --> request HIGH priority (connection interval 7,5ms) 2");
+                    Log.d("NIH_PC", "Android version >= 5.0 --> request HIGH priority (connection interval 7,5ms) 2");
                     if (mBluetoothGatt2 != null) {
                         mBluetoothGatt2.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH);
                     }
