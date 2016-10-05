@@ -37,7 +37,7 @@
     </item>
     <item
         android:bottom="10dp"
-        android:drawable="@drawable/rssi_localization_car"
+        android:drawable="@drawable/car_4"
         android:gravity="center"
         android:left="10dp"
         android:right="10dp"
@@ -74,7 +74,7 @@
     <item
         android:id="@+id/unlock_area_back"
         android:bottom="40dp"
-        android:left="210dp"
+        android:left="214dp"
         android:right="30dp"
         android:top="40dp">
         <shape android:shape="rectangle">
