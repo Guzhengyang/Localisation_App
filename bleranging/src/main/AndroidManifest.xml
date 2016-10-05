@@ -8,7 +8,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application android:allowBackup="true">
-    <service android:name="com.valeo.bleranging.bluetooth.BluetoothLeService"
+        <service
+            android:name="com.valeo.bleranging.bluetooth.BluetoothLeService"
+            android:enabled="true" />
+        <service
+            android:name="com.valeo.bleranging.bluetooth.BluetoothLeService2"
         android:enabled="true"/>
     </application>
 </manifest>

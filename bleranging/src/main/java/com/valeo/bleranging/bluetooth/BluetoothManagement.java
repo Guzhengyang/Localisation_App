@@ -80,6 +80,23 @@ public class BluetoothManagement {
             mBluetoothLeService = null;
         }
     };
+    private BluetoothLeService2 mBluetoothLeService2;
+    private final ServiceConnection mServiceConnection2 = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            Log.i("NIH_PC", "onServiceConnected()");
+            mBluetoothLeService2 = (((BluetoothLeService2.LocalBinder2) service).getService());
+            if (mBluetoothLeService2.initialize()) {
+                mBluetoothLeService2.connectToDevice(SdkPreferencesHelper.getInstance().getTrxAddressConnectable2());
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            Log.i("NIH_PC", "onServiceDisconnected()");
+            mBluetoothLeService2 = null;
+        }
+    };
     private BroadcastReceiver mTrxUpdateReceiver;
 
     /**
@@ -156,9 +173,13 @@ public class BluetoothManagement {
      * Open the connection between the phone and the pc
      */
     public void connectToPC(String address) {
-        if (mBluetoothLeService != null) {
-            Log.i("NIH bind", "BluetoothManagement connectToPC: " + address);
-            mBluetoothLeService.connectToPc(address);
+        if (mBluetoothLeService2 == null) {
+            Log.i("NIH_PC", "BluetoothManagement bindService: " + address);
+            Intent gattServiceIntent = new Intent(mContext, BluetoothLeService2.class);
+            mContext.bindService(gattServiceIntent, mServiceConnection2, Context.BIND_AUTO_CREATE);
+        } else {
+            Log.i("NIH_PC", "BluetoothManagement connectToPC: " + address);
+            mBluetoothLeService2.connectToDevice(address);
         }
     }
 
@@ -374,6 +395,9 @@ public class BluetoothManagement {
 
     public void sendPackets(byte[][] value) {
         mBluetoothLeService.sendPackets(value);
+        if (mBluetoothLeService2 != null && mBluetoothLeService2.isFullyConnected()) {
+            mBluetoothLeService2.sendPackets(value);
+        }
     }
 
     //GETTERS
