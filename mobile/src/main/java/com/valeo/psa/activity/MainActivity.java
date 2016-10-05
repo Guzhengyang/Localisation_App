@@ -151,16 +151,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private KeyguardManager mKeyguardManager;
     private Car selectedCar = null;
 
-    /**
-     * Get the status bar height
-     *
-     * @param res the app resources
-     * @return the height of the status bar
-     */
-    private static int statusBarHeight(Resources res) {
-        return (int) (R.dimen.status_bar_height * res.getDisplayMetrics().density);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -171,7 +161,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setFonts();
-        setActivityTitle();
         setOnClickListeners();
         main_appbar.setExpanded(false, false);
         getPermissions();
@@ -646,6 +635,16 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     }
 
     /**
+     * Get the status bar height
+     *
+     * @param res the app resources
+     * @return the height of the status bar
+     */
+    private int statusBarHeight(Resources res) {
+        return (int) (R.dimen.status_bar_height * res.getDisplayMetrics().density);
+    }
+
+    /**
      * Switch between toolbar's (normal and new toolbar mode)
      *
      * @param mainToNewToolBar boolean to determine which toolbar to inflate
@@ -999,6 +998,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         if(mBleRangingHelper != null) {
             mBleRangingHelper.initializeConnectedCar();
         }
+        setActivityTitle();
     }
 
     private enum CarDoorStatus {

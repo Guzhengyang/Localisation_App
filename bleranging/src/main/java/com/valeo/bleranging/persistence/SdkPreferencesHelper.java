@@ -662,14 +662,15 @@ public final class SdkPreferencesHelper {
         return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_2_PREFERENCE_NAME, BLE_ADDRESS_CONNECTABLE_2);
     }
 
+    public void setTrxAddressConnectable2(String address) {
+        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_2_PREFERENCE_NAME, address);
+    }
+
 // --Commented out by Inspection START (30/09/2016 11:26):
 //    public void setTrxAddressConnectable(String address) {
 //        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, address);
 //    }
 //
-//   public void setTrxAddressConnectable2(String address) {
-//        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_2_PREFERENCE_NAME, address);
-//    }
 // --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public String getTrxAddressLeft() {

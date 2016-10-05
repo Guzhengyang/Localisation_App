@@ -104,6 +104,9 @@ public class BluetoothLeService extends Service {
                 Log.d("NIH", "onMtuChanged mtu request FAILED " + status);
                 intentAction = ACTION_GATT_SERVICES_FAILED;
                 broadcastUpdate(intentAction);
+                if (mBluetoothGatt != null) {
+                    mBluetoothGatt.close();
+                }
             } else {
                 Log.d("NIH", "onMtuChanged mtu request SUCCESS " + status);
                 intentAction = ACTION_GATT_CONNECTED;
@@ -153,6 +156,9 @@ public class BluetoothLeService extends Service {
                     Log.i("NIH", "Failed to Connected to GATT server, New State = " + newState);
                     intentAction = ACTION_GATT_SERVICES_FAILED;
                     broadcastUpdate(intentAction);
+                    if (mBluetoothGatt != null) {
+                        mBluetoothGatt.close();
+                    }
                 }
             } else if (newState == BluetoothProfile.STATE_CONNECTED) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -188,6 +194,9 @@ public class BluetoothLeService extends Service {
                 broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
             } else {
                 broadcastUpdate(ACTION_GATT_SERVICES_FAILED);
+                if (mBluetoothGatt != null) {
+                    mBluetoothGatt.close();
+                }
             }
         }
 
@@ -382,6 +391,9 @@ public class BluetoothLeService extends Service {
                             Log.d("NIH_PC", "onMtuChanged mtu request FAILED " + status);
                         } else {
                             Log.d("NIH_PC", "onMtuChanged mtu request SUCCESS " + status);
+                            if (mBluetoothGatt2 != null) {
+                                mBluetoothGatt2.close();
+                            }
                         }
                     }
 
