@@ -58,6 +58,7 @@ public final class SdkPreferencesHelper {
     public static final int RATIO_MAX_MIN_THR = 20;
     public static final int RATIO_CLOSE_TO_CAR_THR = 30;
     public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:73:88";
+    public final static String BLE_ADDRESS_CONNECTABLE_2 = "5C:E0:C5:34:4D:32";
     public final static String BLE_ADDRESS_LEFT = "D4:F5:13:56:39:A5";
     public final static String BLE_ADDRESS_MIDDLE = "D4:F5:13:56:6B:65";
     public final static String BLE_ADDRESS_RIGHT = "D4:F5:13:56:65:16";
@@ -72,6 +73,7 @@ public final class SdkPreferencesHelper {
     public static final String SAVED_CC_GENERIC_OPTION = "savedConnectedCarGenericOption";
     /** Key formatter. */
     public static final String ADDRESS_CONNECTABLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE";
+    public static final String ADDRESS_CONNECTABLE_2_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE_2";
     public static final String ADDRESS_LEFT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_LEFT";
     public static final String ADDRESS_MIDDLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_MIDDLE";
     public static final String ADDRESS_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_RIGHT";
@@ -656,9 +658,17 @@ public final class SdkPreferencesHelper {
         return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, BLE_ADDRESS_CONNECTABLE);
     }
 
+    public String getTrxAddressConnectable2() {
+        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_2_PREFERENCE_NAME, BLE_ADDRESS_CONNECTABLE_2);
+    }
+
 // --Commented out by Inspection START (30/09/2016 11:26):
 //    public void setTrxAddressConnectable(String address) {
 //        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, address);
+//    }
+//
+//   public void setTrxAddressConnectable2(String address) {
+//        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_2_PREFERENCE_NAME, address);
 //    }
 // --Commented out by Inspection STOP (30/09/2016 11:26)
 

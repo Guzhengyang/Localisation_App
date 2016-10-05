@@ -120,6 +120,7 @@
     <string name="pref_equalizer_rear_right">Rear Right Equalizer</string>
     <string name="pref_ble_address">BLE ADDRESS</string>
     <string name="pref_ble_address_connectable">Connectable BLE Address</string>
+    <string name="pref_ble_address_connectable_2">Second Connectable BLE Address</string>
     <string name="pref_ble_address_left">Left BLE Address</string>
     <string name="pref_ble_address_middle">Middle BLE Address</string>
     <string name="pref_ble_address_right">Right BLE Address</string>

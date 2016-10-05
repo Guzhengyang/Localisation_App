@@ -339,6 +339,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference lin_acc_size;
         private EditTextPreference correction_lin_acc;
         private EditTextPreference address_connectable;
+        private EditTextPreference address_connectable_2;
         private EditTextPreference address_left;
         private EditTextPreference address_middle;
         private EditTextPreference address_right;
@@ -381,6 +382,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             lin_acc_size = ((EditTextPreference) findPreference(SdkPreferencesHelper.LIN_ACC_SIZE_PREFERENCES_NAME));
             correction_lin_acc = ((EditTextPreference) findPreference(SdkPreferencesHelper.CORRECTION_LIN_ACC_PREFERENCES_NAME));
             address_connectable = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_PREFERENCE_NAME));
+            address_connectable_2 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_2_PREFERENCE_NAME));
             address_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_LEFT_PREFERENCE_NAME));
             address_middle = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_MIDDLE_PREFERENCE_NAME));
             address_right = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_RIGHT_PREFERENCE_NAME));
@@ -404,6 +406,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             lin_acc_size.setText(lin_acc_size.getSummary().toString());
             correction_lin_acc.setText(correction_lin_acc.getSummary().toString());
             address_connectable.setText(address_connectable.getSummary().toString());
+            address_connectable_2.setText(address_connectable_2.getSummary().toString());
             address_left.setText(address_left.getSummary().toString());
             address_middle.setText(address_middle.getSummary().toString());
             address_right.setText(address_right.getSummary().toString());
@@ -433,6 +436,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(lin_acc_size, String.valueOf(SdkPreferencesHelper.LIN_ACC_SIZE));
             bindPreferenceSummaryToValue(correction_lin_acc, String.valueOf(SdkPreferencesHelper.CORRECTION_LIN_ACC));
             bindPreferenceSummaryToValue(address_connectable, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE);
+            bindPreferenceSummaryToValue(address_connectable_2, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE_2);
             bindPreferenceSummaryToValue(address_left, SdkPreferencesHelper.BLE_ADDRESS_LEFT);
             bindPreferenceSummaryToValue(address_middle, SdkPreferencesHelper.BLE_ADDRESS_MIDDLE);
             bindPreferenceSummaryToValue(address_right, SdkPreferencesHelper.BLE_ADDRESS_RIGHT);

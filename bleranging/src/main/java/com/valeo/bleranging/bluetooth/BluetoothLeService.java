@@ -388,17 +388,14 @@ public class BluetoothLeService extends Service {
                     @Override
                     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
                         Log.d("NIH_PC", "onConnectionStateChange, Status =" + status + " , NewState = " + newState);
-                        String intentAction;
                         if (status == 8) {
                             Log.i("NIH_PC", "onConnectionStateChange ACTION_GATT_CONNECTION_LOSS");
                         } else if (status != BluetoothGatt.GATT_SUCCESS && status != 19) {
                             // makeNoise when connexion failed
                             if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                                intentAction = ACTION_GATT_DISCONNECTED;
                                 Log.i("NIH_PC", "Error lead to disconnection from GATT server.");
                             } else {
                                 Log.i("NIH_PC", "Failed to Connected to GATT server, New State = " + newState);
-                                intentAction = ACTION_GATT_SERVICES_FAILED;
                             }
                         } else if (newState == BluetoothProfile.STATE_CONNECTED) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -409,7 +406,6 @@ public class BluetoothLeService extends Service {
                             // Result from the requested action: should be 1 or 15 at the end
                             // Otherwise an error occurred during the process
                         } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                            intentAction = ACTION_GATT_DISCONNECTED;
                             Log.i("NIH_PC", "Disconnected from GATT server.");
                         }
                     }

@@ -19,6 +19,9 @@
             android:key="com.inblue.PREFERENCE_ADDRESS_CONNECTABLE"
             android:title="@string/pref_ble_address_connectable" />
         <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_CONNECTABLE_2"
+            android:title="@string/pref_ble_address_connectable_2" />
+        <EditTextPreference
             android:key="com.inblue.PREFERENCE_ADDRESS_LEFT"
             android:title="@string/pref_ble_address_left" />
         <EditTextPreference
