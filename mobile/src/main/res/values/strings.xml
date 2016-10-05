@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">PSAnoSDK</string>
-    <string name="title_activity_main">Remote key</string>
+    <string name="title_activity_main">Lock : %1$s &amp; Unlock %2$s</string>
     <string name="title_activity_login">Connect to My Peugeot</string>
     <string name="title_activity_security_questions">Security Questions</string>
     <string name="set_security_lock">Secure lock screen hasn\'t set up.\nGo to \'Settings -> Security -> ScreenLock\' to set up a lock screen</string>
@@ -140,4 +140,7 @@
     <string name="security_question_one">What was the model of your first car ?</string>
     <string name="security_question_two">What is the first name of the person you first kissed ?</string>
     <string name="notif_unlock_it">Unlock it?</string>
+    <string name="psu">PSU</string>
+    <string name="wal">WAL</string>
+    <string name="uir">UIR</string>
 </resources>

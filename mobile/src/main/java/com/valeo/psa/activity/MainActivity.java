@@ -58,6 +58,8 @@ import android.widget.Toast;
 
 import com.trncic.library.DottedProgressBar;
 import com.valeo.bleranging.BleRangingHelper;
+import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
+import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
 import com.valeo.psa.R;
 import com.valeo.psa.model.Car;
@@ -72,6 +74,7 @@ import com.valeo.psa.view.ReverseProgressBar;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter.OnStartDragListener,
         MyRecyclerAdapter.OnIconLongPressedListener, View.OnTouchListener, BleRangingListener {
@@ -168,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setFonts();
+        setActivityTitle();
         setOnClickListeners();
         main_appbar.setExpanded(false, false);
         getPermissions();
@@ -186,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             // Show a message that the user hasn't set up a lock screen.
             Toast.makeText(this, getString(R.string.set_security_lock), Toast.LENGTH_LONG).show();
         }
-//        showAuthenticationScreen();
+        showAuthenticationScreen();
     }
 
     /**
@@ -228,7 +232,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         // we will provide a generic one for you if you leave it null
         Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(null, null);
         if (intent != null) {
-            startActivityForResult(intent, REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS);
+            Log.d(TAG, "showAuthenticationScreen " + REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS);
+//            startActivityForResult(intent, REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS); // TODO uncomment to activate
         }
     }
 
@@ -336,7 +341,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             @Override
             public void onClick(View v) {
                 if (mBleRangingHelper.isFullyConnected()) {
-                    car_door_status.setText(getString(R.string.vehicle_locked));
                     carDoorStatus = CarDoorStatus.LOCKED;
                     vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
                     driver_s_door_unlocked.setBackgroundResource(0);
@@ -351,7 +355,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             @Override
             public void onClick(View v) {
                 if (mBleRangingHelper.isFullyConnected()) {
-                    car_door_status.setText(getString(R.string.driver_s_door_unlocked));
                     carDoorStatus = CarDoorStatus.DRIVER_DOOR_OPEN;
                     driver_s_door_unlocked.setBackgroundResource(R.mipmap.slider_button);
                     vehicle_locked.setBackgroundResource(0);
@@ -367,7 +370,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             @Override
             public void onClick(View v) {
                 if (mBleRangingHelper.isFullyConnected()) {
-                    car_door_status.setText(getString(R.string.vehicle_unlocked));
                     carDoorStatus = CarDoorStatus.UNLOCKED;
                     vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
                     driver_s_door_unlocked.setBackgroundResource(0);
@@ -461,18 +463,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         start_button_first_wave = (ImageView) findViewById(R.id.start_button_first_wave);
         start_button_second_wave = (ImageView) findViewById(R.id.start_button_second_wave);
         signalReceived = (ImageView) findViewById(R.id.signalReceived);
-        layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization);
-        welcome_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.welcome_area);
-        start_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area);
-        lock_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.lock_area);
-        unlock_area_front_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_left);
-        unlock_area_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_left);
-        unlock_area_rear_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_left);
-        unlock_area_front_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_right);
-        unlock_area_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_right);
-        unlock_area_rear_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_right);
-        unlock_area_back = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_back);
-        thatcham_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.thatcham_area);
+        updateCarDrawable();
         little_round_progressBar = (DottedProgressBar) findViewById(R.id.little_round_progressBar);
         debug_info = (TextView) findViewById(R.id.debug_info);
     }
@@ -627,13 +618,30 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         } else {
             content_start_car_dialog.setVisibility(View.GONE);
             ble_status.setVisibility(View.VISIBLE);
-            activity_title.setText(R.string.title_activity_main);
+            setActivityTitle();
             activity_title.setGravity(Gravity.CENTER);
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) activity_title.getLayoutParams();
             layoutParams.addRule(RelativeLayout.RIGHT_OF, 0);
             layoutParams.width = RelativeLayout.LayoutParams.MATCH_PARENT;
             activity_title.setLayoutParams(layoutParams);
             activity_title.setOnClickListener(null);
+        }
+    }
+
+    private void setActivityTitle() {
+        switch (SdkPreferencesHelper.getInstance().getConnectedCarBase()) {
+            case ConnectedCarFactory.BASE_1:
+                activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.psu), getString(R.string.psu)));
+                break;
+            case ConnectedCarFactory.BASE_2:
+                activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.wal), getString(R.string.psu)));
+                break;
+            case ConnectedCarFactory.BASE_3:
+                activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.wal), getString(R.string.uir)));
+                break;
+            case ConnectedCarFactory.BASE_4:
+                activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.psu), getString(R.string.uir)));
+                break;
         }
     }
 
@@ -817,16 +825,24 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 unlock_area_right.setColor(Color.GREEN);
                 break;
             case BleRangingHelper.UNLOCK_FRONT_LEFT_AREA:
-                unlock_area_front_left.setColor(Color.GREEN);
+                if (unlock_area_front_left != null) {
+                    unlock_area_front_left.setColor(Color.GREEN);
+                }
                 break;
             case BleRangingHelper.UNLOCK_FRONT_RIGHT_AREA:
-                unlock_area_front_right.setColor(Color.GREEN);
+                if (unlock_area_front_right != null) {
+                    unlock_area_front_right.setColor(Color.GREEN);
+                }
                 break;
             case BleRangingHelper.UNLOCK_REAR_LEFT_AREA:
-                unlock_area_rear_left.setColor(Color.GREEN);
+                if (unlock_area_rear_left != null) {
+                    unlock_area_rear_left.setColor(Color.GREEN);
+                }
                 break;
             case BleRangingHelper.UNLOCK_REAR_RIGHT_AREA:
-                unlock_area_rear_right.setColor(Color.GREEN);
+                if (unlock_area_rear_right != null) {
+                    unlock_area_rear_right.setColor(Color.GREEN);
+                }
                 break;
             case BleRangingHelper.UNLOCK_BACK_AREA:
                 unlock_area_back.setColor(Color.GREEN);
@@ -857,16 +873,24 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 unlock_area_right.setColor(Color.BLACK);
                 break;
             case BleRangingHelper.UNLOCK_FRONT_LEFT_AREA:
-                unlock_area_front_left.setColor(Color.BLACK);
+                if (unlock_area_front_left != null) {
+                    unlock_area_front_left.setColor(Color.BLACK);
+                }
                 break;
             case BleRangingHelper.UNLOCK_FRONT_RIGHT_AREA:
-                unlock_area_front_right.setColor(Color.BLACK);
+                if (unlock_area_front_right != null) {
+                    unlock_area_front_right.setColor(Color.BLACK);
+                }
                 break;
             case BleRangingHelper.UNLOCK_REAR_LEFT_AREA:
-                unlock_area_rear_left.setColor(Color.BLACK);
+                if (unlock_area_rear_left != null) {
+                    unlock_area_rear_left.setColor(Color.BLACK);
+                }
                 break;
             case BleRangingHelper.UNLOCK_REAR_RIGHT_AREA:
-                unlock_area_rear_right.setColor(Color.BLACK);
+                if (unlock_area_rear_right != null) {
+                    unlock_area_rear_right.setColor(Color.BLACK);
+                }
                 break;
             case BleRangingHelper.UNLOCK_BACK_AREA:
                 unlock_area_back.setColor(Color.BLACK);
@@ -913,6 +937,40 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             // animation waves start_button
             startButtonAnimation(true);
         }
+    }
+
+    @Override
+    public void updateCarDrawable() {
+        switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
+            case ConnectedCarFactory.TYPE_4_A:
+                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_four);
+                unlock_area_front_left = null;
+                unlock_area_rear_left = null;
+                unlock_area_front_right = null;
+                unlock_area_rear_right = null;
+                break;
+            case ConnectedCarFactory.TYPE_7_A:
+                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_seven);
+                unlock_area_front_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_left);
+                unlock_area_rear_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_left);
+                unlock_area_front_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_right);
+                unlock_area_rear_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_right);
+                break;
+            default:
+                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_seven);
+                unlock_area_front_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_left);
+                unlock_area_rear_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_left);
+                unlock_area_front_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_right);
+                unlock_area_rear_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_right);
+                break;
+        }
+        welcome_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.welcome_area);
+        start_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area);
+        lock_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.lock_area);
+        unlock_area_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_left);
+        unlock_area_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_right);
+        unlock_area_back = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_back);
+        thatcham_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.thatcham_area);
     }
 
     private void startButtonAnimation(boolean isAnimated) {

@@ -12,4 +12,6 @@ public interface BleRangingListener {
 
     void updateBLEStatus();
     void updateCarDoorStatus(boolean lockStatus);
+
+    void updateCarDrawable();
 }

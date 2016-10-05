@@ -18,8 +18,8 @@
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_gravity="center"
-        android:text="@string/title_activity_main"
+        android:layout_toEndOf="@id/main_icon"
         android:textColor="@color/white"
-        android:textSize="@dimen/psa_56_px" />
+        android:textSize="@dimen/psa_40_px" />
 
 </RelativeLayout>
