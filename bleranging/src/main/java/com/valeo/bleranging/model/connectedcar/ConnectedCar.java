@@ -317,7 +317,7 @@ public abstract class ConnectedCar {
 
     int getRatioCloseToCar(int trxNumber, int mode) {
         if (trxLinkedHMap != null) {
-            return (trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode) - getMinAverageRssi(trxNumber, mode));
+            return (trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode) - getAllTrxAverage(mode));//getMinAverageRssi(trxNumber, mode));
         }
         return 0;
     }

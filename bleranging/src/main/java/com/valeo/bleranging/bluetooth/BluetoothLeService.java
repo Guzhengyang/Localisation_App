@@ -50,6 +50,7 @@ public class BluetoothLeService extends Service {
     private final IBinder mBinder = new LocalBinder();
     private boolean mIsServiceDiscovered = false;
     private boolean isFullyConnected = false;
+    private boolean isConnecting = false;
     private boolean isBound = false;
     private int mPacketToWriteCount = 0;
     private Deque<byte[]> mReceiveQueue;
@@ -130,6 +131,7 @@ public class BluetoothLeService extends Service {
             if (status == 8) {
                 intentAction = ACTION_GATT_CONNECTION_LOSS;
                 isFullyConnected = false;
+                isConnecting = false;
                 broadcastUpdate(intentAction);
             } else if (status != BluetoothGatt.GATT_SUCCESS && status != 19) {
                 // makeNoise when connexion failed
@@ -143,6 +145,7 @@ public class BluetoothLeService extends Service {
                     intentAction = ACTION_GATT_DISCONNECTED;
                     Log.i("NIH", "Error lead to disconnection from GATT server.");
                     isFullyConnected = false;
+                    isConnecting = false;
                     if (mBSHandler != null) {
                         // Send a message to the right handler
                         // Return the result from the requested action
@@ -170,6 +173,7 @@ public class BluetoothLeService extends Service {
                 intentAction = ACTION_GATT_DISCONNECTED;
                 Log.i("NIH", "Disconnected from GATT server.");
                 isFullyConnected = false;
+                isConnecting = false;
                 if (mBSHandler != null) {
                     // Send a message to the right handler
                     // Return the result from the requested action
@@ -230,6 +234,7 @@ public class BluetoothLeService extends Service {
             Log.i("NIH", "onCharacteristicChanged(): " + Arrays.toString(characteristic.getValue()));
             mReceiveQueue.add(characteristic.getValue());
             isFullyConnected = true;
+            isConnecting = false;
             broadcastUpdate(ACTION_DATA_AVAILABLE);
         }
 
@@ -239,6 +244,7 @@ public class BluetoothLeService extends Service {
             Log.i("NIH", "onDescriptorWrite(): " + status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 isFullyConnected = true;
+                isConnecting = false;
                 broadcastUpdate(ACTION_GATT_CHARACTERISTIC_SUBSCRIBED);
             }
         }
@@ -261,6 +267,10 @@ public class BluetoothLeService extends Service {
     private void broadcastUpdate(final String action) {
         final Intent intent = new Intent(action);
         sendBroadcast(intent);
+    }
+
+    public boolean isConnecting() {
+        return isConnecting;
     }
 
     public boolean isFullyConnected() {
@@ -332,6 +342,7 @@ public class BluetoothLeService extends Service {
      * callback.
      */
     public void connectToDevice(final String address) {
+        isConnecting = true;
         Log.d("NIH", "connectToDevice.");
         if (mBluetoothAdapter == null || address == null) {
             Log.w("NIH", "BluetoothAdapter not initialized or unspecified address.");
@@ -461,8 +472,8 @@ public class BluetoothLeService extends Service {
         return bReturn;
     }
 
-    public void sendPackets(byte[][] value) {
-        writeCharacteristicBatch(value);
+    public void sendPackets(byte[] value) {
+        writeCharacteristicBatch(new byte[][]{value});
     }
 
     public void registerListener(IBluetoothLeServiceListener listener) {

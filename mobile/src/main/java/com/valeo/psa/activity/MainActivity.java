@@ -988,8 +988,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 
     @Override
     public void onBackPressed() {
-        mBleRangingHelper.closeApp();
         super.onBackPressed();
+        mBleRangingHelper.closeApp();
     }
 
     @Override

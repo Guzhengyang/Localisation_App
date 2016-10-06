@@ -112,12 +112,13 @@ public class BleRangingHelper implements SensorEventListener {
     private boolean isWelcomeStrategyValid = false;
     private boolean checkNewPacketOnlyOneLaunch = true;
     private byte[] bytesToSend;
+    private byte[] bytesReceived;
     private final Runnable sendPacketRunner = new Runnable() {
         @Override
         public void run() {
             Log.d("NIH", "getPacketOnePayload then sendPackets");
-            bytesToSend = mProtocolManager.getPacketOnePayload(isRKE.get());
-            mBluetoothManager.sendPackets(new byte[][]{bytesToSend});
+            bytesToSend = mProtocolManager.getPacketOnePayload(isRKE.get(), isUnlockStrategyValid, isStartStrategyValid, isLockStrategyValid);
+            mBluetoothManager.sendPackets(bytesToSend, bytesReceived);
             if (isRKE.get()) {
                 setIsRKE(false);
             }
@@ -126,7 +127,6 @@ public class BleRangingHelper implements SensorEventListener {
             }
         }
     };
-    private byte[] bytesReceived;
     private final Runnable checkNewPacketsRunner = new Runnable() {
         @Override
         public void run() {
@@ -179,6 +179,81 @@ public class BleRangingHelper implements SensorEventListener {
                 connectedCar.compareCheckerAndSetAntennaActive();
             }
             mMainHandler.postDelayed(this, 2500);
+        }
+    };
+    /**
+     * Handles various events fired by the Service.
+     * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
+     * ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
+     * or notification operations.
+     */
+    private final BroadcastReceiver mTrxUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                bytesReceived = mBluetoothManager.getBytesReceived();
+                Log.d("NIH", "TRX ACTION_DATA_AVAILABLE");
+                boolean oldLockStatus = newLockStatus;
+                if (bytesReceived != null) {
+                    newLockStatus = (bytesReceived[5] & 0x01) != 0;
+                }
+                if (oldLockStatus != newLockStatus) {
+//                    connectedCar.resetWithHysteresis(newLockStatus, isUnlockStrategyValid); //TODO concurrentModification
+                    bleRangingListener.updateCarDoorStatus(newLockStatus);
+                }
+                mProtocolManager.setIsLockedFromTrx(newLockStatus);
+                if (lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
+                    lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
+                    mProtocolManager.setIsLockedToSend(lastCommandFromTrx);
+                    manageRearms(lastCommandFromTrx);
+                }
+                if (lastThatcham.get() != mProtocolManager.isThatcham()) {
+                    lastThatcham.set(mProtocolManager.isThatcham());
+                    manageRearms2(lastThatcham.get());
+                }
+                if (checkNewPacketOnlyOneLaunch) {
+                    checkNewPacketOnlyOneLaunch = false;
+                    mMainHandler.postDelayed(checkNewPacketsRunner, 1000);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED.equals(action)) {
+                Log.d("NIH", "TRX ACTION_GATT_CHARACTERISTIC_SUBSCRIBED");
+                mMainHandler.post(sendPacketRunner); // send works only after subscribed
+                bleRangingListener.updateBLEStatus();
+                mBluetoothManager.resumeLeScan();
+                if (isFirstConnection && isFullyConnected()) {
+                    isFirstConnection = false;
+                    runFirstConnection(newLockStatus);
+                    mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
+                    mHandlerTimeOut.removeCallbacks(null);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                Log.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
+                if (!mBluetoothManager.isConnecting()) {
+                    mMainHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            restartConnection(false);
+                        }
+                    }, 1000);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
+                Log.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
+                if (!mBluetoothManager.isConnecting()) {
+                    mMainHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            restartConnection(false);
+                        }
+                    }, 1000);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
+                Log.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                Log.d("NIH", "TRX ACTION_GATT_SERVICES_DISCOVERED");
+            } else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                Log.d("NIH", "TRX ACTION_GATT_CONNECTED");
+            }
         }
     };
     private byte welcomeByte = 0;
@@ -242,75 +317,6 @@ public class BleRangingHelper implements SensorEventListener {
             }
             if (isFullyConnected()) {
                 mMainHandler.postDelayed(this, 105);
-            }
-        }
-    };
-    /**
-     * Handles various events fired by the Service.
-     * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
-     * ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
-     * or notification operations.
-     */
-    private final BroadcastReceiver mTrxUpdateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-                bytesReceived = mBluetoothManager.getBytesReceived();
-                Log.d("NIH", "TRX ACTION_DATA_AVAILABLE");
-                boolean oldLockStatus = newLockStatus;
-                newLockStatus = (bytesReceived[5] & 0x01) != 0;
-                if (oldLockStatus != newLockStatus) {
-//                    connectedCar.resetWithHysteresis(newLockStatus, isUnlockStrategyValid); //TODO concurrentModification
-                    bleRangingListener.updateCarDoorStatus(newLockStatus);
-                }
-                mProtocolManager.setIsLockedFromTrx(newLockStatus);
-                if (lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
-                    lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
-                    mProtocolManager.setIsLockedToSend(lastCommandFromTrx);
-                    manageRearms(lastCommandFromTrx);
-                }
-                if (lastThatcham.get() != mProtocolManager.isThatcham()) {
-                    lastThatcham.set(mProtocolManager.isThatcham());
-                    manageRearms2(lastThatcham.get());
-                }
-                if (checkNewPacketOnlyOneLaunch) {
-                    checkNewPacketOnlyOneLaunch = false;
-                    mMainHandler.postDelayed(checkNewPacketsRunner, 1000);
-                }
-            } else if (BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED.equals(action)) {
-                Log.d("NIH", "TRX ACTION_GATT_CHARACTERISTIC_SUBSCRIBED");
-                mMainHandler.post(sendPacketRunner); // send works only after subscribed
-                bleRangingListener.updateBLEStatus();
-                mBluetoothManager.resumeLeScan();
-                if (isFirstConnection && isFullyConnected()) {
-                    isFirstConnection = false;
-                    runFirstConnection(newLockStatus);
-                    mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
-                    mHandlerTimeOut.removeCallbacks(null);
-                }
-            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
-                Log.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
-                mMainHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        restartConnection(false);
-                    }
-                }, 1000);
-            } else if (BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
-                Log.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
-                mMainHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        restartConnection(false);
-                    }
-                }, 1000);
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
-                Log.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                Log.d("NIH", "TRX ACTION_GATT_SERVICES_DISCOVERED");
-            } else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
-                Log.d("NIH", "TRX ACTION_GATT_CONNECTED");
             }
         }
     };
@@ -873,7 +879,9 @@ public class BleRangingHelper implements SensorEventListener {
             mMainHandler.removeCallbacks(null);
         }
         mBluetoothManager.suspendLeScan();
-        mBluetoothManager.disconnect();
+        if (!mBluetoothManager.isConnecting()) {
+            mBluetoothManager.disconnect();
+        }
         bleRangingListener.updateBLEStatus();
         // increase the file number use for logs files name
         SdkPreferencesHelper.getInstance().setRssiLogNumber(SdkPreferencesHelper.getInstance().getRssiLogNumber() + 1);

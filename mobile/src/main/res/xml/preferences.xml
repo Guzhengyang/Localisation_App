@@ -9,18 +9,18 @@
             android:inputType="numberSigned"
             android:key="com.inblue.PREFERENCE_CLOSE_TO_CAR_THR"
             android:title="@string/pref_ratio_close_to_car_thr" />
-        <EditTextPreference
-            android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_NEAR_DOOR_THR"
-            android:title="@string/pref_near_door_thr" />
-        <EditTextPreference
-            android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_EQUALLY_NEAR_DOOR_THR"
-            android:title="@string/pref_equally_near_door_thr" />
-        <EditTextPreference
-            android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_NEARER_DOOR_THR"
-            android:title="@string/pref_nearer_door_thr" />
+        <!--<EditTextPreference-->
+        <!--android:inputType="numberSigned"-->
+        <!--android:key="com.inblue.PREFERENCE_NEAR_DOOR_THR"-->
+        <!--android:title="@string/pref_near_door_thr" />-->
+        <!--<EditTextPreference-->
+        <!--android:inputType="numberSigned"-->
+        <!--android:key="com.inblue.PREFERENCE_EQUALLY_NEAR_DOOR_THR"-->
+        <!--android:title="@string/pref_equally_near_door_thr" />-->
+        <!--<EditTextPreference-->
+        <!--android:inputType="numberSigned"-->
+        <!--android:key="com.inblue.PREFERENCE_NEARER_DOOR_THR"-->
+        <!--android:title="@string/pref_nearer_door_thr" />-->
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_offset">
         <EditTextPreference

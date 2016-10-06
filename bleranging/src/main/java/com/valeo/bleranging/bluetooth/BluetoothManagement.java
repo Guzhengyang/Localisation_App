@@ -16,7 +16,10 @@ import com.valeo.bleranging.bluetooth.compat.BluetoothAdapterCompat;
 import com.valeo.bleranging.bluetooth.compat.ScanCallbackCompat;
 import com.valeo.bleranging.bluetooth.compat.ScanTask;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.TextUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -148,6 +151,26 @@ public class BluetoothManagement {
     }
 
     /**
+     * Close the connection between the phone and the current device
+     */
+    public void disconnectPc() {
+        try {
+            if (isFullyConnected2()) {
+                mBluetoothLeService2.disconnect();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            if (isBound2()) {
+                mContext.unbindService(mServiceConnection2);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Open the connection between the phone and the current device
      */
     public void connect(BroadcastReceiver mTrxUpdateReceiver) {
@@ -173,13 +196,15 @@ public class BluetoothManagement {
      * Open the connection between the phone and the pc
      */
     public void connectToPC(String address) {
-        if (mBluetoothLeService2 == null) {
-            Log.i("NIH_PC", "BluetoothManagement bindService: " + address);
-            Intent gattServiceIntent = new Intent(mContext, BluetoothLeService2.class);
-            mContext.bindService(gattServiceIntent, mServiceConnection2, Context.BIND_AUTO_CREATE);
-        } else {
-            Log.i("NIH_PC", "BluetoothManagement connectToPC: " + address);
-            mBluetoothLeService2.connectToDevice(address);
+        if (!isFullyConnected2()) {
+            if (!isBound2()) {
+                Log.i("NIH_PC", "BluetoothManagement bindService: " + address);
+                Intent gattServiceIntent = new Intent(mContext, BluetoothLeService2.class);
+                mContext.bindService(gattServiceIntent, mServiceConnection2, Context.BIND_AUTO_CREATE);
+            } else if (mBluetoothLeService2 != null) {
+                Log.i("NIH_PC", "BluetoothManagement connectToPC: " + address);
+                mBluetoothLeService2.connectToDevice(address);
+            }
         }
     }
 
@@ -393,10 +418,21 @@ public class BluetoothManagement {
         firePassiveEntryTry(device, rssi, scanResponse, advertisedData);
     }
 
-    public void sendPackets(byte[][] value) {
-        mBluetoothLeService.sendPackets(value);
-        if (mBluetoothLeService2 != null && mBluetoothLeService2.isFullyConnected()) {
-            mBluetoothLeService2.sendPackets(value);
+    public void sendPackets(byte[] byteToSend, byte[] byteReceived) {
+        mBluetoothLeService.sendPackets(byteToSend);
+        if (isFullyConnected2() && mBluetoothLeService2.getBLEGattService() != null) {
+            try {
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                outputStream.write(byteToSend);
+                outputStream.write(byteReceived);
+                byte[] concatBytes = outputStream.toByteArray();
+                Log.d("NIH_PC", "send: " + TextUtils.printBleBytes(concatBytes));
+                if (!mBluetoothLeService2.sendPackets(concatBytes)) {
+                    disconnectPc();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -418,11 +454,23 @@ public class BluetoothManagement {
         }
     }
 
+    public boolean isConnecting() {
+        return mBluetoothLeService != null && mBluetoothLeService.isConnecting();
+    }
+
     public boolean isFullyConnected() {
         return mBluetoothLeService != null && mBluetoothLeService.isFullyConnected();
     }
 
+    public boolean isFullyConnected2() {
+        return mBluetoothLeService2 != null && mBluetoothLeService2.isFullyConnected2();
+    }
+
     private boolean isBound() {
         return mBluetoothLeService != null && mBluetoothLeService.isBound();
+    }
+
+    private boolean isBound2() {
+        return mBluetoothLeService2 != null && mBluetoothLeService2.isBound2();
     }
 }

@@ -52,9 +52,9 @@ public final class SdkPreferencesHelper {
     public final static int EQUALIZER_FRONT_RIGHT = 5;
     public final static int EQUALIZER_REAR_LEFT = 5;
     public final static int EQUALIZER_REAR_RIGHT = 5;
-    public static final int NEAR_DOOR_THR = 10;
-    public static final int EQUALLY_NEAR_DOOR_THR = 10;
-    public static final int NEARER_DOOR_THR = 10;
+    //    public static final int NEAR_DOOR_THR = 10;
+//    public static final int EQUALLY_NEAR_DOOR_THR = 10;
+//    public static final int NEARER_DOOR_THR = 10;
     public static final int RATIO_MAX_MIN_THR = 20;
     public static final int RATIO_CLOSE_TO_CAR_THR = 30;
     public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:73:88";

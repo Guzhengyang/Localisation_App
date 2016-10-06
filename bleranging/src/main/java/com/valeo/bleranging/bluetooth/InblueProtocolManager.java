@@ -1,6 +1,9 @@
 package com.valeo.bleranging.bluetooth;
 
+import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
+
+import java.util.List;
 
 /**
  * Created by nhaan on 27/08/2015.
@@ -57,11 +60,33 @@ public class InblueProtocolManager {
         this.carBase = carBase;
     }
 
-    public byte[] getPacketOnePayload(boolean isRKE) {
+    public byte[] getPacketOnePayload(boolean isRKE, List<Integer> isUnlockStrategyValid, boolean isStartStrategyValid, boolean isLockStrategyValid) {
         byte[] payload = new byte[6];
         payload[0] = (byte) ((packetOneCounter>>8)&0xFF);
         payload[1] = (byte) ((packetOneCounter)&0xFF);
         payload[2] = (0x01);
+        payload[4] = (byte) 0;
+        if (!isLockStrategyValid && isUnlockStrategyValid != null) {
+            for (Integer integer : isUnlockStrategyValid) {
+                switch (integer) {
+                    case ConnectedCar.NUMBER_TRX_LEFT:
+                        payload[4] |= 0x03;
+                        break;
+                    case ConnectedCar.NUMBER_TRX_RIGHT:
+                        payload[4] |= 0x02;
+                        break;
+                    case ConnectedCar.NUMBER_TRX_BACK:
+                        payload[4] |= 0x05;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        } else if (isLockStrategyValid && isUnlockStrategyValid == null) {
+            payload[4] |= 0x06;
+        } else if (isStartStrategyValid) {
+            payload[4] |= 0x01;
+        }
         payload[5] = (byte) 0;
         payload[5] |= isStartRequested ? 0x04 : 0x00;
         payload[5] |= isThatcham ? 0x08 : 0x00;
@@ -100,6 +125,7 @@ public class InblueProtocolManager {
         }
         if (isRKE) {
             payload[5] |= isLockedToSend ? 0x01 : 0x02;
+            payload[4] |= isLockedToSend ? 0x08 : 0x07;
         }
         packetOneCounter++;
         return payload;
