@@ -215,7 +215,6 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
                 return null;
             }
             return result;
-
         }
         return null;
     }
