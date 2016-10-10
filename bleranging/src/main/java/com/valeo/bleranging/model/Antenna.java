@@ -221,10 +221,10 @@ public class Antenna {
         if (rssiPente.size() == 10) {
             rssiPente.remove(0);
         }
+        rssi += getTrxRssiEqualizer(numberTrx); // add trx rssi antenna power Equalizer
         currentOriginalRssi = rssi;
         rssiPente.add(currentOriginalRssi - lastOriginalRssi);
         lastOriginalRssi = currentOriginalRssi;
-        rssi += getTrxRssiEqualizer(numberTrx); // add trx rssi antenna power Equalizer
         rssi = getCorrectedRssi(rssi, bleChannel); // Correct the rssi value with an ecretage on the last N-2 rssi seen
         if (rssiHistoric.size() == SdkPreferencesHelper.getInstance().getRollingAvElement()) {
             rssiHistoric.remove(0);

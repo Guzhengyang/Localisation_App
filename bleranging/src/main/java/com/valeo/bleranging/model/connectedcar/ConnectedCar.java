@@ -317,16 +317,24 @@ public abstract class ConnectedCar {
 
     int getRatioCloseToCar(int trxNumber, int mode) {
         if (trxLinkedHMap != null) {
-            return (trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode) - getAllTrxAverage(mode));//getMinAverageRssi(trxNumber, mode));
+            return (trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode) - getMinAverageRssi(trxNumber, mode)); //getAllTrxAverage(mode));
         }
         return 0;
     }
 
+    /**
+     * Find corner trx minimum average
+     *
+     * @param trxNumberToIgnore the trx to compare with
+     * @param mode              the average mode
+     * @return the corner trx minimum average
+     */
     private int getMinAverageRssi(int trxNumberToIgnore, int mode) {
         int min = 0;
         if (trxLinkedHMap != null) {
             for (Integer trxNumber : trxLinkedHMap.keySet()) {
-                if (trxNumber != trxNumberToIgnore) {
+                if (trxNumber != trxNumberToIgnore && trxNumber != NUMBER_TRX_LEFT
+                        && trxNumber != NUMBER_TRX_RIGHT && trxNumber != NUMBER_TRX_MIDDLE) {
                     min = Math.min(min, trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode));
                 }
             }
