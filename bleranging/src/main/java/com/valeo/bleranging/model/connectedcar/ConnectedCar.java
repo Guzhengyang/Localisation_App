@@ -315,9 +315,9 @@ public abstract class ConnectedCar {
         return 0;
     }
 
-    int getRatioCloseToCar(int trxNumber, int mode) {
+    int getRatioCloseToCar(int trxNumber, int mode1, int mode2) {
         if (trxLinkedHMap != null) {
-            return (trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode) - getMinAverageRssi(trxNumber, mode)); //getAllTrxAverage(mode));
+            return (trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode1) - getOtherCornerAverageRssi(trxNumber, mode2));
         }
         return 0;
     }
@@ -340,6 +340,29 @@ public abstract class ConnectedCar {
             }
         }
         return min;
+    }
+
+    /**
+     * Find other corner trx average
+     *
+     * @param trxNumberToIgnore the trx to compare with
+     * @param mode              the average mode
+     * @return the other corners trxs average
+     */
+    private int getOtherCornerAverageRssi(int trxNumberToIgnore, int mode) {
+        int number_of_item_counter = 0;
+        int average = 0;
+        if (trxLinkedHMap != null) {
+            for (Integer trxNumber : trxLinkedHMap.keySet()) {
+                if (trxNumber != trxNumberToIgnore && trxNumber != NUMBER_TRX_LEFT
+                        && trxNumber != NUMBER_TRX_RIGHT && trxNumber != NUMBER_TRX_MIDDLE) {
+                    average += trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode);
+                    number_of_item_counter++;
+                }
+            }
+            average /= number_of_item_counter;
+        }
+        return average;
     }
 
     /**

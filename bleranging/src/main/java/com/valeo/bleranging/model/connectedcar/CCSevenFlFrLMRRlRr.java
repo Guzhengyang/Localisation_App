@@ -170,7 +170,7 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
 //        boolean isApproaching = TrxUtils.compareWithThreshold(getAverageLSDelta(), TrxUtils.getCurrentUnlockThreshold(averageDeltaUnlockThreshold, smartphoneIsInPocket), false);
         boolean isApproaching = true;
         if (isInUnlockArea && isApproaching) {
-            int thresholdMaxMin = SdkPreferencesHelper.getInstance().getRatioMaxMinThreshold(connectedCarType);
+//            int thresholdMaxMin = SdkPreferencesHelper.getInstance().getRatioMaxMinThreshold(connectedCarType);
 //            boolean maxMinLeft = TrxUtils.compareWithThreshold(getRatioMaxMin(NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin, true);
 //            boolean maxMinRearLeft = TrxUtils.compareWithThreshold(getRatioMaxMin(NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin, true);
 //            boolean maxMinRearRight = TrxUtils.compareWithThreshold(getRatioMaxMin(NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin, true);
@@ -188,13 +188,13 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
             boolean isNearDoorLRMin = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -nearDoorRatioThreshold, false);
 
             int thresholdCloseToCar = SdkPreferencesHelper.getInstance().getRatioCloseToCarThreshold(connectedCarType);
-            boolean closeToCarFrontLeft = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_UNLOCK), thresholdCloseToCar, true);
-//            boolean closeToCarLeft = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_LEFT, Antenna.AVERAGE_UNLOCK), thresholdCloseToCar, true);
-            boolean closeToCarMiddle = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_MIDDLE, Antenna.AVERAGE_UNLOCK), thresholdCloseToCar, true);
-            boolean closeToCarRearLeft = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK), thresholdCloseToCar, true);
-            boolean closeToCarRearRight = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdCloseToCar, true);
-//            boolean closeToCarRight = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdCloseToCar, true);
-            boolean closeToCarFrontRight = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdCloseToCar, true);
+            boolean closeToCarFrontLeft = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT), thresholdCloseToCar, true);
+//            boolean closeToCarLeft = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT), thresholdCloseToCar, true);
+            boolean closeToCarMiddle = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_MIDDLE, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT), thresholdCloseToCar, true);
+            boolean closeToCarRearLeft = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT), thresholdCloseToCar, true);
+            boolean closeToCarRearRight = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT), thresholdCloseToCar, true);
+//            boolean closeToCarRight = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT), thresholdCloseToCar, true);
+            boolean closeToCarFrontRight = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT), thresholdCloseToCar, true);
             List<Integer> result = new ArrayList<>();
             if (closeToCarFrontLeft) { //maxMinFrontLeft ||
                 result.add(NUMBER_TRX_FRONT_LEFT);
