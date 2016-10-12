@@ -219,6 +219,10 @@ public final class BluetoothAdapterCompat {
                     .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())
                     .build();
             scanFilters.add(scanFilterConnectable);
+            ScanFilter scanFilterConnectable2 = new ScanFilter.Builder()
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressConnectable2())
+                    .build();
+            scanFilters.add(scanFilterConnectable2);
             ScanFilter scanFilterLeft = new ScanFilter.Builder()
                     .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressLeft())
                     .build();

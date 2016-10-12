@@ -1,10 +1,15 @@
 package com.valeo.bleranging.model;
 
+import android.util.Log;
+
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.valeo.bleranging.model.Trx.ANTENNA_ID_1;
+import static com.valeo.bleranging.model.Trx.ANTENNA_ID_2;
 
 /**
  * Created by l-avaratha on 08/06/2016
@@ -24,6 +29,7 @@ public class Antenna {
     private final int numberTrx;
     private final int antennaId;
     private int lastOriginalRssi;
+    private int lastRssi;
     private int currentOriginalRssi;
     private BLEChannel lastBleChannel;
     private boolean lastIsSmartphoneLaid;
@@ -96,8 +102,9 @@ public class Antenna {
      * @return the corrected rssi
      */
     private int getCorrectedRssi(int rssi, BLEChannel bleChannel) {
-        int borneInf = (int) (antennaRssiAverageWelcome - getEcretageValue(antennaRssiAverageWelcome));
-        int borneSup = (int) (antennaRssiAverageWelcome + getEcretageValue(antennaRssiAverageWelcome));
+        int borneInf = (int) (lastRssi - getEcretageValue(lastRssi));
+        int borneSup = (int) (lastRssi + getEcretageValue(lastRssi));
+        Log.d("ecretage" + antennaId, "lastRssi:" + lastRssi + " borneInf:" + borneInf + " borneSup:" + borneSup);
         switch (bleChannel) {
             case BLE_CHANNEL_37:
                 offsetBleChannel38 = 0;
@@ -214,6 +221,7 @@ public class Antenna {
         if (!hasBeenInitialized) {
             this.currentOriginalRssi = rssi;
             this.lastOriginalRssi = rssi;
+            this.lastRssi = rssi;
             this.lastBleChannel = bleChannel;
             this.lastIsSmartphoneLaid = isSmartphoneLaid;
             hasBeenInitialized = true;
@@ -222,10 +230,17 @@ public class Antenna {
             rssiPente.remove(0);
         }
         rssi += getTrxRssiEqualizer(numberTrx); // add trx rssi antenna power Equalizer
+        if (antennaId == ANTENNA_ID_1) {
+            Log.d("ecretage" + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi);
+        }
+        if (antennaId == ANTENNA_ID_2) {
+            Log.d("ecretage" + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi);
+        }
         currentOriginalRssi = rssi;
         rssiPente.add(currentOriginalRssi - lastOriginalRssi);
         lastOriginalRssi = currentOriginalRssi;
         rssi = getCorrectedRssi(rssi, bleChannel); // Correct the rssi value with an ecretage on the last N-2 rssi seen
+        lastRssi = rssi;
         if (rssiHistoric.size() == SdkPreferencesHelper.getInstance().getRollingAvElement()) {
             rssiHistoric.remove(0);
         }
@@ -237,6 +252,12 @@ public class Antenna {
         }
         rollingAverageRssi(isSmartphoneLaid);
         hasReceivedRssi.set(true);
+        if (antennaId == ANTENNA_ID_1) {
+            Log.d("ecretage" + antennaId, numberTrx + " savedRssi:" + lastRssi);
+        }
+        if (antennaId == ANTENNA_ID_2) {
+            Log.d("ecretage" + antennaId, numberTrx + " savedRssi:" + lastRssi);
+        }
     }
 
     /**

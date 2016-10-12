@@ -20,6 +20,7 @@ import java.util.List;
 public class CCSevenFlFrLMRRlRr extends ConnectedCar {
     private static final String SPACE_ONE = "  ";
     private static final String SPACE_TWO = "   ";
+    private int ratio;
 
     public CCSevenFlFrLMRRlRr(Context mContext) {
         super(mContext, ConnectionNumber.SEVEN_CONNECTION);
@@ -169,8 +170,12 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
         boolean isInUnlockArea = isInUnlockArea(TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket));
 //        boolean isApproaching = TrxUtils.compareWithThreshold(getAverageLSDelta(), TrxUtils.getCurrentUnlockThreshold(averageDeltaUnlockThreshold, smartphoneIsInPocket), false);
         boolean isApproaching = true;
+        int closeToCarFL = getRatioCloseToCar(NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
+        int closeToCarFR = getRatioCloseToCar(NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
+        int closeToCarRL = getRatioCloseToCar(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
+        int closeToCarRR = getRatioCloseToCar(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
+        ratio = (closeToCarFL - closeToCarRR) - (closeToCarFR - closeToCarRL);
         if (isInUnlockArea && isApproaching) {
-//            int thresholdMaxMin = SdkPreferencesHelper.getInstance().getRatioMaxMinThreshold(connectedCarType);
 //            boolean maxMinLeft = TrxUtils.compareWithThreshold(getRatioMaxMin(NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin, true);
 //            boolean maxMinRearLeft = TrxUtils.compareWithThreshold(getRatioMaxMin(NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin, true);
 //            boolean maxMinRearRight = TrxUtils.compareWithThreshold(getRatioMaxMin(NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin, true);
@@ -187,40 +192,40 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
             boolean isNearDoorLRMax = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, nearDoorRatioThreshold, true);
             boolean isNearDoorLRMin = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -nearDoorRatioThreshold, false);
 
+            int thresholdMaxMin = SdkPreferencesHelper.getInstance().getRatioMaxMinThreshold(connectedCarType);
             int thresholdCloseToCar = SdkPreferencesHelper.getInstance().getRatioCloseToCarThreshold(connectedCarType);
-            boolean closeToCarFrontLeft = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT), thresholdCloseToCar, true);
-//            boolean closeToCarLeft = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT), thresholdCloseToCar, true);
-            boolean closeToCarMiddle = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_MIDDLE, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT), thresholdCloseToCar, true);
-            boolean closeToCarRearLeft = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT), thresholdCloseToCar, true);
-            boolean closeToCarRearRight = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT), thresholdCloseToCar, true);
-//            boolean closeToCarRight = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT), thresholdCloseToCar, true);
-            boolean closeToCarFrontRight = TrxUtils.compareWithThreshold(getRatioCloseToCar(NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT), thresholdCloseToCar, true);
-            List<Integer> result = new ArrayList<>();
-            if (closeToCarFrontLeft) { //maxMinFrontLeft ||
-                result.add(NUMBER_TRX_FRONT_LEFT);
+
+            boolean sideA = TrxUtils.compareWithThreshold(ratio, thresholdMaxMin, true);
+            boolean sideB = TrxUtils.compareWithThreshold(ratio, -thresholdMaxMin, false);
+            if (sideA || sideB) {
+                boolean closeToCarFrontLeft = TrxUtils.compareWithThreshold(closeToCarFL, thresholdCloseToCar, true);
+                boolean closeToCarRearLeft = TrxUtils.compareWithThreshold(closeToCarRL, thresholdCloseToCar, true);
+                boolean closeToCarRearRight = TrxUtils.compareWithThreshold(closeToCarRR, thresholdCloseToCar, true);
+                boolean closeToCarFrontRight = TrxUtils.compareWithThreshold(closeToCarFR, thresholdCloseToCar, true);
+                List<Integer> result = new ArrayList<>();
+                if (closeToCarFrontLeft) { //maxMinFrontLeft ||
+                    result.add(NUMBER_TRX_FRONT_LEFT);
+                }
+                if (isNearDoorLRMax) { //maxMinLeft ||
+                    result.add(NUMBER_TRX_LEFT);
+                }
+                if (closeToCarRearLeft) { //maxMinRearLeft ||
+                    result.add(NUMBER_TRX_REAR_LEFT);
+                }
+                if (closeToCarFrontRight) { //maxMinFrontRight ||
+                    result.add(NUMBER_TRX_FRONT_RIGHT);
+                }
+                if (isNearDoorLRMin) { //maxMinRight ||
+                    result.add(NUMBER_TRX_RIGHT);
+                }
+                if (closeToCarRearRight) { //maxMinRearRight ||
+                    result.add(NUMBER_TRX_REAR_RIGHT);
+                }
+                if (result.size() == 0) {
+                    return null;
+                }
+                return result;
             }
-            if (isNearDoorLRMax) { //maxMinLeft ||
-                result.add(NUMBER_TRX_LEFT);
-            }
-            if (closeToCarMiddle) { //maxMinLeft ||
-                result.add(NUMBER_TRX_MIDDLE);
-            }
-            if (closeToCarRearLeft) { //maxMinRearLeft ||
-                result.add(NUMBER_TRX_REAR_LEFT);
-            }
-            if (closeToCarFrontRight) { //maxMinFrontRight ||
-                result.add(NUMBER_TRX_FRONT_RIGHT);
-            }
-            if (isNearDoorLRMin) { //maxMinRight ||
-                result.add(NUMBER_TRX_RIGHT);
-            }
-            if (closeToCarRearRight) { //maxMinRearRight ||
-                result.add(NUMBER_TRX_REAR_RIGHT);
-            }
-            if (result.size() == 0) {
-                return null;
-            }
-            return result;
         }
         return null;
     }
@@ -296,6 +301,7 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
     public SpannableStringBuilder createSecondFooterDebugData(SpannableStringBuilder spannableStringBuilder, boolean smartphoneIsInPocket, boolean smartphoneIsLaidDownLAcc,
                                                               int totalAverage, boolean rearmLock, boolean rearmUnlock) {
         // WELCOME
+        spannableStringBuilder.append(String.valueOf(ratio)).append("\n");
         spannableStringBuilder.append("welcome ");
         StringBuilder footerSB = new StringBuilder();
         footerSB.append("rssi > (")
