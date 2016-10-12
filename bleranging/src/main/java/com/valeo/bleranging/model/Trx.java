@@ -133,7 +133,7 @@ public class Trx {
     /**
      * Reset Hysteresis in every antenna
      */
-    public void resetWithHysteresis(int defaultValue) {
+    public synchronized void resetWithHysteresis(int defaultValue) {
         antenna1.resetWithHysteresis(defaultValue);
         antenna2.resetWithHysteresis(defaultValue);
     }

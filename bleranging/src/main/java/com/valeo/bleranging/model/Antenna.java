@@ -120,6 +120,10 @@ public class Antenna {
                     offsetBleChannel38 = 0;
                 }
                 break;
+            case UNKNOWN:
+                break;
+            default:
+                break;
         }
         if (rssi > borneSup) {
             return borneSup;
@@ -247,7 +251,7 @@ public class Antenna {
         this.rssiHistoric.add(rssi);
         this.lastBleChannel = bleChannel;
         if (lastIsSmartphoneLaid != isSmartphoneLaid) {
-//            resetWithHysteresis(antennaRssiAverageWelcome); //TODO concurrentModification
+            resetWithHysteresis(antennaRssiAverageWelcome); //TODO concurrentModification
             lastIsSmartphoneLaid = isSmartphoneLaid;
         }
         rollingAverageRssi(isSmartphoneLaid);
@@ -372,7 +376,7 @@ public class Antenna {
     }
 
     public enum BLEChannel {
-        BLE_CHANNEL_37, BLE_CHANNEL_38, BLE_CHANNEL_39
+        BLE_CHANNEL_37, BLE_CHANNEL_38, BLE_CHANNEL_39, UNKNOWN
     }
 
 }

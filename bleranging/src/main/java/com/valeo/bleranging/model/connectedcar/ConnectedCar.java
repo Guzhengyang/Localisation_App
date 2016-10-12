@@ -123,37 +123,39 @@ public abstract class ConnectedCar {
      * @param newLockStatus         the lock status
      * @param isUnlockStrategyValid the unlock strategy result
      */
-    public void resetWithHysteresis(boolean newLockStatus, int isUnlockStrategyValid) {
-        if (!newLockStatus) { // just perform an unlock
-            switch (isUnlockStrategyValid) {
-                case ConnectedCar.NUMBER_TRX_LEFT:
-                    resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE);
-                    break;
-                case ConnectedCar.NUMBER_TRX_RIGHT:
-                    resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE);
-                    break;
-                case ConnectedCar.NUMBER_TRX_BACK:
-                    resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE);
-                    break;
-                default:
-                    resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
-                            RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE);
-                    break;
+    public synchronized void resetWithHysteresis(boolean newLockStatus, List<Integer> isUnlockStrategyValid) {
+        if (!newLockStatus && isUnlockStrategyValid != null) { // just perform an unlock
+            for (Integer trxNumber : isUnlockStrategyValid) {
+                switch (trxNumber) {
+                    case ConnectedCar.NUMBER_TRX_LEFT:
+                        resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE);
+                        break;
+                    case ConnectedCar.NUMBER_TRX_RIGHT:
+                        resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE);
+                        break;
+                    case ConnectedCar.NUMBER_TRX_BACK:
+                        resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE);
+                        break;
+                    default:
+                        resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE);
+                        break;
+                }
             }
         } else { // just perform a lock
             resetTrxWithHysteresis(RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE,
@@ -174,9 +176,9 @@ public abstract class ConnectedCar {
      * @param valueRearLeft   the rear left trx new value
      * @param valueRearRight  the rear right trx new value
      */
-    private void resetTrxWithHysteresis(int valueMiddle, int valueLeft, int valueRight,
-                                        int valueBack, int valueFrontLeft, int valueFrontRight,
-                                        int valueRearLeft, int valueRearRight) {
+    private synchronized void resetTrxWithHysteresis(int valueMiddle, int valueLeft, int valueRight,
+                                                     int valueBack, int valueFrontLeft, int valueFrontRight,
+                                                     int valueRearLeft, int valueRearRight) {
         if(trxLeft != null) {
             trxLeft.resetWithHysteresis(valueLeft);
         }
@@ -317,7 +319,7 @@ public abstract class ConnectedCar {
 
     int getRatioCloseToCar(int trxNumber, int mode1, int mode2) {
         if (trxLinkedHMap != null) {
-            return (trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode1) - getOtherCornerAverageRssi(trxNumber, mode2));
+            return (trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode1) - getMinAverageRssi(mode2)); //getOtherCornerAverageRssi(trxNumber, mode2));
         }
         return 0;
     }
@@ -325,16 +327,14 @@ public abstract class ConnectedCar {
     /**
      * Find corner trx minimum average
      *
-     * @param trxNumberToIgnore the trx to compare with
-     * @param mode              the average mode
+     * @param mode the average mode
      * @return the corner trx minimum average
      */
-    private int getMinAverageRssi(int trxNumberToIgnore, int mode) {
+    private int getMinAverageRssi(int mode) {
         int min = 0;
         if (trxLinkedHMap != null) {
             for (Integer trxNumber : trxLinkedHMap.keySet()) {
-                if (trxNumber != trxNumberToIgnore && trxNumber != NUMBER_TRX_LEFT
-                        && trxNumber != NUMBER_TRX_RIGHT && trxNumber != NUMBER_TRX_MIDDLE) {
+                if (trxNumber != NUMBER_TRX_LEFT && trxNumber != NUMBER_TRX_RIGHT && trxNumber != NUMBER_TRX_MIDDLE) {
                     min = Math.min(min, trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode));
                 }
             }

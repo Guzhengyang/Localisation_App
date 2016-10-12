@@ -111,6 +111,14 @@ public class TrxUtils {
         return threshold;
     }
 
+    private static String booleanToString(boolean toConvert) {
+        if (toConvert) {
+            return "1";
+        } else {
+            return "0";
+        }
+    }
+
     /**
      * Create the string to write in the log file and add it
      * @param rssiLeft the left trx rssi
@@ -164,14 +172,57 @@ public class TrxUtils {
         String log = String.valueOf(rssiLeft) + comma + rssiMiddle1 + comma + rssiMiddle2 + comma + rssiRight + comma + rssiBack + comma +
                 rssiFrontLeft + comma + rssiFrontRight + comma + rssiRearLeft + comma + rssiRearRight + comma +
                 z + comma + x + comma + y + comma +
-                isSmartphoneInPocket + comma + isSmartphoneLaid + comma + isLockStatusChangedTimerExpired + comma +
-                rearmLock + comma + rearmUnlock + comma + rearmWelcome + comma + lockStatus + comma +
-                welcomeByte + comma + lockByte + comma + startByte + comma +
-                leftAreaByte + comma + rightAreaByte + comma + backAreaByte + comma +
-                walkAwayByte + comma + steadyByte + comma + approachByte + comma +
-                leftTurnByte + comma + fullTurnByte + comma + rightTurnByte + comma +
+                booleanToString(isSmartphoneInPocket) + comma + booleanToString(isSmartphoneLaid) + comma + booleanToString(isLockStatusChangedTimerExpired) + comma;
+        if (lockStatus) {
+            log += "5" + comma;
+        } else {
+            log += "4" + comma;
+        }
+        if (rearmLock) {
+            log += "7" + comma;
+        } else {
+            log += "6" + comma;
+        }
+        if (rearmUnlock) {
+            log += "9" + comma;
+        } else {
+            log += "8" + comma;
+        }
+        log += rearmWelcome + comma + welcomeByte + comma;
+        if (lockByte == 1) {
+            log += "3" + comma;
+        } else {
+            log += "2" + comma;
+        }
+        log += startByte + comma;
+        if (leftAreaByte == 1) {
+            log += "11" + comma;
+        } else {
+            log += "10" + comma;
+        }
+        if (rightAreaByte == 1) {
+            log += "12" + comma;
+        } else {
+            log += "10" + comma;
+        }
+        if (backAreaByte == 1) {
+            log += "13" + comma;
+        } else {
+            log += "10" + comma;
+        }
+        if (walkAwayByte == 1) {
+            log += "15" + comma;
+        } else {
+            log += "14" + comma;
+        }
+        if (approachByte == 1) {
+            log += "16" + comma;
+        } else {
+            log += "14" + comma;
+        }
+        log += leftTurnByte + comma + fullTurnByte + comma + rightTurnByte + comma +
                 recordByte + comma + rangingPredictionInt + comma +
-                lockFromTrx + comma + lockToSend + comma + startAllowed + comma;
+                booleanToString(lockFromTrx) + comma + booleanToString(lockToSend) + comma + booleanToString(startAllowed) + comma;
         appendRssiLog(log);
     }
 
