@@ -188,7 +188,7 @@ public class TrxUtils {
         } else {
             log += "8" + comma;
         }
-        log += rearmWelcome + comma + welcomeByte + comma;
+        log += booleanToString(rearmWelcome) + comma + welcomeByte + comma;
         if (lockByte == 1) {
             log += "3" + comma;
         } else {
