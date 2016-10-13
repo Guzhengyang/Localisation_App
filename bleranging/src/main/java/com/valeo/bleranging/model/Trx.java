@@ -186,4 +186,21 @@ public class Trx {
             return 0;
         }
     }
+
+    /**
+     * Get antenna ratio max min
+     *
+     * @return the ratio max min over 50 last rssi received
+     */
+    public int getRatioMaxMin() {
+        return antenna1.getRatioMaxMin();
+    }
+
+    public int getMin() {
+        return antenna1.getMin();
+    }
+
+    public int getMax() {
+        return antenna1.getMax();
+    }
 }

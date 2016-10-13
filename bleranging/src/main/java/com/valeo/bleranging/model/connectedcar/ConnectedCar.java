@@ -303,23 +303,23 @@ public abstract class ConnectedCar {
         }
     }
 
-    protected int getRatioMaxMin(int trxNumber1, int trxNumber2, int trxNumber3,
-                                 int trxNumber4, int trxNumber5, int trxNumber6, int mode) {
-        if (trxLinkedHMap != null) {
-            int max = Math.max(Math.max(trxLinkedHMap.get(trxNumber1).getTrxRssiAverage(mode),
-                    trxLinkedHMap.get(trxNumber2).getTrxRssiAverage(mode)),
-                    trxLinkedHMap.get(trxNumber3).getTrxRssiAverage(mode));
-            int min = Math.min(Math.min(trxLinkedHMap.get(trxNumber4).getTrxRssiAverage(mode),
-                    trxLinkedHMap.get(trxNumber5).getTrxRssiAverage(mode)),
-                    trxLinkedHMap.get(trxNumber6).getTrxRssiAverage(mode));
-            return max - min;
-        }
-        return 0;
-    }
+//    protected int getRatioMaxMin(int trxNumber1, int trxNumber2, int trxNumber3,
+//                                 int trxNumber4, int trxNumber5, int trxNumber6, int mode) {
+//        if (trxLinkedHMap != null) {
+//            int max = Math.max(Math.max(trxLinkedHMap.get(trxNumber1).getTrxRssiAverage(mode),
+//                    trxLinkedHMap.get(trxNumber2).getTrxRssiAverage(mode)),
+//                    trxLinkedHMap.get(trxNumber3).getTrxRssiAverage(mode));
+//            int min = Math.min(Math.min(trxLinkedHMap.get(trxNumber4).getTrxRssiAverage(mode),
+//                    trxLinkedHMap.get(trxNumber5).getTrxRssiAverage(mode)),
+//                    trxLinkedHMap.get(trxNumber6).getTrxRssiAverage(mode));
+//            return max - min;
+//        }
+//        return 0;
+//    }
 
     int getRatioCloseToCar(int trxNumber, int mode1, int mode2) {
         if (trxLinkedHMap != null) {
-            return (trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode1) - getMinAverageRssi(mode2)); //getOtherCornerAverageRssi(trxNumber, mode2));
+            return (trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode1) - getMinAverageRssi(mode2));
         }
         return 0;
     }
@@ -343,26 +343,35 @@ public abstract class ConnectedCar {
     }
 
     /**
-     * Find other corner trx average
+     * Find three corner lower trx min max
      *
-     * @param trxNumberToIgnore the trx to compare with
-     * @param mode              the average mode
-     * @return the other corners trxs average
+     * @return the three corner lower trx min max
      */
-    private int getOtherCornerAverageRssi(int trxNumberToIgnore, int mode) {
-        int number_of_item_counter = 0;
-        int average = 0;
+    protected int getThreeCornerLowerMaxMinRatio() {
+        int trxToIgnore = -1;
+        int maxOne = -100;
         if (trxLinkedHMap != null) {
             for (Integer trxNumber : trxLinkedHMap.keySet()) {
-                if (trxNumber != trxNumberToIgnore && trxNumber != NUMBER_TRX_LEFT
+                if (trxNumber != NUMBER_TRX_LEFT
                         && trxNumber != NUMBER_TRX_RIGHT && trxNumber != NUMBER_TRX_MIDDLE) {
-                    average += trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode);
-                    number_of_item_counter++;
+                    if (maxOne < trxLinkedHMap.get(trxNumber).getRatioMaxMin()) {
+                        trxToIgnore = trxNumber;
+                        maxOne = trxLinkedHMap.get(trxNumber).getRatioMaxMin();
+                    }
                 }
             }
-            average /= number_of_item_counter;
+            int maxTwo = -100;
+            int minTwo = 0;
+            for (Integer trxNumber : trxLinkedHMap.keySet()) {
+                if (trxNumber != trxToIgnore && trxNumber != NUMBER_TRX_LEFT
+                        && trxNumber != NUMBER_TRX_RIGHT && trxNumber != NUMBER_TRX_MIDDLE) {
+                    minTwo = Math.min(minTwo, trxLinkedHMap.get(trxNumber).getMin());
+                    maxTwo = Math.max(maxTwo, trxLinkedHMap.get(trxNumber).getMax());
+                }
+            }
+            return (maxTwo - minTwo);
         }
-        return average;
+        return -1;
     }
 
     /**

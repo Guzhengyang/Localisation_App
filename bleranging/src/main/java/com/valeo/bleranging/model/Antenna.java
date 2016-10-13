@@ -40,6 +40,9 @@ public class Antenna {
     private int antennaRssiAverageWelcome;
     private int antennaRssiAverageLong;
     private int antennaRssiAverageShort;
+    private int ratioMaxMin;
+    private int min = 0;
+    private int max = -100;
     private int offsetBleChannel38 = 0;
     private boolean hasBeenInitialized = false;
 
@@ -161,6 +164,8 @@ public class Antenna {
         antennaRssiAverageLong = 0;
         antennaRssiAverageShort = 0;
         int toIndex = rssiHistoric.size();
+        min = 0;
+        max = -100;
         if (toIndex != 0) {
             int indexDefault = getFromIndex(AVERAGE_DEFAULT, isSmartphoneLaid);
             int indexStart = getFromIndex(AVERAGE_START, isSmartphoneLaid);
@@ -172,6 +177,8 @@ public class Antenna {
             int currentHistoricValue;
             for (int i = toIndex - 1; i >= 0; i--) {
                 currentHistoricValue = rssiHistoric.get(i);
+                min = Math.min(min, currentHistoricValue);
+                max = Math.max(max, currentHistoricValue);
                 antennaRssiAverage += currentHistoricValue;
                 if (i >= indexStart) {
                     antennaRssiAverageStart += currentHistoricValue;
@@ -199,6 +206,7 @@ public class Antenna {
             antennaRssiAverageWelcome /= getStartIndexTabPosition(toIndex, indexWelcome);
             antennaRssiAverageLong /= getStartIndexTabPosition(toIndex, indexLong);
             antennaRssiAverageShort /= getStartIndexTabPosition(toIndex, indexShort);
+            ratioMaxMin = max - min;
         }
     }
 
@@ -251,7 +259,7 @@ public class Antenna {
         this.rssiHistoric.add(rssi);
         this.lastBleChannel = bleChannel;
         if (lastIsSmartphoneMovingSlowly != isSmartphoneMovingSlowly) {
-            resetWithHysteresis(antennaRssiAverageWelcome); //TODO concurrentModification
+//            resetWithHysteresis(antennaRssiAverageWelcome); //TODO concurrentModification
             lastIsSmartphoneMovingSlowly = isSmartphoneMovingSlowly;
         }
         rollingAverageRssi(isSmartphoneMovingSlowly);
@@ -365,6 +373,18 @@ public class Antenna {
             default:
                 return antennaRssiAverage;
         }
+    }
+
+    public int getRatioMaxMin() {
+        return ratioMaxMin;
+    }
+
+    public int getMin() {
+        return min;
+    }
+
+    public int getMax() {
+        return max;
     }
 
     public int getOffsetBleChannel38() {

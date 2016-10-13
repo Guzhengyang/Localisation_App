@@ -25,6 +25,7 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
     private int closeToCarFR;
     private int closeToCarRL;
     private int closeToCarRR;
+    private int thresholdMaxMinRatio = 0;
 
     public CCSevenFlFrLMRRlRr(Context mContext) {
         super(mContext, ConnectionNumber.SEVEN_CONNECTION);
@@ -178,6 +179,9 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
         closeToCarFR = getRatioCloseToCar(NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
         closeToCarRL = getRatioCloseToCar(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
         closeToCarRR = getRatioCloseToCar(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
+        int thresholdCloseToCar = SdkPreferencesHelper.getInstance().getRatioCloseToCarThreshold(connectedCarType);
+        thresholdMaxMinRatio = (getThreeCornerLowerMaxMinRatio() * 80) / 100;
+
 //        ratio = (closeToCarFL - closeToCarRR) - (closeToCarFR - closeToCarRL);
         if (isInUnlockArea && isApproaching) {
 //            boolean maxMinLeft = TrxUtils.compareWithThreshold(getRatioMaxMin(NUMBER_TRX_FRONT_LEFT, NUMBER_TRX_LEFT, NUMBER_TRX_REAR_LEFT, NUMBER_TRX_REAR_RIGHT, NUMBER_TRX_RIGHT, NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK), thresholdMaxMin, true);
@@ -196,16 +200,15 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
             boolean isNearDoorLRMax = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, nearDoorRatioThreshold, true);
             boolean isNearDoorLRMin = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -nearDoorRatioThreshold, false);
 
-            int thresholdMaxMin = SdkPreferencesHelper.getInstance().getRatioMaxMinThreshold(connectedCarType);
-            int thresholdCloseToCar = SdkPreferencesHelper.getInstance().getRatioCloseToCarThreshold(connectedCarType);
+//            int thresholdMaxMin = SdkPreferencesHelper.getInstance().getRatioMaxMinThreshold(connectedCarType);
 
 //            boolean sideA = TrxUtils.compareWithThreshold(ratio, thresholdMaxMin, true);
 //            boolean sideB = TrxUtils.compareWithThreshold(ratio, -thresholdMaxMin, false);
 //            if (sideA || sideB) {
-                boolean closeToCarFrontLeft = TrxUtils.compareWithThreshold(closeToCarFL, thresholdCloseToCar, true);
-                boolean closeToCarRearLeft = TrxUtils.compareWithThreshold(closeToCarRL, thresholdCloseToCar, true);
-                boolean closeToCarRearRight = TrxUtils.compareWithThreshold(closeToCarRR, thresholdCloseToCar, true);
-                boolean closeToCarFrontRight = TrxUtils.compareWithThreshold(closeToCarFR, thresholdCloseToCar, true);
+            boolean closeToCarFrontLeft = TrxUtils.compareWithThreshold(closeToCarFL, thresholdCloseToCar + thresholdMaxMinRatio, true);
+            boolean closeToCarRearLeft = TrxUtils.compareWithThreshold(closeToCarRL, thresholdCloseToCar + thresholdMaxMinRatio, true);
+            boolean closeToCarRearRight = TrxUtils.compareWithThreshold(closeToCarRR, thresholdCloseToCar + thresholdMaxMinRatio, true);
+            boolean closeToCarFrontRight = TrxUtils.compareWithThreshold(closeToCarFR, thresholdCloseToCar + thresholdMaxMinRatio, true);
                 List<Integer> result = new ArrayList<>();
                 if (closeToCarFrontLeft) { //maxMinFrontLeft ||
                     result.add(NUMBER_TRX_FRONT_LEFT);
@@ -307,10 +310,12 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
         // WELCOME
 //        spannableStringBuilder.append(String.valueOf(ratio)).append("\n");
         spannableStringBuilder //TODO Remove after test
-                .append(String.valueOf(closeToCarFL)).append(" ")
-                .append(String.valueOf(closeToCarFR)).append(" ")
-                .append(String.valueOf(closeToCarRL)).append(" ")
-                .append(String.valueOf(closeToCarRR)).append("\n");
+                .append(String.valueOf(getThreeCornerLowerMaxMinRatio())).append(" ")
+                .append(String.valueOf(thresholdMaxMinRatio)).append("\n")
+                .append("FL:   ").append(String.valueOf(closeToCarFL)).append("   ")
+                .append("FR:   ").append(String.valueOf(closeToCarFR)).append("   ")
+                .append("RL:   ").append(String.valueOf(closeToCarRL)).append("   ")
+                .append("RR:   ").append(String.valueOf(closeToCarRR)).append("\n");
         spannableStringBuilder.append("welcome ");
         StringBuilder footerSB = new StringBuilder();
         footerSB.append("rssi > (")
