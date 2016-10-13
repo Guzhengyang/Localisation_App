@@ -81,7 +81,7 @@ public class CCFourLRRlRr extends ConnectedCar {
     }
 
     @Override
-    public SpannableStringBuilder createSecondFooterDebugData(SpannableStringBuilder spannableStringBuilder, boolean smartphoneIsInPocket, boolean smartphoneIsLaidDownLAcc, int totalAverage, boolean rearmLock, boolean rearmUnlock) {
+    public SpannableStringBuilder createSecondFooterDebugData(SpannableStringBuilder spannableStringBuilder, boolean smartphoneIsInPocket, boolean smartphoneIsMovingSlowly, int totalAverage, boolean rearmLock, boolean rearmUnlock) {
         return spannableStringBuilder;
     }
 }

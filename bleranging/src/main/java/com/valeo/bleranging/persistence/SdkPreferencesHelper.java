@@ -44,6 +44,7 @@ public final class SdkPreferencesHelper {
     public final static float ECRETAGE_30_30 = 30.0f;
     public final static int LIN_ACC_SIZE = 50;
     public final static float CORRECTION_LIN_ACC = 4.0f;
+    public final static float FROZEN_THRESHOLD = 4.0f;
     public final static int EQUALIZER_LEFT = 5;
     public final static int EQUALIZER_MIDDLE = 5;
     public final static int EQUALIZER_RIGHT = 5;
@@ -118,6 +119,7 @@ public final class SdkPreferencesHelper {
     public static final String ECRETAGE_30_30_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_30_30";
     public static final String LIN_ACC_SIZE_PREFERENCES_NAME = "com.inblue.PREFERENCE_LIN_ACC_SIZE";
     public static final String CORRECTION_LIN_ACC_PREFERENCES_NAME = "com.inblue.PREFERENCE_CORRECTION_LIN_ACC";
+    public static final String FROZEN_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_FROZEN_THRESHOLD";
     public static final String EQUALIZER_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_LEFT";
     public static final String EQUALIZER_MIDDLE_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_MIDDLE";
     public static final String EQUALIZER_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_RIGHT";
@@ -741,6 +743,10 @@ public final class SdkPreferencesHelper {
 
     public float getCorrectionLinAcc() {
         return readFloat(SAVED_CC_GENERIC_OPTION, CORRECTION_LIN_ACC_PREFERENCES_NAME, CORRECTION_LIN_ACC);
+    }
+
+    public float getFrozenThreshold() {
+        return readFloat(SAVED_CC_GENERIC_OPTION, FROZEN_THRESHOLD_PREFERENCES_NAME, FROZEN_THRESHOLD);
     }
 
 // --Commented out by Inspection START (30/09/2016 11:26):

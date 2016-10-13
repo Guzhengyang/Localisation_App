@@ -210,12 +210,12 @@ public abstract class ConnectedCar {
      * @param antennaId                the trx antenna id that sent the signal
      * @param rssi                     the rssi value to save
      * @param bleChannel               the ble channel used to sent
-     * @param smartphoneIsLaidDownLAcc the boolean that determines if the smartphone is moving or not
+     * @param smartphoneIsMovingSlowly the boolean that determines if the smartphone is moving or not
      */
-    public void saveRssi(int trxNumber, int antennaId, int rssi, Antenna.BLEChannel bleChannel, boolean smartphoneIsLaidDownLAcc) {
+    public void saveRssi(int trxNumber, int antennaId, int rssi, Antenna.BLEChannel bleChannel, boolean smartphoneIsMovingSlowly) {
         Trx tmpTrx = trxLinkedHMap.get(trxNumber);
         if(tmpTrx != null) {
-            tmpTrx.saveRssi(antennaId, rssi, bleChannel, smartphoneIsLaidDownLAcc);
+            tmpTrx.saveRssi(antennaId, rssi, bleChannel, smartphoneIsMovingSlowly);
             trxLinkedHMap.put(trxNumber, tmpTrx);
         }
     }
@@ -568,14 +568,14 @@ public abstract class ConnectedCar {
      *
      * @param spannableStringBuilder   the string builder to fill
      * @param smartphoneIsInPocket     a boolean that determine if the smartphone is in the user pocket or not.
-     * @param smartphoneIsLaidDownLAcc a boolean that determine if the smartphone is moving
+     * @param smartphoneIsMovingSlowly a boolean that determine if the smartphone is moving
      * @param totalAverage             the total average of all trx
      * @param rearmLock                a boolean corresponding to the rearm for lock purpose
      * @param rearmUnlock              a boolean corresponding to the rear for unlock purpose
      * @return the spannable string builder filled with the second footer
      */
     public abstract SpannableStringBuilder createSecondFooterDebugData(SpannableStringBuilder spannableStringBuilder,
-                                                                       boolean smartphoneIsInPocket, boolean smartphoneIsLaidDownLAcc,
+                                                                       boolean smartphoneIsInPocket, boolean smartphoneIsMovingSlowly,
                                                                        int totalAverage, boolean rearmLock, boolean rearmUnlock);
 
     /**
@@ -584,17 +584,17 @@ public abstract class ConnectedCar {
      * @param spannableStringBuilder   the string builder to fill
      * @param bleChannel the ble channel used
      * @param deltaLinAcc              the delta of linear acceleration
-     * @param smartphoneIsLaidDownLAcc the boolean that determine if the smartphone is moving or not
+     * @param smartphoneIsMovingSlowly the boolean that determine if the smartphone is moving or not
      * @return the string builder filled with the third footer data
      */
     public SpannableStringBuilder createThirdFooterDebugData(SpannableStringBuilder spannableStringBuilder,
                                                              Antenna.BLEChannel bleChannel, double deltaLinAcc,
-                                                             boolean smartphoneIsLaidDownLAcc) {
+                                                             boolean smartphoneIsMovingSlowly) {
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
         spannableStringBuilder.append("Scanning on channel: ").append(bleChannel.toString()).append("\n");
         String lAccStringBuilder = "Linear Acceleration < (" + linAccThreshold + "): "
                 + String.format(Locale.FRANCE, "%1$.4f", deltaLinAcc) + "\n";
-        spannableStringBuilder.append(TextUtils.colorText(smartphoneIsLaidDownLAcc,
+        spannableStringBuilder.append(TextUtils.colorText(smartphoneIsMovingSlowly,
                 lAccStringBuilder, Color.WHITE, Color.DKGRAY));
         return spannableStringBuilder;
     }

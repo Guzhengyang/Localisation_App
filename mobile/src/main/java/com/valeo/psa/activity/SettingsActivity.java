@@ -338,6 +338,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference short_nb_element;
         private EditTextPreference lin_acc_size;
         private EditTextPreference correction_lin_acc;
+        private EditTextPreference frozen_threshold;
         private EditTextPreference address_connectable;
         private EditTextPreference address_connectable_2;
         private EditTextPreference address_left;
@@ -381,6 +382,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             short_nb_element = ((EditTextPreference) findPreference(SdkPreferencesHelper.SHORT_NB_ELEMENT_PREFERENCES_NAME));
             lin_acc_size = ((EditTextPreference) findPreference(SdkPreferencesHelper.LIN_ACC_SIZE_PREFERENCES_NAME));
             correction_lin_acc = ((EditTextPreference) findPreference(SdkPreferencesHelper.CORRECTION_LIN_ACC_PREFERENCES_NAME));
+            frozen_threshold = ((EditTextPreference) findPreference(SdkPreferencesHelper.FROZEN_THRESHOLD_PREFERENCES_NAME));
             address_connectable = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_PREFERENCE_NAME));
             address_connectable_2 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_2_PREFERENCE_NAME));
             address_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_LEFT_PREFERENCE_NAME));
@@ -405,6 +407,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             short_nb_element.setText(short_nb_element.getSummary().toString());
             lin_acc_size.setText(lin_acc_size.getSummary().toString());
             correction_lin_acc.setText(correction_lin_acc.getSummary().toString());
+            frozen_threshold.setText(frozen_threshold.getSummary().toString());
             address_connectable.setText(address_connectable.getSummary().toString());
             address_connectable_2.setText(address_connectable_2.getSummary().toString());
             address_left.setText(address_left.getSummary().toString());
@@ -435,6 +438,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(short_nb_element, String.valueOf(SdkPreferencesHelper.SHORT_NB_ELEMENT));
             bindPreferenceSummaryToValue(lin_acc_size, String.valueOf(SdkPreferencesHelper.LIN_ACC_SIZE));
             bindPreferenceSummaryToValue(correction_lin_acc, String.valueOf(SdkPreferencesHelper.CORRECTION_LIN_ACC));
+            bindPreferenceSummaryToValue(frozen_threshold, String.valueOf(SdkPreferencesHelper.FROZEN_THRESHOLD));
             bindPreferenceSummaryToValue(address_connectable, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE);
             bindPreferenceSummaryToValue(address_connectable_2, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE_2);
             bindPreferenceSummaryToValue(address_left, SdkPreferencesHelper.BLE_ADDRESS_LEFT);

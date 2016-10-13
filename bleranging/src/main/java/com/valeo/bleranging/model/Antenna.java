@@ -32,7 +32,7 @@ public class Antenna {
     private int lastRssi;
     private int currentOriginalRssi;
     private BLEChannel lastBleChannel;
-    private boolean lastIsSmartphoneLaid;
+    private boolean lastIsSmartphoneMovingSlowly;
     private int antennaRssiAverage;
     private int antennaRssiAverageStart;
     private int antennaRssiAverageLock;
@@ -221,13 +221,13 @@ public class Antenna {
      * @param rssi the rssi of the packet received
      * @param bleChannel the ble channel of the packet received
      */
-    public synchronized void saveRssi(int rssi, BLEChannel bleChannel, boolean isSmartphoneLaid) {
+    public synchronized void saveRssi(int rssi, BLEChannel bleChannel, boolean isSmartphoneMovingSlowly) {
         if (!hasBeenInitialized) {
             this.currentOriginalRssi = rssi;
             this.lastOriginalRssi = rssi;
             this.lastRssi = rssi;
             this.lastBleChannel = bleChannel;
-            this.lastIsSmartphoneLaid = isSmartphoneLaid;
+            this.lastIsSmartphoneMovingSlowly = isSmartphoneMovingSlowly;
             hasBeenInitialized = true;
         }
         if (rssiPente.size() == 10) {
@@ -250,11 +250,11 @@ public class Antenna {
         }
         this.rssiHistoric.add(rssi);
         this.lastBleChannel = bleChannel;
-        if (lastIsSmartphoneLaid != isSmartphoneLaid) {
+        if (lastIsSmartphoneMovingSlowly != isSmartphoneMovingSlowly) {
             resetWithHysteresis(antennaRssiAverageWelcome); //TODO concurrentModification
-            lastIsSmartphoneLaid = isSmartphoneLaid;
+            lastIsSmartphoneMovingSlowly = isSmartphoneMovingSlowly;
         }
-        rollingAverageRssi(isSmartphoneLaid);
+        rollingAverageRssi(isSmartphoneMovingSlowly);
         hasReceivedRssi.set(true);
         if (antennaId == ANTENNA_ID_1) {
             Log.d("ecretage" + antennaId, numberTrx + " savedRssi:" + lastRssi);

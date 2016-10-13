@@ -147,7 +147,7 @@ public class CCFourLMRB extends ConnectedCar {
     @Override
     public SpannableStringBuilder createSecondFooterDebugData(
             SpannableStringBuilder spannableStringBuilder, boolean smartphoneIsInPocket,
-            boolean smartphoneIsLaidDownLAcc, int totalAverage, boolean rearmLock, boolean rearmUnlock) {
+            boolean smartphoneIsMovingSlowly, int totalAverage, boolean rearmLock, boolean rearmUnlock) {
         // WELCOME
         spannableStringBuilder.append("welcome ");
         StringBuilder footerSB = new StringBuilder();
@@ -157,7 +157,7 @@ public class CCFourLMRB extends ConnectedCar {
         spannableStringBuilder.append(TextUtils.colorText(
                 totalAverage > TrxUtils.getCurrentLockThreshold(welcomeThreshold, smartphoneIsInPocket),
                 footerSB.toString(), Color.WHITE, Color.DKGRAY));
-        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_WELCOME, smartphoneIsLaidDownLAcc))).append("\n");
+        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_WELCOME, smartphoneIsMovingSlowly))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_WELCOME, Color.WHITE,
                 TrxUtils.getCurrentLockThreshold(welcomeThreshold, smartphoneIsInPocket), ">", SPACE_TWO));
         // LOCK
@@ -176,7 +176,7 @@ public class CCFourLMRB extends ConnectedCar {
         footerSB.append("rearm Lock: ").append(rearmLock);
         spannableStringBuilder.append(TextUtils.colorText(
                 rearmLock, footerSB.toString(), Color.RED, Color.DKGRAY));
-        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_LOCK, smartphoneIsLaidDownLAcc))).append("\n");
+        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_LOCK, smartphoneIsMovingSlowly))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_LOCK, Color.RED,
                 TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket), "<", SPACE_TWO));
         // UNLOCK
@@ -195,7 +195,7 @@ public class CCFourLMRB extends ConnectedCar {
         footerSB.append("rearm Unlock: ").append(rearmUnlock);
         spannableStringBuilder.append(TextUtils.colorText(
                 rearmUnlock, footerSB.toString(), Color.GREEN, Color.DKGRAY));
-        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_UNLOCK, smartphoneIsLaidDownLAcc))).append("\n");
+        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_UNLOCK, smartphoneIsMovingSlowly))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_UNLOCK, Color.GREEN,
                 TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket), ">", SPACE_TWO));
         footerSB.setLength(0);
@@ -231,7 +231,7 @@ public class CCFourLMRB extends ConnectedCar {
         spannableStringBuilder.append(TextUtils.colorText(
                 isInStartArea(TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket)),
                 footerSB.toString(), Color.CYAN, Color.DKGRAY));
-        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_START, smartphoneIsLaidDownLAcc))).append("\n");
+        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_START, smartphoneIsMovingSlowly))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_START, Color.CYAN,
                 TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket), ">", SPACE_TWO));
         footerSB.setLength(0);

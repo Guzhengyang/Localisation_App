@@ -85,8 +85,8 @@ public class TextUtils {
      * @param mode the average mode
      * @return the number of element to calculate the average
      */
-    public static int getNbElement(int mode, boolean smartphoneIsLaidDownLAcc) {
-        if (smartphoneIsLaidDownLAcc) {
+    public static int getNbElement(int mode, boolean smartphoneIsMovingSlowly) {
+        if (smartphoneIsMovingSlowly) {
             return rollingAvElement;
         }
         switch (mode) {

@@ -134,8 +134,11 @@ public class TrxUtils {
      * @param x the device x position pitch
      * @param y the device y position roll
      * @param isSmartphoneInPocket true if the smartphone is in pocket, false otherwise
-     * @param isSmartphoneLaid true if the smartphone is moving, false otherwise
+     * @param smartphoneIsMovingSlowly true if the smartphone is moving, false otherwise
      * @param isLockStatusChangedTimerExpired true if the lock timeout is expired, false otherwise
+     * @param blockStart true if the lock can be done, false otherwise
+     * @param forcedStart true if the lock can be done, false otherwise
+     * @param smartphoneIsFrozen true if the lock can be done, false otherwise
      * @param rearmLock true if the lock can be done, false otherwise
      * @param rearmUnlock true if the unlock can be done, false otherwise
      * @param rearmWelcome true if the welcome can be done, false otherwise
@@ -147,7 +150,6 @@ public class TrxUtils {
      * @param rightAreaByte equals 1 if right area is activated, 0 otherwise
      * @param backAreaByte equals 1 if back area is activated, 0 otherwise
      * @param walkAwayByte equals 1 if walk away is activated, 0 otherwise
-     * @param steadyByte equals 1 if steady is activated, 0 otherwise
      * @param approachByte equals 1 if approach is activated, 0 otherwise
      * @param leftTurnByte equals 1 if left turn is activated, 0 otherwise
      * @param fullTurnByte equals 1 if full turn is activated, 0 otherwise
@@ -161,18 +163,20 @@ public class TrxUtils {
     public static void appendRssiLogs(int rssiLeft, int rssiMiddle1, int rssiMiddle2, int rssiRight, int rssiBack,
                                       int rssiFrontLeft, int rssiFrontRight, int rssiRearLeft, int rssiRearRight,
                                       float z, float x, float y,
-                                      boolean isSmartphoneInPocket, boolean isSmartphoneLaid, boolean isLockStatusChangedTimerExpired,
+                                      boolean isSmartphoneInPocket, boolean smartphoneIsMovingSlowly, boolean isLockStatusChangedTimerExpired,
+                                      boolean blockStart, boolean forcedStart, boolean smartphoneIsFrozen,
                                       boolean rearmLock, boolean rearmUnlock, boolean rearmWelcome, boolean lockStatus,
                                       byte welcomeByte, byte lockByte, byte startByte,
                                       byte leftAreaByte, byte rightAreaByte, byte backAreaByte,
-                                      byte walkAwayByte, byte steadyByte, byte approachByte,
+                                      byte walkAwayByte, byte approachByte,
                                       byte leftTurnByte, byte fullTurnByte, byte rightTurnByte, byte recordByte, int rangingPredictionInt,
                                       boolean lockFromTrx, boolean lockToSend, boolean startAllowed) {
         final String comma = ";";
         String log = String.valueOf(rssiLeft) + comma + rssiMiddle1 + comma + rssiMiddle2 + comma + rssiRight + comma + rssiBack + comma +
                 rssiFrontLeft + comma + rssiFrontRight + comma + rssiRearLeft + comma + rssiRearRight + comma +
                 z + comma + x + comma + y + comma +
-                booleanToString(isSmartphoneInPocket) + comma + booleanToString(isSmartphoneLaid) + comma + booleanToString(isLockStatusChangedTimerExpired) + comma;
+                booleanToString(isSmartphoneInPocket) + comma + booleanToString(smartphoneIsMovingSlowly) + comma + booleanToString(isLockStatusChangedTimerExpired) + comma +
+                booleanToString(blockStart) + comma + booleanToString(forcedStart) + comma + booleanToString(smartphoneIsFrozen) + comma;
         if (lockStatus) {
             log += "5" + comma;
         } else {

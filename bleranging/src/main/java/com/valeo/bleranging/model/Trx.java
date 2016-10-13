@@ -144,29 +144,29 @@ public class Trx {
      * @param antennaId                the antenna id that sent the rssi
      * @param rssi                     the rssi value
      * @param bleChannel               the ble channel use to send signal
-     * @param smartphoneIsLaidDownLAcc the boolean which determines if the smartphone is moving or not
+     * @param smartphoneIsMovingSlowly the boolean which determines if the smartphone is moving or not
      */
-    public void saveRssi(int antennaId, int rssi, Antenna.BLEChannel bleChannel, boolean smartphoneIsLaidDownLAcc) {
+    public void saveRssi(int antennaId, int rssi, Antenna.BLEChannel bleChannel, boolean smartphoneIsMovingSlowly) {
         switch (antennaId) {
             case ANTENNA_ID_0:
-                antenna1.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                antenna2.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
+                antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
                 break;
             case ANTENNA_ID_1:
-                antenna1.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
                 if (!antenna2.isAntennaActive()) {
-                    antenna2.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                    antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
                 }
                 break;
             case ANTENNA_ID_2:
-                antenna2.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
                 if (!antenna1.isAntennaActive()) {
-                    antenna1.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                    antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
                 }
                 break;
             default:
-                antenna1.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
-                antenna2.saveRssi(rssi, bleChannel, smartphoneIsLaidDownLAcc);
+                antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
+                antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
                 break;
         }
     }

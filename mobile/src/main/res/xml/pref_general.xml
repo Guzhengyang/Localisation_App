@@ -95,5 +95,9 @@
             android:inputType="number|numberDecimal"
             android:key="com.inblue.PREFERENCE_CORRECTION_LIN_ACC"
             android:title="@string/pref_acc_correction" />
+        <EditTextPreference
+            android:inputType="number|numberDecimal"
+            android:key="com.inblue.PREFERENCE_FROZEN_THRESHOLD"
+            android:title="@string/pref_frozen_threshold" />
     </PreferenceCategory>
 </PreferenceScreen>
