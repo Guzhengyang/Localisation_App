@@ -4,7 +4,8 @@ import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.os.Build;
 import android.os.Handler;
-import android.util.Log;
+
+import com.valeo.bleranging.utils.PSALogs;
 
 /**
  * Pre Lollipop implementation of the {@link ScanTask}.
@@ -13,7 +14,9 @@ import android.util.Log;
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class PreLollipopScanTask implements ScanTask {
-    /** Log tag. */
+    /**
+     * PSALogs tag.
+     */
     private static final String TAG = PreLollipopScanTask.class.getName();
 
     /** Start/ stop scan messages handler; */
@@ -69,7 +72,7 @@ class PreLollipopScanTask implements ScanTask {
             //noinspection deprecation
             mBluetoothAdapter.stopLeScan(mScanCallback);
         } else {
-            Log.w(TAG, "Bluetooth adapter is disabled, cannot perform the stopScan call");
+            PSALogs.w(TAG, "Bluetooth adapter is disabled, cannot perform the stopScan call");
         }
 
         mIsScanning = false;
@@ -118,13 +121,13 @@ class PreLollipopScanTask implements ScanTask {
                 if (mIsScanning) {
                     //noinspection deprecation
                     mBluetoothAdapter.stopLeScan(mScanCallback);
-                    Log.d("ACH", "stopLeScan");
+                    PSALogs.d("ACH", "stopLeScan");
                     nextToggleDelay = mInactiveScanningPeriod;
                     result = StartLeScanResult.SUCCESS;
                 } else {
                     //noinspection deprecation
                     if (mBluetoothAdapter.startLeScan(mScanCallback)) {
-                        Log.d("ACH","startLeScan");
+                        PSALogs.d("ACH", "startLeScan");
                         result = StartLeScanResult.SUCCESS;
                     } else {
                         result = StartLeScanResult.ERROR_NOT_STARTED;
@@ -136,7 +139,7 @@ class PreLollipopScanTask implements ScanTask {
                 mIsScanning = !mIsScanning;
                 mScanHandler.postDelayed(mScanRunnable, nextToggleDelay);
             } else {
-                Log.w(TAG, "Bluetooth adapter is disabled, stop scanning");
+                PSALogs.w(TAG, "Bluetooth adapter is disabled, stop scanning");
                 result = StartLeScanResult.ERROR_BLUETOOTH_DISABLED;
                 mIsScanning = false;
             }

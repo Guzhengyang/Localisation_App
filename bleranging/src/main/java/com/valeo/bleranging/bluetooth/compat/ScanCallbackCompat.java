@@ -8,7 +8,8 @@ import android.bluetooth.le.ScanResult;
 import android.os.Build;
 import android.os.ParcelUuid;
 import android.support.annotation.Nullable;
-import android.util.Log;
+
+import com.valeo.bleranging.utils.PSALogs;
 
 /**
  * "Compat" callback used to receive Bluetooth LE scan results.
@@ -101,7 +102,7 @@ public abstract class ScanCallbackCompat {
                 }
 
                 public void onScanFailed(int errorCode) {
-                    Log.e("NIH", "Scan Failed");
+                    PSALogs.e("NIH", "Scan Failed");
                 }
             };
         }

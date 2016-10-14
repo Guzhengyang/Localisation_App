@@ -343,9 +343,9 @@ public abstract class ConnectedCar {
     }
 
     /**
-     * Find three corner lower trx min max
+     * Find three corner lower trx min max, take 80% of it
      *
-     * @return the three corner lower trx min max
+     * @return the three corner lower trx min max 80% of it, or 15 if it's lower than 15.
      */
     protected int getThreeCornerLowerMaxMinRatio() {
         int trxToIgnore = -1;
@@ -369,7 +369,12 @@ public abstract class ConnectedCar {
                     maxTwo = Math.max(maxTwo, trxLinkedHMap.get(trxNumber).getMax());
                 }
             }
-            return (maxTwo - minTwo);
+            int result = ((maxTwo - minTwo) * 80) / 100;
+            if (result < 15) {
+                return 15;
+            } else {
+                return result;
+            }
         }
         return -1;
     }

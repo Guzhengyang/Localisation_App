@@ -19,8 +19,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 
+import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.TextUtils;
 
 import java.util.ArrayDeque;
@@ -76,7 +76,7 @@ public class BluetoothLeService extends Service {
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-            Log.i("NIH", "onCharacteristicWrite(): status=" + status + " " +
+            PSALogs.i("NIH", "onCharacteristicWrite(): status=" + status + " " +
                     TextUtils.getHexString(characteristic.getValue()));
             if (mDevice != null && mBluetoothGatt != null) {
                 //Disconnect after write
@@ -100,33 +100,33 @@ public class BluetoothLeService extends Service {
                 } catch (RuntimeException e) {
                     // do nothing
                 }
-                Log.d("NIH", "onMtuChanged mtu request FAILED " + status);
+                PSALogs.d("NIH", "onMtuChanged mtu request FAILED " + status);
                 intentAction = ACTION_GATT_SERVICES_FAILED;
                 broadcastUpdate(intentAction);
                 if (mBluetoothGatt != null) {
                     mBluetoothGatt.close();
                 }
             } else {
-                Log.d("NIH", "onMtuChanged mtu request SUCCESS " + status);
+                PSALogs.d("NIH", "onMtuChanged mtu request SUCCESS " + status);
                 intentAction = ACTION_GATT_CONNECTED;
                 broadcastUpdate(intentAction);
-                Log.i("NIH", "Connected to GATT server.");
+                PSALogs.i("NIH", "Connected to GATT server.");
                 mPacketToWriteCount = 0;
                 try {
                     // Attempts to discover services after successful connection.
                     if (!mIsServiceDiscovered) {
                         boolean isStarted = mBluetoothGatt.discoverServices();
-                        Log.i("NIH", "Attempting to start service discovery:" + isStarted);
+                        PSALogs.i("NIH", "Attempting to start service discovery:" + isStarted);
                     }
                 } catch (Exception e) {
-                    Log.w("NIH", "An exception occurred while trying to start the services discovery", e);
+                    PSALogs.w("NIH", "An exception occurred while trying to start the services discovery");
                 }
             }
         }
 
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            Log.d("NIH", "onConnectionStateChange , Status =" + status + " , NewState = " + newState);
+            PSALogs.d("NIH", "onConnectionStateChange , Status =" + status + " , NewState = " + newState);
             String intentAction;
             if (status == 8) {
                 intentAction = ACTION_GATT_CONNECTION_LOSS;
@@ -143,7 +143,7 @@ public class BluetoothLeService extends Service {
                 }
                 if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                     intentAction = ACTION_GATT_DISCONNECTED;
-                    Log.i("NIH", "Error lead to disconnection from GATT server.");
+                    PSALogs.i("NIH", "Error lead to disconnection from GATT server.");
                     isFullyConnected = false;
                     isConnecting = false;
                     if (mBSHandler != null) {
@@ -154,7 +154,7 @@ public class BluetoothLeService extends Service {
                     }
                     broadcastUpdate(intentAction);
                 } else {
-                    Log.i("NIH", "Failed to Connected to GATT server, New State = " + newState);
+                    PSALogs.i("NIH", "Failed to Connected to GATT server, New State = " + newState);
                     intentAction = ACTION_GATT_SERVICES_FAILED;
                     broadcastUpdate(intentAction);
                     if (mBluetoothGatt != null) {
@@ -165,13 +165,13 @@ public class BluetoothLeService extends Service {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     gatt.requestMtu(23);
                 } else {
-                    Log.d("NIH", "onConnectionStateChange no mtu request");
+                    PSALogs.d("NIH", "onConnectionStateChange no mtu request");
                 }
                 // Result from the requested action: should be 1 or 15 at the end
                 // Otherwise an error occurred during the process
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 intentAction = ACTION_GATT_DISCONNECTED;
-                Log.i("NIH", "Disconnected from GATT server.");
+                PSALogs.i("NIH", "Disconnected from GATT server.");
                 isFullyConnected = false;
                 isConnecting = false;
                 if (mBSHandler != null) {
@@ -189,7 +189,7 @@ public class BluetoothLeService extends Service {
          */
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            Log.i("NIH", "onServicesDiscovered");
+            PSALogs.i("NIH", "onServicesDiscovered");
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 mIsServiceDiscovered = true;
                 subscribeToReadCharacteristic(true);
@@ -213,14 +213,14 @@ public class BluetoothLeService extends Service {
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
             if (characteristic == null) {
-                Log.e("NIH", "onCharacteristicRead(): null characteristic, status: " + status);
+                PSALogs.e("NIH", "onCharacteristicRead(): null characteristic, status: " + status);
                 return;
             }
             if (characteristic.getValue() == null) {
-                Log.e("NIH", "onCharacteristicRead(): null value, status: " + status);
+                PSALogs.e("NIH", "onCharacteristicRead(): null value, status: " + status);
                 return;
             }
-            Log.i("NIH", "onCharacteristicRead(): " + Arrays.toString(characteristic.getValue()) + ", status=" + status);
+            PSALogs.i("NIH", "onCharacteristicRead(): " + Arrays.toString(characteristic.getValue()) + ", status=" + status);
         }
 
         /**
@@ -231,7 +231,7 @@ public class BluetoothLeService extends Service {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
-            Log.i("NIH", "onCharacteristicChanged(): " + Arrays.toString(characteristic.getValue()));
+            PSALogs.i("NIH", "onCharacteristicChanged(): " + Arrays.toString(characteristic.getValue()));
             mReceiveQueue.add(characteristic.getValue());
             isFullyConnected = true;
             isConnecting = false;
@@ -241,7 +241,7 @@ public class BluetoothLeService extends Service {
         @Override
         public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor,
                                       int status) {
-            Log.i("NIH", "onDescriptorWrite(): " + status);
+            PSALogs.i("NIH", "onDescriptorWrite(): " + status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 isFullyConnected = true;
                 isConnecting = false;
@@ -251,7 +251,7 @@ public class BluetoothLeService extends Service {
 
         @Override
         public void onReliableWriteCompleted(BluetoothGatt gatt, int status) {
-            Log.i("NIH", "onReliableWriteCompleted(): " + status);
+            PSALogs.i("NIH", "onReliableWriteCompleted(): " + status);
         }
 
     };
@@ -287,13 +287,13 @@ public class BluetoothLeService extends Service {
     }
 
     public void onCreate() {
-        Log.i("NIH", "BluetoothLeService.onCreate()");
+        PSALogs.i("NIH", "BluetoothLeService.onCreate()");
         init();
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.i("NIH", "onBind()");
+        PSALogs.i("NIH", "onBind()");
         isBound = true;
         return mBinder;
     }
@@ -303,7 +303,7 @@ public class BluetoothLeService extends Service {
         // After using a given device, you should make sure that BluetoothGatt.close() is called
         // such that resources are cleaned up properly.  In this particular example, close() is
         // invoked when the UI is disconnected from the Service.
-        Log.i("NIH", "onUnbind()");
+        PSALogs.i("NIH", "onUnbind()");
         close();
         isBound = false;
         return super.onUnbind(intent);
@@ -315,19 +315,19 @@ public class BluetoothLeService extends Service {
      * @return Return true if the initialization is successful.
      */
     public boolean initialize() {
-        Log.i("NIH", "initialize()");
+        PSALogs.i("NIH", "initialize()");
         // For API level 18 and above, get a reference to BluetoothAdapter through
         // BluetoothManager.
         if (mBluetoothManager == null) {
             mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
             if (mBluetoothManager == null) {
-                Log.e("NIH", "Unable to initialize BluetoothManager.");
+                PSALogs.e("NIH", "Unable to initialize BluetoothManager.");
                 return false;
             }
         }
         mBluetoothAdapter = mBluetoothManager.getAdapter();
         if (mBluetoothAdapter == null) {
-            Log.e("NIH", "Unable to obtain a BluetoothAdapter.");
+            PSALogs.e("NIH", "Unable to obtain a BluetoothAdapter.");
             return false;
         }
         return true;
@@ -343,9 +343,9 @@ public class BluetoothLeService extends Service {
      */
     public void connectToDevice(final String address) {
         isConnecting = true;
-        Log.d("NIH", "connectToDevice.");
+        PSALogs.d("NIH", "connectToDevice.");
         if (mBluetoothAdapter == null || address == null) {
-            Log.w("NIH", "BluetoothAdapter not initialized or unspecified address.");
+            PSALogs.w("NIH", "BluetoothAdapter not initialized or unspecified address.");
             return;
         }
         mDevice = mBluetoothAdapter.getRemoteDevice(address);
@@ -359,7 +359,7 @@ public class BluetoothLeService extends Service {
             public void run() {
                 mBluetoothGatt = mDevice.connectGatt(getApplicationContext(), false, mGattCallback);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    Log.d("NIH", "Android version >= 5.0 --> request HIGH priority (connection interval 7,5ms) 2");
+                    PSALogs.d("NIH", "Android version >= 5.0 --> request HIGH priority (connection interval 7,5ms) 2");
                     if (mBluetoothGatt != null) {
                         mBluetoothGatt.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH);
                     }
@@ -376,14 +376,14 @@ public class BluetoothLeService extends Service {
      * callback.
      */
     public void disconnect() {
-        Log.i("NIH", "BluetoothLeService.disconnect()");
+        PSALogs.i("NIH", "BluetoothLeService.disconnect()");
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-            Log.w("NIH", "BluetoothAdapter not initialized 1");
+            PSALogs.w("NIH", "BluetoothAdapter not initialized 1");
             if (mBluetoothAdapter == null) {
-                Log.w("NIH", "mBluetoothAdapter is null");
+                PSALogs.w("NIH", "mBluetoothAdapter is null");
             }
             if (mBluetoothGatt == null) {
-                Log.w("NIH", "mBluetoothGatt is null");
+                PSALogs.w("NIH", "mBluetoothGatt is null");
             }
             return;
         }
@@ -395,7 +395,7 @@ public class BluetoothLeService extends Service {
      * released properly.
      */
     private void close() {
-        Log.i("NIH", "BluetoothLeService.close()");
+        PSALogs.i("NIH", "BluetoothLeService.close()");
         if (mBluetoothGatt == null) {
             return;
         }
@@ -405,19 +405,19 @@ public class BluetoothLeService extends Service {
     }
 
     private void subscribeToReadCharacteristic(boolean enabled) {
-        Log.d("NIH", "subscribeToReadCharacteristic()");
+        PSALogs.d("NIH", "subscribeToReadCharacteristic()");
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-            Log.w("NIH", "BluetoothAdapter not initialized 2");
+            PSALogs.w("NIH", "BluetoothAdapter not initialized 2");
             return;
         }
         BluetoothGattService service = mBluetoothGatt.getService(UUID.fromString(VALEO_GENERIC_SERVICE));
         if(service == null){
-            Log.e("NIH", "Service not found");
+            PSALogs.e("NIH", "Service not found");
             return;
         }
         BluetoothGattCharacteristic charac = service.getCharacteristic(UUID.fromString(VALEO_OUT_CHARACTERISTIC));
         if (charac == null) {
-            Log.e("NIH", "characteristic not found");
+            PSALogs.e("NIH", "characteristic not found");
             return;
         }
         mBluetoothGatt.setCharacteristicNotification(charac, enabled);
@@ -444,27 +444,27 @@ public class BluetoothLeService extends Service {
     private boolean writeCharacteristic(byte[] value) {
         boolean bReturn = false;
         if (mBluetoothAdapter == null) {
-            Log.w("NIH", "BluetoothAdapter not initialized 2");
+            PSALogs.w("NIH", "BluetoothAdapter not initialized 2");
         }
         if (mBluetoothGatt == null) {
-            Log.w("NIH", "mBluetoothGatt not initialized 2");
+            PSALogs.w("NIH", "mBluetoothGatt not initialized 2");
             return false;
         }
         BluetoothGattService service = mBluetoothGatt.getService(UUID.fromString(VALEO_GENERIC_SERVICE));
         if(service == null){
-            Log.e("NIH", "Service not found");
+            PSALogs.e("NIH", "Service not found");
             return false;
         }
         BluetoothGattCharacteristic charac = service.getCharacteristic(UUID.fromString(VALEO_IN_CHARACTERISTIC));
         if (charac == null) {
-            Log.e("NIH", "characteristic not found");
+            PSALogs.e("NIH", "characteristic not found");
             return false;
         }
         if(value == null){
-            Log.e("NIH", "writeCharacteristic(): Null value");
+            PSALogs.e("NIH", "writeCharacteristic(): Null value");
             return false;
         }
-        Log.d("NIH", "writeCharacteristic(" + VALEO_IN_CHARACTERISTIC + "): " + TextUtils.getHexString(value));
+        PSALogs.d("NIH", "writeCharacteristic(" + VALEO_IN_CHARACTERISTIC + "): " + TextUtils.getHexString(value));
         charac.setValue(value);
         if(mBluetoothGatt != null) {
             bReturn = mBluetoothGatt.writeCharacteristic(charac);

@@ -20,6 +20,7 @@ import android.nfc.NfcManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -37,7 +38,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.SpannableStringBuilder;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
@@ -61,6 +61,7 @@ import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
+import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 import com.valeo.psa.model.Car;
 import com.valeo.psa.model.ViewModel;
@@ -221,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         // we will provide a generic one for you if you leave it null
         Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(null, null);
         if (intent != null) {
-            Log.d(TAG, "showAuthenticationScreen " + REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS);
+            PSALogs.d(TAG, "showAuthenticationScreen " + REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS);
 //            startActivityForResult(intent, REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS); // TODO uncomment to activate
         }
     }
@@ -237,6 +238,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         switch (item.getItemId()) {
             case R.id.menu_settings:
                 Intent settingIntent = new Intent(this, SettingsActivity.class);
+                if (!PSALogs.DEBUG) {
+                    settingIntent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, SettingsActivity.PSASettingsFragment.class.getName());
+                    settingIntent.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
+                }
                 startActivityForResult(settingIntent, RESULT_SETTINGS);
                 break;
             case R.id.menu_login:
@@ -265,15 +270,15 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_ACCESS_COARSE_LOCATION_PERMISSION) {
             // Received permission result for permission.
-            Log.i(TAG, "Received response for permission request.");
+            PSALogs.i(TAG, "Received response for permission request.");
             // Check if the permission has been granted
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // permission has been granted
-                Log.i(TAG, "permission has now been granted.");
+                PSALogs.i(TAG, "permission has now been granted.");
                 Snackbar.make(content_main, R.string.permision_available,
                         Snackbar.LENGTH_SHORT).show();
             } else {
-                Log.i(TAG, "permission was NOT granted.");
+                PSALogs.i(TAG, "permission was NOT granted.");
                 Snackbar.make(content_main, R.string.permissions_not_granted,
                         Snackbar.LENGTH_SHORT).show();
             }
@@ -408,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             lightTypeFace = Typeface.createFromAsset(getAssets(), "fonts/HelveticaNeueLTStd-Lt.otf");
             boldTypeFace = Typeface.createFromAsset(getAssets(), "fonts/HelveticaNeueLTStd-Bd.otf");
         } catch (Exception e) {
-            Log.e(TAG, "Font not loaded !");
+            PSALogs.e(TAG, "Font not loaded !");
         }
         activity_title = (TextView) toolbar.findViewById(R.id.activity_title);
         final TextView unlock_trunk_title = (TextView) toolbar.findViewById(R.id.unlock_trunk_title);
@@ -697,23 +702,23 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         if (viewModel != null) {
             switch (viewModel.getViewModelId()) {
                 case UNLOCK_TRUNK:
-                    Log.d("Longpress", "UNLOCK_TRUNK detected ");
+                    PSALogs.d("Longpress", "UNLOCK_TRUNK detected ");
                     switchToolbars(true, R.id.unlock_trunk_toolbar);
                     break;
                 case LOCK_TRUNK:
-                    Log.d("Longpress", "LOCK_TRUNK detected ");
+                    PSALogs.d("Longpress", "LOCK_TRUNK detected ");
                     switchToolbars(true, R.id.lock_trunk_toolbar);
                     break;
                 case CLOSE_ALL_WINDOWS:
-                    Log.d("Longpress", "CLOSE_ALL_WINDOWS detected ");
+                    PSALogs.d("Longpress", "CLOSE_ALL_WINDOWS detected ");
                     switchToolbars(true, R.id.close_all_windows_toolbar);
                     little_round_progressBar.startProgress();
                     break;
                 case FLASH_LIGHTS:
-                    Log.d("Longpress", "FLASH_LIGHTS detected ");
+                    PSALogs.d("Longpress", "FLASH_LIGHTS detected ");
                     break;
                 case UNKNOWN:
-                    Log.d("Longpress", "UNKNOWN detected ");
+                    PSALogs.d("Longpress", "UNKNOWN detected ");
                     break;
             }
         }
@@ -725,20 +730,20 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (!isIconLongPressed) {
-                    Log.d("Longpress", "ACTION_DOWN");
+                    PSALogs.d("Longpress", "ACTION_DOWN");
                     mDetector.onTouchEvent(event);
                     pressedView = null;
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (isIconLongPressed && (Math.abs(mDownX - event.getX()) > SCROLL_THRESHOLD || Math.abs(mDownY - event.getY()) > SCROLL_THRESHOLD)) {
-                    Log.d("Longpress", "ACTION_MOVE");
+                    PSALogs.d("Longpress", "ACTION_MOVE");
                     // no break to prevent moving while long pressing
                 } else {
                     break;
                 }
             case MotionEvent.ACTION_CANCEL:
-                Log.d("Longpress", "ACTION_CANCEL");
+                PSALogs.d("Longpress", "ACTION_CANCEL");
                 // no break because no action up will be called
             case MotionEvent.ACTION_UP:
                 if (isIconLongPressed) {
@@ -748,7 +753,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     if (viewModel != null) {
                         switch (viewModel.getViewModelId()) {
                             case UNLOCK_TRUNK:
-                                Log.d("Longpress", "ACTION_UP UNLOCK_TRUNK");
+                                PSALogs.d("Longpress", "ACTION_UP UNLOCK_TRUNK");
                                 switchToolbars(false, R.id.unlock_trunk_toolbar);
                                 v.postDelayed(new Runnable() {
                                     @Override
@@ -763,7 +768,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                                 }, 100);
                                 break;
                             case LOCK_TRUNK:
-                                Log.d("Longpress", "ACTION_UP LOCK_TRUNK");
+                                PSALogs.d("Longpress", "ACTION_UP LOCK_TRUNK");
                                 switchToolbars(false, R.id.lock_trunk_toolbar);
                                 v.postDelayed(new Runnable() {
                                     @Override
@@ -778,20 +783,20 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                                 }, 100);
                                 break;
                             case CLOSE_ALL_WINDOWS:
-                                Log.d("Longpress", "ACTION_UP CLOSE_ALL_WINDOWS");
+                                PSALogs.d("Longpress", "ACTION_UP CLOSE_ALL_WINDOWS");
                                 switchToolbars(false, R.id.close_all_windows_toolbar);
                                 little_round_progressBar.stopProgress();
                                 break;
                             case FLASH_LIGHTS:
-                                Log.d("Longpress", "ACTION_UP FLASH_LIGHTS");
+                                PSALogs.d("Longpress", "ACTION_UP FLASH_LIGHTS");
                                 break;
                             case UNKNOWN:
-                                Log.d("Longpress", "ACTION_UP UNKNOWN");
+                                PSALogs.d("Longpress", "ACTION_UP UNKNOWN");
                                 break;
                         }
                     }
                 } else {
-                    Log.d("Longpress", "ACTION_UP isIconLongPressed = false");
+                    PSALogs.d("Longpress", "ACTION_UP isIconLongPressed = false");
                 }
                 isIconLongPressed = false;
                 mDownX = 0;
@@ -799,10 +804,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 pressedView = null;
                 break;
             case MotionEvent.ACTION_OUTSIDE:
-                Log.d("Longpress", "ACTION_OUTSIDE");
+                PSALogs.d("Longpress", "ACTION_OUTSIDE");
                 break;
             case MotionEvent.ACTION_SCROLL:
-                Log.d("Longpress", "ACTION_SCROLL");
+                PSALogs.d("Longpress", "ACTION_SCROLL");
                 break;
         }
         return true;

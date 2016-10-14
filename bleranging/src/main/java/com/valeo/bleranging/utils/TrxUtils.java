@@ -1,7 +1,5 @@
 package com.valeo.bleranging.utils;
 
-import android.util.Log;
-
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.io.BufferedWriter;
@@ -234,7 +232,7 @@ public class TrxUtils {
      * Function used to debug and write logs into a file.
      */
     private static void appendRssiLog(String text) {
-        Log.d("log", text);
+        PSALogs.d("log", text);
         try {
             SimpleDateFormat s = new SimpleDateFormat("HH:mm:ss:SSS", Locale.FRANCE);
             String timestamp = s.format(new Date());

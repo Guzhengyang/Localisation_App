@@ -180,7 +180,7 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
         closeToCarRL = getRatioCloseToCar(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
         closeToCarRR = getRatioCloseToCar(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
         int thresholdCloseToCar = SdkPreferencesHelper.getInstance().getRatioCloseToCarThreshold(connectedCarType);
-        thresholdMaxMinRatio = (getThreeCornerLowerMaxMinRatio() * 80) / 100;
+        thresholdMaxMinRatio = getThreeCornerLowerMaxMinRatio();
 
 //        ratio = (closeToCarFL - closeToCarRR) - (closeToCarFR - closeToCarRL);
         if (isInUnlockArea && isApproaching) {

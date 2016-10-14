@@ -8,7 +8,8 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 import android.os.Build;
 import android.os.Handler;
-import android.util.Log;
+
+import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class PostLollipopScanTask implements ScanTask {
     /**
-     * Log tag.
+     * PSALogs tag.
      */
     private static final String TAG = PostLollipopScanTask.class.getName();
 
@@ -111,14 +112,14 @@ class PostLollipopScanTask implements ScanTask {
                 if (mIsScanning) {
                     bluetoothLeScanner.stopScan(mScanCallback);
                 }else {
-                    Log.w(TAG, "No running scanning to STOP");
+                    PSALogs.w(TAG, "No running scanning to STOP");
                 }
                 mScanHandler.removeCallbacks(mScanRunnable);
             } else {
-                Log.w(TAG, "Bluetooth LE scanner is not available, cannot perform the stopScan call");
+                PSALogs.w(TAG, "Bluetooth LE scanner is not available, cannot perform the stopScan call");
             }
         } else {
-            Log.w(TAG, "Bluetooth adapter is disabled, cannot perform the stopScan call");
+            PSALogs.w(TAG, "Bluetooth adapter is disabled, cannot perform the stopScan call");
         }
 
         mIsScanning = false;
@@ -170,13 +171,13 @@ class PostLollipopScanTask implements ScanTask {
                     long nextToggleDelay;
 
                     if (!mIsScanning) {
-                        Log.d("ACH", "Start LE Scan");
+                        PSALogs.d("ACH", "Start LE Scan");
                         bluetoothLeScanner.startScan(mListOfScanFilter, mScanSettings, mScanCallback);
                         nextToggleDelay = mActiveScanningPeriod;
                         result = StartLeScanResult.SUCCESS;
                         mIsScanning = true;
                     } else {
-                        Log.d("ACH", "Stop LE Scan");
+                        PSALogs.d("ACH", "Stop LE Scan");
                         bluetoothLeScanner.stopScan(mScanCallback);
                         nextToggleDelay = mInactiveScanningPeriod;
                         result = StartLeScanResult.SUCCESS;
@@ -185,12 +186,12 @@ class PostLollipopScanTask implements ScanTask {
 
                     mScanHandler.postDelayed(mScanRunnable, nextToggleDelay);
                 } else {
-                    Log.w(TAG, "Bluetooth LE scanner is not available, stop scanning");
+                    PSALogs.w(TAG, "Bluetooth LE scanner is not available, stop scanning");
                     result = StartLeScanResult.ERROR_BLUETOOTH_NOT_AVAILABLE;
                     mIsScanning = false;
                 }
             } else {
-                Log.w(TAG, "Bluetooth adapter is disabled, stop scanning");
+                PSALogs.w(TAG, "Bluetooth adapter is disabled, stop scanning");
                 result = StartLeScanResult.ERROR_BLUETOOTH_DISABLED;
                 mIsScanning = false;
             }

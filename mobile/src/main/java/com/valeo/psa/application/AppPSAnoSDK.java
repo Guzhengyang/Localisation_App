@@ -1,9 +1,9 @@
 package com.valeo.psa.application;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,22 +26,22 @@ public class AppPSAnoSDK extends Application {
         //if the folder doesn't exist
         if (!dir.exists()) {
             if (dir.mkdir()) {
-                Log.d("make", "dir Success");
+                PSALogs.d("make", "dir Success");
             } else {
-                Log.d("make", "dir Failed");
+                PSALogs.d("make", "dir Failed");
                 return;
             }
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_kk", Locale.FRANCE);
         String timestampLog = sdf.format(new Date());
         SdkPreferencesHelper.getInstance().setLogFileName("sdcard/InBlueRssi/allRssi_" + SdkPreferencesHelper.getInstance().getRssiLogNumber() + "_" + timestampLog + ".csv");
-        Log.d("LogFileName", SdkPreferencesHelper.getInstance().getLogFileName());
+        PSALogs.d("LogFileName", SdkPreferencesHelper.getInstance().getLogFileName());
         File logFile = new File("sdcard/InBlueRssi/allRssi_" + SdkPreferencesHelper.getInstance().getRssiLogNumber() + "_" + timestampLog + ".csv");
         if (!logFile.exists()) {
             try {
                 //Create file
                 if (logFile.createNewFile()) {
-                    Log.d("make", "file Success");
+                    PSALogs.d("make", "file Success");
                     //Write 1st row with column names
                     //BufferedWriter for performance, true to set append to file flag
                     String ColNames = "TIMESTAMP;RSSI LEFT;RSSI MIDDLE1;RSSI MIDDLE2;RSSI RIGHT;RSSI BACK;RSSI FRONTLEFT;RSSI FRONTRIGHT;RSSI REARLEFT;RSSI REARRIGHT;Z AZIMUTH;X PITCH;Y ROLL;IN POCKET;IS LAID;IS LOCK STATUS CHANGED TIMER;IS START BLOCKED;IS START FORCED;IS FROZEN;IS LOCK;REARM LOCK;REARM UNLOCK;REARM WELCOME;WELCOME FLAG;LOCK FLAG;START FLAG;LEFT AREA FLAG; RIGHT AREA FLAG; BACK AREA FLAG;WALK AWAY FLAG;APPROACH FLAG; LEFT TURN FLAG; FULL TURN FLAG; RIGHT TURN FLAG;RECORD FLAG;PREDICTION;LOCK FROM TRX;LOCK TO SEND;START ALLOWED;";
@@ -50,7 +50,7 @@ public class AppPSAnoSDK extends Application {
                     buf.newLine();
                     buf.close();
                 } else {
-                    Log.d("make", "file Failed");
+                    PSALogs.d("make", "file Failed");
                 }
             } catch (IOException e) {
                 e.printStackTrace();

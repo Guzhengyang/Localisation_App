@@ -10,12 +10,12 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 
 import com.valeo.bleranging.bluetooth.compat.BluetoothAdapterCompat;
 import com.valeo.bleranging.bluetooth.compat.ScanCallbackCompat;
 import com.valeo.bleranging.bluetooth.compat.ScanTask;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.TextUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -68,7 +68,7 @@ public class BluetoothManagement {
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
-            Log.i("NIH bind", "onServiceConnected()");
+            PSALogs.i("NIH bind", "onServiceConnected()");
             mBluetoothLeService = (((BluetoothLeService.LocalBinder) service).getService());
             mBluetoothLeService.registerListener(mBLEServiceListener);
             if (mBluetoothLeService.initialize()) {
@@ -78,7 +78,7 @@ public class BluetoothManagement {
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            Log.i("NIH bind", "onServiceDisconnected()");
+            PSALogs.i("NIH bind", "onServiceDisconnected()");
             mBluetoothLeService.unregisterListener(mBLEServiceListener);
             mBluetoothLeService = null;
         }
@@ -87,7 +87,7 @@ public class BluetoothManagement {
     private final ServiceConnection mServiceConnection2 = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
-            Log.i("NIH_PC", "onServiceConnected()");
+            PSALogs.i("NIH_PC", "onServiceConnected()");
             mBluetoothLeService2 = (((BluetoothLeService2.LocalBinder2) service).getService());
             if (mBluetoothLeService2.initialize()) {
                 mBluetoothLeService2.connectToDevice(SdkPreferencesHelper.getInstance().getTrxAddressConnectable2());
@@ -96,7 +96,7 @@ public class BluetoothManagement {
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            Log.i("NIH_PC", "onServiceDisconnected()");
+            PSALogs.i("NIH_PC", "onServiceDisconnected()");
             mBluetoothLeService2 = null;
         }
     };
@@ -181,12 +181,12 @@ public class BluetoothManagement {
                 isReceiverRegistered = true;
             }
             if (!isBound()) {
-                Log.i("NIH bind", "BluetoothManagement bindService()");
+                PSALogs.i("NIH bind", "BluetoothManagement bindService()");
                 // the connection will happen onServiceConnected after binding
                 Intent gattServiceIntent = new Intent(mContext, BluetoothLeService.class);
                 mContext.bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
             } else if (mBluetoothLeService != null) {
-                Log.i("NIH bind", "BluetoothManagement connectToDevice: " + SdkPreferencesHelper.getInstance().getTrxAddressConnectable());
+                PSALogs.i("NIH bind", "BluetoothManagement connectToDevice: " + SdkPreferencesHelper.getInstance().getTrxAddressConnectable());
                 mBluetoothLeService.connectToDevice(SdkPreferencesHelper.getInstance().getTrxAddressConnectable());
             }
         }
@@ -198,11 +198,11 @@ public class BluetoothManagement {
     public void connectToPC(String address) {
         if (!isFullyConnected2()) {
             if (!isBound2()) {
-                Log.i("NIH_PC", "BluetoothManagement bindService: " + address);
+                PSALogs.i("NIH_PC", "BluetoothManagement bindService: " + address);
                 Intent gattServiceIntent = new Intent(mContext, BluetoothLeService2.class);
                 mContext.bindService(gattServiceIntent, mServiceConnection2, Context.BIND_AUTO_CREATE);
             } else if (mBluetoothLeService2 != null) {
-                Log.i("NIH_PC", "BluetoothManagement connectToPC: " + address);
+                PSALogs.i("NIH_PC", "BluetoothManagement connectToPC: " + address);
                 mBluetoothLeService2.connectToDevice(address);
             }
         }
@@ -216,26 +216,26 @@ public class BluetoothManagement {
      */
     private void scanLeDevice(final boolean enable) {
         if (enable) {
-            Log.i(TAG, "Start scanning for LE device");
+            PSALogs.i(TAG, "Start scanning for LE device");
             ScanTask.StartLeScanResult result = mBluetoothAdapterCompat.startLeScan(mLeScanCallbackMain);
             switch (result) {
                 case ERROR_BLUETOOTH_NOT_AVAILABLE:
                     // TODO Bluetooth is not available, display a nice message
-                    Log.d(TAG, "Bluetooth is not available");
+                    PSALogs.d(TAG, "Bluetooth is not available");
                     break;
                 case ERROR_BLUETOOTH_DISABLED:
                     // TODO Bluetooth is disabled, display a nice message
-                    Log.d(TAG, "Bluetooth is disabled");
+                    PSALogs.d(TAG, "Bluetooth is disabled");
                     break;
                 case ERROR_NOT_STARTED:
-                    Log.i(TAG, "LE Scan start failed");
+                    PSALogs.i(TAG, "LE Scan start failed");
                     break;
                 case SUCCESS:
-                    Log.i(TAG, "LE Scan start succeeded");
+                    PSALogs.i(TAG, "LE Scan start succeeded");
                     break;
             }
         } else {
-            Log.i(TAG, "Stop scanning for LE device");
+            PSALogs.i(TAG, "Stop scanning for LE device");
             mBluetoothAdapterCompat.stopLeScan(mLeScanCallbackMain);
         }
     }
@@ -426,7 +426,7 @@ public class BluetoothManagement {
                 outputStream.write(byteToSend);
                 outputStream.write(byteReceived);
                 byte[] concatBytes = outputStream.toByteArray();
-                Log.d("NIH_PC", "send: " + TextUtils.printBleBytes(concatBytes));
+                PSALogs.d("NIH_PC", "send: " + TextUtils.printBleBytes(concatBytes));
                 if (!mBluetoothLeService2.sendPackets(concatBytes)) {
                     disconnectPc();
                 }

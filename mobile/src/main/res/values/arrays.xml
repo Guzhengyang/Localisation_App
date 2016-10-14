@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="entries_list_preference">
-        <item>TYPE_3_A</item>
-        <item>TYPE_3_B</item>
-        <item>TYPE_4_A</item>
-        <item>TYPE_4_B</item>
-        <item>TYPE_5_A</item>
-        <item>TYPE_5_B</item>
-        <item>TYPE_6_A</item>
-        <item>TYPE_6_B</item>
-        <item>TYPE_7_A</item>
-        <item>TYPE_7_B</item>
+        <item>3 with middle</item>
+        <item>3 with back</item>
+        <item>4 with middle</item>
+        <item>4 with back</item>
+        <item>5 with middle</item>
+        <item>5 with back</item>
+        <item>6 with middle</item>
+        <item>6 with back</item>
+        <item>7 with middle</item>
+        <item>7 with back</item>
     </string-array>
     <string-array name="base_list_preference">
         <item>Lock: PSU &amp; Unlock: PSU</item>

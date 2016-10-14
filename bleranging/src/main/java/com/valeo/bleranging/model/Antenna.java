@@ -1,9 +1,8 @@
 package com.valeo.bleranging.model;
 
-import android.util.Log;
-
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -107,7 +106,7 @@ public class Antenna {
     private int getCorrectedRssi(int rssi, BLEChannel bleChannel) {
         int borneInf = (int) (lastRssi - getEcretageValue(lastRssi));
         int borneSup = (int) (lastRssi + getEcretageValue(lastRssi));
-        Log.d("ecretage" + antennaId, "lastRssi:" + lastRssi + " borneInf:" + borneInf + " borneSup:" + borneSup);
+        PSALogs.d("ecretage" + antennaId, "lastRssi:" + lastRssi + " borneInf:" + borneInf + " borneSup:" + borneSup);
         switch (bleChannel) {
             case BLE_CHANNEL_37:
                 offsetBleChannel38 = 0;
@@ -243,10 +242,10 @@ public class Antenna {
         }
         rssi += getTrxRssiEqualizer(numberTrx); // add trx rssi antenna power Equalizer
         if (antennaId == ANTENNA_ID_1) {
-            Log.d("ecretage" + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi);
+            PSALogs.d("ecretage" + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi);
         }
         if (antennaId == ANTENNA_ID_2) {
-            Log.d("ecretage" + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi);
+            PSALogs.d("ecretage" + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi);
         }
         currentOriginalRssi = rssi;
         rssiPente.add(currentOriginalRssi - lastOriginalRssi);
@@ -265,10 +264,10 @@ public class Antenna {
         rollingAverageRssi(isSmartphoneMovingSlowly);
         hasReceivedRssi.set(true);
         if (antennaId == ANTENNA_ID_1) {
-            Log.d("ecretage" + antennaId, numberTrx + " savedRssi:" + lastRssi);
+            PSALogs.d("ecretage" + antennaId, numberTrx + " savedRssi:" + lastRssi);
         }
         if (antennaId == ANTENNA_ID_2) {
-            Log.d("ecretage" + antennaId, numberTrx + " savedRssi:" + lastRssi);
+            PSALogs.d("ecretage" + antennaId, numberTrx + " savedRssi:" + lastRssi);
         }
     }
 

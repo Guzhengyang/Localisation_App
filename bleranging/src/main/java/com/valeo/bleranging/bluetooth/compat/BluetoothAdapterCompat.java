@@ -10,9 +10,9 @@ import android.content.Context;
 import android.os.Build;
 import android.os.ParcelUuid;
 import android.support.v4.util.ArrayMap;
-import android.util.Log;
 
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,9 @@ import java.util.Map;
  * "Compat" Bluetooth adapter. Depending on the device, uses the pre or post Lollipop scan methods.
  */
 public final class BluetoothAdapterCompat {
-    /** Log tag. */
+    /**
+     * PSALogs tag.
+     */
     private static final String TAG = BluetoothAdapterCompat.class.getName();
     /** Running detection tasks map. */
     private final Map<ScanCallbackCompat, ScanTask> mRunningDetections = new ArrayMap<>();
@@ -94,9 +96,9 @@ public final class BluetoothAdapterCompat {
      */
     public ScanTask.StartLeScanResult startLeScan(final ScanCallbackCompat scanCallbackCompat) {
         ScanTask.StartLeScanResult result;
-        Log.w("NIH", "startLeScan()");
+        PSALogs.w("NIH", "startLeScan()");
         if (mBluetoothAdapter == null) {
-            Log.w(TAG, "Bluetooth adapter not available");
+            PSALogs.w(TAG, "Bluetooth adapter not available");
             result = ScanTask.StartLeScanResult.ERROR_BLUETOOTH_NOT_AVAILABLE;
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             result = postLollipopStartLeScan(scanCallbackCompat);
@@ -114,7 +116,7 @@ public final class BluetoothAdapterCompat {
      * @param scanCallbackCompat used to identify which scan to stop. Must be the same handle used to start the scan.
      */
     public void stopLeScan(final ScanCallbackCompat scanCallbackCompat) {
-        Log.w("NIH", "stopLeScan()");
+        PSALogs.w("NIH", "stopLeScan()");
         ScanTask scanTask = mRunningDetections.get(scanCallbackCompat);
 
         if (scanTask != null) {
@@ -132,7 +134,7 @@ public final class BluetoothAdapterCompat {
      * stack
      */
     public void suspendLeScan(final ScanCallbackCompat scanCallbackCompat) {
-        Log.w("NIH", "suspendLeScan()");
+        PSALogs.w("NIH", "suspendLeScan()");
         ScanTask scanTask = mRunningDetections.get(scanCallbackCompat);
         scanTask.suspend();
     }
@@ -144,7 +146,7 @@ public final class BluetoothAdapterCompat {
      * mecanism is resumed.
      */
     public void resumeLeScan(final ScanCallbackCompat scanCallbackCompat) {
-        Log.w("NIH", "resumeLeScan()");
+        PSALogs.w("NIH", "resumeLeScan()");
         ScanTask scanTask = mRunningDetections.get(scanCallbackCompat);
         scanTask.resume();
     }
@@ -195,7 +197,7 @@ public final class BluetoothAdapterCompat {
                         .build();
                 ScanTask runningScanTask = mRunningDetections.get(scanCallbackCompat);
                 if (runningScanTask != null) {
-                    Log.w(TAG, "Scanning task is not Started, Already Running one found");
+                    PSALogs.w(TAG, "Scanning task is not Started, Already Running one found");
                 } else {
                     PostLollipopScanTask scanTask = new PostLollipopScanTask(mBluetoothAdapter, scanFilters, setting, getPostLollipopScanCallback(scanCallbackCompat));
                     scanTask.setScanPeriods(3000, 200);

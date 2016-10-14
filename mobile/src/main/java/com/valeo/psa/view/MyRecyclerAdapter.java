@@ -80,11 +80,11 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
                 public boolean onTouch(View v, MotionEvent event) {
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
-                            Log.d("icon onTouchEvent", "ACTION_DOWN");
+                            PSALogs.d("icon onTouchEvent", "ACTION_DOWN");
                             //mDetector.onTouchEvent(event);
                             break;
                         case MotionEvent.ACTION_UP:
-                            Log.d("icon onTouchEvent", "ACTION_UP");
+                            PSALogs.d("icon onTouchEvent", "ACTION_UP");
                             break;
                     }
                     return true;

@@ -20,6 +20,7 @@ import android.view.View;
 
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 
 import java.util.List;
@@ -114,7 +115,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void onBuildHeaders(List<Header> target) {
-        loadHeadersFromResource(R.xml.pref_headers, target);
+        if (PSALogs.DEBUG) {
+            loadHeadersFromResource(R.xml.pref_headers, target);
+        }
     }
 
     /**
@@ -123,7 +126,48 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     protected boolean isValidFragment(String fragmentName) {
         return GeneralPreferenceFragment.class.getName().equals(fragmentName)
-                || SpecificPreferenceFragment.class.getName().equals(fragmentName);
+                || SpecificPreferenceFragment.class.getName().equals(fragmentName)
+                || PSASettingsFragment.class.getName().equals(fragmentName);
+    }
+
+    public static class PSASettingsFragment extends PreferenceFragment {
+        private ListPreference connected_car_type;
+        private ListPreference connected_car_base;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            manager = getPreferenceManager();
+            manager.setSharedPreferencesName(SdkPreferencesHelper.SAVED_CC_GENERIC_OPTION);
+            sharedPreferences = manager.getSharedPreferences();
+            addPreferencesFromResource(R.xml.pref_psa);
+            setViews();
+            bindSummaries();
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            setDefaultValues();
+        }
+
+        private void setViews() {
+            connected_car_type = ((ListPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_TYPE_PREFERENCES_NAME));
+            connected_car_base = ((ListPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_BASE_PREFERENCES_NAME));
+        }
+
+        private void setDefaultValues() {
+
+        }
+
+        // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+        // to their values. When their values change, their summaries are
+        // updated to reflect the new value, per the Android Design
+        // guidelines.
+        private void bindSummaries() {
+            bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_A);
+            bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
+        }
     }
 
     /**
