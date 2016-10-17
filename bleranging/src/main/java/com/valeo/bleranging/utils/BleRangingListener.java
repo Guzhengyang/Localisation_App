@@ -8,6 +8,8 @@ import android.text.SpannableStringBuilder;
 public interface BleRangingListener {
     void lightUpArea(int area);
     void darkenArea(int area);
+
+    void applyNewDrawable();
     void printDebugInfo(SpannableStringBuilder spannableStringBuilder);
 
     void updateBLEStatus();

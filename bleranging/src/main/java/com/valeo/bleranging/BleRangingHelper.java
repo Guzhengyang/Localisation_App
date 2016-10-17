@@ -124,10 +124,11 @@ public class BleRangingHelper implements SensorEventListener {
     private boolean forcedUnlock = false;
     private boolean blockUnlock = false;
     private Integer rangingPredictionInt = -1;
-    private boolean isLockStrategyValid = false;
     private List<Integer> isUnlockStrategyValid;
-    private boolean isStartStrategyValid = false;
-    private boolean isWelcomeStrategyValid = false;
+    private boolean isInLockArea = false;
+    private boolean isInUnlockArea = false;
+    private boolean isInStartArea = false;
+    private boolean isInWelcomeArea = false;
     private boolean checkNewPacketOnlyOneLaunch = true;
     private byte[] bytesToSend;
     private byte[] bytesReceived;
@@ -135,7 +136,7 @@ public class BleRangingHelper implements SensorEventListener {
         @Override
         public void run() {
             PSALogs.d("NIH", "getPacketOnePayload then sendPackets");
-            bytesToSend = mProtocolManager.getPacketOnePayload(isRKE.get(), isUnlockStrategyValid, isStartStrategyValid, isLockStrategyValid);
+            bytesToSend = mProtocolManager.getPacketOnePayload(isRKE.get(), isUnlockStrategyValid, isInUnlockArea, isInStartArea, isInLockArea);
             mBluetoothManager.sendPackets(bytesToSend, bytesReceived);
             if (isRKE.get()) {
                 setIsRKE(false);
@@ -205,94 +206,6 @@ public class BleRangingHelper implements SensorEventListener {
             tryStrategies(newLockStatus);
             updateCarLocalization();
             mMainHandler.postDelayed(this, 400);
-        }
-    };
-    /**
-     * Handles various events fired by the Service.
-     * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
-     * ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
-     * or notification operations.
-     */
-    private final BroadcastReceiver mTrxUpdateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-                bytesReceived = mBluetoothManager.getBytesReceived();
-                PSALogs.d("NIH", "TRX ACTION_DATA_AVAILABLE");
-                boolean oldLockStatus = newLockStatus;
-                if (bytesReceived != null) {
-                    newLockStatus = (bytesReceived[5] & 0x01) != 0;
-                }
-                if (oldLockStatus != newLockStatus) {
-//                    connectedCar.resetWithHysteresis(newLockStatus, isUnlockStrategyValid); //TODO concurrentModification
-                    bleRangingListener.updateCarDoorStatus(newLockStatus);
-                }
-                mProtocolManager.setIsLockedFromTrx(newLockStatus);
-                // if car lock status changed
-                if (lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
-                    lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
-                    mProtocolManager.setIsLockedToSend(lastCommandFromTrx);
-                    manageRearms(lastCommandFromTrx);
-                }
-                // if car thatcham status changed
-                if (lastThatcham.get() != mProtocolManager.isThatcham()) {
-                    lastThatcham.set(mProtocolManager.isThatcham());
-                    if (lastThatcham.get()) { // if in thatcham area, rearm lock
-                        rearmLock.set(true);
-                        lastThatchamChanged = false;
-                    } else { // if not in thatcham area wait for being in lock area to rearm unlock
-                        lastThatchamChanged = true;
-                    }
-                }
-                if (lastThatchamChanged && isLockStrategyValid) {
-                    // if not in thatcham area and in lock area, rearm unlock
-                    rearmUnlock.set(true);
-                    makeNoise(ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 100);
-                    lastThatchamChanged = false;
-                }
-                if (checkNewPacketOnlyOneLaunch) {
-                    checkNewPacketOnlyOneLaunch = false;
-                    mMainHandler.postDelayed(checkNewPacketsRunner, 1000);
-                }
-            } else if (BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_CHARACTERISTIC_SUBSCRIBED");
-                mMainHandler.post(sendPacketRunner); // send works only after subscribed
-                bleRangingListener.updateBLEStatus();
-                mBluetoothManager.resumeLeScan();
-                if (isFirstConnection && isFullyConnected()) {
-                    isFirstConnection = false;
-                    runFirstConnection(newLockStatus);
-                    mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
-                    mHandlerTimeOut.removeCallbacks(null);
-                }
-            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
-                if (!mBluetoothManager.isConnecting()) {
-                    mMainHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            restartConnection(false);
-                        }
-                    }, 1000);
-                }
-            } else if (BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
-                PSALogs.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
-                if (!mBluetoothManager.isConnecting()) {
-                    mMainHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            restartConnection(false);
-                        }
-                    }, 1000);
-                }
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_DISCOVERED");
-            } else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_CONNECTED");
-            }
         }
     };
     private byte welcomeByte = 0;
@@ -367,6 +280,94 @@ public class BleRangingHelper implements SensorEventListener {
             }
             if (isFullyConnected()) {
                 mMainHandler.postDelayed(this, 105);
+            }
+        }
+    };
+    /**
+     * Handles various events fired by the Service.
+     * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
+     * ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
+     * or notification operations.
+     */
+    private final BroadcastReceiver mTrxUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                bytesReceived = mBluetoothManager.getBytesReceived();
+                PSALogs.d("NIH", "TRX ACTION_DATA_AVAILABLE");
+                boolean oldLockStatus = newLockStatus;
+                if (bytesReceived != null) {
+                    newLockStatus = (bytesReceived[5] & 0x01) != 0;
+                }
+                if (oldLockStatus != newLockStatus) {
+//                    connectedCar.resetWithHysteresis(newLockStatus, isUnlockStrategyValid); //TODO concurrentModification
+                    bleRangingListener.updateCarDoorStatus(newLockStatus);
+                }
+                mProtocolManager.setIsLockedFromTrx(newLockStatus);
+                // if car lock status changed
+                if (lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
+                    lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
+                    mProtocolManager.setIsLockedToSend(lastCommandFromTrx);
+                    manageRearms(lastCommandFromTrx);
+                }
+                // if car thatcham status changed
+                if (lastThatcham.get() != mProtocolManager.isThatcham()) {
+                    lastThatcham.set(mProtocolManager.isThatcham());
+                    if (lastThatcham.get()) { // if in thatcham area, rearm lock
+                        rearmLock.set(true);
+                        lastThatchamChanged = false;
+                    } else { // if not in thatcham area wait for being in lock area to rearm unlock
+                        lastThatchamChanged = true;
+                    }
+                }
+                if (lastThatchamChanged && isInLockArea) {
+                    // if not in thatcham area and in lock area, rearm unlock
+                    rearmUnlock.set(true);
+                    makeNoise(ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 100);
+                    lastThatchamChanged = false;
+                }
+                if (checkNewPacketOnlyOneLaunch) {
+                    checkNewPacketOnlyOneLaunch = false;
+                    mMainHandler.postDelayed(checkNewPacketsRunner, 1000);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_CHARACTERISTIC_SUBSCRIBED");
+                mMainHandler.post(sendPacketRunner); // send works only after subscribed
+                bleRangingListener.updateBLEStatus();
+                mBluetoothManager.resumeLeScan();
+                if (isFirstConnection && isFullyConnected()) {
+                    isFirstConnection = false;
+                    runFirstConnection(newLockStatus);
+                    mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
+                    mHandlerTimeOut.removeCallbacks(null);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
+                if (!mBluetoothManager.isConnecting()) {
+                    mMainHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            restartConnection(false);
+                        }
+                    }, 1000);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
+                PSALogs.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
+                if (!mBluetoothManager.isConnecting()) {
+                    mMainHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            restartConnection(false);
+                        }
+                    }, 1000);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_DISCOVERED");
+            } else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_CONNECTED");
             }
         }
     };
@@ -479,17 +480,16 @@ public class BleRangingHelper implements SensorEventListener {
         }
     }
 
-    private void rearmForcedBlock(String connectedCarType) {
+    private void rearmForcedBlock(boolean isInLockArea, boolean isInUnlockArea, boolean isInStartArea) {
         if (smartphoneIsFrozen) {
-            if (!isLockStrategyValid && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >=
-                    SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)) {
+            if (isInUnlockArea) {
                 blockUnlock = false;
                 forcedUnlock = true;
             } else {
                 blockUnlock = true;
                 forcedUnlock = false;
             }
-            if (isStartStrategyValid) { // smartphone in start area and frozen, then force start
+            if (isInStartArea) { // smartphone in start area and frozen, then force start
                 forcedStart = true;
                 blockStart = false;
                 blockUnlock = true;
@@ -498,8 +498,7 @@ public class BleRangingHelper implements SensorEventListener {
                 forcedStart = false;
                 blockStart = true;
             }
-            if (isLockStrategyValid && (isUnlockStrategyValid == null || isUnlockStrategyValid.size() <
-                    SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType))) { // smartphone in lock area and frozen, then force lock
+            if (isInLockArea) { // smartphone in lock area and frozen, then force lock
                 forcedLock = true;
                 blockLock = false;
                 blockUnlock = true;
@@ -663,7 +662,7 @@ public class BleRangingHelper implements SensorEventListener {
     }
 
     private void setIsThatcham(boolean isInLockArea, boolean isInUnlockArea, boolean isInStartArea) {
-        if (isInLockArea || isInStartArea) {
+        if (!isInUnlockArea || isInStartArea || isInLockArea) {
             if (!thatchamIsChanging.get()) { // if thatcham is not changing
                 mProtocolManager.setThatcham(false);
             }
@@ -680,20 +679,21 @@ public class BleRangingHelper implements SensorEventListener {
         if (isFullyConnected()) {
             boolean isStartAllowed = false;
             String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-            isStartStrategyValid = connectedCar.startStrategy(smartphoneIsInPocket);
-            isLockStrategyValid = connectedCar.lockStrategy(smartphoneIsInPocket);
+            boolean isStartStrategyValid = connectedCar.startStrategy(smartphoneIsInPocket);
+            boolean isLockStrategyValid = connectedCar.lockStrategy(smartphoneIsInPocket);
             isUnlockStrategyValid = connectedCar.unlockStrategy(smartphoneIsInPocket);
-            isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus, smartphoneIsInPocket);
-            boolean isInLockArea = forcedLock || (!blockLock && isLockStrategyValid && (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)));
-            boolean isInUnlockArea = forcedUnlock || (!blockUnlock && !isLockStrategyValid && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType));
-            boolean isInStartArea = forcedStart || (!blockStart && isStartStrategyValid);
+            boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus, smartphoneIsInPocket);
+            isInLockArea = forcedLock || (!blockLock && isLockStrategyValid && (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)));
+            isInUnlockArea = forcedUnlock || (!blockUnlock && !isLockStrategyValid && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType));
+            isInStartArea = forcedStart || (!blockStart && isStartStrategyValid);
+            isInWelcomeArea = rearmWelcome.get() && isWelcomeStrategyValid;
             setIsThatcham(isInLockArea, isInUnlockArea, isInStartArea);
             if (lastSmartphoneIsFrozen != smartphoneIsFrozen) {
-                rearmForcedBlock(connectedCarType);
+                rearmForcedBlock(isInLockArea, isInUnlockArea, isInStartArea);
                 lastSmartphoneIsFrozen = smartphoneIsFrozen;
             }
             rangingPredictionInt = mostCommon(mostCommon);
-            if (rearmWelcome.get() && isWelcomeStrategyValid) {
+            if (isInWelcomeArea) {
                 rearmWelcome.set(false);
                 //TODO Welcome
             }
@@ -728,76 +728,68 @@ public class BleRangingHelper implements SensorEventListener {
      * Update the mini map with our location around the car
      */
     private void updateCarLocalization() {
+        bleRangingListener.darkenArea(THATCHAM_AREA);
+        bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
+        bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
+        bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
+        bleRangingListener.darkenArea(UNLOCK_FRONT_LEFT_AREA);
+        bleRangingListener.darkenArea(UNLOCK_REAR_LEFT_AREA);
+        bleRangingListener.darkenArea(UNLOCK_FRONT_RIGHT_AREA);
+        bleRangingListener.darkenArea(UNLOCK_REAR_RIGHT_AREA);
+        bleRangingListener.darkenArea(START_AREA);
+        bleRangingListener.darkenArea(LOCK_AREA);
+        bleRangingListener.darkenArea(WELCOME_AREA);
         //THATCHAM
         if (mProtocolManager.isThatcham()) {
             bleRangingListener.lightUpArea(THATCHAM_AREA);
-        } else {
-            bleRangingListener.darkenArea(THATCHAM_AREA);
         }
-        //START
-        if(isStartStrategyValid) {
-            bleRangingListener.lightUpArea(START_AREA);
-        } else {
-            bleRangingListener.darkenArea(START_AREA);
-            // LOCK THEN UNLOCK STRATEGIES
-            bleRangingListener.darkenArea(LOCK_AREA);
-            bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
-            bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
-            bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
-            bleRangingListener.darkenArea(UNLOCK_FRONT_LEFT_AREA);
-            bleRangingListener.darkenArea(UNLOCK_REAR_LEFT_AREA);
-            bleRangingListener.darkenArea(UNLOCK_FRONT_RIGHT_AREA);
-            bleRangingListener.darkenArea(UNLOCK_REAR_RIGHT_AREA);
-            if (isLockStrategyValid && (isUnlockStrategyValid == null ||
-                    isUnlockStrategyValid.size() < SdkPreferencesHelper.getInstance().getUnlockValidNb(
-                            SdkPreferencesHelper.getInstance().getConnectedCarType()))) {
-                // LOCK
-                bleRangingListener.lightUpArea(LOCK_AREA);
-            } else if (!isLockStrategyValid && isUnlockStrategyValid != null) {
-                //UNLOCK
-                for (Integer integer : isUnlockStrategyValid) {
-                    switch (integer) {
-                        case ConnectedCar.NUMBER_TRX_LEFT:
-                            bleRangingListener.lightUpArea(UNLOCK_LEFT_AREA);
-                            break;
-                        case ConnectedCar.NUMBER_TRX_RIGHT:
-                            bleRangingListener.lightUpArea(UNLOCK_RIGHT_AREA);
-                            break;
-                        case ConnectedCar.NUMBER_TRX_BACK:
-                            bleRangingListener.lightUpArea(UNLOCK_BACK_AREA);
-                            break;
-                        case ConnectedCar.NUMBER_TRX_FRONT_LEFT:
-                            bleRangingListener.lightUpArea(UNLOCK_FRONT_LEFT_AREA);
-                            break;
-                        case ConnectedCar.NUMBER_TRX_REAR_LEFT:
-                            bleRangingListener.lightUpArea(UNLOCK_REAR_LEFT_AREA);
-                            break;
-                        case ConnectedCar.NUMBER_TRX_FRONT_RIGHT:
-                            bleRangingListener.lightUpArea(UNLOCK_FRONT_RIGHT_AREA);
-                            break;
-                        case ConnectedCar.NUMBER_TRX_REAR_RIGHT:
-                            bleRangingListener.lightUpArea(UNLOCK_REAR_RIGHT_AREA);
-                            break;
-                        default:
-                            bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
-                            bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
-                            bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
-                            bleRangingListener.darkenArea(UNLOCK_FRONT_LEFT_AREA);
-                            bleRangingListener.darkenArea(UNLOCK_REAR_LEFT_AREA);
-                            bleRangingListener.darkenArea(UNLOCK_FRONT_RIGHT_AREA);
-                            bleRangingListener.darkenArea(UNLOCK_REAR_RIGHT_AREA);
-                            break;
-                    }
-                }
-            } else {
-                // WELCOME
-                if (rearmWelcome.get() && isWelcomeStrategyValid) {
-                    bleRangingListener.lightUpArea(WELCOME_AREA);
-                } else {
-                    bleRangingListener.darkenArea(WELCOME_AREA);
+        if (isInUnlockArea) {
+            //UNLOCK
+            for (Integer integer : isUnlockStrategyValid) {
+                switch (integer) {
+                    case ConnectedCar.NUMBER_TRX_LEFT:
+                        bleRangingListener.lightUpArea(UNLOCK_LEFT_AREA);
+                        break;
+                    case ConnectedCar.NUMBER_TRX_RIGHT:
+                        bleRangingListener.lightUpArea(UNLOCK_RIGHT_AREA);
+                        break;
+                    case ConnectedCar.NUMBER_TRX_BACK:
+                        bleRangingListener.lightUpArea(UNLOCK_BACK_AREA);
+                        break;
+                    case ConnectedCar.NUMBER_TRX_FRONT_LEFT:
+                        bleRangingListener.lightUpArea(UNLOCK_FRONT_LEFT_AREA);
+                        break;
+                    case ConnectedCar.NUMBER_TRX_REAR_LEFT:
+                        bleRangingListener.lightUpArea(UNLOCK_REAR_LEFT_AREA);
+                        break;
+                    case ConnectedCar.NUMBER_TRX_FRONT_RIGHT:
+                        bleRangingListener.lightUpArea(UNLOCK_FRONT_RIGHT_AREA);
+                        break;
+                    case ConnectedCar.NUMBER_TRX_REAR_RIGHT:
+                        bleRangingListener.lightUpArea(UNLOCK_REAR_RIGHT_AREA);
+                        break;
+                    default:
+                        bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
+                        bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
+                        bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
+                        bleRangingListener.darkenArea(UNLOCK_FRONT_LEFT_AREA);
+                        bleRangingListener.darkenArea(UNLOCK_REAR_LEFT_AREA);
+                        bleRangingListener.darkenArea(UNLOCK_FRONT_RIGHT_AREA);
+                        bleRangingListener.darkenArea(UNLOCK_REAR_RIGHT_AREA);
+                        break;
                 }
             }
+        } else if (isInStartArea) {
+            //START
+            bleRangingListener.lightUpArea(START_AREA);
+        } else if (isInLockArea) {
+            // LOCK
+            bleRangingListener.lightUpArea(LOCK_AREA);
+        } else if (isInWelcomeArea) {
+            // WELCOME
+            bleRangingListener.lightUpArea(WELCOME_AREA);
         }
+        bleRangingListener.applyNewDrawable();
     }
 
     /**

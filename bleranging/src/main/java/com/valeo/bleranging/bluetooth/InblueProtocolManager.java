@@ -68,17 +68,18 @@ public class InblueProtocolManager {
      *
      * @param isRKE                 the rke status
      * @param isUnlockStrategyValid the list of unlock position valid
-     * @param isStartStrategyValid  true if in start area, false otherwise
-     * @param isLockStrategyValid   true if in lock area, false otherwise
+     * @param isInUnlockArea  true if in unlock area, false otherwise
+     * @param isInStartArea  true if in start area, false otherwise
+     * @param isInLockArea   true if in lock area, false otherwise
      * @return the packet one payload containing six bytes
      */
-    public byte[] getPacketOnePayload(boolean isRKE, List<Integer> isUnlockStrategyValid, boolean isStartStrategyValid, boolean isLockStrategyValid) {
+    public byte[] getPacketOnePayload(boolean isRKE, List<Integer> isUnlockStrategyValid, boolean isInUnlockArea, boolean isInStartArea, boolean isInLockArea) {
         byte[] payload = new byte[6];
         payload[0] = (byte) ((packetOneCounter>>8)&0xFF);
         payload[1] = (byte) ((packetOneCounter)&0xFF);
         payload[2] = (0x01);
         payload[3] = getPayloadThirdByte();
-        payload[4] = getPayloadFourthByte(isRKE, isUnlockStrategyValid, isStartStrategyValid, isLockStrategyValid);
+        payload[4] = getPayloadFourthByte(isRKE, isUnlockStrategyValid, isInUnlockArea, isInStartArea, isInLockArea);
         payload[5] = getPayloadFifthByte(isRKE);
         packetOneCounter++;
         return payload;
@@ -131,14 +132,17 @@ public class InblueProtocolManager {
 
     /**
      * Set jlr protocol in payload fourth byte
-     *
+     * @param isRKE true if the action is RKE, flase otherwise
+     * @param isUnlockStrategyValid the list of valid unlock area
+     * @param isInUnlockArea true if in unlock area; false otherwise
+     * @param isInStartArea true if in start area; false otherwise
+     * @param isInLockArea true if in lock area; false otherwise
      * @return the payload fourth byte
      */
-    private byte getPayloadFourthByte(boolean isRKE, List<Integer> isUnlockStrategyValid, boolean isStartStrategyValid, boolean isLockStrategyValid) {
+    private byte getPayloadFourthByte(boolean isRKE, List<Integer> isUnlockStrategyValid, boolean
+            isInUnlockArea, boolean isInStartArea, boolean isInLockArea) {
         byte payloadFour = (byte) 0;
-        if (isStartStrategyValid) {
-            payloadFour |= 0x01;
-        } else if (!isLockStrategyValid && isUnlockStrategyValid != null) {
+        if (isInUnlockArea) {
             for (Integer integer : isUnlockStrategyValid) {
                 switch (integer) {
                     case ConnectedCar.NUMBER_TRX_LEFT:
@@ -166,7 +170,9 @@ public class InblueProtocolManager {
                         break;
                 }
             }
-        } else if (isLockStrategyValid && isUnlockStrategyValid == null) {
+        } else if (isInStartArea) {
+            payloadFour |= 0x01;
+        } else if (isInLockArea) {
             payloadFour |= 0x06;
         }
         if (isRKE) {

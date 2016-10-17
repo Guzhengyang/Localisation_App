@@ -36,6 +36,7 @@
         </shape>
     </item>
     <item
+        android:id="@+id/car_drawable"
         android:bottom="10dp"
         android:drawable="@drawable/car_4"
         android:gravity="center"

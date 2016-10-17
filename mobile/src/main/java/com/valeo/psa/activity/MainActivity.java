@@ -458,6 +458,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         start_button_second_wave = (ImageView) findViewById(R.id.start_button_second_wave);
         signalReceived = (ImageView) findViewById(R.id.signalReceived);
         updateCarDrawable();
+        applyNewDrawable();
         little_round_progressBar = (DottedProgressBar) findViewById(R.id.little_round_progressBar);
         debug_info = (TextView) findViewById(R.id.debug_info);
     }
@@ -858,7 +859,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 thatcham_area.setColor(Color.YELLOW);
                 break;
         }
-        signalReceived.setImageDrawable(layerDrawable);
     }
 
     @Override
@@ -906,6 +906,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 thatcham_area.setColor(Color.BLACK);
                 break;
         }
+    }
+
+    @Override
+    public void applyNewDrawable() {
         signalReceived.setImageDrawable(layerDrawable);
     }
 
@@ -941,6 +945,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             // animation waves start_button
             startButtonAnimation(true);
         }
+        updateCarDrawable();
     }
 
     @Override
@@ -948,6 +953,11 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
             case ConnectedCarFactory.TYPE_4_A:
                 layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_four);
+                if (carDoorStatus == CarDoorStatus.LOCKED) {
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_close));
+                } else {
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_open));
+                }
                 unlock_area_front_left = null;
                 unlock_area_rear_left = null;
                 unlock_area_front_right = null;
@@ -955,6 +965,11 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 break;
             case ConnectedCarFactory.TYPE_7_A:
                 layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_seven);
+                if (carDoorStatus == CarDoorStatus.LOCKED) {
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_7_close));
+                } else {
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_7_open));
+                }
                 unlock_area_front_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_left);
                 unlock_area_rear_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_left);
                 unlock_area_front_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_right);
@@ -962,6 +977,11 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 break;
             default:
                 layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_seven);
+                if (carDoorStatus == CarDoorStatus.LOCKED) {
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_7_close));
+                } else {
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_7_open));
+                }
                 unlock_area_front_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_left);
                 unlock_area_rear_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_left);
                 unlock_area_front_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_right);
