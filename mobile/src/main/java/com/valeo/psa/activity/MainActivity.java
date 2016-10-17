@@ -3,6 +3,7 @@ package com.valeo.psa.activity;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.KeyguardManager;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -995,6 +996,24 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         unlock_area_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_right);
         unlock_area_back = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_back);
         thatcham_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.thatcham_area);
+    }
+
+    @Override
+    public void doWelcome() {
+        Intent actionIntent = new Intent(this, MainActivity.class);
+        PendingIntent actionPendingIntent = PendingIntent.getActivity(this, 0, actionIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification notification = new android.support.v7.app.NotificationCompat.Builder(this)
+                // Show controls on lock screen even when user hides sensitive content.
+                .setVisibility(android.support.v7.app.NotificationCompat.VISIBILITY_PRIVATE)
+                .setSmallIcon(R.mipmap.peugeot_notif_logo)
+                .setContentTitle("ADML100%Smartphone")
+                .setContentText("Welcome !")
+                .setContentIntent(actionPendingIntent)
+                .build();
+        NotificationManagerCompat notificationManager =
+                NotificationManagerCompat.from(MainActivity.this);
+        notificationManager.notify(1, notification);
     }
 
     private void startButtonAnimation(boolean isAnimated) {
