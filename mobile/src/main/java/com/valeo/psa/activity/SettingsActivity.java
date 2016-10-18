@@ -393,13 +393,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference frozen_threshold;
         private EditTextPreference address_connectable;
         private EditTextPreference address_connectable_2;
+        private EditTextPreference address_front_left;
+        private EditTextPreference address_front_right;
         private EditTextPreference address_left;
         private EditTextPreference address_middle;
         private EditTextPreference address_right;
-        private EditTextPreference address_back;
-        private EditTextPreference address_front_left;
-        private EditTextPreference address_front_right;
+        private EditTextPreference address_trunk;
         private EditTextPreference address_rear_left;
+        private EditTextPreference address_back;
         private EditTextPreference address_rear_right;
 
         @Override
@@ -437,13 +438,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             frozen_threshold = ((EditTextPreference) findPreference(SdkPreferencesHelper.FROZEN_THRESHOLD_PREFERENCES_NAME));
             address_connectable = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_PREFERENCE_NAME));
             address_connectable_2 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_2_PREFERENCE_NAME));
+            address_front_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_FRONT_LEFT_PREFERENCE_NAME));
+            address_front_right = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_FRONT_RIGHT_PREFERENCE_NAME));
             address_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_LEFT_PREFERENCE_NAME));
             address_middle = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_MIDDLE_PREFERENCE_NAME));
             address_right = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_RIGHT_PREFERENCE_NAME));
-            address_back = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_BACK_PREFERENCE_NAME));
-            address_front_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_FRONT_LEFT_PREFERENCE_NAME));
-            address_front_right = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_FRONT_RIGHT_PREFERENCE_NAME));
+            address_trunk = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_TRUNK_PREFERENCE_NAME));
             address_rear_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_REAR_LEFT_PREFERENCE_NAME));
+            address_back = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_BACK_PREFERENCE_NAME));
             address_rear_right = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_REAR_RIGHT_PREFERENCE_NAME));
         }
 
@@ -462,13 +464,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             frozen_threshold.setText(frozen_threshold.getSummary().toString());
             address_connectable.setText(address_connectable.getSummary().toString());
             address_connectable_2.setText(address_connectable_2.getSummary().toString());
+            address_front_left.setText(address_front_left.getSummary().toString());
+            address_front_right.setText(address_front_right.getSummary().toString());
             address_left.setText(address_left.getSummary().toString());
             address_middle.setText(address_middle.getSummary().toString());
             address_right.setText(address_right.getSummary().toString());
-            address_back.setText(address_back.getSummary().toString());
-            address_front_left.setText(address_front_left.getSummary().toString());
-            address_front_right.setText(address_front_right.getSummary().toString());
+            address_trunk.setText(address_trunk.getSummary().toString());
             address_rear_left.setText(address_rear_left.getSummary().toString());
+            address_back.setText(address_back.getSummary().toString());
             address_rear_right.setText(address_rear_right.getSummary().toString());
         }
 
@@ -493,13 +496,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(frozen_threshold, String.valueOf(SdkPreferencesHelper.FROZEN_THRESHOLD));
             bindPreferenceSummaryToValue(address_connectable, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE);
             bindPreferenceSummaryToValue(address_connectable_2, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE_2);
+            bindPreferenceSummaryToValue(address_front_left, SdkPreferencesHelper.BLE_ADDRESS_FRONT_LEFT);
+            bindPreferenceSummaryToValue(address_front_right, SdkPreferencesHelper.BLE_ADDRESS_FRONT_RIGHT);
             bindPreferenceSummaryToValue(address_left, SdkPreferencesHelper.BLE_ADDRESS_LEFT);
             bindPreferenceSummaryToValue(address_middle, SdkPreferencesHelper.BLE_ADDRESS_MIDDLE);
             bindPreferenceSummaryToValue(address_right, SdkPreferencesHelper.BLE_ADDRESS_RIGHT);
-            bindPreferenceSummaryToValue(address_back, SdkPreferencesHelper.BLE_ADDRESS_BACK);
-            bindPreferenceSummaryToValue(address_front_left, SdkPreferencesHelper.BLE_ADDRESS_FRONT_LEFT);
-            bindPreferenceSummaryToValue(address_front_right, SdkPreferencesHelper.BLE_ADDRESS_FRONT_RIGHT);
+            bindPreferenceSummaryToValue(address_trunk, SdkPreferencesHelper.BLE_ADDRESS_TRUNK);
             bindPreferenceSummaryToValue(address_rear_left, SdkPreferencesHelper.BLE_ADDRESS_REAR_LEFT);
+            bindPreferenceSummaryToValue(address_back, SdkPreferencesHelper.BLE_ADDRESS_BACK);
             bindPreferenceSummaryToValue(address_rear_right, SdkPreferencesHelper.BLE_ADDRESS_REAR_RIGHT);
         }
 
