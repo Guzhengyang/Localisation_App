@@ -11,7 +11,7 @@ public class ConnectedCarFactory {
     public final static String BASE_3 = "Base_3";
     public final static String BASE_4 = "Base_4";
     public final static String TYPE_4_A = "fourLMRB";
-    public final static String TYPE_5_A = "fiveLMRRlRr";
+    public final static String TYPE_5_A = "fiveLMRTB";
     public final static String TYPE_7_A = "sevenFlFrLMRRlRr";
     public final static String TYPE_8_A = "eightFlFrLMRTRlRr";
 
