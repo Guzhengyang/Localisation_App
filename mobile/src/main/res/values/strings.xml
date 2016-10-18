@@ -83,6 +83,8 @@
     <string name="pref_threshold_near_door_ratio_mb">Near Door Ratio MB Threshold</string>
     <string name="pref_threshold_near_door_ratio_ml_mr_max">Near Door Ratio ML MR Max Threshold</string>
     <string name="pref_threshold_near_door_ratio_ml_mr_min">Near Door Ratio ML MR Min Threshold</string>
+    <string name="pref_threshold_near_door_ratio_tl_tr_max">Near Door Ratio TL TR Max Threshold</string>
+    <string name="pref_threshold_near_door_ratio_tl_tr_min">Near Door Ratio TL TR Min Threshold</string>
     <string name="pref_threshold_average_delta_lock">Average Delta Lock Threshold</string>
     <string name="pref_threshold_average_delta_unlock">Average Delta Unlock Threshold</string>
     <string name="pref_unlock_valid_nb">Unlock Valid Number</string>
@@ -122,13 +124,14 @@
     <string name="pref_ble_address">BLE ADDRESS</string>
     <string name="pref_ble_address_connectable">Connectable BLE Address</string>
     <string name="pref_ble_address_connectable_2">Second Connectable BLE Address</string>
+    <string name="pref_ble_address_front_left">Front left BLE Address</string>
+    <string name="pref_ble_address_front_right">Front right BLE Address</string>
     <string name="pref_ble_address_left">Left BLE Address</string>
     <string name="pref_ble_address_middle">Middle BLE Address</string>
     <string name="pref_ble_address_right">Right BLE Address</string>
-    <string name="pref_ble_address_back">Back BLE Address</string>
-    <string name="pref_ble_address_front_left">Front left BLE Address</string>
-    <string name="pref_ble_address_front_right">Front right BLE Address</string>
+    <string name="pref_ble_address_trunk">Trunk BLE Address</string>
     <string name="pref_ble_address_rear_left">Rear left BLE Address</string>
+    <string name="pref_ble_address_back">Back BLE Address</string>
     <string name="pref_ble_address_rear_right">Rear right BLE Address</string>
 
     <string name="forgot_password"><u>Forgot password ?</u></string>
@@ -145,4 +148,6 @@
     <string name="psu">PSU</string>
     <string name="wal">WAL</string>
     <string name="uir">UIR</string>
+    <string name="welcome_notif_title">ADML100%Smartphone</string>
+    <string name="welcome_notif_message">Welcome !</string>
 </resources>

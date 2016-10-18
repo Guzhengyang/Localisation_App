@@ -23,6 +23,8 @@ public final class SdkPreferencesHelper {
     public final static int NEAR_DOOR_RATIO_THRESHOLD_MB = 0;
     public final static int NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MAX = 12;
     public final static int NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MIN = 2;
+    public final static int NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MAX = 12;
+    public final static int NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MIN = 2;
     public final static int AVERAGE_DELTA_UNLOCK_THRESHOLD = 10;
     public final static int AVERAGE_DELTA_LOCK_THRESHOLD = -10;
     public final static float THATCHAM_TIMEOUT = 3.5f;
@@ -60,13 +62,14 @@ public final class SdkPreferencesHelper {
     public static final int RATIO_CLOSE_TO_CAR_THR = 30;
     public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:73:88";
     public final static String BLE_ADDRESS_CONNECTABLE_2 = "5C:E0:C5:34:4D:32";
+    public final static String BLE_ADDRESS_FRONT_LEFT = "D4:F5:13:56:5C:F0";
+    public final static String BLE_ADDRESS_FRONT_RIGHT = "D4:F5:13:56:7C:C2";
     public final static String BLE_ADDRESS_LEFT = "D4:F5:13:56:39:A5";
     public final static String BLE_ADDRESS_MIDDLE = "D4:F5:13:56:6B:65";
     public final static String BLE_ADDRESS_RIGHT = "D4:F5:13:56:65:16";
-    public final static String BLE_ADDRESS_BACK = "78:A5:04:81:5A:21"; //"D4:F5:13:56:5C:B4";
-    public final static String BLE_ADDRESS_FRONT_LEFT = "D4:F5:13:56:5C:F0";
+    public final static String BLE_ADDRESS_TRUNK = "D4:F5:13:56:5C:B4";
     public final static String BLE_ADDRESS_REAR_LEFT = "D4:F5:13:56:7A:55";
-    public final static String BLE_ADDRESS_FRONT_RIGHT = "D4:F5:13:56:7C:C2";
+    public final static String BLE_ADDRESS_BACK = "78:A5:04:81:5A:21";
     public final static String BLE_ADDRESS_REAR_RIGHT = "D4:F5:13:56:71:4B";
     public final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
     public final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
@@ -78,6 +81,7 @@ public final class SdkPreferencesHelper {
     public static final String ADDRESS_LEFT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_LEFT";
     public static final String ADDRESS_MIDDLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_MIDDLE";
     public static final String ADDRESS_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_RIGHT";
+    public static final String ADDRESS_TRUNK_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_TRUNK";
     public static final String ADDRESS_BACK_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_BACK";
     public static final String ADDRESS_FRONT_LEFT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_FRONT_LEFT";
     public static final String ADDRESS_REAR_LEFT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_REAR_LEFT";
@@ -97,6 +101,8 @@ public final class SdkPreferencesHelper {
     public static final String NEAR_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_BACKDOOR_RATIO_THR_MAX";
     public static final String NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_ML_MR_MAX";
     public static final String NEAR_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_ML_MR_MIN";
+    public static final String NEAR_DOOR_RATIO_THR_TL_TR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_TL_TR_MAX";
+    public static final String NEAR_DOOR_RATIO_THR_TL_TR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_TL_TR_MIN";
     public static final String NEAR_DOOR_RATIO_THR_MB_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_MB";
     public static final String AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_LOCK_THRESHOLD";
     public static final String AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD";
@@ -128,9 +134,9 @@ public final class SdkPreferencesHelper {
     public static final String EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_FRONT_RIGHT";
     public static final String EQUALIZER_REAR_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_REAR_LEFT";
     public static final String EQUALIZER_REAR_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_REAR_RIGHT";
-    public static final String NEAR_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_THR";
-    public static final String EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALLY_NEAR_DOOR_THR";
-    public static final String NEARER_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEARER_DOOR_THR";
+    //    public static final String NEAR_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_THR";
+//    public static final String EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALLY_NEAR_DOOR_THR";
+//    public static final String NEARER_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEARER_DOOR_THR";
     public static final String RATIO_MAX_MIN_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_RATIO_MAX_MIN_THR";
     public static final String RATIO_CLOSE_TO_CAR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_CLOSE_TO_CAR_THR";
     private final static String LOG_FILE_NAME = "sdcard/InBlueRssi/allRssi_0_0000.csv";
@@ -141,7 +147,7 @@ public final class SdkPreferencesHelper {
     private static final String SAVED_LOGIN_INFO = "savedLoginInfo";
     private static final String SAVED_LOGGER_INFO = "savedLoggerInfo";
     private static final String LIGHT_CAPTOR_PREFERENCES_NAME = "com.inblue.PREFERENCE_LIGHT_CAPTOR";
-    private static final String SELECTED_LOCATION_PREFERENCES_NAME = "com.inblue.PREFERENCE_SELECTED_LOCATION";
+    //    private static final String SELECTED_LOCATION_PREFERENCES_NAME = "com.inblue.PREFERENCE_SELECTED_LOCATION";
     private static final String USER_MAIL_PREFERENCES_NAME = "com.inblue.PREFERENCE_USER_MAIL";
     private static final String PASSWORD_PREFERENCES_NAME = "com.inblue.PREFERENCE_PASSWORD";
     private static final String LOG_FILE_NAME_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOG_FILE_NAME";
@@ -410,12 +416,20 @@ public final class SdkPreferencesHelper {
         return readInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MAX);
     }
 
+    public int getNearDoorThresholdTLorTRMax(final String fileName) {
+        return readInt(fileName, NEAR_DOOR_RATIO_THR_TL_TR_MAX_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MAX);
+    }
+
     public int getNearDoorThresholdMB(final String fileName) {
         return readInt(fileName, NEAR_DOOR_RATIO_THR_MB_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_MB);
     }
 
     public int getNearDoorThresholdMLorMRMin(final String fileName) {
         return readInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MIN);
+    }
+
+    public int getNearDoorThresholdTLorTRMin(final String fileName) {
+        return readInt(fileName, NEAR_DOOR_RATIO_THR_TL_TR_MIN_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MIN);
     }
 
     public int getAverageDeltaUnlockThreshold(final String fileName) {
@@ -697,6 +711,10 @@ public final class SdkPreferencesHelper {
 
     public String getTrxAddressRight() {
         return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_RIGHT_PREFERENCE_NAME, BLE_ADDRESS_RIGHT);
+    }
+
+    public String getTrxAddressTrunk() {
+        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_TRUNK_PREFERENCE_NAME, BLE_ADDRESS_TRUNK);
     }
 
 // --Commented out by Inspection START (30/09/2016 11:26):

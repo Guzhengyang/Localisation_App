@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="entries_list_preference">
-        <item>3 with middle</item>
-        <item>3 with back</item>
-        <item>4 with middle</item>
-        <item>4 with back</item>
-        <item>5 with middle</item>
-        <item>5 with back</item>
-        <item>6 with middle</item>
-        <item>6 with back</item>
-        <item>7 with middle</item>
-        <item>7 with back</item>
+        <item>4</item>
+        <item>5 including trunk</item>
+        <item>7</item>
+        <item>8 including trunk</item>
     </string-array>
     <string-array name="base_list_preference">
         <item>Lock: PSU &amp; Unlock: PSU</item>
@@ -25,16 +19,10 @@
         <item>Base_4</item>
     </string-array>
     <string-array name="entry_values_list_preference">
-        <item>"threeLMR"        </item>
-        <item>"threeLRB"        </item>
         <item>"fourLMRB"        </item>
-        <item>"fourLRRlRr"      </item>
-        <item>"fiveLMRRlRr"     </item>
-        <item>"fiveFlFrLRB"     </item>
-        <item>"sixLMRRlBRr"     </item>
-        <item>"sixFlFrLRRlRr"   </item>
+        <item>"fiveLMRTB"     </item>
         <item>"sevenFlFrLMRRlRr"</item>
-        <item>"sevenFlFrLRRlBRr"</item>
+        <item>"eightFlFrLMRTRlRr"</item>
     </string-array>
     <string-array name="default_big_button_text">
         <item>0</item>

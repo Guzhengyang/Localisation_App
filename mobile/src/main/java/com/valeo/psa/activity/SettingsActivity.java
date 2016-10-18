@@ -194,6 +194,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference near_door_thr_mb;
         private EditTextPreference near_door_thr_ml_mr_max;
         private EditTextPreference near_door_thr_ml_mr_min;
+        private EditTextPreference near_door_thr_tl_tr_max;
+        private EditTextPreference near_door_thr_tl_tr_min;
         private EditTextPreference average_delta_unlock_thr;
         private EditTextPreference average_delta_lock_thr;
         private EditTextPreference unlock_valid_nb;
@@ -250,6 +252,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             near_door_thr_mb = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEAR_DOOR_RATIO_THR_MB_PREFERENCES_NAME));
             near_door_thr_ml_mr_max = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME));
             near_door_thr_ml_mr_min = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEAR_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME));
+            near_door_thr_tl_tr_max = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEAR_DOOR_RATIO_THR_TL_TR_MAX_PREFERENCES_NAME));
+            near_door_thr_tl_tr_min = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEAR_DOOR_RATIO_THR_TL_TR_MIN_PREFERENCES_NAME));
             average_delta_unlock_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME));
             average_delta_lock_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME));
             unlock_valid_nb = ((EditTextPreference) findPreference(SdkPreferencesHelper.UNLOCK_VALID_NB_PREFERENCES_NAME));
@@ -289,6 +293,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             near_door_thr_mb.setText(near_door_thr_mb.getSummary().toString());
             near_door_thr_ml_mr_max.setText(near_door_thr_ml_mr_max.getSummary().toString());
             near_door_thr_ml_mr_min.setText(near_door_thr_ml_mr_min.getSummary().toString());
+            near_door_thr_tl_tr_max.setText(near_door_thr_tl_tr_max.getSummary().toString());
+            near_door_thr_tl_tr_min.setText(near_door_thr_tl_tr_min.getSummary().toString());
             average_delta_unlock_thr.setText(average_delta_unlock_thr.getSummary().toString());
             average_delta_lock_thr.setText(average_delta_lock_thr.getSummary().toString());
             unlock_valid_nb.setText(unlock_valid_nb.getSummary().toString());
@@ -332,6 +338,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(near_door_thr_mb, String.valueOf(SdkPreferencesHelper.NEAR_DOOR_RATIO_THRESHOLD_MB));
             bindPreferenceSummaryToValue(near_door_thr_ml_mr_max, String.valueOf(SdkPreferencesHelper.NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MAX));
             bindPreferenceSummaryToValue(near_door_thr_ml_mr_min, String.valueOf(SdkPreferencesHelper.NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MIN));
+            bindPreferenceSummaryToValue(near_door_thr_tl_tr_max, String.valueOf(SdkPreferencesHelper.NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MAX));
+            bindPreferenceSummaryToValue(near_door_thr_tl_tr_min, String.valueOf(SdkPreferencesHelper.NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MIN));
             bindPreferenceSummaryToValue(average_delta_unlock_thr, String.valueOf(SdkPreferencesHelper.AVERAGE_DELTA_UNLOCK_THRESHOLD));
             bindPreferenceSummaryToValue(average_delta_lock_thr, String.valueOf(SdkPreferencesHelper.AVERAGE_DELTA_LOCK_THRESHOLD));
             bindPreferenceSummaryToValue(unlock_valid_nb, String.valueOf(SdkPreferencesHelper.UNLOCK_VALID_NB));

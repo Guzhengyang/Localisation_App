@@ -26,14 +26,16 @@ public abstract class ConnectedCar {
     public final static int NUMBER_TRX_LEFT = 3;
     public final static int NUMBER_TRX_MIDDLE = 4;
     public final static int NUMBER_TRX_RIGHT = 5;
-    public final static int NUMBER_TRX_REAR_LEFT = 6;
-    public final static int NUMBER_TRX_BACK = 7;
-    public final static int NUMBER_TRX_REAR_RIGHT = 8;
+    public final static int NUMBER_TRX_TRUNK = 6;
+    public final static int NUMBER_TRX_REAR_LEFT = 7;
+    public final static int NUMBER_TRX_BACK = 8;
+    public final static int NUMBER_TRX_REAR_RIGHT = 9;
     final static String TRX_FRONT_LEFT_NAME = "FLeft";
     final static String TRX_FRONT_RIGHT_NAME = "FRight";
     final static String TRX_LEFT_NAME = "Left";
     final static String TRX_MIDDLE_NAME = "Mid";
     final static String TRX_RIGHT_NAME = "Right";
+    final static String TRX_TRUNK_NAME = "Trunk";
     final static String TRX_REAR_LEFT_NAME = "RLeft";
     final static String TRX_BACK_NAME = "Back";
     final static String TRX_REAR_RIGHT_NAME = "RRight";
@@ -42,13 +44,14 @@ public abstract class ConnectedCar {
     private final static int RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE = -30;
     private final static int RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE = -70;
     private final static int RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE = -80;
+    private final static String trxAddressFrontLeft = SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft();
+    private final static String trxAddressFrontRight = SdkPreferencesHelper.getInstance().getTrxAddressFrontRight();
     private final static String trxAddressLeft = SdkPreferencesHelper.getInstance().getTrxAddressLeft();
     private final static String trxAddressMiddle = SdkPreferencesHelper.getInstance().getTrxAddressMiddle();
     private final static String trxAddressRight = SdkPreferencesHelper.getInstance().getTrxAddressRight();
-    private final static String trxAddressBack = SdkPreferencesHelper.getInstance().getTrxAddressBack();
-    private final static String trxAddressFrontLeft = SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft();
-    private final static String trxAddressFrontRight = SdkPreferencesHelper.getInstance().getTrxAddressFrontRight();
+    private final static String trxAddressTrunk = SdkPreferencesHelper.getInstance().getTrxAddressTrunk();
     private final static String trxAddressRearLeft = SdkPreferencesHelper.getInstance().getTrxAddressRearLeft();
+    private final static String trxAddressBack = SdkPreferencesHelper.getInstance().getTrxAddressBack();
     private final static String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
     final LinkedHashMap<Integer, Trx> trxLinkedHMap;
     private final Ranging ranging;
@@ -68,14 +71,17 @@ public abstract class ConnectedCar {
     int nearBackDoorRatioThresholdMax;
     int nearDoorThresholdMLorMRMin;
     int nearDoorThresholdMLorMRMax;
+    int nearDoorThresholdTLorTRMin;
+    int nearDoorThresholdTLorTRMax;
     int nearDoorThresholdMB;
+    Trx trxFrontLeft;
+    Trx trxFrontRight;
     Trx trxLeft;
     Trx trxMiddle;
     Trx trxRight;
-    Trx trxBack;
-    Trx trxFrontLeft;
+    Trx trxTrunk;
     Trx trxRearLeft;
-    Trx trxFrontRight;
+    Trx trxBack;
     Trx trxRearRight;
     private float linAccThreshold;
 
@@ -103,6 +109,8 @@ public abstract class ConnectedCar {
         this.nearBackDoorRatioThresholdMax = SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMax(connectedCarType);
         this.nearDoorThresholdMLorMRMin = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMin(connectedCarType);
         this.nearDoorThresholdMLorMRMax = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMax(connectedCarType);
+        this.nearDoorThresholdTLorTRMin = SdkPreferencesHelper.getInstance().getNearDoorThresholdTLorTRMin(connectedCarType);
+        this.nearDoorThresholdTLorTRMax = SdkPreferencesHelper.getInstance().getNearDoorThresholdTLorTRMax(connectedCarType);
         this.nearDoorThresholdMB = SdkPreferencesHelper.getInstance().getNearDoorThresholdMB(connectedCarType);
     }
 
@@ -130,35 +138,35 @@ public abstract class ConnectedCar {
                     case ConnectedCar.NUMBER_TRX_LEFT:
                         resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
                                 RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
                                 RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
                                 RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE);
                         break;
                     case ConnectedCar.NUMBER_TRX_RIGHT:
                         resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
                                 RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
                                 RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE,
                                 RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE);
                         break;
                     case ConnectedCar.NUMBER_TRX_BACK:
                         resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
                                 RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE,
                                 RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
                                 RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE);
                         break;
                     default:
                         resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
                                 RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
+                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
                                 RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
                                 RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE);
                         break;
                 }
             }
         } else { // just perform a lock
-            resetTrxWithHysteresis(RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE,
+            resetTrxWithHysteresis(RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE,
                     RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE,
                     RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE);
         }
@@ -177,30 +185,34 @@ public abstract class ConnectedCar {
      * @param valueRearRight  the rear right trx new value
      */
     private synchronized void resetTrxWithHysteresis(int valueMiddle, int valueLeft, int valueRight,
-                                                     int valueBack, int valueFrontLeft, int valueFrontRight,
+                                                     int valueBack, int valueTrunk, int valueFrontLeft, int valueFrontRight,
                                                      int valueRearLeft, int valueRearRight) {
-        if(trxLeft != null) {
-            trxLeft.resetWithHysteresis(valueLeft);
-        }
         if(trxFrontLeft != null) {
             trxFrontLeft.resetWithHysteresis(valueFrontLeft);
         }
-        if(trxRearLeft != null) {
-            trxRearLeft.resetWithHysteresis(valueRearLeft);}
+        if (trxFrontRight != null) {
+            trxFrontRight.resetWithHysteresis(valueFrontRight);
+        }
+        if (trxLeft != null) {
+            trxLeft.resetWithHysteresis(valueLeft);
+        }
         if(trxMiddle != null) {
             trxMiddle.resetWithHysteresis(valueMiddle);
         }
         if(trxRight != null) {
             trxRight.resetWithHysteresis(valueRight);
         }
-        if(trxFrontRight != null) {
-            trxFrontRight.resetWithHysteresis(valueFrontRight);
+        if (trxTrunk != null) {
+            trxTrunk.resetWithHysteresis(valueTrunk);
         }
-        if(trxRearRight != null) {
-            trxRearRight.resetWithHysteresis(valueRearRight);
+        if (trxRearLeft != null) {
+            trxRearLeft.resetWithHysteresis(valueRearLeft);
         }
         if(trxBack != null) {
             trxBack.resetWithHysteresis(valueBack);
+        }
+        if (trxRearRight != null) {
+            trxRearRight.resetWithHysteresis(valueRearRight);
         }
     }
 
@@ -352,8 +364,8 @@ public abstract class ConnectedCar {
         int maxOne = -100;
         if (trxLinkedHMap != null) {
             for (Integer trxNumber : trxLinkedHMap.keySet()) {
-                if (trxNumber != NUMBER_TRX_LEFT
-                        && trxNumber != NUMBER_TRX_RIGHT && trxNumber != NUMBER_TRX_MIDDLE) {
+                if (trxNumber != NUMBER_TRX_LEFT && trxNumber != NUMBER_TRX_RIGHT
+                        && trxNumber != NUMBER_TRX_MIDDLE && trxNumber != NUMBER_TRX_TRUNK) {
                     if (maxOne < trxLinkedHMap.get(trxNumber).getRatioMaxMin()) {
                         trxToIgnore = trxNumber;
                         maxOne = trxLinkedHMap.get(trxNumber).getRatioMaxMin();
@@ -363,8 +375,9 @@ public abstract class ConnectedCar {
             int maxTwo = -100;
             int minTwo = 0;
             for (Integer trxNumber : trxLinkedHMap.keySet()) {
-                if (trxNumber != trxToIgnore && trxNumber != NUMBER_TRX_LEFT
-                        && trxNumber != NUMBER_TRX_RIGHT && trxNumber != NUMBER_TRX_MIDDLE) {
+                if (trxNumber != trxToIgnore
+                        && trxNumber != NUMBER_TRX_LEFT && trxNumber != NUMBER_TRX_RIGHT
+                        && trxNumber != NUMBER_TRX_MIDDLE && trxNumber != NUMBER_TRX_TRUNK) {
                     minTwo = Math.min(minTwo, trxLinkedHMap.get(trxNumber).getMin());
                     maxTwo = Math.max(maxTwo, trxLinkedHMap.get(trxNumber).getMax());
                 }
@@ -643,20 +656,22 @@ public abstract class ConnectedCar {
     }
 
     public int getTrxNumber(String address) {
-        if (address.equals(trxAddressLeft)) {
+        if (address.equals(trxAddressFrontLeft)) {
+            return ConnectedCar.NUMBER_TRX_FRONT_LEFT;
+        } else if (address.equals(trxAddressFrontRight)) {
+            return ConnectedCar.NUMBER_TRX_FRONT_RIGHT;
+        } else if (address.equals(trxAddressLeft)) {
             return ConnectedCar.NUMBER_TRX_LEFT;
         } else if (address.equals(trxAddressMiddle)) {
             return ConnectedCar.NUMBER_TRX_MIDDLE;
         } else if (address.equals(trxAddressRight)) {
             return ConnectedCar.NUMBER_TRX_RIGHT;
-        } else if (address.equals(trxAddressBack)) {
-            return ConnectedCar.NUMBER_TRX_BACK;
-        } else if (address.equals(trxAddressFrontLeft)) {
-            return ConnectedCar.NUMBER_TRX_FRONT_LEFT;
-        } else if (address.equals(trxAddressFrontRight)) {
-            return ConnectedCar.NUMBER_TRX_FRONT_RIGHT;
+        } else if (address.equals(trxAddressTrunk)) {
+            return ConnectedCar.NUMBER_TRX_TRUNK;
         } else if (address.equals(trxAddressRearLeft)) {
             return ConnectedCar.NUMBER_TRX_REAR_LEFT;
+        } else if (address.equals(trxAddressBack)) {
+            return ConnectedCar.NUMBER_TRX_BACK;
         } else if (address.equals(trxAddressRearRight)) {
             return ConnectedCar.NUMBER_TRX_REAR_RIGHT;
         } else {
@@ -684,6 +699,7 @@ public abstract class ConnectedCar {
     }
 
     protected enum ConnectionNumber {
-        THREE_CONNECTION, FOUR_CONNECTION, FIVE_CONNECTION, SIX_CONNECTION, SEVEN_CONNECTION
+        THREE_CONNECTION, FOUR_CONNECTION, FIVE_CONNECTION,
+        SIX_CONNECTION, SEVEN_CONNECTION, EIGHT_CONNECTION
     }
 }

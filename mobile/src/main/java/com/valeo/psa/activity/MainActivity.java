@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private boolean showMenu = true;
     private KeyguardManager mKeyguardManager;
     private Car selectedCar = null;
+    private NotificationManagerCompat notificationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             nfc_disclaimer.setVisibility(View.VISIBLE);
             nfc_logo.setVisibility(View.VISIBLE);
         }
+        notificationManager = NotificationManagerCompat.from(MainActivity.this);
         mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
         if (!mKeyguardManager.isKeyguardSecure()) {
             // Show a message that the user hasn't set up a lock screen.
@@ -400,8 +402,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                         .addAction(action)
                         .setBackground(BitmapFactory
                                 .decodeResource(getResources(), R.mipmap.car_model_208)));
-        NotificationManagerCompat notificationManager =
-                NotificationManagerCompat.from(MainActivity.this);
         notificationManager.notify(notifId, notificationBuilder.build());
     }
 
@@ -964,12 +964,36 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 unlock_area_front_right = null;
                 unlock_area_rear_right = null;
                 break;
+            case ConnectedCarFactory.TYPE_5_A:
+                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_five);
+                if (carDoorStatus == CarDoorStatus.LOCKED) {
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_5_close));
+                } else {
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_5_open));
+                }
+                unlock_area_front_left = null;
+                unlock_area_rear_left = null;
+                unlock_area_front_right = null;
+                unlock_area_rear_right = null;
+                break;
             case ConnectedCarFactory.TYPE_7_A:
                 layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_seven);
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_7_close));
                 } else {
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_7_open));
+                }
+                unlock_area_front_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_left);
+                unlock_area_rear_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_left);
+                unlock_area_front_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_right);
+                unlock_area_rear_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_right);
+                break;
+            case ConnectedCarFactory.TYPE_8_A:
+                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_eight);
+                if (carDoorStatus == CarDoorStatus.LOCKED) {
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_8_close));
+                } else {
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_8_open));
                 }
                 unlock_area_front_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_left);
                 unlock_area_rear_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_left);
@@ -1007,13 +1031,11 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 // Show controls on lock screen even when user hides sensitive content.
                 .setVisibility(android.support.v7.app.NotificationCompat.VISIBILITY_PRIVATE)
                 .setSmallIcon(R.mipmap.peugeot_notif_logo)
-                .setContentTitle("ADML100%Smartphone")
-                .setContentText("Welcome !")
+                .setContentTitle(getString(R.string.welcome_notif_title))
+                .setContentText(getString(R.string.welcome_notif_message))
                 .setContentIntent(actionPendingIntent)
                 .build();
-        NotificationManagerCompat notificationManager =
-                NotificationManagerCompat.from(MainActivity.this);
-        notificationManager.notify(1, notification);
+        notificationManager.notify(NOTIFICATION_ID_1, notification);
     }
 
     private void startButtonAnimation(boolean isAnimated) {
