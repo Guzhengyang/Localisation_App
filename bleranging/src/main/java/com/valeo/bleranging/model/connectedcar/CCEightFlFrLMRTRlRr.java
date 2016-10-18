@@ -89,8 +89,10 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public boolean isInStartArea(int threshold) {
         boolean trxM = compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold, true);
+        boolean trxT = compareTrxWithThreshold(NUMBER_TRX_TRUNK, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold, true);
         LinkedHashMap<Integer, Boolean> result = new LinkedHashMap<>();
         result.put(NUMBER_TRX_MIDDLE, trxM);
+        result.put(NUMBER_TRX_TRUNK, trxT);
         return numberOfTrxValid(startMode, result);
     }
 
@@ -159,7 +161,10 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     public boolean lockStrategy(boolean smartphoneIsInPocket) {
         boolean isInLockArea = isInLockArea(TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket));
 //        boolean isLeaving = TrxUtils.compareWithThreshold(getAverageLSDelta(), TrxUtils.getCurrentLockThreshold(averageDeltaLockThreshold, smartphoneIsInPocket), true);
-        return (isInLockArea); //&& isLeaving);
+        return (isInLockArea
+                && compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, -60, false)
+                && compareTrxWithThreshold(NUMBER_TRX_TRUNK, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, -60, false)
+        ); //&& isLeaving);
     }
 
     @Override
@@ -238,6 +243,16 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         footerSB.append("rssi < (").append(TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket)).append(") ");
         spannableStringBuilder.append(TextUtils.colorText(
                 isInLockArea(TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket)),
+                footerSB.toString(), Color.RED, Color.DKGRAY));
+        footerSB.setLength(0);
+        footerSB.append("rssiMid < (").append(-60).append(") ");
+        spannableStringBuilder.append(TextUtils.colorText(
+                compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, -60, false),
+                footerSB.toString(), Color.RED, Color.DKGRAY));
+        footerSB.setLength(0);
+        footerSB.append("rssiTrunk < (").append(-60).append(") ");
+        spannableStringBuilder.append(TextUtils.colorText(
+                compareTrxWithThreshold(NUMBER_TRX_TRUNK, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, -60, false),
                 footerSB.toString(), Color.RED, Color.DKGRAY));
         footerSB.setLength(0);
         footerSB.append("rearm Lock: ").append(rearmLock);

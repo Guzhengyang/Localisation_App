@@ -2,6 +2,8 @@ package com.valeo.psa.activity;
 
 
 import android.annotation.TargetApi;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,9 +16,14 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
@@ -126,7 +133,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     protected boolean isValidFragment(String fragmentName) {
         return GeneralPreferenceFragment.class.getName().equals(fragmentName)
-                || SpecificPreferenceFragment.class.getName().equals(fragmentName)
+                || SpecificPreferenceViewPagerFragment.class.getName().equals(fragmentName)
                 || PSASettingsFragment.class.getName().equals(fragmentName);
     }
 
@@ -170,12 +177,75 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class SpecificPreferenceViewPagerFragment extends Fragment {
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View result = inflater.inflate(R.layout.pager, container, false);
+            ViewPager pager = (ViewPager) result.findViewById(R.id.pager);
+            pager.setAdapter(buildAdapter());
+            return (result);
+        }
+
+        private PagerAdapter buildAdapter() {
+            return (new SampleAdapter(getActivity(), getChildFragmentManager()));
+        }
+    }
+
+    public static class SampleAdapter extends FragmentPagerAdapter {
+        Context ctxt = null;
+
+        public SampleAdapter(Context ctxt, FragmentManager mgr) {
+            super(mgr);
+            this.ctxt = ctxt;
+        }
+
+        @Override
+        public int getCount() {
+            return (4);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return SpecificPreferenceFragment.newInstance("fourLMRB");
+                case 1:
+                    return SpecificPreferenceFragment.newInstance("fiveLMRTB");
+                case 2:
+                    return SpecificPreferenceFragment.newInstance("sevenFlFrLMRRlRr");
+                case 3:
+                    return SpecificPreferenceFragment.newInstance("eightFlFrLMRTRlRr");
+                default:
+                    return SpecificPreferenceFragment.newInstance(SdkPreferencesHelper.getInstance().getConnectedCarType());
+            }
+        }
+
+        @Override
+        public String getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return SpecificPreferenceFragment.getTitle("fourLMRB");
+                case 1:
+                    return SpecificPreferenceFragment.getTitle("fiveLMRTB");
+                case 2:
+                    return SpecificPreferenceFragment.getTitle("sevenFlFrLMRRlRr");
+                case 3:
+                    return SpecificPreferenceFragment.getTitle("eightFlFrLMRTRlRr");
+                default:
+                    return SpecificPreferenceFragment.getTitle(SdkPreferencesHelper.getInstance().getConnectedCarType());
+            }
+        }
+    }
+
     /**
      * This fragment shows specific preferences only. It is used when the
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class SpecificPreferenceFragment extends PreferenceFragment {
+        private static final String FILE_NAME = "filename";
+
         private EditTextPreference ratio_max_min_thr;
         private EditTextPreference ratio_close_to_car_thr;
         //        private EditTextPreference near_door_thr;
@@ -215,11 +285,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference equalizer_front_right;
         private EditTextPreference equalizer_rear_right;
 
+        static SpecificPreferenceFragment newInstance(String preferenceFilename) {
+            SpecificPreferenceFragment frag = new SpecificPreferenceFragment();
+            Bundle args = new Bundle();
+            args.putString(FILE_NAME, preferenceFilename);
+            frag.setArguments(args);
+            return (frag);
+        }
+
+        static String getTitle(String preferenceFilename) {
+            return preferenceFilename;
+        }
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             manager = getPreferenceManager();
-            manager.setSharedPreferencesName(SdkPreferencesHelper.getInstance().getConnectedCarType());
+            manager.setSharedPreferencesName(getArguments().getString(FILE_NAME, SdkPreferencesHelper.getInstance().getConnectedCarType()));
             sharedPreferences = manager.getSharedPreferences();
             addPreferencesFromResource(R.xml.preferences);
             setHasOptionsMenu(true);
