@@ -158,8 +158,8 @@ public class TrxUtils {
      * @param lockToSend lock status to send
      * @param startAllowed true if start is allowed, false otherwise
      */
-    public static void appendRssiLogs(int rssiLeft, int rssiMiddle1, int rssiMiddle2, int rssiRight, int rssiBack,
-                                      int rssiFrontLeft, int rssiFrontRight, int rssiRearLeft, int rssiRearRight,
+    public static void appendRssiLogs(int rssiLeft, int rssiMiddle1, int rssiMiddle2, int rssiRight, int rssiTrunk,
+                                      int rssiFrontLeft, int rssiFrontRight, int rssiRearLeft, int rssiRearRight, int rssiBack,
                                       float z, float x, float y,
                                       boolean isSmartphoneInPocket, boolean smartphoneIsMovingSlowly, boolean isLockStatusChangedTimerExpired,
                                       boolean blockStart, boolean forcedStart, boolean smartphoneIsFrozen,
@@ -170,8 +170,8 @@ public class TrxUtils {
                                       byte leftTurnByte, byte fullTurnByte, byte rightTurnByte, byte recordByte, int rangingPredictionInt,
                                       boolean lockFromTrx, boolean lockToSend, boolean startAllowed) {
         final String comma = ";";
-        String log = String.valueOf(rssiLeft) + comma + rssiMiddle1 + comma + rssiMiddle2 + comma + rssiRight + comma + rssiBack + comma +
-                rssiFrontLeft + comma + rssiFrontRight + comma + rssiRearLeft + comma + rssiRearRight + comma +
+        String log = String.valueOf(rssiLeft) + comma + rssiMiddle1 + comma + rssiMiddle2 + comma + rssiRight + comma + rssiTrunk + comma +
+                rssiFrontLeft + comma + rssiFrontRight + comma + rssiRearLeft + comma + rssiRearRight + comma + rssiBack + comma +
                 z + comma + x + comma + y + comma +
                 booleanToString(isSmartphoneInPocket) + comma + booleanToString(smartphoneIsMovingSlowly) + comma + booleanToString(isLockStatusChangedTimerExpired) + comma +
                 booleanToString(blockStart) + comma + booleanToString(forcedStart) + comma + booleanToString(smartphoneIsFrozen) + comma;
