@@ -209,13 +209,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return SpecificPreferenceFragment.newInstance("fourLMRB");
+                    return SpecificPreferenceFragment.newInstance(ConnectedCarFactory.TYPE_4_A);
                 case 1:
-                    return SpecificPreferenceFragment.newInstance("fiveLMRTB");
+                    return SpecificPreferenceFragment.newInstance(ConnectedCarFactory.TYPE_5_A);
                 case 2:
-                    return SpecificPreferenceFragment.newInstance("sevenFlFrLMRRlRr");
+                    return SpecificPreferenceFragment.newInstance(ConnectedCarFactory.TYPE_7_A);
                 case 3:
-                    return SpecificPreferenceFragment.newInstance("eightFlFrLMRTRlRr");
+                    return SpecificPreferenceFragment.newInstance(ConnectedCarFactory.TYPE_8_A);
                 default:
                     return SpecificPreferenceFragment.newInstance(SdkPreferencesHelper.getInstance().getConnectedCarType());
             }
@@ -223,15 +223,32 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         @Override
         public String getPageTitle(int position) {
+            String currentConfigType = "Current Config: ";
             switch (position) {
                 case 0:
-                    return SpecificPreferenceFragment.getTitle("fourLMRB");
+                    if (SdkPreferencesHelper.getInstance().getConnectedCarType().equals(ConnectedCarFactory.TYPE_4_A)) {
+                        return SpecificPreferenceFragment.getTitle(currentConfigType + "4 beacons");
+                    } else {
+                        return SpecificPreferenceFragment.getTitle("4 beacons");
+                    }
                 case 1:
-                    return SpecificPreferenceFragment.getTitle("fiveLMRTB");
+                    if (SdkPreferencesHelper.getInstance().getConnectedCarType().equals(ConnectedCarFactory.TYPE_5_A)) {
+                        return SpecificPreferenceFragment.getTitle(currentConfigType + "5 beacons");
+                    } else {
+                        return SpecificPreferenceFragment.getTitle("5 beacons");
+                    }
                 case 2:
-                    return SpecificPreferenceFragment.getTitle("sevenFlFrLMRRlRr");
+                    if (SdkPreferencesHelper.getInstance().getConnectedCarType().equals(ConnectedCarFactory.TYPE_7_A)) {
+                        return SpecificPreferenceFragment.getTitle(currentConfigType + "7 beacons");
+                    } else {
+                        return SpecificPreferenceFragment.getTitle("7 beacons");
+                    }
                 case 3:
-                    return SpecificPreferenceFragment.getTitle("eightFlFrLMRTRlRr");
+                    if (SdkPreferencesHelper.getInstance().getConnectedCarType().equals(ConnectedCarFactory.TYPE_8_A)) {
+                        return SpecificPreferenceFragment.getTitle(currentConfigType + "8 beacons");
+                    } else {
+                        return SpecificPreferenceFragment.getTitle("8 beacons");
+                    }
                 default:
                     return SpecificPreferenceFragment.getTitle(SdkPreferencesHelper.getInstance().getConnectedCarType());
             }
@@ -293,8 +310,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return (frag);
         }
 
-        static String getTitle(String preferenceFilename) {
-            return preferenceFilename;
+        static String getTitle(String title) {
+            return title;
         }
 
         @Override
