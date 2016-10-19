@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="entries_list_preference">
-        <item>4</item>
-        <item>5 including trunk</item>
-        <item>7</item>
-        <item>8 including trunk</item>
+    <string-array name="iconName">
+        <item>4 beacons</item>
+        <item>5 beacons (4+trunk)</item>
+        <item>7 beacons</item>
+        <item>8 beacons (7+trunk)</item>
+    </string-array>
+    <string-array name="entry_values_list_preference">
+        <item>"fourLMRB"        </item>
+        <item>"fiveLMRTB"     </item>
+        <item>"sevenFlFrLMRRlRr"</item>
+        <item>"eightFlFrLMRTRlRr"</item>
+    </string-array>
+    <string-array name="iconFile">
+        <item>car_4</item>
+        <item>car_5</item>
+        <item>car_7</item>
+        <item>car_8</item>
     </string-array>
     <string-array name="base_list_preference">
         <item>Lock: PSU &amp; Unlock: PSU</item>
@@ -17,12 +29,6 @@
         <item>Base_2</item>
         <item>Base_3</item>
         <item>Base_4</item>
-    </string-array>
-    <string-array name="entry_values_list_preference">
-        <item>"fourLMRB"        </item>
-        <item>"fiveLMRTB"     </item>
-        <item>"sevenFlFrLMRRlRr"</item>
-        <item>"eightFlFrLMRTRlRr"</item>
     </string-array>
     <string-array name="default_big_button_text">
         <item>0</item>

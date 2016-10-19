@@ -150,4 +150,7 @@
     <string name="uir">UIR</string>
     <string name="welcome_notif_title">ADML100%Smartphone</string>
     <string name="welcome_notif_message">Welcome !</string>
+
+    <string name="default_summary">Select a configuration</string>
+    <string name="icon_default">car_8</string>
 </resources>

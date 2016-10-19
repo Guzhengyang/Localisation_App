@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/com.valeo.psa">
     <PreferenceCategory android:title="@string/pref_car_type">
         <ListPreference
             android:dialogTitle="@string/dialog_title_list_preference"
-            android:entries="@array/entries_list_preference"
-            android:entryValues="@array/entry_values_list_preference"
+            android:entries="@array/iconName"
+            android:entryValues="@array/iconFile"
             android:key="com.inblue.PREFERENCE_CONNECTED_CAR_TYPE"
-            android:title="@string/pref_car_type_title" />
+            android:layout="@layout/icon_item_preference"
+            android:title="@string/pref_car_type_title"
+            custom:iconFile="@string/icon_default" />
         <ListPreference
             android:dialogTitle="@string/base_title_list_preference"
             android:entries="@array/base_list_preference"
