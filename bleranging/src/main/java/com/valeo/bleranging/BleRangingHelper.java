@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -26,6 +27,7 @@ import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
+import com.valeo.bleranging.utils.CallReceiver;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.TextUtils;
 import com.valeo.bleranging.utils.TrxUtils;
@@ -57,7 +59,7 @@ public class BleRangingHelper implements SensorEventListener {
     private final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
     private final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
     private final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
-    private final static int LOCK_STATUS_CHANGED_TIMEOUT = 3000;
+    private final static int LOCK_STATUS_CHANGED_TIMEOUT = 5000;
     private final static int PREDICTION_MAX = 16;
     private final Context mContext;
     private final BluetoothManagement mBluetoothManager;
@@ -98,6 +100,7 @@ public class BleRangingHelper implements SensorEventListener {
     private final BleRangingListener bleRangingListener;
     private final ArrayList<Double> lAccHistoric = new ArrayList<>(SdkPreferencesHelper.getInstance().getLinAccSize());
     private final float orientation[] = new float[3];
+    private final CallReceiver callReceiver = new CallReceiver();
     private boolean lastThatchamChanged = false;
     private boolean smartphoneIsInPocket = false;
     private boolean smartphoneIsMovingSlowly = false;
@@ -310,6 +313,10 @@ public class BleRangingHelper implements SensorEventListener {
                 if (lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
                     lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
                     mProtocolManager.setIsLockedToSend(lastCommandFromTrx);
+                    //Initialize timeout flag which is cleared in the runnable launched in the next instruction
+                    isLockStatusChangedTimerExpired.set(false);
+                    //Launch timeout
+                    mLockStatusChangedHandler.postDelayed(mManageIsLockStatusChangedPeriodicTimer, LOCK_STATUS_CHANGED_TIMEOUT);
                     manageRearms(lastCommandFromTrx);
                 }
                 // if car thatcham status changed
@@ -407,6 +414,7 @@ public class BleRangingHelper implements SensorEventListener {
         senSensorManager.registerListener(this, senProximity, SensorManager.SENSOR_DELAY_NORMAL);
         senSensorManager.registerListener(this, senLinAcceleration, SensorManager.SENSOR_DELAY_UI);
         senSensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
+        mContext.registerReceiver(callReceiver, new IntentFilter());
         mBluetoothManager.resumeLeScan();
         mMainHandler.post(printRunner);
         mMainHandler.post(updateCarLocalizationRunnable);
@@ -681,10 +689,14 @@ public class BleRangingHelper implements SensorEventListener {
             boolean isStartAllowed = false;
             boolean isWelcomeAllowed = false;
             String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-            boolean isStartStrategyValid = connectedCar.startStrategy(smartphoneIsInPocket);
-            boolean isLockStrategyValid = connectedCar.lockStrategy(smartphoneIsInPocket);
-            isUnlockStrategyValid = connectedCar.unlockStrategy(smartphoneIsInPocket);
-            boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus, smartphoneIsInPocket);
+            AudioManager audM = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+            PSALogs.d("test", "smartphoneIsNearEar " + CallReceiver.smartphoneIsNearEar
+                    + audM.isBluetoothScoOn() + " " + audM.isSpeakerphoneOn() + " " + smartphoneIsInPocket);
+            connectedCar.updateThresholdValues(smartphoneIsInPocket, CallReceiver.smartphoneIsNearEar);
+            boolean isStartStrategyValid = connectedCar.startStrategy();
+            boolean isLockStrategyValid = connectedCar.lockStrategy();
+            isUnlockStrategyValid = connectedCar.unlockStrategy();
+            boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus);
             isInLockArea = forcedLock || (!blockLock && isLockStrategyValid && (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)));
             isInUnlockArea = forcedUnlock || (!blockUnlock && !isLockStrategyValid && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType));
             isInStartArea = forcedStart || (!blockStart && isStartStrategyValid);
@@ -937,10 +949,6 @@ public class BleRangingHelper implements SensorEventListener {
         boolean lastLockCommand = mProtocolManager.isLockedToSend();
         mProtocolManager.setIsLockedToSend(lockVehicle);
         if(lastLockCommand != mProtocolManager.isLockedToSend()) {
-            //Initialize timeout flag which is cleared in the runnable launched in the next instruction
-            isLockStatusChangedTimerExpired.set(false);
-            //Launch timeout
-            mLockStatusChangedHandler.postDelayed(mManageIsLockStatusChangedPeriodicTimer, LOCK_STATUS_CHANGED_TIMEOUT);
             if (mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) {
                 if (isAbortRunning) {
                     mHandlerTimeOut.removeCallbacks(abortCommandRunner);
@@ -963,6 +971,7 @@ public class BleRangingHelper implements SensorEventListener {
     }
 
     public void closeApp() {
+        mContext.unregisterReceiver(callReceiver);
         if (mMainHandler != null) {
             mMainHandler.removeCallbacks(printRunner);
             mMainHandler.removeCallbacks(updateCarLocalizationRunnable);

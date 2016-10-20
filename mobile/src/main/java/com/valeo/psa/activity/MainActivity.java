@@ -91,6 +91,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int REQUEST_BLUETOOTH_PERMISSION = 25112;
     private static final int REQUEST_BLUETOOTH_ADMIN_PERMISSION = 25113;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 25114;
+    private static final int REQUEST_READ_PHONE_STATE_PERMISSION = 25115;
+    private static final int REQUEST_PROCESS_OUTGOING_CALLS_PERMISSION = 25116;
     private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
     private static final int NOTIFICATION_ID_1 = 1;
     private Toolbar toolbar;
@@ -216,6 +218,16 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION);
             }
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE},
+                        REQUEST_READ_PHONE_STATE_PERMISSION);
+            }
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.PROCESS_OUTGOING_CALLS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS},
+                        REQUEST_PROCESS_OUTGOING_CALLS_PERMISSION);
+            }
         }
     }
 
@@ -253,7 +265,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 break;
             case R.id.menu_reconnect_ble:
                 mBleRangingHelper.connectToPC();
-//                mBleRangingHelper.restartConnection(false);
                 break;
         }
         return true;

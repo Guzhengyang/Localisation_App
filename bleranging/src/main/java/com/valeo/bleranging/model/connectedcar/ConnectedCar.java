@@ -114,6 +114,15 @@ public abstract class ConnectedCar {
         this.nearDoorThresholdMB = SdkPreferencesHelper.getInstance().getNearDoorThresholdMB(connectedCarType);
     }
 
+    public void updateThresholdValues(boolean smartphoneIsInPocket, boolean smartphoneIsNearEar) {
+        this.welcomeThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_WELCOME, smartphoneIsInPocket, smartphoneIsNearEar);
+        this.lockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_LOCK, smartphoneIsInPocket, smartphoneIsNearEar);
+        this.unlockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_UNLOCK, smartphoneIsInPocket, smartphoneIsNearEar);
+        this.startThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_START, smartphoneIsInPocket, smartphoneIsNearEar);
+        this.averageDeltaLockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_DELTA_LOCK, smartphoneIsInPocket, smartphoneIsNearEar);
+        this.averageDeltaUnlockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_DELTA_UNLOCK, smartphoneIsInPocket, smartphoneIsNearEar);
+    }
+
     /**
      * Initialize trx and antenna and their rssi historic with default value periph and central
      * @param newLockStatus the lock status that determines which values to set
@@ -446,10 +455,9 @@ public abstract class ConnectedCar {
 
     /**
      * Condition to enable Start action
-     * @param smartphoneIsInPocket the "is in pocket" status
      * @return true if the strategy is verified, false otherwise
      */
-    public abstract boolean startStrategy(boolean smartphoneIsInPocket);
+    public abstract boolean startStrategy();
 
     /**
      * Check if we are in start area
@@ -459,11 +467,9 @@ public abstract class ConnectedCar {
 
     /**
      * Condition to enable unlock action
-     *
-     * @param smartphoneIsInPocket the "is in pocket" status
      * @return true if the strategy is verified, false otherwise
      */
-    public abstract List<Integer> unlockStrategy(boolean smartphoneIsInPocket);
+    public abstract List<Integer> unlockStrategy();
 
     /**
      * Check if we are in unlock area
@@ -473,10 +479,9 @@ public abstract class ConnectedCar {
 
     /**
      * Condition to enable lock action
-     * @param smartphoneIsInPocket the "is in pocket" status
      * @return true if the strategy is verified, false otherwise
      */
-    public abstract boolean lockStrategy(boolean smartphoneIsInPocket);
+    public abstract boolean lockStrategy();
 
     /**
      * Check if we are in lock area
@@ -486,12 +491,11 @@ public abstract class ConnectedCar {
 
     /**
      * Condition to enable welcome action
-     * @param totalAverage         the total average of all antenna rssi
-     * @param newlockStatus        the lock status
-     * @param smartphoneIsInPocket the "is in pocket" status
+     * @param totalAverage  the total average of all antenna rssi
+     * @param newlockStatus the lock status
      * @return true if the strategy is verified, false otherwise
      */
-    public abstract boolean welcomeStrategy(int totalAverage, boolean newlockStatus, boolean smartphoneIsInPocket);
+    public abstract boolean welcomeStrategy(int totalAverage, boolean newlockStatus);
 
     /**
      * Check if the number of trx valid is available

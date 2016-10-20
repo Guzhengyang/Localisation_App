@@ -1,5 +1,6 @@
 package com.valeo.bleranging.utils;
 
+import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.io.BufferedWriter;
@@ -16,43 +17,57 @@ import java.util.Locale;
 public class TrxUtils {
     private static final File logFile = new File(SdkPreferencesHelper.getInstance().getLogFileName());
 
-//    /**
-//     * Calculate the threshold to use for lock
-//     * @param mode the mode of average
-//     * @param smartphoneIsInPocket true if the smartphone is in the pocket, false otherwise
-//     * @return the threshold with an offset if the smartphone is in a pocket
-//     */
-//    public static int getCurrentThreshold(int mode, boolean smartphoneIsInPocket) {
-//        int threshold = 0;
-//        String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-//        switch (mode) {
-//            case Antenna.AVERAGE_START:
-//                threshold = SdkPreferencesHelper.getInstance().getStartThreshold(connectedCarType);
-//                if(smartphoneIsInPocket) {
-//                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForStart(connectedCarType);
-//                }
-//                break;
-//            case Antenna.AVERAGE_LOCK:
-//                threshold = SdkPreferencesHelper.getInstance().getLockThreshold(connectedCarType);
-//                if(smartphoneIsInPocket) {
-//                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType);
-//                }
-//                break;
-//            case Antenna.AVERAGE_UNLOCK:
-//                threshold = SdkPreferencesHelper.getInstance().getUnlockThreshold(connectedCarType);
-//                if(smartphoneIsInPocket) {
-//                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(connectedCarType);
-//                }
-//                break;
-//            case Antenna.AVERAGE_WELCOME:
-//                threshold = SdkPreferencesHelper.getInstance().getWelcomeThreshold(connectedCarType);
-//                if(smartphoneIsInPocket) {
-//                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForWelcome(connectedCarType);
-//                }
-//                break;
-//        }
-//        return threshold;
-//    }
+    /**
+     * Calculate the threshold to use for lock
+     *
+     * @param mode                 the mode of average
+     * @param smartphoneIsInPocket true if the smartphone is in the pocket, false otherwise
+     * @param smartphoneIsNearEar  true if the smartphone is near ears, false otherwise
+     * @return the threshold with an offset if the smartphone is in a pocket
+     */
+    public static int getCurrentThreshold(int mode, boolean smartphoneIsInPocket, boolean smartphoneIsNearEar) {
+        int threshold = 0;
+        String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
+        switch (mode) {
+            case Antenna.AVERAGE_START:
+                threshold = SdkPreferencesHelper.getInstance().getStartThreshold(connectedCarType);
+                if (smartphoneIsInPocket) {
+                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForStart(connectedCarType);
+                }
+                break;
+            case Antenna.AVERAGE_LOCK:
+                threshold = SdkPreferencesHelper.getInstance().getLockThreshold(connectedCarType);
+                if (smartphoneIsInPocket) {
+                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType);
+                }
+                break;
+            case Antenna.AVERAGE_UNLOCK:
+                threshold = SdkPreferencesHelper.getInstance().getUnlockThreshold(connectedCarType);
+                if (smartphoneIsInPocket) {
+                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(connectedCarType);
+                }
+                break;
+            case Antenna.AVERAGE_WELCOME:
+                threshold = SdkPreferencesHelper.getInstance().getWelcomeThreshold(connectedCarType);
+                if (smartphoneIsInPocket) {
+                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType);
+                }
+                break;
+            case Antenna.AVERAGE_DELTA_LOCK:
+                threshold = SdkPreferencesHelper.getInstance().getAverageDeltaLockThreshold(connectedCarType);
+                if (smartphoneIsInPocket) {
+                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType);
+                }
+                break;
+            case Antenna.AVERAGE_DELTA_UNLOCK:
+                threshold = SdkPreferencesHelper.getInstance().getAverageDeltaUnlockThreshold(connectedCarType);
+                if (smartphoneIsInPocket) {
+                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(connectedCarType);
+                }
+                break;
+        }
+        return threshold;
+    }
 
     /**
      * Compare value with threshold
@@ -68,45 +83,6 @@ public class TrxUtils {
         } else {
             return value < threshold;
         }
-    }
-
-    /**
-     * Calculate the threshold to use for lock
-     * @param threshold the threshold to analyze
-     * @param smartphoneIsInPocket true if the smartphone is in the pocket, false otherwise
-     * @return the threshold with an offset if the smartphone is in a pocket
-     */
-    public static int getCurrentLockThreshold(int threshold, boolean smartphoneIsInPocket) {
-        if(smartphoneIsInPocket) {
-            threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock(SdkPreferencesHelper.getInstance().getConnectedCarType());
-        }
-        return threshold;
-    }
-
-    /**
-     * Calculate the threshold to use for unlock
-     * @param threshold the threshold to analyze
-     * @param smartphoneIsInPocket true if the smartphone is in the pocket, false otherwise
-     * @return the threshold with an offset if the smartphone is in a pocket
-     */
-    public static int getCurrentUnlockThreshold(int threshold, boolean smartphoneIsInPocket) {
-        if(smartphoneIsInPocket) {
-            threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(SdkPreferencesHelper.getInstance().getConnectedCarType());
-        }
-        return threshold;
-    }
-
-    /**
-     * Calculate the threshold to use for start
-     * @param threshold the threshold to analyze
-     * @param smartphoneIsInPocket true if the smartphone is in the pocket, false otherwise
-     * @return the threshold with an offset if the smartphone is in a pocket for start
-     */
-    public static int getCurrentStartThreshold(int threshold, boolean smartphoneIsInPocket) {
-        if(smartphoneIsInPocket) {
-            threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForStart(SdkPreferencesHelper.getInstance().getConnectedCarType());
-        }
-        return threshold;
     }
 
     private static String booleanToString(boolean toConvert) {

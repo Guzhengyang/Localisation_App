@@ -47,8 +47,8 @@ public class CCFourLMRB extends ConnectedCar {
     }
 
     @Override
-    public boolean startStrategy(boolean smartphoneIsInPocket) {
-        boolean isInStartArea = isInStartArea(TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket));
+    public boolean startStrategy() {
+        boolean isInStartArea = isInStartArea(startThreshold);
         return (isInStartArea
                 && (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -nearDoorRatioThreshold, true)
                 || compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, nearDoorRatioThreshold, false))
@@ -69,15 +69,15 @@ public class CCFourLMRB extends ConnectedCar {
     }
 
     @Override
-    public List<Integer> unlockStrategy(boolean smartphoneIsInPocket) {
-        boolean isInUnlockArea = isInUnlockArea(TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket));
+    public List<Integer> unlockStrategy() {
+        boolean isInUnlockArea = isInUnlockArea(unlockThreshold);
         boolean isNearDoorLRMax = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, nearDoorRatioThreshold, true);
         boolean isNearDoorLRMin = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -nearDoorRatioThreshold, false);
         boolean isNearDoorLBMax = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_BACK, nearBackDoorRatioThresholdMax, true);
         boolean isNearDoorLBMin = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_BACK, nearBackDoorRatioThresholdMin, false);
         boolean isNearDoorRBMax = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_RIGHT, NUMBER_TRX_BACK, nearBackDoorRatioThresholdMax, true);
         boolean isNearDoorRBMin = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_RIGHT, NUMBER_TRX_BACK, nearBackDoorRatioThresholdMin, false);
-        boolean isApproaching = TrxUtils.compareWithThreshold(getAverageLSDelta(), TrxUtils.getCurrentUnlockThreshold(averageDeltaUnlockThreshold, smartphoneIsInPocket), false);
+        boolean isApproaching = TrxUtils.compareWithThreshold(getAverageLSDelta(), averageDeltaUnlockThreshold, false);
         if (isInUnlockArea && isApproaching) {
             List<Integer> result = new ArrayList<>();
             if (isNearDoorLRMax && isNearDoorLBMax) {
@@ -110,9 +110,9 @@ public class CCFourLMRB extends ConnectedCar {
     }
 
     @Override
-    public boolean lockStrategy(boolean smartphoneIsInPocket) {
-        boolean isInLockArea = isInLockArea(TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket));
-        boolean isLeaving = TrxUtils.compareWithThreshold(getAverageLSDelta(), TrxUtils.getCurrentLockThreshold(averageDeltaLockThreshold, smartphoneIsInPocket), true);
+    public boolean lockStrategy() {
+        boolean isInLockArea = isInLockArea(lockThreshold);
+        boolean isLeaving = TrxUtils.compareWithThreshold(getAverageLSDelta(), averageDeltaLockThreshold, true);
         return (isInLockArea && isLeaving);
     }
 
@@ -134,9 +134,8 @@ public class CCFourLMRB extends ConnectedCar {
     }
 
     @Override
-    public boolean welcomeStrategy(int totalAverage, boolean newLockStatus, boolean smartphoneIsInPocket) {
-        int threshold = TrxUtils.getCurrentLockThreshold(welcomeThreshold, smartphoneIsInPocket);
-        return (totalAverage >= threshold) && newLockStatus;
+    public boolean welcomeStrategy(int totalAverage, boolean newLockStatus) {
+        return (totalAverage >= welcomeThreshold) && newLockStatus;
     }
 
     @Override
@@ -152,25 +151,25 @@ public class CCFourLMRB extends ConnectedCar {
         spannableStringBuilder.append("welcome ");
         StringBuilder footerSB = new StringBuilder();
         footerSB.append("rssi > (")
-                .append(TrxUtils.getCurrentLockThreshold(welcomeThreshold, smartphoneIsInPocket))
+                .append(welcomeThreshold)
                 .append("): ").append(totalAverage);
         spannableStringBuilder.append(TextUtils.colorText(
-                totalAverage > TrxUtils.getCurrentLockThreshold(welcomeThreshold, smartphoneIsInPocket),
+                totalAverage > welcomeThreshold,
                 footerSB.toString(), Color.WHITE, Color.DKGRAY));
         spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_WELCOME, smartphoneIsMovingSlowly))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_WELCOME, Color.WHITE,
-                TrxUtils.getCurrentLockThreshold(welcomeThreshold, smartphoneIsInPocket), ">", SPACE_TWO));
+                welcomeThreshold, ">", SPACE_TWO));
         // LOCK
         spannableStringBuilder.append("lock").append("  mode : ").append(String.valueOf(lockMode)).append(" ");
         footerSB.setLength(0);
         footerSB.append(String.valueOf(getAverageLSDelta())).append(" ");
         spannableStringBuilder.append(TextUtils.colorText(
-                TrxUtils.compareWithThreshold(getAverageLSDelta(), TrxUtils.getCurrentLockThreshold(averageDeltaLockThreshold, smartphoneIsInPocket), true),
+                TrxUtils.compareWithThreshold(getAverageLSDelta(), averageDeltaLockThreshold, true),
                 footerSB.toString(), Color.RED, Color.DKGRAY));
         footerSB.setLength(0);
-        footerSB.append("rssi < (").append(TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket)).append(") ");
+        footerSB.append("rssi < (").append(lockThreshold).append(") ");
         spannableStringBuilder.append(TextUtils.colorText(
-                isInLockArea(TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket)),
+                isInLockArea(lockThreshold),
                 footerSB.toString(), Color.RED, Color.DKGRAY));
         footerSB.setLength(0);
         footerSB.append("rearm Lock: ").append(rearmLock);
@@ -178,18 +177,18 @@ public class CCFourLMRB extends ConnectedCar {
                 rearmLock, footerSB.toString(), Color.RED, Color.DKGRAY));
         spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_LOCK, smartphoneIsMovingSlowly))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_LOCK, Color.RED,
-                TrxUtils.getCurrentLockThreshold(lockThreshold, smartphoneIsInPocket), "<", SPACE_TWO));
+                lockThreshold, "<", SPACE_TWO));
         // UNLOCK
         spannableStringBuilder.append("unlock").append("  mode : ").append(String.valueOf(unlockMode)).append(" ");
         footerSB.setLength(0);
         footerSB.append(String.valueOf(getAverageLSDelta())).append(" ");
         spannableStringBuilder.append(TextUtils.colorText(
-                TrxUtils.compareWithThreshold(getAverageLSDelta(), TrxUtils.getCurrentUnlockThreshold(averageDeltaUnlockThreshold, smartphoneIsInPocket), false),
+                TrxUtils.compareWithThreshold(getAverageLSDelta(), averageDeltaUnlockThreshold, false),
                 footerSB.toString(), Color.GREEN, Color.DKGRAY));
         footerSB.setLength(0);
-        footerSB.append("rssi > (").append(TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket)).append(") ");
+        footerSB.append("rssi > (").append(unlockThreshold).append(") ");
         spannableStringBuilder.append(TextUtils.colorText(
-                isInUnlockArea(TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket)),
+                isInUnlockArea(unlockThreshold),
                 footerSB.toString(), Color.GREEN, Color.DKGRAY));
         footerSB.setLength(0);
         footerSB.append("rearm Unlock: ").append(rearmUnlock);
@@ -197,7 +196,7 @@ public class CCFourLMRB extends ConnectedCar {
                 rearmUnlock, footerSB.toString(), Color.GREEN, Color.DKGRAY));
         spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_UNLOCK, smartphoneIsMovingSlowly))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_UNLOCK, Color.GREEN,
-                TrxUtils.getCurrentUnlockThreshold(unlockThreshold, smartphoneIsInPocket), ">", SPACE_TWO));
+                unlockThreshold, ">", SPACE_TWO));
         footerSB.setLength(0);
         footerSB.append("       ratio L/R > (+/-")
                 .append(nearDoorRatioThreshold)
@@ -227,13 +226,13 @@ public class CCFourLMRB extends ConnectedCar {
         // START
         spannableStringBuilder.append("start").append("  mode : ").append(String.valueOf(startMode)).append(" ");
         footerSB.setLength(0);
-        footerSB.append("rssi > (").append(TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket)).append(") ");
+        footerSB.append("rssi > (").append(startThreshold).append(") ");
         spannableStringBuilder.append(TextUtils.colorText(
-                isInStartArea(TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket)),
+                isInStartArea(startThreshold),
                 footerSB.toString(), Color.CYAN, Color.DKGRAY));
         spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_START, smartphoneIsMovingSlowly))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_START, Color.CYAN,
-                TrxUtils.getCurrentStartThreshold(startThreshold, smartphoneIsInPocket), ">", SPACE_TWO));
+                startThreshold, ">", SPACE_TWO));
         footerSB.setLength(0);
         footerSB.append("       ratio M/L OR M/R Max > (")
                 .append(nearDoorThresholdMLorMRMax)

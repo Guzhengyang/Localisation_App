@@ -45,7 +45,7 @@ public class CCFiveLMRTB extends ConnectedCar {
     }
 
     @Override
-    public boolean startStrategy(boolean smartphoneIsInPocket) {
+    public boolean startStrategy() {
         return false;
     }
 
@@ -55,7 +55,7 @@ public class CCFiveLMRTB extends ConnectedCar {
     }
 
     @Override
-    public List<Integer> unlockStrategy(boolean smartphoneIsInPocket) {
+    public List<Integer> unlockStrategy() {
         return null;
     }
 
@@ -65,7 +65,7 @@ public class CCFiveLMRTB extends ConnectedCar {
     }
 
     @Override
-    public boolean lockStrategy(boolean smartphoneIsInPocket) {
+    public boolean lockStrategy() {
         return false;
     }
 
@@ -75,7 +75,7 @@ public class CCFiveLMRTB extends ConnectedCar {
     }
 
     @Override
-    public boolean welcomeStrategy(int totalAverage, boolean newlockStatus, boolean smartphoneIsInPocket) {
+    public boolean welcomeStrategy(int totalAverage, boolean newlockStatus) {
         return false;
     }
 
