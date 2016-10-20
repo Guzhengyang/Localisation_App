@@ -15,6 +15,7 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.BASE_1
 public class InblueProtocolManager {
     private int packetOneCounter = 0;
     private boolean isStartRequested = false;
+    private boolean isWelcomeRequested = false;
     private boolean isLockedFromTrx = false;
     private boolean isLockedToSend = false;
     private boolean isThatcham = false;
@@ -25,6 +26,10 @@ public class InblueProtocolManager {
 
     public boolean isStartRequested() {
         return isStartRequested;
+    }
+
+    public boolean isWelcomeRequested() {
+        return isWelcomeRequested;
     }
 
     public boolean isLockedToSend() {
@@ -45,6 +50,10 @@ public class InblueProtocolManager {
 
     public void setIsStartRequested(boolean isStartRequested) {
         this.isStartRequested = isStartRequested;
+    }
+
+    public void setIsWelcomeRequested(boolean isWelcomeRequested) {
+        this.isWelcomeRequested = isWelcomeRequested;
     }
 
     public void setIsLockedFromTrx(boolean isLockedFromTrx) {
@@ -172,37 +181,37 @@ public class InblueProtocolManager {
         byte payloadFive = (byte) 0;
         payloadFive |= isStartRequested ? 0x04 : 0x00;
         payloadFive |= isThatcham ? 0x08 : 0x00;
+        payloadFive |= isWelcomeRequested ? 0x40 : 0x00;
         switch (carBase) {
             case BASE_1:
-                payloadFive |= 0x00;
-                payloadFive |= (0x10);
+                payloadFive |= 0x30; // Full PSU, lock and unlock activated 0011 0000
                 break;
             case ConnectedCarFactory.BASE_2:
                 if (isLockedToSend && !isLockedFromTrx) {
-                    payloadFive |= 0x01;
+                    payloadFive |= 0x01; // WAL, lock command sent when car is unlocked
                 } else {
                     payloadFive |= 0x00;
                 }
                 if (!isLockedFromTrx) { // no psu_lock, so if unlock force thatcham to 0, so psu deactivated
-                    payloadFive &= 0xF7;
+                    payloadFive &= 0xF7; // TODO delete workaround after bml flash
                 }
-                payloadFive |= (0x20);
+                payloadFive |= 0x20; // Unlock PSU activated 0010 0000
                 break;
             case ConnectedCarFactory.BASE_3:
                 payloadFive |= isLockedToSend ? 0x01 : 0x02;
-                payloadFive &= 0xF7;
-                payloadFive |= (0x40);
+                payloadFive &= 0xF7; // TODO delete workaround after bml flash
+                // WAL & UIR, PSU deactivated 0000 0000
                 break;
             case ConnectedCarFactory.BASE_4:
                 if (!isLockedToSend && isLockedFromTrx) {
-                    payloadFive |= 0x02;
+                    payloadFive |= 0x02; // UIR, unlock command sent when car is locked
                 } else {
                     payloadFive |= 0x00;
                 }
                 if (isLockedFromTrx) { // no psu_unlock, so if lock force thatcham to 0, so psu deactivated
-                    payloadFive &= 0xF7;
+                    payloadFive &= 0xF7; // TODO delete workaround after bml flash
                 }
-                payloadFive |= (0x80);
+                payloadFive |= 0x10; // Lock PSU activated 0001 0000
                 break;
         }
         if (isRKE) {
