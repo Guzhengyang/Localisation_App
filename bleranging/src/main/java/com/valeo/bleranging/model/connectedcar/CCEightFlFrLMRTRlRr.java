@@ -104,14 +104,14 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         closeToCarRL = getRatioCloseToCar(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
         closeToCarRR = getRatioCloseToCar(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
         int thresholdCloseToCar = SdkPreferencesHelper.getInstance().getRatioCloseToCarThreshold(connectedCarType);
-        thresholdMaxMinRatio = getThreeCornerLowerMaxMinRatio();
+        thresholdMaxMinRatio = getThreeCornerLowerMaxMinRatio() + thresholdCloseToCar;
         if (isInUnlockArea) {
             boolean isNearDoorLRMax = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, nearDoorRatioThreshold, true);
             boolean isNearDoorLRMin = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -nearDoorRatioThreshold, false);
-            boolean closeToCarFrontLeft = TrxUtils.compareWithThreshold(closeToCarFL, thresholdCloseToCar + thresholdMaxMinRatio, true);
-            boolean closeToCarRearLeft = TrxUtils.compareWithThreshold(closeToCarRL, thresholdCloseToCar + thresholdMaxMinRatio, true);
-            boolean closeToCarRearRight = TrxUtils.compareWithThreshold(closeToCarRR, thresholdCloseToCar + thresholdMaxMinRatio, true);
-            boolean closeToCarFrontRight = TrxUtils.compareWithThreshold(closeToCarFR, thresholdCloseToCar + thresholdMaxMinRatio, true);
+            boolean closeToCarFrontLeft = TrxUtils.compareWithThreshold(closeToCarFL, thresholdMaxMinRatio, true);
+            boolean closeToCarRearLeft = TrxUtils.compareWithThreshold(closeToCarRL, thresholdMaxMinRatio, true);
+            boolean closeToCarRearRight = TrxUtils.compareWithThreshold(closeToCarRR, thresholdMaxMinRatio, true);
+            boolean closeToCarFrontRight = TrxUtils.compareWithThreshold(closeToCarFR, thresholdMaxMinRatio, true);
             List<Integer> result = new ArrayList<>();
             if (closeToCarFrontLeft) { //maxMinFrontLeft ||
                 result.add(NUMBER_TRX_FRONT_LEFT);
@@ -130,6 +130,10 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             }
             if (closeToCarRearRight) { //maxMinRearRight ||
                 result.add(NUMBER_TRX_REAR_RIGHT);
+            }
+            //TODO ADD TRUNK
+            if ((closeToCarRL + closeToCarRR) > (2 * thresholdMaxMinRatio)) {
+                result.add(NUMBER_TRX_BACK);
             }
             if (result.size() == 0) {
                 return null;

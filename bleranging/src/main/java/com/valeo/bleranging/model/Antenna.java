@@ -41,6 +41,13 @@ public class Antenna {
     private int antennaRssiAverageWelcome;
     private int antennaRssiAverageLong;
     private int antennaRssiAverageShort;
+    private int defaultSum = 0;
+    private int startSum = 0;
+    private int lockSum = 0;
+    private int unlockSum = 0;
+    private int welcomeSum = 0;
+    private int longSum = 0;
+    private int shortSum = 0;
     private int ratioMaxMin;
     private int min = 0;
     private int max = -100;
@@ -156,57 +163,98 @@ public class Antenna {
     /**
      * Calculate a rolling average of the rssi
      */
-    private synchronized void rollingAverageRssi(boolean isSmartphoneLaid) {
-        antennaRssiAverage = 0;
-        antennaRssiAverageStart = 0;
-        antennaRssiAverageLock = 0;
-        antennaRssiAverageUnlock = 0;
-        antennaRssiAverageWelcome = 0;
-        antennaRssiAverageLong = 0;
-        antennaRssiAverageShort = 0;
-        int toIndex = rssiHistoric.size();
+    private synchronized void rollingAverageRssi(int rssi, boolean isSmartphoneLaid) {
+        lastRssi = rssi; // Need last rssi for ecretage in next round
+        int historicSize = rssiHistoric.size();
+        int defaultSize = SdkPreferencesHelper.getInstance().getRollingAvElement();
+        int startSize = SdkPreferencesHelper.getInstance().getStartNbElement();
+        int lockSize = SdkPreferencesHelper.getInstance().getLockNbElement();
+        int unlockSize = SdkPreferencesHelper.getInstance().getUnlockNbElement();
+        int welcomeSize = SdkPreferencesHelper.getInstance().getWelcomeNbElement();
+        int longSize = SdkPreferencesHelper.getInstance().getLongNbElement();
+        int shortSize = SdkPreferencesHelper.getInstance().getShortNbElement();
+        if (historicSize >= defaultSize) {
+            defaultSum -= rssiHistoric.get(historicSize - defaultSize);
+        }
+        if (historicSize >= startSize) {
+            startSum -= rssiHistoric.get(historicSize - startSize);
+        }
+        if (historicSize >= lockSize) {
+            lockSum -= rssiHistoric.get(historicSize - lockSize);
+        }
+        if (historicSize >= unlockSize) {
+            unlockSum -= rssiHistoric.get(historicSize - unlockSize);
+        }
+        if (historicSize >= welcomeSize) {
+            welcomeSum -= rssiHistoric.get(historicSize - welcomeSize);
+        }
+        if (historicSize >= longSize) {
+            longSum -= rssiHistoric.get(historicSize - longSize);
+        }
+        if (historicSize >= shortSize) {
+            shortSum -= rssiHistoric.get(historicSize - shortSize);
+        }
+        defaultSum += rssi;
+        startSum += rssi;
+        lockSum += rssi;
+        unlockSum += rssi;
+        welcomeSum += rssi;
+        longSum += rssi;
+        shortSum += rssi;
+        antennaRssiAverage = defaultSum / defaultSize;
+        antennaRssiAverageStart = startSum / startSize;
+        antennaRssiAverageLock = lockSum / lockSize;
+        antennaRssiAverageUnlock = unlockSum / unlockSize;
+        antennaRssiAverageWelcome = welcomeSum / welcomeSize;
+        antennaRssiAverageLong = longSum / longSize;
+        antennaRssiAverageShort = shortSum / shortSize;
+        // If list full, remove first and add last
+        if (rssiHistoric.size() == defaultSize) {
+            rssiHistoric.remove(0);
+        }
+        this.rssiHistoric.add(rssi);
         min = 0;
         max = -100;
-        if (toIndex != 0) {
-            int indexDefault = getFromIndex(AVERAGE_DEFAULT, isSmartphoneLaid);
-            int indexStart = getFromIndex(AVERAGE_START, isSmartphoneLaid);
-            int indexLock = getFromIndex(AVERAGE_LOCK, isSmartphoneLaid);
-            int indexUnlock = getFromIndex(AVERAGE_UNLOCK, isSmartphoneLaid);
-            int indexWelcome = getFromIndex(AVERAGE_WELCOME, isSmartphoneLaid);
-            int indexLong = getFromIndex(AVERAGE_LONG, isSmartphoneLaid);
-            int indexShort = getFromIndex(AVERAGE_SHORT, isSmartphoneLaid);
+        if (historicSize != 0) {
+//            int indexDefault = getFromIndex(AVERAGE_DEFAULT, isSmartphoneLaid);
+//            int indexStart = getFromIndex(AVERAGE_START, isSmartphoneLaid);
+//            int indexLock = getFromIndex(AVERAGE_LOCK, isSmartphoneLaid);
+//            int indexUnlock = getFromIndex(AVERAGE_UNLOCK, isSmartphoneLaid);
+//            int indexWelcome = getFromIndex(AVERAGE_WELCOME, isSmartphoneLaid);
+//            int indexLong = getFromIndex(AVERAGE_LONG, isSmartphoneLaid);
+//            int indexShort = getFromIndex(AVERAGE_SHORT, isSmartphoneLaid);
             int currentHistoricValue;
-            for (int i = toIndex - 1; i >= 0; i--) {
+            for (int i = historicSize - 1; i >= 0; i--) {
                 currentHistoricValue = rssiHistoric.get(i);
                 min = Math.min(min, currentHistoricValue);
                 max = Math.max(max, currentHistoricValue);
-                antennaRssiAverage += currentHistoricValue;
-                if (i >= indexStart) {
-                    antennaRssiAverageStart += currentHistoricValue;
-                }
-                if (i >= indexLock) {
-                    antennaRssiAverageLock += currentHistoricValue;
-                }
-                if (i >= indexUnlock) {
-                    antennaRssiAverageUnlock += currentHistoricValue;
-                }
-                if (i >= indexWelcome) {
-                    antennaRssiAverageWelcome += currentHistoricValue;
-                }
-                if (i >= indexLong) {
-                    antennaRssiAverageLong += currentHistoricValue;
-                }
-                if (i >= indexShort) {
-                    antennaRssiAverageShort += currentHistoricValue;
-                }
+//                antennaRssiAverage += currentHistoricValue;
+//                if (i >= indexStart) {
+//                    antennaRssiAverageStart += currentHistoricValue;
+//                }
+//                if (i >= indexLock) {
+//                    antennaRssiAverageLock += currentHistoricValue;
+//                }
+//                if (i >= indexUnlock) {
+//                    antennaRssiAverageUnlock += currentHistoricValue;
+//                }
+//                if (i >= indexWelcome) {
+//                    antennaRssiAverageWelcome += currentHistoricValue;
+//                }
+//                if (i >= indexLong) {
+//                    antennaRssiAverageLong += currentHistoricValue;
+//                }
+//                if (i >= indexShort) {
+//                    antennaRssiAverageShort += currentHistoricValue;
+//                }
             }
-            antennaRssiAverage /= getStartIndexTabPosition(toIndex, indexDefault);
-            antennaRssiAverageStart /= getStartIndexTabPosition(toIndex, indexStart);
-            antennaRssiAverageLock /= getStartIndexTabPosition(toIndex, indexLock);
-            antennaRssiAverageUnlock /= getStartIndexTabPosition(toIndex, indexUnlock);
-            antennaRssiAverageWelcome /= getStartIndexTabPosition(toIndex, indexWelcome);
-            antennaRssiAverageLong /= getStartIndexTabPosition(toIndex, indexLong);
-            antennaRssiAverageShort /= getStartIndexTabPosition(toIndex, indexShort);
+//            antennaRssiAverage /= getStartIndexTabPosition(toIndex, indexDefault);
+//            antennaRssiAverageStart /= getStartIndexTabPosition(toIndex, indexStart);
+//            antennaRssiAverageLock /= getStartIndexTabPosition(toIndex, indexLock);
+//            antennaRssiAverageUnlock /= getStartIndexTabPosition(toIndex, indexUnlock);
+//            antennaRssiAverageWelcome /= getStartIndexTabPosition(toIndex, indexWelcome);
+//            antennaRssiAverageLong /= getStartIndexTabPosition(toIndex, indexLong);
+//            antennaRssiAverageShort /= getStartIndexTabPosition(toIndex, indexShort);
             ratioMaxMin = max - min;
         }
     }
@@ -253,17 +301,12 @@ public class Antenna {
         rssiPente.add(currentOriginalRssi - lastOriginalRssi);
         lastOriginalRssi = currentOriginalRssi;
         rssi = getCorrectedRssi(rssi, bleChannel); // Correct the rssi value with an ecretage on the last N-2 rssi seen
-        lastRssi = rssi;
-        if (rssiHistoric.size() == SdkPreferencesHelper.getInstance().getRollingAvElement()) {
-            rssiHistoric.remove(0);
-        }
-        this.rssiHistoric.add(rssi);
         this.lastBleChannel = bleChannel;
         if (lastIsSmartphoneMovingSlowly != isSmartphoneMovingSlowly) {
 //            resetWithHysteresis(antennaRssiAverageWelcome); //TODO concurrentModification
             lastIsSmartphoneMovingSlowly = isSmartphoneMovingSlowly;
         }
-        rollingAverageRssi(isSmartphoneMovingSlowly);
+        rollingAverageRssi(rssi, isSmartphoneMovingSlowly);
         hasReceivedRssi.set(true);
         if (antennaId == ANTENNA_ID_1) {
             PSALogs.d("ecretage" + antennaId, numberTrx + " savedRssi:" + lastRssi);

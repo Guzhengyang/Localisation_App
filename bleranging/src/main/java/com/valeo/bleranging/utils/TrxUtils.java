@@ -153,7 +153,9 @@ public class TrxUtils {
                                       int rssiFrontLeft, int rssiFrontRight, int rssiRearLeft, int rssiRearRight, int rssiBack,
                                       float z, float x, float y,
                                       boolean isSmartphoneInPocket, boolean smartphoneIsMovingSlowly, boolean isLockStatusChangedTimerExpired,
-                                      boolean blockStart, boolean forcedStart, boolean smartphoneIsFrozen,
+                                      boolean blockStart, boolean forcedStart,
+                                      boolean blockLock, boolean forcedLock,
+                                      boolean blockUnlock, boolean forcedUnlock, boolean smartphoneIsFrozen,
                                       boolean rearmLock, boolean rearmUnlock, boolean rearmWelcome, boolean lockStatus,
                                       byte welcomeByte, byte lockByte, byte startByte,
                                       byte leftAreaByte, byte rightAreaByte, byte backAreaByte,
@@ -165,7 +167,9 @@ public class TrxUtils {
                 rssiFrontLeft + comma + rssiFrontRight + comma + rssiRearLeft + comma + rssiRearRight + comma + rssiBack + comma +
                 z + comma + x + comma + y + comma +
                 booleanToString(isSmartphoneInPocket) + comma + booleanToString(smartphoneIsMovingSlowly) + comma + booleanToString(isLockStatusChangedTimerExpired) + comma +
-                booleanToString(blockStart) + comma + booleanToString(forcedStart) + comma + booleanToString(smartphoneIsFrozen) + comma;
+                booleanToString(blockStart) + comma + booleanToString(forcedStart) + comma +
+                booleanToString(blockLock) + comma + booleanToString(forcedLock) + comma +
+                booleanToString(blockUnlock) + comma + booleanToString(forcedUnlock) + comma + booleanToString(smartphoneIsFrozen) + comma;
         if (lockStatus) {
             log += "5" + comma;
         } else {

@@ -142,6 +142,9 @@ public class InblueProtocolManager {
                     case ConnectedCar.NUMBER_TRX_RIGHT:
                         payloadFour |= 0x02;
                         break;
+                    case ConnectedCar.NUMBER_TRX_TRUNK:
+                        payloadFour |= 0x04;
+                        break;
                     case ConnectedCar.NUMBER_TRX_BACK:
                         payloadFour |= 0x05;
                         break;
