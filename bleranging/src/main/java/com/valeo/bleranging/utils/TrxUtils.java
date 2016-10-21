@@ -22,48 +22,63 @@ public class TrxUtils {
      *
      * @param mode                 the mode of average
      * @param smartphoneIsInPocket true if the smartphone is in the pocket, false otherwise
-     * @param smartphoneIsNearEar  true if the smartphone is near ears, false otherwise
+     * @param smartphoneComIsActivated  true if the smartphone is near ears, false otherwise
      * @return the threshold with an offset if the smartphone is in a pocket
      */
-    public static int getCurrentThreshold(int mode, boolean smartphoneIsInPocket, boolean smartphoneIsNearEar) {
-        int threshold = 0;
+    public static int getCurrentThreshold(int mode, boolean smartphoneIsInPocket, boolean smartphoneComIsActivated) {
+        int threshold;
         String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
         switch (mode) {
             case Antenna.AVERAGE_START:
                 threshold = SdkPreferencesHelper.getInstance().getStartThreshold(connectedCarType);
-                if (smartphoneIsInPocket) {
+                if (smartphoneComIsActivated && smartphoneIsInPocket) {
+                    threshold += SdkPreferencesHelper.getInstance().getOffsetEarForStart(connectedCarType);
+                } else if (smartphoneIsInPocket) {
                     threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForStart(connectedCarType);
                 }
                 break;
             case Antenna.AVERAGE_LOCK:
                 threshold = SdkPreferencesHelper.getInstance().getLockThreshold(connectedCarType);
-                if (smartphoneIsInPocket) {
+                if (smartphoneComIsActivated && smartphoneIsInPocket) {
+                    threshold += SdkPreferencesHelper.getInstance().getOffsetEarForLock(connectedCarType);
+                } else if (smartphoneIsInPocket) {
                     threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType);
                 }
                 break;
             case Antenna.AVERAGE_UNLOCK:
                 threshold = SdkPreferencesHelper.getInstance().getUnlockThreshold(connectedCarType);
-                if (smartphoneIsInPocket) {
+                if (smartphoneComIsActivated && smartphoneIsInPocket) {
+                    threshold += SdkPreferencesHelper.getInstance().getOffsetEarForUnlock(connectedCarType);
+                } else if (smartphoneIsInPocket) {
                     threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(connectedCarType);
                 }
                 break;
             case Antenna.AVERAGE_WELCOME:
                 threshold = SdkPreferencesHelper.getInstance().getWelcomeThreshold(connectedCarType);
-                if (smartphoneIsInPocket) {
+                if (smartphoneComIsActivated && smartphoneIsInPocket) {
+                    threshold += SdkPreferencesHelper.getInstance().getOffsetEarForLock(connectedCarType);
+                } else if (smartphoneIsInPocket) {
                     threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType);
                 }
                 break;
             case Antenna.AVERAGE_DELTA_LOCK:
                 threshold = SdkPreferencesHelper.getInstance().getAverageDeltaLockThreshold(connectedCarType);
-                if (smartphoneIsInPocket) {
+                if (smartphoneComIsActivated && smartphoneIsInPocket) {
+                    threshold += SdkPreferencesHelper.getInstance().getOffsetEarForLock(connectedCarType);
+                } else if (smartphoneIsInPocket) {
                     threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType);
                 }
                 break;
             case Antenna.AVERAGE_DELTA_UNLOCK:
                 threshold = SdkPreferencesHelper.getInstance().getAverageDeltaUnlockThreshold(connectedCarType);
-                if (smartphoneIsInPocket) {
+                if (smartphoneComIsActivated && smartphoneIsInPocket) {
+                    threshold += SdkPreferencesHelper.getInstance().getOffsetEarForUnlock(connectedCarType);
+                } else if (smartphoneIsInPocket) {
                     threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(connectedCarType);
                 }
+                break;
+            default:
+                threshold = SdkPreferencesHelper.getInstance().getLockThreshold(connectedCarType);
                 break;
         }
         return threshold;
@@ -144,7 +159,7 @@ public class TrxUtils {
                                       byte leftAreaByte, byte rightAreaByte, byte backAreaByte,
                                       byte walkAwayByte, byte approachByte,
                                       byte leftTurnByte, byte fullTurnByte, byte rightTurnByte, byte recordByte, int rangingPredictionInt,
-                                      boolean lockFromTrx, boolean lockToSend, boolean startAllowed) {
+                                      boolean lockFromTrx, boolean lockToSend, boolean startAllowed, boolean isThatcham) {
         final String comma = ";";
         String log = String.valueOf(rssiLeft) + comma + rssiMiddle1 + comma + rssiMiddle2 + comma + rssiRight + comma + rssiTrunk + comma +
                 rssiFrontLeft + comma + rssiFrontRight + comma + rssiRearLeft + comma + rssiRearRight + comma + rssiBack + comma +
@@ -200,7 +215,8 @@ public class TrxUtils {
         }
         log += leftTurnByte + comma + fullTurnByte + comma + rightTurnByte + comma +
                 recordByte + comma + rangingPredictionInt + comma +
-                booleanToString(lockFromTrx) + comma + booleanToString(lockToSend) + comma + booleanToString(startAllowed) + comma;
+                booleanToString(lockFromTrx) + comma + booleanToString(lockToSend) + comma
+                + booleanToString(startAllowed) + comma + booleanToString(isThatcham) + comma;
         appendRssiLog(log);
     }
 

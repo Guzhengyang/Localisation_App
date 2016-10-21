@@ -114,13 +114,13 @@ public abstract class ConnectedCar {
         this.nearDoorThresholdMB = SdkPreferencesHelper.getInstance().getNearDoorThresholdMB(connectedCarType);
     }
 
-    public void updateThresholdValues(boolean smartphoneIsInPocket, boolean smartphoneIsNearEar) {
-        this.welcomeThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_WELCOME, smartphoneIsInPocket, smartphoneIsNearEar);
-        this.lockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_LOCK, smartphoneIsInPocket, smartphoneIsNearEar);
-        this.unlockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_UNLOCK, smartphoneIsInPocket, smartphoneIsNearEar);
-        this.startThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_START, smartphoneIsInPocket, smartphoneIsNearEar);
-        this.averageDeltaLockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_DELTA_LOCK, smartphoneIsInPocket, smartphoneIsNearEar);
-        this.averageDeltaUnlockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_DELTA_UNLOCK, smartphoneIsInPocket, smartphoneIsNearEar);
+    public void updateThresholdValues(boolean smartphoneIsInPocket, boolean smartphoneComIsActivated) {
+        this.welcomeThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_WELCOME, smartphoneIsInPocket, smartphoneComIsActivated);
+        this.lockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_LOCK, smartphoneIsInPocket, smartphoneComIsActivated);
+        this.unlockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_UNLOCK, smartphoneIsInPocket, smartphoneComIsActivated);
+        this.startThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_START, smartphoneIsInPocket, smartphoneComIsActivated);
+        this.averageDeltaLockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_DELTA_LOCK, smartphoneIsInPocket, smartphoneComIsActivated);
+        this.averageDeltaUnlockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_DELTA_UNLOCK, smartphoneIsInPocket, smartphoneComIsActivated);
     }
 
     /**

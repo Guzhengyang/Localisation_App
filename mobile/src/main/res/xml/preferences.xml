@@ -25,16 +25,28 @@
     <PreferenceCategory android:title="@string/pref_offset">
         <EditTextPreference
             android:inputType="numberSigned"
+            android:key="com.inblue.PREFERENCE_OFFSET_EAR_FOR_START"
+            android:title="@string/pref_offset_ear_start" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="com.inblue.PREFERENCE_OFFSET_EAR_FOR_LOCK"
+            android:title="@string/pref_offset_ear_lock" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="com.inblue.PREFERENCE_OFFSET_EAR_FOR_UNLOCK"
+            android:title="@string/pref_offset_ear_unlock" />
+        <EditTextPreference
+            android:inputType="numberSigned"
             android:key="com.inblue.PREFERENCE_OFFSET_POCKET_FOR_START"
-            android:title="@string/pref_offset_start" />
+            android:title="@string/pref_offset_pocket_start" />
         <EditTextPreference
             android:inputType="numberSigned"
             android:key="com.inblue.PREFERENCE_OFFSET_POCKET_FOR_LOCK"
-            android:title="@string/pref_offset_lock" />
+            android:title="@string/pref_offset_pocket_lock" />
         <EditTextPreference
             android:inputType="numberSigned"
             android:key="com.inblue.PREFERENCE_OFFSET_POCKET_FOR_UNLOCK"
-            android:title="@string/pref_offset_unlock" />
+            android:title="@string/pref_offset_pocket_unlock" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_threshold">
         <EditTextPreference

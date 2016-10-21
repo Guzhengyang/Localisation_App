@@ -10,7 +10,7 @@ import java.util.Date;
  */
 
 public class CallReceiver extends PhoneCallReceiver {
-    public static boolean smartphoneIsNearEar = false;
+    public static boolean smartphoneComIsActivated = false;
 
     public CallReceiver() {
     }
@@ -23,26 +23,26 @@ public class CallReceiver extends PhoneCallReceiver {
     protected void onIncomingCallAnswered(Context ctx, String number, Date start) {
         AudioManager audM = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
         if (!audM.isBluetoothScoOn()) { // if no bluetooth headset connected
-            smartphoneIsNearEar = true;
+            smartphoneComIsActivated = true;
         }
     }
 
     @Override
     protected void onIncomingCallEnded(Context ctx, String number, Date start, Date end) {
-        smartphoneIsNearEar = false;
+        smartphoneComIsActivated = false;
     }
 
     @Override
     protected void onOutgoingCallStarted(Context ctx, String number, Date start) {
         AudioManager audM = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
         if (!audM.isBluetoothScoOn()) { // if no bluetooth headset connected
-            smartphoneIsNearEar = true;
+            smartphoneComIsActivated = true;
         }
     }
 
     @Override
     protected void onOutgoingCallEnded(Context ctx, String number, Date start, Date end) {
-        smartphoneIsNearEar = false;
+        smartphoneComIsActivated = false;
     }
 
     @Override

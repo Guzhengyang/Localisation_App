@@ -69,9 +69,12 @@
     <string name="pref_equally_near_door_thr">Equally Near Door Thr</string>
     <string name="pref_nearer_door_thr">Nearer Door Thr</string>
     <string name="pref_offset">OFFSET</string>
-    <string name="pref_offset_start">Start Offset</string>
-    <string name="pref_offset_lock">Lock Offset</string>
-    <string name="pref_offset_unlock">Unlock Offset</string>
+    <string name="pref_offset_ear_start">Start Offset Ear</string>
+    <string name="pref_offset_ear_lock">Lock Offset Ear</string>
+    <string name="pref_offset_ear_unlock">Unlock Offset Ear</string>
+    <string name="pref_offset_pocket_start">Start Offset Pocket</string>
+    <string name="pref_offset_pocket_lock">Lock Offset Pocket</string>
+    <string name="pref_offset_pocket_unlock">Unlock Offset Pocket</string>
     <string name="pref_threshold">THRESHOLD</string>
     <string name="pref_threshold_start">Start Threshold</string>
     <string name="pref_threshold_unlock">Unlock Threshold</string>

@@ -10,6 +10,9 @@ import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
  * Constants file for SharedPrefs
  */
 public final class SdkPreferencesHelper {
+    public final static int OFFSET_EAR_FOR_START = -5;
+    public final static int OFFSET_EAR_FOR_LOCK = -5;
+    public final static int OFFSET_EAR_FOR_UNLOCK = -5;
     public final static int OFFSET_POCKET_FOR_START = -5;
     public final static int OFFSET_POCKET_FOR_LOCK = -5;
     public final static int OFFSET_POCKET_FOR_UNLOCK = -5;
@@ -89,6 +92,9 @@ public final class SdkPreferencesHelper {
     public static final String ADDRESS_REAR_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_REAR_RIGHT";
     public static final String CONNECTED_CAR_TYPE_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_TYPE";
     public static final String CONNECTED_CAR_BASE_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_BASE";
+    public static final String OFFSET_EAR_FOR_START_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_EAR_FOR_START";
+    public static final String OFFSET_EAR_FOR_LOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_EAR_FOR_LOCK";
+    public static final String OFFSET_EAR_FOR_UNLOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_EAR_FOR_UNLOCK";
     public static final String OFFSET_POCKET_FOR_START_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_START";
     public static final String OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_LOCK";
     public static final String OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_UNLOCK";
@@ -316,6 +322,10 @@ public final class SdkPreferencesHelper {
         return readInt(fileName, OFFSET_POCKET_FOR_START_PREFERENCES_NAME, OFFSET_POCKET_FOR_START);
     }
 
+    public int getOffsetEarForStart(final String fileName) {
+        return readInt(fileName, OFFSET_EAR_FOR_START_PREFERENCES_NAME, OFFSET_EAR_FOR_START);
+    }
+
 // --Commented out by Inspection START (30/09/2016 11:26):
 //    public void setOffsetPocketForStart(final String fileName, int offsetPocket) {
 //        saveInt(fileName, OFFSET_POCKET_FOR_START_PREFERENCES_NAME, offsetPocket);
@@ -326,6 +336,10 @@ public final class SdkPreferencesHelper {
         return readInt(fileName, OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME, OFFSET_POCKET_FOR_LOCK);
     }
 
+    public int getOffsetEarForLock(final String fileName) {
+        return readInt(fileName, OFFSET_EAR_FOR_LOCK_PREFERENCES_NAME, OFFSET_EAR_FOR_LOCK);
+    }
+
 // --Commented out by Inspection START (30/09/2016 11:26):
 //    public void setOffsetPocketForLock(final String fileName, int offsetPocket) {
 //        saveInt(fileName, OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME, offsetPocket);
@@ -334,6 +348,10 @@ public final class SdkPreferencesHelper {
 
     public int getOffsetPocketForUnlock(final String fileName) {
         return readInt(fileName, OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME, OFFSET_POCKET_FOR_UNLOCK);
+    }
+
+    public int getOffsetEarForUnlock(final String fileName) {
+        return readInt(fileName, OFFSET_EAR_FOR_UNLOCK_PREFERENCES_NAME, OFFSET_EAR_FOR_UNLOCK);
     }
 
 // --Commented out by Inspection START (30/09/2016 11:26):

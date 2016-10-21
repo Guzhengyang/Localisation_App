@@ -268,6 +268,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         //        private EditTextPreference near_door_thr;
 //        private EditTextPreference equally_near_door_thr;
 //        private EditTextPreference nearer_door_thr;
+        private EditTextPreference offset_ear_start;
+        private EditTextPreference offset_ear_lock;
+        private EditTextPreference offset_ear_unlock;
         private EditTextPreference offset_pocket_start;
         private EditTextPreference offset_pocket_lock;
         private EditTextPreference offset_pocket_unlock;
@@ -338,6 +341,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 //            near_door_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEAR_DOOR_THR_PREFERENCES_NAME));
 //            equally_near_door_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME));
 //            nearer_door_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEARER_DOOR_THR_PREFERENCES_NAME));
+            offset_ear_start = ((EditTextPreference) findPreference(SdkPreferencesHelper.OFFSET_EAR_FOR_START_PREFERENCES_NAME));
+            offset_ear_lock = ((EditTextPreference) findPreference(SdkPreferencesHelper.OFFSET_EAR_FOR_LOCK_PREFERENCES_NAME));
+            offset_ear_unlock = ((EditTextPreference) findPreference(SdkPreferencesHelper.OFFSET_EAR_FOR_UNLOCK_PREFERENCES_NAME));
             offset_pocket_start = ((EditTextPreference) findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_START_PREFERENCES_NAME));
             offset_pocket_lock = ((EditTextPreference) findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME));
             offset_pocket_unlock = ((EditTextPreference) findPreference(SdkPreferencesHelper.OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME));
@@ -379,6 +385,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 //            near_door_thr.setText(near_door_thr.getSummary().toString());
 //            equally_near_door_thr.setText(equally_near_door_thr.getSummary().toString());
 //            nearer_door_thr.setText(nearer_door_thr.getSummary().toString());
+            offset_ear_start.setText(offset_ear_start.getSummary().toString());
+            offset_ear_lock.setText(offset_ear_lock.getSummary().toString());
+            offset_ear_unlock.setText(offset_ear_unlock.getSummary().toString());
             offset_pocket_start.setText(offset_pocket_start.getSummary().toString());
             offset_pocket_lock.setText(offset_pocket_lock.getSummary().toString());
             offset_pocket_unlock.setText(offset_pocket_unlock.getSummary().toString());
@@ -424,6 +433,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 //            bindPreferenceSummaryToValue(near_door_thr, String.valueOf(SdkPreferencesHelper.NEAR_DOOR_THR));
 //            bindPreferenceSummaryToValue(equally_near_door_thr, String.valueOf(SdkPreferencesHelper.EQUALLY_NEAR_DOOR_THR));
 //            bindPreferenceSummaryToValue(nearer_door_thr, String.valueOf(SdkPreferencesHelper.NEARER_DOOR_THR));
+            bindPreferenceSummaryToValue(offset_ear_start, String.valueOf(SdkPreferencesHelper.OFFSET_EAR_FOR_START));
+            bindPreferenceSummaryToValue(offset_ear_lock, String.valueOf(SdkPreferencesHelper.OFFSET_EAR_FOR_LOCK));
+            bindPreferenceSummaryToValue(offset_ear_unlock, String.valueOf(SdkPreferencesHelper.OFFSET_EAR_FOR_UNLOCK));
             bindPreferenceSummaryToValue(offset_pocket_start, String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_START));
             bindPreferenceSummaryToValue(offset_pocket_lock, String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_LOCK));
             bindPreferenceSummaryToValue(offset_pocket_unlock, String.valueOf(SdkPreferencesHelper.OFFSET_POCKET_FOR_UNLOCK));
