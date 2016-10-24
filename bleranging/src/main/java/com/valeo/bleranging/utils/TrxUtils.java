@@ -224,7 +224,6 @@ public class TrxUtils {
         appendRssiLog(log);
     }
 
-
     public static void appendSettingLogs(String carType, String carBase, String addressConnectable, String addressConnectable2, String addressFrontLeft, String addressFrontRight,
                                          String addressLeft, String addressMiddle, String addressRight, String addressTrunk, String addressRearLeft, String addressBack, String addressRearRight,
                                          int logNumber, int rollAvElement, int startNumElement, int lockNumelement, int unlockNumElement, int welcomeNumElement, int LongNumElement, int shortNumElement,
@@ -237,9 +236,9 @@ public class TrxUtils {
                                          int equaLeft, int equaMiddle, int equaRight, int equaTrunk, int equaBack, int equaFrontLeft, int equaRearLeft, int equaFrontRight, int equaRearRight) {
         final String comma = ";";
         String log = carType + comma + carBase + comma + addressConnectable + comma
-                + addressConnectable2 + comma + addressFrontLeft + comma + addressFrontRight +
-                comma + addressLeft + comma + addressMiddle + comma + addressRight + comma + addressTrunk
-                + comma + addressRearLeft + comma + addressBack + comma + addressRearRight
+                + addressConnectable2 + comma + addressFrontLeft + comma + addressFrontRight + comma
+                + addressLeft + comma + addressMiddle + comma + addressRight + comma + addressTrunk + comma
+                + addressRearLeft + comma + addressBack + comma + addressRearRight + comma
                 + String.valueOf(logNumber) + comma + String.valueOf(rollAvElement) + comma
                 + String.valueOf(startNumElement) + comma + String.valueOf(lockNumelement) + comma
                 + String.valueOf(unlockNumElement) + comma + String.valueOf(welcomeNumElement) + comma

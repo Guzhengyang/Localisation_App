@@ -115,7 +115,7 @@ public class Antenna {
     private int getCorrectedRssi(int rssi, BLEChannel bleChannel) {
         int borneInf = (int) (lastRssi - getEcretageValue(lastRssi));
         int borneSup = (int) (lastRssi + getEcretageValue(lastRssi));
-        PSALogs.d("ecretage" + antennaId, "lastRssi:" + lastRssi + " borneInf:" + borneInf + " borneSup:" + borneSup);
+        PSALogs.d("ecretage" + antennaId, numberTrx + " lastRssi:" + lastRssi + " borneInf:" + borneInf + " borneSup:" + borneSup);
         switch (bleChannel) {
             case BLE_CHANNEL_37:
                 offsetBleChannel38 = 0;
