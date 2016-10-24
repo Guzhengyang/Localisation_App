@@ -69,14 +69,14 @@ public class BleRangingHelper implements SensorEventListener {
     private final byte[] lastPacketIdNumber = new byte[2];
     private final float R[] = new float[9];
     private final float I[] = new float[9];
-    private final AtomicBoolean isLockStatusChangedTimerExpired = new AtomicBoolean(true);
+    private final AtomicBoolean areLockActionsAvailable = new AtomicBoolean(true);
     /**
      * Create a handler to detect if the vehicle can do a unlock
      */
     private final Runnable mManageIsLockStatusChangedPeriodicTimer = new Runnable() {
         @Override
         public void run() {
-            isLockStatusChangedTimerExpired.set(true);
+            areLockActionsAvailable.set(true);
         }
     };
     private final AtomicBoolean thatchamIsChanging = new AtomicBoolean(false);
@@ -212,6 +212,101 @@ public class BleRangingHelper implements SensorEventListener {
             mMainHandler.postDelayed(this, 400);
         }
     };
+    /**
+     * Handles various events fired by the Service.
+     * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
+     * ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
+     * or notification operations.
+     */
+    private final BroadcastReceiver mTrxUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                bytesReceived = mBluetoothManager.getBytesReceived();
+                PSALogs.d("NIH", "TRX ACTION_DATA_AVAILABLE");
+                boolean oldLockStatus = newLockStatus;
+                if (bytesReceived != null) {
+                    newLockStatus = (bytesReceived[5] & 0x01) != 0;
+                }
+                if (oldLockStatus != newLockStatus) {
+//                    connectedCar.resetWithHysteresis(newLockStatus, isUnlockStrategyValid); //TODO concurrentModification
+                    bleRangingListener.updateCarDoorStatus(newLockStatus);
+                }
+                mProtocolManager.setIsLockedFromTrx(newLockStatus);
+                // if car lock status changed
+                if (lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
+                    lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
+                    mProtocolManager.setIsLockedToSend(lastCommandFromTrx);
+                    //Initialize timeout flag which is cleared in the runnable launched in the next instruction
+                    areLockActionsAvailable.set(false);
+                    //Launch timeout
+                    mLockStatusChangedHandler.postDelayed(mManageIsLockStatusChangedPeriodicTimer, LOCK_STATUS_CHANGED_TIMEOUT);
+                    manageRearms(lastCommandFromTrx);
+                }
+                // if car thatcham status changed
+                if (lastThatcham.get() != mProtocolManager.isThatcham()) {
+                    lastThatcham.set(mProtocolManager.isThatcham());
+                    if (lastThatcham.get()) { // if in thatcham area, rearm lock
+                        rearmLock.set(true);
+                        lastThatchamChanged = false;
+                    } else { // if not in thatcham area wait for being in lock area to rearm unlock
+                        lastThatchamChanged = true; // because when thatcham changed, maybe not in lock area yet
+                    }
+                }
+                if (lastThatchamChanged && isInLockArea) { // when thatcham has changed, and get into lock area
+                    // if not in thatcham area and in lock area, rearm unlock
+                    rearmUnlock.set(true);
+                    makeNoise(ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 100);
+                    lastThatchamChanged = false;
+                }
+                if (checkNewPacketOnlyOneLaunch) {
+                    checkNewPacketOnlyOneLaunch = false;
+                    mMainHandler.postDelayed(checkNewPacketsRunner, 1000);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_CHARACTERISTIC_SUBSCRIBED");
+                mMainHandler.post(sendPacketRunner); // send works only after subscribed
+                bleRangingListener.updateBLEStatus();
+                mBluetoothManager.resumeLeScan();
+                if (isFirstConnection && isFullyConnected()) {
+                    isFirstConnection = false;
+                    runFirstConnection(newLockStatus);
+                    mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
+                    mHandlerTimeOut.removeCallbacks(null);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
+                if (!mBluetoothManager.isConnecting()) {
+                    mMainHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            restartConnection(false);
+                        }
+                    }, 1000);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
+                PSALogs.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
+                if (!mBluetoothManager.isConnecting()) {
+                    mMainHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            restartConnection(false);
+                        }
+                    }, 1000);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
+                bleRangingListener.updateBLEStatus();
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_DISCOVERED");
+                bleRangingListener.updateBLEStatus();
+            } else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_CONNECTED");
+                bleRangingListener.updateBLEStatus();
+            }
+        }
+    };
     private byte welcomeByte = 0;
     private byte lockByte = 0;
     private byte startByte = 0;
@@ -275,7 +370,7 @@ public class BleRangingHelper implements SensorEventListener {
                         connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_0),
                         connectedCar.getCurrentOriginalRssi(ConnectedCar.NUMBER_TRX_BACK, Trx.ANTENNA_ID_0),
                         orientation[0], orientation[1], orientation[2],
-                        smartphoneIsInPocket, smartphoneIsMovingSlowly, isLockStatusChangedTimerExpired.get(),
+                        smartphoneIsInPocket, smartphoneIsMovingSlowly, areLockActionsAvailable.get(),
                         blockStart, forcedStart, blockLock, forcedLock, blockUnlock, forcedUnlock,
                         smartphoneIsFrozen,
                         rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), newLockStatus, welcomeByte,
@@ -287,98 +382,6 @@ public class BleRangingHelper implements SensorEventListener {
             }
             if (isFullyConnected()) {
                 mMainHandler.postDelayed(this, 105);
-            }
-        }
-    };
-    /**
-     * Handles various events fired by the Service.
-     * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
-     * ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
-     * or notification operations.
-     */
-    private final BroadcastReceiver mTrxUpdateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-                bytesReceived = mBluetoothManager.getBytesReceived();
-                PSALogs.d("NIH", "TRX ACTION_DATA_AVAILABLE");
-                boolean oldLockStatus = newLockStatus;
-                if (bytesReceived != null) {
-                    newLockStatus = (bytesReceived[5] & 0x01) != 0;
-                }
-                if (oldLockStatus != newLockStatus) {
-//                    connectedCar.resetWithHysteresis(newLockStatus, isUnlockStrategyValid); //TODO concurrentModification
-                    bleRangingListener.updateCarDoorStatus(newLockStatus);
-                }
-                mProtocolManager.setIsLockedFromTrx(newLockStatus);
-                // if car lock status changed
-                if (lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
-                    lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
-                    mProtocolManager.setIsLockedToSend(lastCommandFromTrx);
-                    //Initialize timeout flag which is cleared in the runnable launched in the next instruction
-                    isLockStatusChangedTimerExpired.set(false);
-                    //Launch timeout
-                    mLockStatusChangedHandler.postDelayed(mManageIsLockStatusChangedPeriodicTimer, LOCK_STATUS_CHANGED_TIMEOUT);
-                    manageRearms(lastCommandFromTrx);
-                }
-                // if car thatcham status changed
-                if (lastThatcham.get() != mProtocolManager.isThatcham()) {
-                    lastThatcham.set(mProtocolManager.isThatcham());
-                    if (lastThatcham.get()) { // if in thatcham area, rearm lock
-                        rearmLock.set(true);
-                        lastThatchamChanged = false;
-                    } else { // if not in thatcham area wait for being in lock area to rearm unlock
-                        lastThatchamChanged = true; // because when thatcham changed, maybe not in lock area yet
-                    }
-                }
-                if (lastThatchamChanged && isInLockArea) { // when thatcham has changed, and get into lock area
-                    // if not in thatcham area and in lock area, rearm unlock
-                    rearmUnlock.set(true);
-                    makeNoise(ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 100);
-                    lastThatchamChanged = false;
-                }
-                if (checkNewPacketOnlyOneLaunch) {
-                    checkNewPacketOnlyOneLaunch = false;
-                    mMainHandler.postDelayed(checkNewPacketsRunner, 1000);
-                }
-            } else if (BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_CHARACTERISTIC_SUBSCRIBED");
-                mMainHandler.post(sendPacketRunner); // send works only after subscribed
-                bleRangingListener.updateBLEStatus();
-                mBluetoothManager.resumeLeScan();
-                if (isFirstConnection && isFullyConnected()) {
-                    isFirstConnection = false;
-                    runFirstConnection(newLockStatus);
-                    mHandlerTimeOut.removeCallbacks(mManageIsTryingToConnectTimer);
-                    mHandlerTimeOut.removeCallbacks(null);
-                }
-            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
-                if (!mBluetoothManager.isConnecting()) {
-                    mMainHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            restartConnection(false);
-                        }
-                    }, 1000);
-                }
-            } else if (BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
-                PSALogs.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
-                if (!mBluetoothManager.isConnecting()) {
-                    mMainHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            restartConnection(false);
-                        }
-                    }, 1000);
-                }
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_DISCOVERED");
-            } else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_CONNECTED");
             }
         }
     };
@@ -716,12 +719,12 @@ public class BleRangingHelper implements SensorEventListener {
                 makeNoise(ToneGenerator.TONE_SUP_CONFIRM, 300);
                 bleRangingListener.doWelcome();
             }
-            if (isLockStatusChangedTimerExpired.get() && rearmLock.get() && isInLockArea) {
+            if (areLockActionsAvailable.get() && rearmLock.get() && isInLockArea) {
                 // DO NOT check if !newLockStatus to let the rearm algorithm in performLockVehicle work
                 performLockVehicleRequest(true);
             } else if (isInStartArea) { //smartphone in start area and moving
                 isStartAllowed = true;
-            } else if (isLockStatusChangedTimerExpired.get() && rearmUnlock.get() && isInUnlockArea) {
+            } else if (areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
                 // DO NOT check if newLockStatus to let the rearm algorithm in performLockVehicle work
                 performLockVehicleRequest(false);
             }
@@ -971,6 +974,10 @@ public class BleRangingHelper implements SensorEventListener {
 
     public boolean isFullyConnected() {
         return mBluetoothManager != null && mBluetoothManager.isFullyConnected();
+    }
+
+    public boolean areLockActionsAvailable() {
+        return areLockActionsAvailable.get();
     }
 
     public void setIsRKE(boolean isRKE) {

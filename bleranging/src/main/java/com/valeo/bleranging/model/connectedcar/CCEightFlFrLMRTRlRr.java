@@ -18,7 +18,7 @@ import java.util.List;
  * Created by l-avaratha on 07/09/2016
  */
 public class CCEightFlFrLMRTRlRr extends ConnectedCar {
-    private static final String SPACE_ONE = "  ";
+    private static final String SPACE_ONE = " ";
     private static final String SPACE_TWO = "   ";
     private int ratio;
     private int closeToCarFL;

@@ -348,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         vehicle_locked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBleRangingHelper.isFullyConnected()) {
+                if (mBleRangingHelper.isFullyConnected() && mBleRangingHelper.areLockActionsAvailable()) {
                     carDoorStatus = CarDoorStatus.LOCKED;
                     vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
                     driver_s_door_unlocked.setBackgroundResource(0);
@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         driver_s_door_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBleRangingHelper.isFullyConnected()) {
+                if (mBleRangingHelper.isFullyConnected() && mBleRangingHelper.areLockActionsAvailable()) {
                     carDoorStatus = CarDoorStatus.DRIVER_DOOR_OPEN;
                     driver_s_door_unlocked.setBackgroundResource(R.mipmap.slider_button);
                     vehicle_locked.setBackgroundResource(0);
@@ -377,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         vehicle_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBleRangingHelper.isFullyConnected()) {
+                if (mBleRangingHelper.isFullyConnected() && mBleRangingHelper.areLockActionsAvailable()) {
                     carDoorStatus = CarDoorStatus.UNLOCKED;
                     vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
                     driver_s_door_unlocked.setBackgroundResource(0);

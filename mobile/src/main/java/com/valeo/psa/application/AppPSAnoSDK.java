@@ -46,7 +46,7 @@ public class AppPSAnoSDK extends Application {
                     //BufferedWriter for performance, true to set append to file flag
                     String ColNames = "TIMESTAMP;RSSI LEFT;RSSI MIDDLE1;RSSI MIDDLE2;RSSI RIGHT;"
                             + "RSSI TRUNK;RSSI FRONTLEFT;RSSI FRONTRIGHT;RSSI REARLEFT;RSSI REARRIGHT;"
-                            + "RSSI BACK;Z AZIMUTH;X PITCH;Y ROLL;IN POCKET;IS LAID;IS LOCK STATUS CHANGED TIMER;"
+                            + "RSSI BACK;Z AZIMUTH;X PITCH;Y ROLL;IN POCKET;IS LAID;ARE LOCK ACTIONS AVAILABLE;"
                             + "IS START BLOCKED;IS START FORCED;IS LOCK BLOCKED;IS LOCK FORCED;"
                             + "IS UNLOCK BLOCKED;IS UNLOCK FORCED;IS FROZEN;IS LOCK;REARM LOCK;REARM UNLOCK;"
                             + "REARM WELCOME;WELCOME FLAG;LOCK FLAG;START FLAG;LEFT AREA FLAG;RIGHT AREA FLAG;"
