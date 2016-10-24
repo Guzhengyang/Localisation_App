@@ -312,11 +312,11 @@ public class Antenna {
         rssiPente.add(currentOriginalRssi - lastOriginalRssi);
         lastOriginalRssi = currentOriginalRssi;
         rssi = getCorrectedRssi(rssi, bleChannel); // Correct the rssi value with an ecretage on the last N-2 rssi seen
-        lastRssi = rssi;
         if (rssiHistoric.size() == SdkPreferencesHelper.getInstance().getRollingAvElement()) {
             rssiHistoric.remove(0);
         }
         this.rssiHistoric.add(rssi);
+        lastRssi = rssi;
         this.lastBleChannel = bleChannel;
         if (lastIsSmartphoneMovingSlowly != isSmartphoneMovingSlowly) {
 //            resetWithHysteresis(antennaRssiAverageWelcome); //TODO concurrentModification
@@ -453,6 +453,10 @@ public class Antenna {
 
     public int getCurrentOriginalRssi() {
         return currentOriginalRssi;
+    }
+
+    public int getCurrentModifiedRssi() {
+        return lastRssi;
     }
 
     public enum BLEChannel {

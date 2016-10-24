@@ -257,6 +257,14 @@ public abstract class ConnectedCar {
         }
     }
 
+    public int getCurrentModifiedRssi(int trxNumber, int antennaId) {
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            return trxLinkedHMap.get(trxNumber).getCurrentModifiedRssi(antennaId);
+        } else {
+            return 0;
+        }
+    }
+
     /**
      * Check all trx antenna to see if they are active
      */

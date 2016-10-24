@@ -151,6 +151,8 @@ public class TrxUtils {
      */
     public static void appendRssiLogs(int rssiLeft, int rssiMiddle1, int rssiMiddle2, int rssiRight, int rssiTrunk,
                                       int rssiFrontLeft, int rssiFrontRight, int rssiRearLeft, int rssiRearRight, int rssiBack,
+                                      int rssiLeftOriginal, int rssiMiddle1Original, int rssiMiddle2Original, int rssiRightOriginal, int rssiTrunkOriginal,
+                                      int rssiFrontLeftOriginal, int rssiFrontRightOriginal, int rssiRearLeftOriginal, int rssiRearRightOriginal, int rssiBackOriginal,
                                       float z, float x, float y,
                                       boolean isSmartphoneInPocket, boolean smartphoneIsMovingSlowly, boolean isLockStatusChangedTimerExpired,
                                       boolean blockStart, boolean forcedStart,
@@ -163,8 +165,10 @@ public class TrxUtils {
                                       byte leftTurnByte, byte fullTurnByte, byte rightTurnByte, byte recordByte, int rangingPredictionInt,
                                       boolean lockFromTrx, boolean lockToSend, boolean startAllowed, boolean isThatcham) {
         final String comma = ";";
-        String log = String.valueOf(rssiLeft) + comma + rssiMiddle1 + comma + rssiMiddle2 + comma + rssiRight + comma + rssiTrunk + comma +
+        String log = rssiLeft + comma + rssiMiddle1 + comma + rssiMiddle2 + comma + rssiRight + comma + rssiTrunk + comma +
                 rssiFrontLeft + comma + rssiFrontRight + comma + rssiRearLeft + comma + rssiRearRight + comma + rssiBack + comma +
+                rssiLeftOriginal + comma + rssiMiddle1Original + comma + rssiMiddle2Original + comma + rssiRightOriginal + comma + rssiTrunkOriginal + comma +
+                rssiFrontLeftOriginal + comma + rssiFrontRightOriginal + comma + rssiRearLeftOriginal + comma + rssiRearRightOriginal + comma + rssiBackOriginal + comma +
                 z + comma + x + comma + y + comma +
                 booleanToString(isSmartphoneInPocket) + comma + booleanToString(smartphoneIsMovingSlowly) + comma + booleanToString(isLockStatusChangedTimerExpired) + comma +
                 booleanToString(blockStart) + comma + booleanToString(forcedStart) + comma +

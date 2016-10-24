@@ -85,6 +85,25 @@ public class Trx {
         }
     }
 
+    /**
+     * Get the current modified rssi
+     *
+     * @param antennaId the antenna id that received the rssi
+     * @return the current modified rssi value for id 1 or 2. Antenna id 0 will return antenna 1 current rssi
+     */
+    public int getCurrentModifiedRssi(int antennaId) {
+        switch (antennaId) {
+            case ANTENNA_ID_0:
+                return antenna1.getCurrentModifiedRssi();
+            case ANTENNA_ID_1:
+                return antenna1.getCurrentModifiedRssi();
+            case ANTENNA_ID_2:
+                return antenna2.getCurrentModifiedRssi();
+            default:
+                return antenna1.getCurrentModifiedRssi();
+        }
+    }
+
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
     }
