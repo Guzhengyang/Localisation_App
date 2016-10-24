@@ -133,7 +133,7 @@ public class InblueProtocolManager {
     private byte getPayloadFourthByte(boolean isRKE, List<Integer> isUnlockStrategyValid, boolean
             isInUnlockArea, boolean isInStartArea, boolean isInLockArea) {
         byte payloadFour = (byte) 0;
-        if (isInUnlockArea) {
+        if (isUnlockStrategyValid != null && isInUnlockArea) {
             for (Integer integer : isUnlockStrategyValid) {
                 switch (integer) {
                     case ConnectedCar.NUMBER_TRX_LEFT:
