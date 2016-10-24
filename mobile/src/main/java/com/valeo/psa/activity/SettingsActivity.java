@@ -299,6 +299,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference equalizer_left;
         private EditTextPreference equalizer_middle;
         private EditTextPreference equalizer_right;
+        private EditTextPreference equalizer_trunk;
         private EditTextPreference equalizer_back;
         private EditTextPreference equalizer_front_left;
         private EditTextPreference equalizer_rear_left;
@@ -372,6 +373,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             equalizer_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_LEFT_PREFERENCES_NAME));
             equalizer_middle = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_MIDDLE_PREFERENCES_NAME));
             equalizer_right = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_RIGHT_PREFERENCES_NAME));
+            equalizer_trunk = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_TRUNK_PREFERENCES_NAME));
             equalizer_back = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_BACK_PREFERENCES_NAME));
             equalizer_front_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_FRONT_LEFT_PREFERENCES_NAME));
             equalizer_rear_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALIZER_REAR_LEFT_PREFERENCES_NAME));
@@ -416,6 +418,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             equalizer_left.setText(equalizer_left.getSummary().toString());
             equalizer_middle.setText(equalizer_middle.getSummary().toString());
             equalizer_right.setText(equalizer_right.getSummary().toString());
+            equalizer_trunk.setText(equalizer_trunk.getSummary().toString());
             equalizer_back.setText(equalizer_back.getSummary().toString());
             equalizer_front_left.setText(equalizer_front_left.getSummary().toString());
             equalizer_rear_left.setText(equalizer_rear_left.getSummary().toString());
@@ -464,6 +467,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(equalizer_left, String.valueOf(SdkPreferencesHelper.EQUALIZER_LEFT));
             bindPreferenceSummaryToValue(equalizer_middle, String.valueOf(SdkPreferencesHelper.EQUALIZER_MIDDLE));
             bindPreferenceSummaryToValue(equalizer_right, String.valueOf(SdkPreferencesHelper.EQUALIZER_RIGHT));
+            bindPreferenceSummaryToValue(equalizer_trunk, String.valueOf(SdkPreferencesHelper.EQUALIZER_TRUNK));
             bindPreferenceSummaryToValue(equalizer_back, String.valueOf(SdkPreferencesHelper.EQUALIZER_BACK));
             bindPreferenceSummaryToValue(equalizer_front_left, String.valueOf(SdkPreferencesHelper.EQUALIZER_FRONT_LEFT));
             bindPreferenceSummaryToValue(equalizer_rear_left, String.valueOf(SdkPreferencesHelper.EQUALIZER_REAR_LEFT));

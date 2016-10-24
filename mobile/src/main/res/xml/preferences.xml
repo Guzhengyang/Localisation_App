@@ -157,6 +157,10 @@
             android:title="@string/pref_equalizer_right" />
         <EditTextPreference
             android:inputType="numberSigned"
+            android:key="com.inblue.PREFERENCE_EQUALIZER_TRUNK"
+            android:title="@string/pref_equalizer_trunk" />
+        <EditTextPreference
+            android:inputType="numberSigned"
             android:key="com.inblue.PREFERENCE_EQUALIZER_BACK"
             android:title="@string/pref_equalizer_back" />
         <EditTextPreference

@@ -133,7 +133,11 @@ public class InblueProtocolManager {
     private byte getPayloadFourthByte(boolean isRKE, List<Integer> isUnlockStrategyValid, boolean
             isInUnlockArea, boolean isInStartArea, boolean isInLockArea) {
         byte payloadFour = (byte) 0;
-        if (isUnlockStrategyValid != null && isInUnlockArea) {
+        if (isInLockArea) {
+            payloadFour |= 0x06;
+        } else if (isInStartArea) {
+            payloadFour |= 0x01;
+        } else if (isUnlockStrategyValid != null && isInUnlockArea) {
             for (Integer integer : isUnlockStrategyValid) {
                 switch (integer) {
                     case ConnectedCar.NUMBER_TRX_LEFT:
@@ -164,10 +168,6 @@ public class InblueProtocolManager {
                         break;
                 }
             }
-        } else if (isInStartArea) {
-            payloadFour |= 0x01;
-        } else if (isInLockArea) {
-            payloadFour |= 0x06;
         }
         if (isRKE) {
             payloadFour |= isLockedToSend ? 0x08 : 0x07;

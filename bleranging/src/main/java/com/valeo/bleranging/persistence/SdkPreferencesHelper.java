@@ -53,6 +53,7 @@ public final class SdkPreferencesHelper {
     public final static int EQUALIZER_LEFT = 5;
     public final static int EQUALIZER_MIDDLE = 5;
     public final static int EQUALIZER_RIGHT = 5;
+    public final static int EQUALIZER_TRUNK = 5;
     public final static int EQUALIZER_BACK = 5;
     public final static int EQUALIZER_FRONT_LEFT = 5;
     public final static int EQUALIZER_FRONT_RIGHT = 5;
@@ -135,6 +136,7 @@ public final class SdkPreferencesHelper {
     public static final String EQUALIZER_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_LEFT";
     public static final String EQUALIZER_MIDDLE_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_MIDDLE";
     public static final String EQUALIZER_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_RIGHT";
+    public static final String EQUALIZER_TRUNK_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_TRUNK";
     public static final String EQUALIZER_BACK_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_BACK";
     public static final String EQUALIZER_FRONT_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_FRONT_LEFT";
     public static final String EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_FRONT_RIGHT";
@@ -568,6 +570,10 @@ public final class SdkPreferencesHelper {
 
     public int getTrxRssiEqualizerRight(final String fileName) {
         return readInt(fileName, EQUALIZER_RIGHT_PREFERENCES_NAME, EQUALIZER_RIGHT);
+    }
+
+    public int getTrxRssiEqualizerTrunk(final String fileName) {
+        return readInt(fileName, EQUALIZER_TRUNK_PREFERENCES_NAME, EQUALIZER_TRUNK);
     }
 
     public int getTrxRssiEqualizerFrontRight(final String fileName) {

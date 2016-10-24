@@ -63,6 +63,7 @@ import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
 import com.valeo.bleranging.utils.PSALogs;
+import com.valeo.bleranging.utils.TrxUtils;
 import com.valeo.psa.R;
 import com.valeo.psa.model.Car;
 import com.valeo.psa.model.ViewModel;
@@ -1073,6 +1074,63 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     protected void onResume() {
         super.onResume();
         if(mBleRangingHelper != null) {
+            if (TrxUtils.createLogFile()) {
+                TrxUtils.writeFirstColumnSettings();
+                String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
+                TrxUtils.appendSettingLogs(connectedCarType,
+                        SdkPreferencesHelper.getInstance().getConnectedCarBase(), SdkPreferencesHelper.getInstance().getTrxAddressConnectable(),
+                        SdkPreferencesHelper.getInstance().getTrxAddressConnectable2(), SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft(),
+                        SdkPreferencesHelper.getInstance().getTrxAddressFrontRight(), SdkPreferencesHelper.getInstance().getTrxAddressLeft(),
+                        SdkPreferencesHelper.getInstance().getTrxAddressMiddle(), SdkPreferencesHelper.getInstance().getTrxAddressRight(),
+                        SdkPreferencesHelper.getInstance().getTrxAddressTrunk(), SdkPreferencesHelper.getInstance().getTrxAddressRearLeft(),
+                        SdkPreferencesHelper.getInstance().getTrxAddressBack(), SdkPreferencesHelper.getInstance().getTrxAddressRearRight(),
+                        SdkPreferencesHelper.getInstance().getRssiLogNumber(), SdkPreferencesHelper.getInstance().getRollingAvElement(),
+                        SdkPreferencesHelper.getInstance().getStartNbElement(), SdkPreferencesHelper.getInstance().getLockNbElement(),
+                        SdkPreferencesHelper.getInstance().getUnlockNbElement(), SdkPreferencesHelper.getInstance().getWelcomeNbElement(),
+                        SdkPreferencesHelper.getInstance().getLongNbElement(), SdkPreferencesHelper.getInstance().getShortNbElement(),
+                        SdkPreferencesHelper.getInstance().getThatchamTimeout(), SdkPreferencesHelper.getInstance().getLinAccSize(),
+                        SdkPreferencesHelper.getInstance().getCorrectionLinAcc(), SdkPreferencesHelper.getInstance().getFrozenThreshold(),
+                        SdkPreferencesHelper.getInstance().getRatioMaxMinThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getRatioCloseToCarThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOffsetEarForStart(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOffsetEarForLock(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOffsetEarForUnlock(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOffsetPocketForStart(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getStartThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getUnlockThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getLockThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getWelcomeThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMin(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMax(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getNearDoorThresholdMB(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMax(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMin(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getNearDoorThresholdTLorTRMax(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getNearDoorThresholdTLorTRMin(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getAverageDeltaLockThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getAverageDeltaUnlockThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getUnlockMode(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getLockMode(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getStartMode(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getEcretage70_100(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getEcretage50_70(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getEcretage30_50(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getEcretage30_30(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerLeft(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerMiddle(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRight(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerTrunk(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerBack(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontLeft(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearLeft(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontRight(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearRight(connectedCarType));
+                TrxUtils.writeFirstColumnLogs();
+            }
             mBleRangingHelper.initializeConnectedCar();
         }
         setActivityTitle();

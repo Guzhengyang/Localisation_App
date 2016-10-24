@@ -119,6 +119,7 @@
     <string name="pref_equalizer_left">Left Equalizer</string>
     <string name="pref_equalizer_middle">Middle Equalizer</string>
     <string name="pref_equalizer_right">Right Equalizer</string>
+    <string name="pref_equalizer_trunk">Trunk Equalizer</string>
     <string name="pref_equalizer_back">Back Equalizer</string>
     <string name="pref_equalizer_front_left">Front Left Equalizer</string>
     <string name="pref_equalizer_rear_left">Rear Left Equalizer</string>

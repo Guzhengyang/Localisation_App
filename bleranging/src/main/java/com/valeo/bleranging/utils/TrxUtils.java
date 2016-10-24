@@ -224,6 +224,53 @@ public class TrxUtils {
         appendRssiLog(log);
     }
 
+
+    public static void appendSettingLogs(String carType, String carBase, String addressConnectable, String addressConnectable2, String addressFrontLeft, String addressFrontRight,
+                                         String addressLeft, String addressMiddle, String addressRight, String addressTrunk, String addressRearLeft, String addressBack, String addressRearRight,
+                                         int logNumber, int rollAvElement, int startNumElement, int lockNumelement, int unlockNumElement, int welcomeNumElement, int LongNumElement, int shortNumElement,
+                                         float thatchamTimeout, int sizeAcc, float correctionAcc, float frozenThr,
+                                         int ratioMaxMinThr, int ratioCloseToCar, int offsetEarStart, int offsetEarLock, int offsetEarUnlock, int offsetPocketStart, int offsetPocketLock, int offsetPocketUnlock,
+                                         int startThr, int unlockThr, int lockThr, int welcomeThr, int nearDoorRatioThr, int backDoorRatioMinThr, int backDoorRatioMaxThr,
+                                         int nearDoorRatioMB, int nearDoorRatioMLMRMaxThr, int nearDoorRatioMLMRMinThr, int nearDoorRatioTLTRMaxThr, int nearDoorRatioTLTRMinThr,
+                                         int averageDeltaLockThr, int averageDeltaUnlockThr, int unlockValidNumber,
+                                         int unlockMode, int lockMode, int startMode, float ecretage100, float ecretage70, float ecretage50, float ecretage30,
+                                         int equaLeft, int equaMiddle, int equaRight, int equaTrunk, int equaBack, int equaFrontLeft, int equaRearLeft, int equaFrontRight, int equaRearRight) {
+        final String comma = ";";
+        String log = carType + comma + carBase + comma + addressConnectable + comma
+                + addressConnectable2 + comma + addressFrontLeft + comma + addressFrontRight +
+                comma + addressLeft + comma + addressMiddle + comma + addressRight + comma + addressTrunk
+                + comma + addressRearLeft + comma + addressBack + comma + addressRearRight
+                + String.valueOf(logNumber) + comma + String.valueOf(rollAvElement) + comma
+                + String.valueOf(startNumElement) + comma + String.valueOf(lockNumelement) + comma
+                + String.valueOf(unlockNumElement) + comma + String.valueOf(welcomeNumElement) + comma
+                + String.valueOf(LongNumElement) + comma + String.valueOf(shortNumElement) + comma
+                + String.valueOf(thatchamTimeout) + comma + String.valueOf(sizeAcc) + comma
+                + String.valueOf(correctionAcc) + comma + String.valueOf(frozenThr) + comma
+                + String.valueOf(ratioMaxMinThr) + comma + String.valueOf(ratioCloseToCar) + comma
+                + String.valueOf(offsetEarStart) + comma + String.valueOf(offsetEarLock) + comma
+                + String.valueOf(offsetEarUnlock) + comma + String.valueOf(offsetPocketStart) + comma
+                + String.valueOf(offsetPocketLock) + comma + String.valueOf(offsetPocketUnlock) + comma
+                + String.valueOf(startThr) + comma + String.valueOf(unlockThr) + comma
+                + String.valueOf(lockThr) + comma + String.valueOf(welcomeThr) + comma
+                + String.valueOf(nearDoorRatioThr) + comma + String.valueOf(backDoorRatioMinThr) + comma
+                + String.valueOf(backDoorRatioMaxThr) + comma + String.valueOf(nearDoorRatioMB) + comma
+                + String.valueOf(nearDoorRatioMLMRMaxThr) + comma
+                + String.valueOf(nearDoorRatioMLMRMinThr) + comma
+                + String.valueOf(nearDoorRatioTLTRMaxThr) + comma
+                + String.valueOf(nearDoorRatioTLTRMinThr) + comma
+                + String.valueOf(averageDeltaLockThr) + comma
+                + String.valueOf(averageDeltaUnlockThr) + comma
+                + String.valueOf(unlockValidNumber) + comma + String.valueOf(unlockMode) + comma
+                + String.valueOf(lockMode) + comma + String.valueOf(startMode) + comma
+                + String.valueOf(ecretage100) + comma + String.valueOf(ecretage70) + comma
+                + String.valueOf(ecretage50) + comma + String.valueOf(ecretage30) + comma
+                + String.valueOf(equaLeft) + comma + String.valueOf(equaMiddle) + comma
+                + String.valueOf(equaRight) + comma + String.valueOf(equaTrunk) + comma + String.valueOf(equaBack) + comma
+                + String.valueOf(equaFrontLeft) + comma + String.valueOf(equaRearLeft) + comma
+                + String.valueOf(equaFrontRight) + comma + String.valueOf(equaRearRight);
+        appendRssiLog(log);
+    }
+
     /**
      * Function used to debug and write logs into a file.
      */
@@ -235,6 +282,75 @@ public class TrxUtils {
             //BufferedWriter for performance, true to set append to file flag
             BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
             buf.append(timestamp).append(";").append(text);
+            buf.newLine();
+            buf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean createLogFile() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_kk", Locale.FRANCE);
+        String timestampLog = sdf.format(new Date());
+        SdkPreferencesHelper.getInstance().setLogFileName("sdcard/InBlueRssi/allRssi_" + SdkPreferencesHelper.getInstance().getRssiLogNumber() + "_" + timestampLog + ".csv");
+        PSALogs.d("LogFileName", SdkPreferencesHelper.getInstance().getLogFileName());
+        File logFile = new File("sdcard/InBlueRssi/allRssi_" + SdkPreferencesHelper.getInstance().getRssiLogNumber() + "_" + timestampLog + ".csv");
+        if (!logFile.exists()) {
+            try {
+                //Create file
+                if (logFile.createNewFile()) {
+                    PSALogs.d("make", "file Success");
+                    return true;
+                } else {
+                    PSALogs.d("make", "file Failed");
+                    return false;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    public static void writeFirstColumnSettings() {
+        //Write 1st row with column names
+        //BufferedWriter for performance, true to set append to file flag
+        String ColNames = "TIMESTAMP;carType;carBase;addressConnectable;addressConnectable2;addressFrontLeft;addressFrontRight;"
+                + "addressLeft;addressMiddle;addressRight;addressTrunk;addressRearLeft;addressBack;addressRearRight;"
+                + "logNumber;rollAvElement;startNumElement;lockNumelement;unlockNumElement;welcomeNumElement;LongNumElement;shortNumElement;"
+                + "thatchamTimeout;sizeAcc;correctionAcc;frozenThr;"
+                + "ratioMaxMinThr;ratioCloseToCar;offsetEarStart;offsetEarLock;offsetEarUnlock;offsetPocketStart;offsetPocketLock;offsetPocketUnlock;"
+                + "startThr;unlockThr;lockThr;welcomeThr;nearDoorRatioThr;backDoorRatioMinThr;backDoorRatioMaxThr;"
+                + "nearDoorRatioMB;nearDoorRatioMLMRMaxThr;nearDoorRatioMLMRMinThr;nearDoorRatioTLTRMaxThr;nearDoorRatioTLTRMinThr;"
+                + "averageDeltaLockThr;averageDeltaUnlockThr;unlockValidNumber;"
+                + "unlockMode;lockMode;startMode;ecretage100;ecretage70;ecretage50;ecretage30;"
+                + "equaLeft;equaMiddle;equaRight;equaTrunk;equaBack;equaFrontLeft;equaRearLeft;equaFrontRight;equaRearRight;";
+        try {
+            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+            buf.append(ColNames);
+            buf.newLine();
+            buf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeFirstColumnLogs() {
+        //Write 1st row with column names
+        //BufferedWriter for performance, true to set append to file flag
+        String ColNames = "TIMESTAMP;RSSI LEFT;RSSI MIDDLE1;RSSI MIDDLE2;RSSI RIGHT;"
+                + "RSSI TRUNK;RSSI FRONTLEFT;RSSI FRONTRIGHT;RSSI REARLEFT;RSSI REARRIGHT;"
+                + "RSSI BACK;Z AZIMUTH;X PITCH;Y ROLL;IN POCKET;IS LAID;ARE LOCK ACTIONS AVAILABLE;"
+                + "IS START BLOCKED;IS START FORCED;IS LOCK BLOCKED;IS LOCK FORCED;"
+                + "IS UNLOCK BLOCKED;IS UNLOCK FORCED;IS FROZEN;IS LOCK;REARM LOCK;REARM UNLOCK;"
+                + "REARM WELCOME;WELCOME FLAG;LOCK FLAG;START FLAG;LEFT AREA FLAG;RIGHT AREA FLAG;"
+                + "BACK AREA FLAG;WALK AWAY FLAG;APPROACH FLAG;LEFT TURN FLAG;FULL TURN FLAG;"
+                + "RIGHT TURN FLAG;RECORD FLAG;PREDICTION;LOCK FROM TRX;LOCK TO SEND;START ALLOWED;IS THATCHAM;";
+        try {
+            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+            buf.append(ColNames);
             buf.newLine();
             buf.close();
         } catch (IOException e) {
