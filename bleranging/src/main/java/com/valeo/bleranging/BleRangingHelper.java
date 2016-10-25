@@ -344,6 +344,9 @@ public class BleRangingHelper implements SensorEventListener {
                     }
                 }
                 if (lastThatchamChanged && isInLockArea) { // when thatcham has changed, and get into lock area
+                    if (!newLockStatus) { // if the vehicle is unlocked, lock it
+                        performLockVehicleRequest(true);
+                    }
                     // if not in thatcham area and in lock area, rearm unlock
                     rearmUnlock.set(true);
                     makeNoise(ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 100);
