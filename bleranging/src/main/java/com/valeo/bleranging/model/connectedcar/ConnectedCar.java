@@ -465,7 +465,7 @@ public abstract class ConnectedCar {
      * Condition to enable Start action
      * @return true if the strategy is verified, false otherwise
      */
-    public abstract boolean startStrategy();
+    public abstract List<Integer> startStrategy();
 
     /**
      * Check if we are in start area

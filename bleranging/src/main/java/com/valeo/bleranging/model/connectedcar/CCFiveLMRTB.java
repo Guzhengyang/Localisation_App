@@ -45,8 +45,8 @@ public class CCFiveLMRTB extends ConnectedCar {
     }
 
     @Override
-    public boolean startStrategy() {
-        return false;
+    public List<Integer> startStrategy() {
+        return null;
     }
 
     @Override

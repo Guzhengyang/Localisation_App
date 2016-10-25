@@ -1,5 +1,6 @@
 package com.valeo.bleranging.bluetooth;
 
+import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
@@ -91,13 +92,16 @@ public class InblueProtocolManager {
      * @param isInLockArea   true if in lock area, false otherwise
      * @return the packet one payload containing six bytes
      */
-    public byte[] getPacketOnePayload(boolean isRKE, List<Integer> isUnlockStrategyValid, boolean isInUnlockArea, boolean isInStartArea, boolean isInLockArea) {
+    public byte[] getPacketOnePayload(boolean isRKE, List<Integer> isUnlockStrategyValid,
+                                      boolean isInUnlockArea, List<Integer> isStartStrategyValid,
+                                      boolean isInStartArea, boolean isInLockArea) {
         byte[] payload = new byte[6];
         payload[0] = (byte) ((packetOneCounter>>8)&0xFF);
         payload[1] = (byte) ((packetOneCounter)&0xFF);
         payload[2] = (0x01);
         payload[3] = getPayloadThirdByte();
-        payload[4] = getPayloadFourthByte(isRKE, isUnlockStrategyValid, isInUnlockArea, isInStartArea, isInLockArea);
+        payload[4] = getPayloadFourthByte(isRKE, isUnlockStrategyValid, isInUnlockArea,
+                isStartStrategyValid, isInStartArea, isInLockArea);
         payload[5] = getPayloadFifthByte(isRKE);
         packetOneCounter++;
         return payload;
@@ -140,12 +144,23 @@ public class InblueProtocolManager {
      * @return the payload fourth byte
      */
     private byte getPayloadFourthByte(boolean isRKE, List<Integer> isUnlockStrategyValid, boolean
-            isInUnlockArea, boolean isInStartArea, boolean isInLockArea) {
+            isInUnlockArea, List<Integer> isStartStrategyValid, boolean isInStartArea, boolean isInLockArea) {
         byte payloadFour = (byte) 0;
         if (isInLockArea) {
             payloadFour |= 0x06;
-        } else if (isInStartArea) {
-            payloadFour |= 0x01;
+        } else if (isStartStrategyValid != null && isInStartArea) {
+            for (Integer integer : isStartStrategyValid) {
+                switch (integer) {
+                    case BleRangingHelper.START_TRUNK_AREA:
+                        payloadFour |= 0x04;
+                        break;
+                    case BleRangingHelper.START_PASSENGER_AREA:
+                        payloadFour |= 0x01;
+                        break;
+                    default:
+                        break;
+                }
+            }
         } else if (isUnlockStrategyValid != null && isInUnlockArea) {
             for (Integer integer : isUnlockStrategyValid) {
                 switch (integer) {
@@ -154,9 +169,6 @@ public class InblueProtocolManager {
                         break;
                     case ConnectedCar.NUMBER_TRX_RIGHT:
                         payloadFour |= 0x02;
-                        break;
-                    case ConnectedCar.NUMBER_TRX_TRUNK:
-                        payloadFour |= 0x04;
                         break;
                     case ConnectedCar.NUMBER_TRX_BACK:
                         payloadFour |= 0x05;

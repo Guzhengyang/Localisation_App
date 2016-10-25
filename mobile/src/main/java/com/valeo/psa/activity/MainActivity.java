@@ -21,6 +21,7 @@ import android.nfc.NfcManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -96,6 +97,15 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int REQUEST_PROCESS_OUTGOING_CALLS_PERMISSION = 25116;
     private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
     private static final int NOTIFICATION_ID_1 = 1;
+    private final static int RKE_USE_TIMEOUT = 5000;
+    private final Handler mHandler = new Handler();
+    private boolean isRKEAvailable = true;
+    private final Runnable toggleOnIsRKEAvailable = new Runnable() {
+        @Override
+        public void run() {
+            isRKEAvailable = true;
+        }
+    };
     private Toolbar toolbar;
     private FrameLayout main_frame;
     private NestedScrollView content_main;
@@ -126,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private LayerDrawable layerDrawable;
     private GradientDrawable welcome_area;
     private GradientDrawable start_area;
+    private GradientDrawable trunk_area;
     private GradientDrawable lock_area;
     private GradientDrawable unlock_area_front_left;
     private GradientDrawable unlock_area_left;
@@ -349,7 +360,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         vehicle_locked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBleRangingHelper.isFullyConnected() && mBleRangingHelper.areLockActionsAvailable()) {
+                if (isRKEAvailable && mBleRangingHelper.isFullyConnected()
+                        && mBleRangingHelper.areLockActionsAvailable()) {
+                    isRKEAvailable = false;
+                    mHandler.postDelayed(toggleOnIsRKEAvailable, RKE_USE_TIMEOUT);
                     carDoorStatus = CarDoorStatus.LOCKED;
                     vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
                     driver_s_door_unlocked.setBackgroundResource(0);
@@ -363,7 +377,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         driver_s_door_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBleRangingHelper.isFullyConnected() && mBleRangingHelper.areLockActionsAvailable()) {
+                if (isRKEAvailable && mBleRangingHelper.isFullyConnected()
+                        && mBleRangingHelper.areLockActionsAvailable()) {
+                    isRKEAvailable = false;
+                    mHandler.postDelayed(toggleOnIsRKEAvailable, RKE_USE_TIMEOUT);
                     carDoorStatus = CarDoorStatus.DRIVER_DOOR_OPEN;
                     driver_s_door_unlocked.setBackgroundResource(R.mipmap.slider_button);
                     vehicle_locked.setBackgroundResource(0);
@@ -378,7 +395,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         vehicle_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBleRangingHelper.isFullyConnected() && mBleRangingHelper.areLockActionsAvailable()) {
+                if (isRKEAvailable && mBleRangingHelper.isFullyConnected()
+                        && mBleRangingHelper.areLockActionsAvailable()) {
+                    isRKEAvailable = false;
+                    mHandler.postDelayed(toggleOnIsRKEAvailable, RKE_USE_TIMEOUT);
                     carDoorStatus = CarDoorStatus.UNLOCKED;
                     vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
                     driver_s_door_unlocked.setBackgroundResource(0);
@@ -865,8 +885,13 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             case BleRangingHelper.UNLOCK_BACK_AREA:
                 unlock_area_back.setColor(Color.GREEN);
                 break;
-            case BleRangingHelper.START_AREA:
+            case BleRangingHelper.START_PASSENGER_AREA:
                 start_area.setColor(Color.CYAN);
+                break;
+            case BleRangingHelper.START_TRUNK_AREA:
+                if (trunk_area != null) {
+                    trunk_area.setColor(Color.MAGENTA);
+                }
                 break;
             case BleRangingHelper.THATCHAM_AREA:
                 thatcham_area.setColor(Color.YELLOW);
@@ -912,8 +937,13 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             case BleRangingHelper.UNLOCK_BACK_AREA:
                 unlock_area_back.setColor(Color.BLACK);
                 break;
-            case BleRangingHelper.START_AREA:
+            case BleRangingHelper.START_PASSENGER_AREA:
                 start_area.setColor(Color.BLACK);
+                break;
+            case BleRangingHelper.START_TRUNK_AREA:
+                if (trunk_area != null) {
+                    trunk_area.setColor(Color.BLACK);
+                }
                 break;
             case BleRangingHelper.THATCHAM_AREA:
                 thatcham_area.setColor(Color.BLACK);
@@ -971,6 +1001,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 } else {
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_open));
                 }
+                trunk_area = null;
                 unlock_area_front_left = null;
                 unlock_area_rear_left = null;
                 unlock_area_front_right = null;
@@ -983,6 +1014,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 } else {
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_5_open));
                 }
+                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                 unlock_area_front_left = null;
                 unlock_area_rear_left = null;
                 unlock_area_front_right = null;
@@ -995,6 +1027,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 } else {
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_7_open));
                 }
+                trunk_area = null;
                 unlock_area_front_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_left);
                 unlock_area_rear_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_left);
                 unlock_area_front_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_right);
@@ -1007,18 +1040,20 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 } else {
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_8_open));
                 }
+                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                 unlock_area_front_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_left);
                 unlock_area_rear_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_left);
                 unlock_area_front_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_right);
                 unlock_area_rear_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_right);
                 break;
             default:
-                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_seven);
+                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_eight);
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_7_close));
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_8_close));
                 } else {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_7_open));
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_8_open));
                 }
+                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                 unlock_area_front_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_left);
                 unlock_area_rear_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_left);
                 unlock_area_front_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_right);
