@@ -16,6 +16,7 @@ public class InblueProtocolManager {
     private int packetOneCounter = 0;
     private boolean isStartRequested = false;
     private boolean isWelcomeRequested = false;
+    private boolean isBackRequested = false;
     private boolean isLockedFromTrx = false;
     private boolean isLockedToSend = false;
     private boolean isThatcham = false;
@@ -30,6 +31,10 @@ public class InblueProtocolManager {
 
     public boolean isWelcomeRequested() {
         return isWelcomeRequested;
+    }
+
+    public boolean isBackRequested() {
+        return isBackRequested;
     }
 
     public boolean isLockedToSend() {
@@ -54,6 +59,10 @@ public class InblueProtocolManager {
 
     public void setIsWelcomeRequested(boolean isWelcomeRequested) {
         this.isWelcomeRequested = isWelcomeRequested;
+    }
+
+    public void setIsBackRequested(boolean isBackRequested) {
+        this.isBackRequested = isBackRequested;
     }
 
     public void setIsLockedFromTrx(boolean isLockedFromTrx) {
@@ -185,6 +194,7 @@ public class InblueProtocolManager {
         payloadFive |= isStartRequested ? 0x04 : 0x00;
         payloadFive |= isThatcham ? 0x08 : 0x00;
         payloadFive |= isWelcomeRequested ? 0x40 : 0x00;
+        payloadFive |= isBackRequested ? 0x80 : 0x00;
         switch (carBase) {
             case BASE_1:
                 payloadFive |= 0x30; // Full PSU, lock and unlock activated 0011 0000

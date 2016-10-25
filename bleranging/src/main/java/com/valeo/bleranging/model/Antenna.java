@@ -7,9 +7,6 @@ import com.valeo.bleranging.utils.PSALogs;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.valeo.bleranging.model.Trx.ANTENNA_ID_1;
-import static com.valeo.bleranging.model.Trx.ANTENNA_ID_2;
-
 /**
  * Created by l-avaratha on 08/06/2016
  */
@@ -115,7 +112,6 @@ public class Antenna {
     private int getCorrectedRssi(int rssi, BLEChannel bleChannel) {
         float borneInf = lastRssi - getEcretageValue(lastRssi);
         float borneSup = lastRssi + getEcretageValue(lastRssi);
-        PSALogs.d("ecretage" + antennaId, numberTrx + " lastRssi:" + lastRssi + " borneInf:" + borneInf + " borneSup:" + borneSup);
         switch (bleChannel) {
             case BLE_CHANNEL_37:
                 offsetBleChannel38 = 0;
@@ -137,10 +133,16 @@ public class Antenna {
                 break;
         }
         if (rssi > borneSup) {
+            PSALogs.d("ecretage" + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi
+                    + " borneInf:" + borneInf + " borneSup:" + borneSup + " savedRssi:" + (int) Math.ceil(borneSup));
             return (int) Math.ceil(borneSup);
         } else if (rssi < borneInf) {
+            PSALogs.d("ecretage" + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi
+                    + " borneInf:" + borneInf + " borneSup:" + borneSup + " savedRssi:" + (int) Math.floor(borneInf));
             return (int) Math.floor(borneInf);
         } else {
+            PSALogs.d("ecretage" + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi
+                    + " borneInf:" + borneInf + " borneSup:" + borneSup + " savedRssi:" + rssi);
             return rssi;
         }
     }
@@ -302,12 +304,6 @@ public class Antenna {
             rssiPente.remove(0);
         }
         rssi += getTrxRssiEqualizer(numberTrx); // add trx rssi antenna power Equalizer
-        if (antennaId == ANTENNA_ID_1) {
-            PSALogs.d("ecretage" + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi);
-        }
-        if (antennaId == ANTENNA_ID_2) {
-            PSALogs.d("ecretage" + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi);
-        }
         currentOriginalRssi = rssi;
         rssiPente.add(currentOriginalRssi - lastOriginalRssi);
         lastOriginalRssi = currentOriginalRssi;
@@ -324,12 +320,6 @@ public class Antenna {
         }
         rollingAverageRssi(isSmartphoneMovingSlowly);
         hasReceivedRssi.set(true);
-        if (antennaId == ANTENNA_ID_1) {
-            PSALogs.d("ecretage" + antennaId, numberTrx + " savedRssi:" + lastRssi);
-        }
-        if (antennaId == ANTENNA_ID_2) {
-            PSALogs.d("ecretage" + antennaId, numberTrx + " savedRssi:" + lastRssi);
-        }
     }
 
     /**
