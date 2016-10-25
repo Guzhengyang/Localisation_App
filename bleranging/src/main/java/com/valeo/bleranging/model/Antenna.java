@@ -113,8 +113,8 @@ public class Antenna {
      * @return the corrected rssi
      */
     private int getCorrectedRssi(int rssi, BLEChannel bleChannel) {
-        int borneInf = (int) (lastRssi - getEcretageValue(lastRssi));
-        int borneSup = (int) (lastRssi + getEcretageValue(lastRssi));
+        float borneInf = lastRssi - getEcretageValue(lastRssi);
+        float borneSup = lastRssi + getEcretageValue(lastRssi);
         PSALogs.d("ecretage" + antennaId, numberTrx + " lastRssi:" + lastRssi + " borneInf:" + borneInf + " borneSup:" + borneSup);
         switch (bleChannel) {
             case BLE_CHANNEL_37:
@@ -137,9 +137,9 @@ public class Antenna {
                 break;
         }
         if (rssi > borneSup) {
-            return borneSup;
+            return (int) Math.ceil(borneSup);
         } else if (rssi < borneInf) {
-            return borneInf;
+            return (int) Math.floor(borneInf);
         } else {
             return rssi;
         }
