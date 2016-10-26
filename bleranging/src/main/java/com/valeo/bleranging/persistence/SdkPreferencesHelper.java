@@ -31,6 +31,8 @@ public final class SdkPreferencesHelper {
     public final static int AVERAGE_DELTA_UNLOCK_THRESHOLD = 10;
     public final static int AVERAGE_DELTA_LOCK_THRESHOLD = -10;
     public final static float THATCHAM_TIMEOUT = 3.5f;
+    public final static float CRYPTO_PRE_AUTH_TIMEOUT = 0f;
+    public final static float CRYPTO_ACTION_TIMEOUT = 0f;
     public final static int RSSI_LOG_NUMBER = 0;
     public final static int ROLLING_AVERAGE_ELEMENTS = 50;
     public final static int START_NB_ELEMENT = 10;
@@ -115,6 +117,8 @@ public final class SdkPreferencesHelper {
     public static final String AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD";
     public static final String UNLOCK_VALID_NB_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_VALID_NB_ELEMENT";
     public static final String THATCHAM_TIMEOUT_PREFERENCES_NAME = "com.inblue.PREFERENCE_THATCHAM_TIMEOUT";
+    public static final String CRYPTO_PRE_AUTH_TIMEOUT_PREFERENCES_NAME = "com.inblue.PREFERENCE_CRYPTO_PRE_AUTH_TIMEOUT";
+    public static final String CRYPTO_ACTION_TIMEOUT_PREFERENCES_NAME = "com.inblue.PREFERENCE_CRYPTO_ACTION_TIMEOUT";
     public static final String RSSI_LOG_NUMBER_PREFERENCES_NAME = "com.inblue.PREFERENCE_RSSI_LOG_NUMBER";
     public static final String ROLLING_AV_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_ROLLING_AV_ELEMENT";
     public static final String START_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_START_NB_ELEMENT";
@@ -608,6 +612,14 @@ public final class SdkPreferencesHelper {
 
     public float getThatchamTimeout() {
         return readFloat(SAVED_CC_GENERIC_OPTION, THATCHAM_TIMEOUT_PREFERENCES_NAME, THATCHAM_TIMEOUT);
+    }
+
+    public float getCryptoPreAuthTimeout() {
+        return readFloat(SAVED_CC_GENERIC_OPTION, CRYPTO_PRE_AUTH_TIMEOUT_PREFERENCES_NAME, CRYPTO_PRE_AUTH_TIMEOUT);
+    }
+
+    public float getCryptoActionTimeout() {
+        return readFloat(SAVED_CC_GENERIC_OPTION, CRYPTO_ACTION_TIMEOUT_PREFERENCES_NAME, CRYPTO_ACTION_TIMEOUT);
     }
 
 // --Commented out by Inspection START (30/09/2016 11:26):

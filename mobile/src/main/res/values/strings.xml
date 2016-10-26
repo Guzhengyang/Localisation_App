@@ -102,6 +102,8 @@
     <string name="pref_nb_element_short">Short Number Element</string>
     <string name="pref_timeout">TIMEOUT</string>
     <string name="pref_thatcham_timeout">Thatcham Timeout</string>
+    <string name="pref_crypto_pre_auth_timeout">Crypto Pre Auth Timeout</string>
+    <string name="pref_crypto_action_timeout">Crypto Action Timeout</string>
     <string name="pref_mode">MODE</string>
     <string name="pref_mode_unlock">Unlock Mode</string>
     <string name="pref_mode_lock">Lock Mode</string>

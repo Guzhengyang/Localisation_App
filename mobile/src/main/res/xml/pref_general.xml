@@ -91,6 +91,14 @@
             android:inputType="number|numberDecimal"
             android:key="com.inblue.PREFERENCE_THATCHAM_TIMEOUT"
             android:title="@string/pref_thatcham_timeout" />
+        <EditTextPreference
+            android:inputType="number|numberDecimal"
+            android:key="com.inblue.PREFERENCE_CRYPTO_PRE_AUTH_TIMEOUT"
+            android:title="@string/pref_crypto_pre_auth_timeout" />
+        <EditTextPreference
+            android:inputType="number|numberDecimal"
+            android:key="com.inblue.PREFERENCE_CRYPTO_ACTION_TIMEOUT"
+            android:title="@string/pref_crypto_action_timeout" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_acc">
         <EditTextPreference

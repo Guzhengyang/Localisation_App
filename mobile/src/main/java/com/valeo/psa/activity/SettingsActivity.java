@@ -495,6 +495,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private ListPreference connected_car_type;
         private ListPreference connected_car_base;
         private EditTextPreference thatcham_timeout;
+        private EditTextPreference crypto_pre_auth_timeout;
+        private EditTextPreference crypto_action_timeout;
         private EditTextPreference rssi_log_number;
         private EditTextPreference rolling_av_element;
         private EditTextPreference start_nb_element;
@@ -540,6 +542,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             connected_car_type = ((ListPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_TYPE_PREFERENCES_NAME));
             connected_car_base = ((ListPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_BASE_PREFERENCES_NAME));
             thatcham_timeout = ((EditTextPreference) findPreference(SdkPreferencesHelper.THATCHAM_TIMEOUT_PREFERENCES_NAME));
+            crypto_pre_auth_timeout = ((EditTextPreference) findPreference(SdkPreferencesHelper.CRYPTO_PRE_AUTH_TIMEOUT_PREFERENCES_NAME));
+            crypto_action_timeout = ((EditTextPreference) findPreference(SdkPreferencesHelper.CRYPTO_ACTION_TIMEOUT_PREFERENCES_NAME));
             rssi_log_number = ((EditTextPreference) findPreference(SdkPreferencesHelper.RSSI_LOG_NUMBER_PREFERENCES_NAME));
             rolling_av_element = ((EditTextPreference) findPreference(SdkPreferencesHelper.ROLLING_AV_ELEMENT_PREFERENCES_NAME));
             start_nb_element = ((EditTextPreference) findPreference(SdkPreferencesHelper.START_NB_ELEMENT_PREFERENCES_NAME));
@@ -566,6 +570,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         private void setDefaultValues() {
             thatcham_timeout.setText(thatcham_timeout.getSummary().toString());
+            crypto_pre_auth_timeout.setText(crypto_pre_auth_timeout.getSummary().toString());
+            crypto_action_timeout.setText(crypto_action_timeout.getSummary().toString());
             rssi_log_number.setText(rssi_log_number.getSummary().toString());
             rolling_av_element.setText(rolling_av_element.getSummary().toString());
             start_nb_element.setText(start_nb_element.getSummary().toString());
@@ -598,6 +604,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_A);
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
             bindPreferenceSummaryToValue(thatcham_timeout, String.valueOf(SdkPreferencesHelper.THATCHAM_TIMEOUT));
+            bindPreferenceSummaryToValue(crypto_pre_auth_timeout, String.valueOf(SdkPreferencesHelper.CRYPTO_PRE_AUTH_TIMEOUT));
+            bindPreferenceSummaryToValue(crypto_action_timeout, String.valueOf(SdkPreferencesHelper.CRYPTO_ACTION_TIMEOUT));
             bindPreferenceSummaryToValue(rssi_log_number, String.valueOf(SdkPreferencesHelper.RSSI_LOG_NUMBER));
             bindPreferenceSummaryToValue(rolling_av_element, String.valueOf(SdkPreferencesHelper.ROLLING_AVERAGE_ELEMENTS));
             bindPreferenceSummaryToValue(start_nb_element, String.valueOf(SdkPreferencesHelper.START_NB_ELEMENT));
