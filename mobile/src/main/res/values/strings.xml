@@ -157,4 +157,5 @@
 
     <string name="default_summary">Select a configuration</string>
     <string name="icon_default">car_8</string>
+    <string name="please_wait">Please wait…</string>
 </resources>

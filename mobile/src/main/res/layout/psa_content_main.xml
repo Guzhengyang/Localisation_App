@@ -125,7 +125,21 @@
                     android:visibility="invisible" />
             </FrameLayout>
 
-
+            <TextView
+                android:id="@+id/rke_loading_progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@+id/start_button_frame"
+                android:layout_alignTop="@+id/door_status_bg"
+                android:background="#AA000000"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:text="@string/please_wait"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <ImageView

@@ -100,12 +100,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private final static int RKE_USE_TIMEOUT = 5000;
     private final Handler mHandler = new Handler();
     private boolean isRKEAvailable = true;
-    private final Runnable toggleOnIsRKEAvailable = new Runnable() {
-        @Override
-        public void run() {
-            isRKEAvailable = true;
-        }
-    };
     private Toolbar toolbar;
     private FrameLayout main_frame;
     private NestedScrollView content_main;
@@ -124,6 +118,14 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private RecyclerView control_trunk_windows_lights;
     private RecyclerView car_model_recyclerView;
     private TextView selected_car_model_pinned;
+    private TextView rke_loading_progress_bar;
+    private final Runnable toggleOnIsRKEAvailable = new Runnable() {
+        @Override
+        public void run() {
+            isRKEAvailable = true;
+            rke_loading_progress_bar.setVisibility(View.GONE);
+        }
+    };
     private ImageButton vehicle_locked;
     private ImageButton driver_s_door_unlocked;
     private ImageButton vehicle_unlocked;
@@ -363,6 +365,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 if (isRKEAvailable && mBleRangingHelper.isFullyConnected()
                         && mBleRangingHelper.areLockActionsAvailable()) {
                     isRKEAvailable = false;
+                    rke_loading_progress_bar.setVisibility(View.VISIBLE);
                     mHandler.postDelayed(toggleOnIsRKEAvailable, RKE_USE_TIMEOUT);
                     carDoorStatus = CarDoorStatus.LOCKED;
                     vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
@@ -380,6 +383,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 if (isRKEAvailable && mBleRangingHelper.isFullyConnected()
                         && mBleRangingHelper.areLockActionsAvailable()) {
                     isRKEAvailable = false;
+                    rke_loading_progress_bar.setVisibility(View.VISIBLE);
                     mHandler.postDelayed(toggleOnIsRKEAvailable, RKE_USE_TIMEOUT);
                     carDoorStatus = CarDoorStatus.DRIVER_DOOR_OPEN;
                     driver_s_door_unlocked.setBackgroundResource(R.mipmap.slider_button);
@@ -398,6 +402,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 if (isRKEAvailable && mBleRangingHelper.isFullyConnected()
                         && mBleRangingHelper.areLockActionsAvailable()) {
                     isRKEAvailable = false;
+                    rke_loading_progress_bar.setVisibility(View.VISIBLE);
                     mHandler.postDelayed(toggleOnIsRKEAvailable, RKE_USE_TIMEOUT);
                     carDoorStatus = CarDoorStatus.UNLOCKED;
                     vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
@@ -483,6 +488,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         control_trunk_windows_lights = (RecyclerView) findViewById(R.id.control_trunk_windows_lights);
         car_model_recyclerView = (RecyclerView) findViewById(R.id.car_model_recyclerView);
         selected_car_model_pinned = (TextView) findViewById(R.id.selected_car_model_pinned);
+        rke_loading_progress_bar = (TextView) findViewById(R.id.rke_loading_progress_bar);
         vehicle_locked = (ImageButton) findViewById(R.id.vehicle_locked);
         driver_s_door_unlocked = (ImageButton) findViewById(R.id.driver_s_door_unlocked);
         vehicle_unlocked = (ImageButton) findViewById(R.id.vehicle_unlocked);
