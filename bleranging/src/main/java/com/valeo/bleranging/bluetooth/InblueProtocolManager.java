@@ -17,7 +17,6 @@ public class InblueProtocolManager {
     private int packetOneCounter = 0;
     private boolean isStartRequested = false;
     private boolean isWelcomeRequested = false;
-    private boolean isBackRequested = false;
     private boolean isLockedFromTrx = false;
     private boolean isLockedToSend = false;
     private boolean isThatcham = false;
@@ -32,10 +31,6 @@ public class InblueProtocolManager {
 
     public boolean isWelcomeRequested() {
         return isWelcomeRequested;
-    }
-
-    public boolean isBackRequested() {
-        return isBackRequested;
     }
 
     public boolean isLockedToSend() {
@@ -60,10 +55,6 @@ public class InblueProtocolManager {
 
     public void setIsWelcomeRequested(boolean isWelcomeRequested) {
         this.isWelcomeRequested = isWelcomeRequested;
-    }
-
-    public void setIsBackRequested(boolean isBackRequested) {
-        this.isBackRequested = isBackRequested;
     }
 
     public void setIsLockedFromTrx(boolean isLockedFromTrx) {
@@ -102,7 +93,7 @@ public class InblueProtocolManager {
         payload[3] = getPayloadThirdByte();
         payload[4] = getPayloadFourthByte(isRKE, isUnlockStrategyValid, isInUnlockArea,
                 isStartStrategyValid, isInStartArea, isInLockArea);
-        payload[5] = getPayloadFifthByte(isRKE);
+        payload[5] = getPayloadFifthByte(isRKE, isUnlockStrategyValid);
         packetOneCounter++;
         return payload;
     }
@@ -201,12 +192,14 @@ public class InblueProtocolManager {
      *
      * @return the payload fifth byte
      */
-    private byte getPayloadFifthByte(boolean isRKE) {
+    private byte getPayloadFifthByte(boolean isRKE, List<Integer> isUnlockStrategyValid) {
         byte payloadFive = (byte) 0;
         payloadFive |= isStartRequested ? 0x04 : 0x00;
         payloadFive |= isThatcham ? 0x08 : 0x00;
         payloadFive |= isWelcomeRequested ? 0x40 : 0x00;
-        payloadFive |= isBackRequested ? 0x80 : 0x00;
+        if (isUnlockStrategyValid != null && isUnlockStrategyValid.contains(ConnectedCar.NUMBER_TRX_BACK)) {
+            payloadFive |= 0x80;
+        }
         switch (carBase) {
             case BASE_1:
                 payloadFive |= 0x30; // Full PSU, lock and unlock activated 0011 0000
@@ -233,9 +226,9 @@ public class InblueProtocolManager {
                 } else {
                     payloadFive |= 0x00;
                 }
-                if (isLockedFromTrx) { // no psu_unlock, so if lock force thatcham to 0, so psu deactivated
-                    payloadFive &= 0xF7; // TODO delete workaround after bml flash
-                }
+//                if (isLockedFromTrx) { // no psu_unlock, so if lock force thatcham to 0, so psu deactivated
+//                    payloadFive &= 0xF7; // TODO delete workaround after bml flash
+//                }
                 payloadFive |= 0x10; // Lock PSU activated 0001 0000
                 break;
         }

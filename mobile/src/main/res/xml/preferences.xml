@@ -99,6 +99,14 @@
             android:title="@string/pref_threshold_near_door_ratio_tl_tr_min" />
         <EditTextPreference
             android:inputType="numberSigned"
+            android:key="com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_MRL_MRR"
+            android:title="@string/pref_threshold_near_door_ratio_mrl_mrr" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_TRL_TRR"
+            android:title="@string/pref_threshold_near_door_ratio_trl_trr" />
+        <EditTextPreference
+            android:inputType="numberSigned"
             android:key="com.inblue.PREFERENCE_AVERAGE_DELTA_LOCK_THRESHOLD"
             android:title="@string/pref_threshold_average_delta_lock" />
         <EditTextPreference

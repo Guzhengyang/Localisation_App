@@ -28,6 +28,8 @@ public final class SdkPreferencesHelper {
     public final static int NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MIN = 2;
     public final static int NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MAX = 12;
     public final static int NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MIN = 2;
+    public final static int NEAR_DOOR_RATIO_THRESHOLD_MRL_MRR = 10;
+    public final static int NEAR_DOOR_RATIO_THRESHOLD_TRL_TRR = 10;
     public final static int AVERAGE_DELTA_UNLOCK_THRESHOLD = 10;
     public final static int AVERAGE_DELTA_LOCK_THRESHOLD = -10;
     public final static float THATCHAM_TIMEOUT = 3.5f;
@@ -112,6 +114,8 @@ public final class SdkPreferencesHelper {
     public static final String NEAR_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_ML_MR_MIN";
     public static final String NEAR_DOOR_RATIO_THR_TL_TR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_TL_TR_MAX";
     public static final String NEAR_DOOR_RATIO_THR_TL_TR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_TL_TR_MIN";
+    public static final String NEAR_DOOR_RATIO_THR_MRL_MRR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_MRL_MRR";
+    public static final String NEAR_DOOR_RATIO_THR_TRL_TRR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_TRL_TRR";
     public static final String NEAR_DOOR_RATIO_THR_MB_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_MB";
     public static final String AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_LOCK_THRESHOLD";
     public static final String AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD";
@@ -454,6 +458,14 @@ public final class SdkPreferencesHelper {
 
     public int getNearDoorThresholdTLorTRMin(final String fileName) {
         return readInt(fileName, NEAR_DOOR_RATIO_THR_TL_TR_MIN_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MIN);
+    }
+
+    public int getNearDoorThresholdMRLorMRR(final String fileName) {
+        return readInt(fileName, NEAR_DOOR_RATIO_THR_MRL_MRR_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_MRL_MRR);
+    }
+
+    public int getNearDoorThresholdTRLorTRR(final String fileName) {
+        return readInt(fileName, NEAR_DOOR_RATIO_THR_TRL_TRR_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_TRL_TRR);
     }
 
     public int getAverageDeltaUnlockThreshold(final String fileName) {

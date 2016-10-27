@@ -73,6 +73,8 @@ public abstract class ConnectedCar {
     int nearDoorThresholdMLorMRMax;
     int nearDoorThresholdTLorTRMin;
     int nearDoorThresholdTLorTRMax;
+    int nearDoorThresholdMRLorMRR;
+    int nearDoorThresholdTRLorTRR;
     int nearDoorThresholdMB;
     Trx trxFrontLeft;
     Trx trxFrontRight;
@@ -111,6 +113,8 @@ public abstract class ConnectedCar {
         this.nearDoorThresholdMLorMRMax = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMax(connectedCarType);
         this.nearDoorThresholdTLorTRMin = SdkPreferencesHelper.getInstance().getNearDoorThresholdTLorTRMin(connectedCarType);
         this.nearDoorThresholdTLorTRMax = SdkPreferencesHelper.getInstance().getNearDoorThresholdTLorTRMax(connectedCarType);
+        this.nearDoorThresholdMRLorMRR = SdkPreferencesHelper.getInstance().getNearDoorThresholdMRLorMRR(connectedCarType);
+        this.nearDoorThresholdTRLorTRR = SdkPreferencesHelper.getInstance().getNearDoorThresholdTRLorTRR(connectedCarType);
         this.nearDoorThresholdMB = SdkPreferencesHelper.getInstance().getNearDoorThresholdMB(connectedCarType);
     }
 

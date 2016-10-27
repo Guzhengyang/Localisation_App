@@ -80,13 +80,17 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                     (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_LEFT, nearDoorThresholdMLorMRMax, true)
                             || compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_RIGHT, nearDoorThresholdMLorMRMax, true)) &&
                     (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_LEFT, nearDoorThresholdMLorMRMin, true)
-                            && compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_RIGHT, nearDoorThresholdMLorMRMin, true))) {
+                            && compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_RIGHT, nearDoorThresholdMLorMRMin, true)) &&
+                    (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_REAR_LEFT, nearDoorThresholdMRLorMRR, true)
+                            || compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_REAR_RIGHT, nearDoorThresholdMRLorMRR, true))) {
                 result.add(BleRangingHelper.START_PASSENGER_AREA);
             }
             if ((compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_LEFT, nearDoorThresholdTLorTRMax, true)
                     || compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_RIGHT, nearDoorThresholdTLorTRMax, true))
                     && (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_LEFT, nearDoorThresholdTLorTRMin, true)
-                    && compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_RIGHT, nearDoorThresholdTLorTRMin, true))) {
+                    && compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_RIGHT, nearDoorThresholdTLorTRMin, true))
+                    && (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_REAR_LEFT, nearDoorThresholdTRLorTRR, true)
+                    || compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_REAR_RIGHT, nearDoorThresholdTRLorTRR, true))) {
                 result.add(BleRangingHelper.START_TRUNK_AREA);
             }
             if (result.isEmpty()) {
@@ -331,6 +335,15 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                         && getRatioBetweenTwoTrx(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_RIGHT) > nearDoorThresholdMLorMRMin,
                 footerSB.toString(), Color.CYAN, Color.DKGRAY));
         footerSB.setLength(0);
+        footerSB.append("       ratio M/RL OR M/RR > (")
+                .append(nearDoorThresholdMRLorMRR)
+                .append("): ").append(getRatioBetweenTwoTrx(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_REAR_LEFT))
+                .append(" | ").append(getRatioBetweenTwoTrx(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_REAR_RIGHT)).append("\n");
+        spannableStringBuilder.append(TextUtils.colorText(
+                getRatioBetweenTwoTrx(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_REAR_LEFT) > nearDoorThresholdMRLorMRR
+                        || getRatioBetweenTwoTrx(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_REAR_RIGHT) > nearDoorThresholdMRLorMRR,
+                footerSB.toString(), Color.CYAN, Color.DKGRAY));
+        footerSB.setLength(0);
         footerSB.append("       ratio T/L OR T/R Max > (")
                 .append(nearDoorThresholdTLorTRMax)
                 .append("): ").append(getRatioBetweenTwoTrx(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_LEFT))
@@ -347,6 +360,15 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         spannableStringBuilder.append(TextUtils.colorText(
                 getRatioBetweenTwoTrx(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_LEFT) > nearDoorThresholdTLorTRMin
                         && getRatioBetweenTwoTrx(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_RIGHT) > nearDoorThresholdTLorTRMin,
+                footerSB.toString(), Color.CYAN, Color.DKGRAY));
+        footerSB.setLength(0);
+        footerSB.append("       ratio T/RL OR T/RR > (")
+                .append(nearDoorThresholdTRLorTRR)
+                .append("): ").append(getRatioBetweenTwoTrx(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_REAR_LEFT))
+                .append(" | ").append(getRatioBetweenTwoTrx(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_REAR_RIGHT)).append("\n");
+        spannableStringBuilder.append(TextUtils.colorText(
+                getRatioBetweenTwoTrx(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_REAR_LEFT) > nearDoorThresholdTRLorTRR
+                        || getRatioBetweenTwoTrx(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_REAR_RIGHT) > nearDoorThresholdTRLorTRR,
                 footerSB.toString(), Color.CYAN, Color.DKGRAY));
         return spannableStringBuilder;
     }

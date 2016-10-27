@@ -88,6 +88,8 @@
     <string name="pref_threshold_near_door_ratio_ml_mr_min">Near Door Ratio ML MR Min Threshold</string>
     <string name="pref_threshold_near_door_ratio_tl_tr_max">Near Door Ratio TL TR Max Threshold</string>
     <string name="pref_threshold_near_door_ratio_tl_tr_min">Near Door Ratio TL TR Min Threshold</string>
+    <string name="pref_threshold_near_door_ratio_mrl_mrr">Near Door Ratio MRL MRR Threshold</string>
+    <string name="pref_threshold_near_door_ratio_trl_trr">Near Door Ratio TRL TRR Threshold</string>
     <string name="pref_threshold_average_delta_lock">Average Delta Lock Threshold</string>
     <string name="pref_threshold_average_delta_unlock">Average Delta Unlock Threshold</string>
     <string name="pref_unlock_valid_nb">Unlock Valid Number</string>
