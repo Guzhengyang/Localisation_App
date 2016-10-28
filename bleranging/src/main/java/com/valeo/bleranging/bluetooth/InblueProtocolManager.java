@@ -194,10 +194,16 @@ public class InblueProtocolManager {
      */
     private byte getPayloadFifthByte(boolean isRKE, List<Integer> isUnlockStrategyValid) {
         byte payloadFive = (byte) 0;
-        payloadFive |= isStartRequested ? 0x04 : 0x00;
+//        payloadFive |= isStartRequested ? 0x04 : 0x00;
         payloadFive |= isThatcham ? 0x08 : 0x00;
-        payloadFive |= isWelcomeRequested ? 0x40 : 0x00;
-        if (isUnlockStrategyValid != null && isUnlockStrategyValid.contains(ConnectedCar.NUMBER_TRX_BACK)) {
+//        payloadFive |= isWelcomeRequested ? 0x40 : 0x00;
+        if (isWelcomeRequested) {
+            payloadFive |= 0x40;
+        }
+        if (isStartRequested) {
+            payloadFive |= 0x04;
+        } else if (isUnlockStrategyValid != null
+                && isUnlockStrategyValid.contains(ConnectedCar.NUMBER_TRX_BACK)) {
             payloadFive |= 0x80;
         }
         switch (carBase) {
