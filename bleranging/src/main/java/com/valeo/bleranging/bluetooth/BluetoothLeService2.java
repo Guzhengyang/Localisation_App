@@ -29,9 +29,9 @@ import java.util.UUID;
  */
 public class BluetoothLeService2 extends Service {
     //Bluetooth SERVICES and CHARACTERISTICS UUIDs
-    private final static String VALEO_GENERIC_SERVICE = SampleGattAttributes.VALEO_GENERIC_SERVICE;
-    private final static String VALEO_IN_CHARACTERISTIC = SampleGattAttributes.VALEO_IN_CHARACTERISTIC;
-    private final static String VALEO_OUT_CHARACTERISTIC = SampleGattAttributes.VALEO_OUT_CHARACTERISTIC;
+    private final static String VALEO_GENERIC_SERVICE = SampleGattAttributes.VALEO_PC_GENERIC_SERVICE;
+    private final static String VALEO_IN_CHARACTERISTIC = SampleGattAttributes.VALEO_PC_IN_CHARACTERISTIC;
+    private final static String VALEO_OUT_CHARACTERISTIC = SampleGattAttributes.VALEO_PC_OUT_CHARACTERISTIC;
     private static final short MAX_RETRIES_WRITE_CHARACTERISTIC = 5;
     private final ArrayList<IBluetoothLeServiceListener> mListeners = new ArrayList<>();
     private final IBinder mBinder = new LocalBinder2();

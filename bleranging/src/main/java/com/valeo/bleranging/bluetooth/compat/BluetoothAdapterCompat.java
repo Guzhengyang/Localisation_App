@@ -221,10 +221,6 @@ public final class BluetoothAdapterCompat {
                     .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())
                     .build();
             scanFilters.add(scanFilterConnectable);
-            ScanFilter scanFilterConnectable2 = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressConnectable2())
-                    .build();
-            scanFilters.add(scanFilterConnectable2);
             ScanFilter scanFilterLeft = new ScanFilter.Builder()
                     .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressLeft())
                     .build();
@@ -261,6 +257,10 @@ public final class BluetoothAdapterCompat {
                     .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRearRight())
                     .build();
             scanFilters.add(scanFilterRearRight);
+            ScanFilter scanFilterConnectable2 = new ScanFilter.Builder()
+                    .setServiceUuid(ParcelUuid.fromString("F0001132-0451-4000-B000-000000000000"))
+                    .build();
+            scanFilters.add(scanFilterConnectable2);
             ScanFilter scanFilterLogger = new ScanFilter.Builder()
                     .setServiceUuid(ParcelUuid.fromString("f000ff12-0451-4000-b000-000000000000"))
                     .build();
