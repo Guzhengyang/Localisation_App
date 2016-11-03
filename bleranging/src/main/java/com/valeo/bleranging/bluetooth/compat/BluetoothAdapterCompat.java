@@ -258,7 +258,8 @@ public final class BluetoothAdapterCompat {
                     .build();
             scanFilters.add(scanFilterRearRight);
             ScanFilter scanFilterConnectable2 = new ScanFilter.Builder()
-                    .setServiceUuid(ParcelUuid.fromString("F0001132-0451-4000-B000-000000000000"))
+                    .setDeviceAddress("B0:B4:48:BD:56:85")
+//                    .setServiceUuid(ParcelUuid.fromString("F0001132-0451-4000-B000-000000000000"))
                     .build();
             scanFilters.add(scanFilterConnectable2);
             ScanFilter scanFilterLogger = new ScanFilter.Builder()

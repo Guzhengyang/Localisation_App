@@ -238,10 +238,8 @@ public abstract class ConnectedCar {
      * @param smartphoneIsMovingSlowly the boolean that determines if the smartphone is moving or not
      */
     public void saveRssi(int trxNumber, int antennaId, int rssi, Antenna.BLEChannel bleChannel, boolean smartphoneIsMovingSlowly) {
-        Trx tmpTrx = trxLinkedHMap.get(trxNumber);
-        if(tmpTrx != null) {
-            tmpTrx.saveRssi(antennaId, rssi, bleChannel, smartphoneIsMovingSlowly);
-            trxLinkedHMap.put(trxNumber, tmpTrx);
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            trxLinkedHMap.get(trxNumber).saveRssi(antennaId, rssi, bleChannel, smartphoneIsMovingSlowly);
         }
     }
 
