@@ -60,6 +60,8 @@
     <string name="pref_car_type">Connected Car Option</string>
     <string name="pref_car_type_title">Car Type</string>
     <string name="pref_car_base_title">Car Base</string>
+    <string name="pref_car_trame_enabled">Car trame enabled</string>
+    <string name="pref_car_trame">Car trame</string>
     <string name="dialog_title_list_preference">Number of active beacon</string>
     <string name="base_title_list_preference">Available base type</string>
     <string name="pref_near_door">NEAR DOOR THR</string>

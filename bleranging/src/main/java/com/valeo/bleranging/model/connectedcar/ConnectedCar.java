@@ -535,7 +535,7 @@ public abstract class ConnectedCar {
      * @return the spannable string builder filled with the header
      */
     public SpannableStringBuilder createHeaderDebugData(
-            SpannableStringBuilder spannableStringBuilder, byte[] bytesToSend, byte[] bytesReceived, boolean isFullyConnected) {
+            SpannableStringBuilder spannableStringBuilder, final byte[] bytesToSend, final byte[] bytesReceived, boolean isFullyConnected) {
         if (isFullyConnected) {
             spannableStringBuilder
                     .append("       Send:       ").append(TextUtils.printBleBytes((bytesToSend))).append("\n")

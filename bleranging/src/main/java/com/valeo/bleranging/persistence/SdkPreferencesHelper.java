@@ -97,6 +97,8 @@ public final class SdkPreferencesHelper {
     public static final String ADDRESS_REAR_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_REAR_RIGHT";
     public static final String CONNECTED_CAR_TYPE_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_TYPE";
     public static final String CONNECTED_CAR_BASE_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_BASE";
+    public static final String CONNECTED_CAR_TRAME_ENABLED_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_TRAME_ENABLED";
+    public static final String CONNECTED_CAR_TRAME_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_TRAME";
     public static final String OFFSET_EAR_FOR_START_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_EAR_FOR_START";
     public static final String OFFSET_EAR_FOR_LOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_EAR_FOR_LOCK";
     public static final String OFFSET_EAR_FOR_UNLOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_EAR_FOR_UNLOCK";
@@ -622,6 +624,14 @@ public final class SdkPreferencesHelper {
         return readString(SAVED_CC_GENERIC_OPTION, CONNECTED_CAR_BASE_PREFERENCES_NAME, ConnectedCarFactory.BASE_3);
     }
 
+    public Boolean getConnectedCarTrameEnabled() {
+        return readBoolean(SAVED_CC_GENERIC_OPTION, CONNECTED_CAR_TRAME_ENABLED_PREFERENCES_NAME, false);
+    }
+
+    public String getConnectedCarTrame() {
+        return readString(SAVED_CC_GENERIC_OPTION, CONNECTED_CAR_TRAME_PREFERENCES_NAME, "");
+    }
+
     public float getThatchamTimeout() {
         return readFloat(SAVED_CC_GENERIC_OPTION, THATCHAM_TIMEOUT_PREFERENCES_NAME, THATCHAM_TIMEOUT);
     }
@@ -889,7 +899,7 @@ public final class SdkPreferencesHelper {
      */
     private boolean readBoolean(final String fileName, final String keyName, final boolean defaultValue) {
         SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-        return Boolean.parseBoolean(sharedPref.getString(keyName, String.valueOf(defaultValue)));
+        return sharedPref.getBoolean(keyName, defaultValue);
     }
 
     /**

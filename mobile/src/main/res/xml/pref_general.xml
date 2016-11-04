@@ -16,6 +16,13 @@
             android:entryValues="@array/base_entryvalues_list_preference"
             android:key="com.inblue.PREFERENCE_CONNECTED_CAR_BASE"
             android:title="@string/pref_car_base_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="com.inblue.PREFERENCE_CONNECTED_CAR_TRAME_ENABLED"
+            android:title="@string/pref_car_trame_enabled" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_CONNECTED_CAR_TRAME"
+            android:title="@string/pref_car_trame" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_ble_address">
         <EditTextPreference
