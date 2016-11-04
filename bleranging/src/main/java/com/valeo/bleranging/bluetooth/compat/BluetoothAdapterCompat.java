@@ -166,8 +166,8 @@ public final class BluetoothAdapterCompat {
         ScanTask.StartLeScanResult result;
 
         PreLollipopScanTask scanTask = new PreLollipopScanTask(mBluetoothAdapter, getPreLollipopScanCallback(scanCallbackCompat));
-//        scanTask.setScanPeriods(1000*1000, 1000);
-        scanTask.setScanPeriods(3000, 200);
+        scanTask.setScanPeriods(1000 * 1000, 1000);
+//        scanTask.setScanPeriods(3000, 200);
         mRunningDetections.put(scanCallbackCompat, scanTask);
 
         result = scanTask.start();
@@ -200,7 +200,8 @@ public final class BluetoothAdapterCompat {
                     PSALogs.w(TAG, "Scanning task is not Started, Already Running one found");
                 } else {
                     PostLollipopScanTask scanTask = new PostLollipopScanTask(mBluetoothAdapter, scanFilters, setting, getPostLollipopScanCallback(scanCallbackCompat));
-                    scanTask.setScanPeriods(3000, 200);
+//                    scanTask.setScanPeriods(3000, 200);
+                    scanTask.setScanPeriods(1000 * 1000, 1000);
                     mRunningDetections.put(scanCallbackCompat, scanTask);
                     scanTask.start();
                 }
