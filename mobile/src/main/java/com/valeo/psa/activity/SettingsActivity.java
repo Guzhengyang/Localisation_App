@@ -86,10 +86,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
         // Trigger the listener immediately with the preference's current value.
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-//                preference.getContext().getSharedPreferences(fileName, MODE_PRIVATE)
-//                PreferenceManager.getDefaultSharedPreferences(preference.getContext())
-                sharedPreferences
-                        .getString(preference.getKey(), defaultValue));
+                sharedPreferences.getString(preference.getKey(), defaultValue));
     }
 
     @Override
@@ -633,17 +630,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void bindSummaries() {
             bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_A);
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
-            connected_car_trame_enabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    if ((boolean) newValue) {
-                        connected_car_trame.setEnabled(true);
-                    } else {
-                        connected_car_trame.setEnabled(false);
-                    }
-                    return true;
-                }
-            });
+            connected_car_trame_enabled.setSummary(R.string.pref_car_forced_trame_enabled_summary);
             bindPreferenceSummaryToValue(connected_car_trame, "");
             bindPreferenceSummaryToValue(thatcham_timeout, String.valueOf(SdkPreferencesHelper.THATCHAM_TIMEOUT));
             bindPreferenceSummaryToValue(crypto_pre_auth_timeout, String.valueOf(SdkPreferencesHelper.CRYPTO_PRE_AUTH_TIMEOUT));

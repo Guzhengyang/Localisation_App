@@ -19,10 +19,11 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="com.inblue.PREFERENCE_CONNECTED_CAR_TRAME_ENABLED"
-            android:title="@string/pref_car_trame_enabled" />
+            android:title="@string/pref_car_forced_trame_enabled" />
         <EditTextPreference
+            android:dependency="com.inblue.PREFERENCE_CONNECTED_CAR_TRAME_ENABLED"
             android:key="com.inblue.PREFERENCE_CONNECTED_CAR_TRAME"
-            android:title="@string/pref_car_trame" />
+            android:title="@string/pref_car_forced_trame" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_ble_address">
         <EditTextPreference
