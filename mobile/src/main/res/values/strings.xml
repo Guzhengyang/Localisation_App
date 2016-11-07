@@ -57,6 +57,8 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_login">Log in</string>
     <string name="menu_connect">Connect</string>
+    <string name="menu_connect_to_pc">Connect to PC</string>
+    <string name="menu_relaunch_ble_scan">Relaunch Scan</string>
     <string name="pref_car_type">Connected Car Option</string>
     <string name="pref_car_type_title">Car Type</string>
     <string name="pref_car_base_title">Car Base</string>

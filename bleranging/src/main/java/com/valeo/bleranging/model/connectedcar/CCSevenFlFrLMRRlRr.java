@@ -408,6 +408,6 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
                 getRatioBetweenTwoTrx(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_LEFT) > nearDoorThresholdMLorMRMin
                         && getRatioBetweenTwoTrx(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_RIGHT) > nearDoorThresholdMLorMRMin,
                 footerSB.toString(), Color.CYAN, Color.DKGRAY));
-        return spannableStringBuilder;
+        return createSecondFooterDebugData(spannableStringBuilder, SPACE_TWO);
     }
 }

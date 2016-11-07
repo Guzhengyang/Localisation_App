@@ -87,6 +87,6 @@ public class CCFiveLMRTB extends ConnectedCar {
 
     @Override
     public SpannableStringBuilder createSecondFooterDebugData(SpannableStringBuilder spannableStringBuilder, boolean smartphoneIsInPocket, boolean smartphoneIsMovingSlowly, int totalAverage, boolean rearmLock, boolean rearmUnlock) {
-        return spannableStringBuilder;
+        return createSecondFooterDebugData(spannableStringBuilder, SPACE_TWO);
     }
 }

@@ -421,17 +421,19 @@ public class BluetoothManagement {
     public void sendPackets(byte[] byteToSend, byte[] byteReceived) {
         mBluetoothLeService.sendPackets(byteToSend);
         if (isFullyConnected2() && mBluetoothLeService2.getBLEGattService() != null) {
-            try {
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                outputStream.write(byteToSend);
-                outputStream.write(byteReceived);
-                byte[] concatBytes = outputStream.toByteArray();
-                PSALogs.d("NIH_PC", "send: " + TextUtils.printBleBytes(concatBytes));
-                if (!mBluetoothLeService2.sendPackets(concatBytes)) {
-                    disconnectPc();
+            if (byteToSend != null && byteReceived != null) {
+                try {
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    outputStream.write(byteToSend);
+                    outputStream.write(byteReceived);
+                    byte[] concatBytes = outputStream.toByteArray();
+                    PSALogs.d("NIH_PC", "send: " + TextUtils.printBleBytes(concatBytes));
+                    if (!mBluetoothLeService2.sendPackets(concatBytes)) {
+                        disconnectPc();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }

@@ -18,4 +18,6 @@ public interface BleRangingListener {
     void updateCarDrawable();
 
     void doWelcome();
+
+    void showSnackBar(String message);
 }

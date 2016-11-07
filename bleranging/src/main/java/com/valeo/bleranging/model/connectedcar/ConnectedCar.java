@@ -10,6 +10,7 @@ import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Ranging;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.TextUtils;
 import com.valeo.bleranging.utils.TrxUtils;
 
@@ -382,6 +383,7 @@ public abstract class ConnectedCar {
         int trxToIgnore = -1;
         int maxOne = -100;
         if (trxLinkedHMap != null) {
+            // Find the trx to ignore in the next loop
             for (Integer trxNumber : trxLinkedHMap.keySet()) {
                 if (trxNumber != NUMBER_TRX_LEFT && trxNumber != NUMBER_TRX_RIGHT
                         && trxNumber != NUMBER_TRX_MIDDLE && trxNumber != NUMBER_TRX_TRUNK) {
@@ -391,10 +393,11 @@ public abstract class ConnectedCar {
                     }
                 }
             }
+            PSALogs.d("max", "maxOne " + maxOne);
             int maxTwo = -100;
             int minTwo = 0;
             for (Integer trxNumber : trxLinkedHMap.keySet()) {
-                if (trxNumber != trxToIgnore
+                if (trxNumber != trxToIgnore // previous loop trx to ignore because it is the maxOne
                         && trxNumber != NUMBER_TRX_LEFT && trxNumber != NUMBER_TRX_RIGHT
                         && trxNumber != NUMBER_TRX_MIDDLE && trxNumber != NUMBER_TRX_TRUNK) {
                     minTwo = Math.min(minTwo, trxLinkedHMap.get(trxNumber).getMin());
@@ -402,6 +405,7 @@ public abstract class ConnectedCar {
                 }
             }
             int result = ((maxTwo - minTwo) * 80) / 100;
+            PSALogs.d("max", "maxTwo " + maxTwo + ", minTwo " + minTwo + ", result " + result);
             if (result < 15) {
                 return 15;
             } else {
@@ -537,9 +541,12 @@ public abstract class ConnectedCar {
     public SpannableStringBuilder createHeaderDebugData(
             SpannableStringBuilder spannableStringBuilder, final byte[] bytesToSend, final byte[] bytesReceived, boolean isFullyConnected) {
         if (isFullyConnected) {
-            spannableStringBuilder
-                    .append("       Send:       ").append(TextUtils.printBleBytes((bytesToSend))).append("\n")
-                    .append("       Receive: ").append(TextUtils.printBleBytes(bytesReceived)).append("\n");
+            if (bytesToSend != null) {
+                spannableStringBuilder.append("       Send:       ").append(TextUtils.printBleBytes((bytesToSend))).append("\n");
+            }
+            if (bytesReceived != null) {
+                spannableStringBuilder.append("       Receive: ").append(TextUtils.printBleBytes(bytesReceived)).append("\n");
+            }
         } else {
             SpannableString disconnectedSpanString = new SpannableString("Disconnected\n");
             disconnectedSpanString.setSpan(new ForegroundColorSpan(Color.DKGRAY), 0, "Disconnected\n".length(), 0);
@@ -592,15 +599,6 @@ public abstract class ConnectedCar {
                 .append(String.format(Locale.FRANCE, "%1$03d", getAllTrxAverage(Antenna.AVERAGE_DEFAULT)))
                 .append("\n");
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
-        spannableStringBuilder.append("offset channel 38 :\n");
-        for (Trx trx : trxLinkedHMap.values()) {
-            spannableStringBuilder
-                    .append(space2)
-                    .append(String.format(Locale.FRANCE, "%1$03d", getOffsetBleChannel38(trx.getTrxNumber(), Trx.ANTENNA_ID_1)))
-                    .append(space2);
-        }
-        spannableStringBuilder.append('\n');
-        spannableStringBuilder.append("-------------------------------------------------------------------------\n");
         return spannableStringBuilder;
     }
 
@@ -618,6 +616,19 @@ public abstract class ConnectedCar {
     public abstract SpannableStringBuilder createSecondFooterDebugData(SpannableStringBuilder spannableStringBuilder,
                                                                        boolean smartphoneIsInPocket, boolean smartphoneIsMovingSlowly,
                                                                        int totalAverage, boolean rearmLock, boolean rearmUnlock);
+
+    SpannableStringBuilder createSecondFooterDebugData(SpannableStringBuilder spannableStringBuilder, String space2) {
+        spannableStringBuilder.append("-------------------------------------------------------------------------\n");
+        spannableStringBuilder.append("offset channel 38 :\n");
+        for (Trx trx : trxLinkedHMap.values()) {
+            spannableStringBuilder
+                    .append(space2)
+                    .append(String.format(Locale.FRANCE, "%1$03d", getOffsetBleChannel38(trx.getTrxNumber(), Trx.ANTENNA_ID_1)))
+                    .append(space2);
+        }
+        spannableStringBuilder.append('\n');
+        return spannableStringBuilder;
+    }
 
     /**
      * Get the string from the third footer

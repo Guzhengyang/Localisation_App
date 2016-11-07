@@ -268,7 +268,7 @@ public class CCFourLMRB extends ConnectedCar {
         spannableStringBuilder.append(TextUtils.colorText(
                 compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_BACK, nearDoorThresholdMB, true),
                 footerSB.toString(), Color.CYAN, Color.DKGRAY));
-        return spannableStringBuilder;
+        return createSecondFooterDebugData(spannableStringBuilder, SPACE_TWO);
     }
 
 }

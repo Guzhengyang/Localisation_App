@@ -277,8 +277,14 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 Intent loginIntent = new Intent(this, LoginActivity.class);
                 startActivityForResult(loginIntent, RESULT_SETTINGS);
                 break;
-            case R.id.menu_reconnect_ble:
+            case R.id.menu_reconnect_ble_pc:
                 mBleRangingHelper.connectToPC();
+                break;
+            case R.id.menu_reconnect_ble:
+                mBleRangingHelper.connect();
+                break;
+            case R.id.menu_relaunch_ble_scan:
+                mBleRangingHelper.relaunchScan();
                 break;
         }
         return true;
@@ -1089,6 +1095,11 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 .setContentIntent(actionPendingIntent)
                 .build();
         notificationManager.notify(NOTIFICATION_ID_1, notification);
+    }
+
+    @Override
+    public void showSnackBar(String message) {
+        Snackbar.make(main_scroll, message, Snackbar.LENGTH_SHORT).show();
     }
 
     private void startButtonAnimation(boolean isAnimated) {
