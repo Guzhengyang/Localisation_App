@@ -58,6 +58,7 @@
     <string name="menu_login">Log in</string>
     <string name="menu_connect">Connect</string>
     <string name="menu_connect_to_pc">Connect to PC</string>
+    <string name="menu_connect_to_remote_control">Connect to Remote Control</string>
     <string name="menu_relaunch_ble_scan">Relaunch Scan</string>
     <string name="pref_car_type">Connected Car Option</string>
     <string name="pref_car_type_title">Car Type</string>
@@ -85,6 +86,7 @@
     <string name="pref_threshold_unlock">Unlock Threshold</string>
     <string name="pref_threshold_lock">Lock Threshold</string>
     <string name="pref_threshold_welcome">Welcome Threshold</string>
+    <string name="pref_threshold_close_to_beacon">Close to Beacon Threshold</string>
     <string name="pref_threshold_near_door_ratio">Near Door Ratio Threshold</string>
     <string name="pref_threshold_back_door_ratio_min">Back Door Ratio Min Threshold</string>
     <string name="pref_threshold_back_door_ratio_max">Back Door Ratio Max Threshold</string>
@@ -136,7 +138,8 @@
     <string name="pref_equalizer_rear_right">Rear Right Equalizer</string>
     <string name="pref_ble_address">BLE ADDRESS</string>
     <string name="pref_ble_address_connectable">Connectable BLE Address</string>
-    <string name="pref_ble_address_connectable_2">Second Connectable BLE Address</string>
+    <string name="pref_ble_address_connectable_pc">Second Connectable BLE Address</string>
+    <string name="pref_ble_address_connectable_remote_control">Third Connectable BLE Address</string>
     <string name="pref_ble_address_front_left">Front left BLE Address</string>
     <string name="pref_ble_address_front_right">Front right BLE Address</string>
     <string name="pref_ble_address_left">Left BLE Address</string>

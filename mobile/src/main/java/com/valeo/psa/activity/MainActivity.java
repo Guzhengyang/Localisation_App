@@ -277,11 +277,14 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 Intent loginIntent = new Intent(this, LoginActivity.class);
                 startActivityForResult(loginIntent, RESULT_SETTINGS);
                 break;
+            case R.id.menu_reconnect_ble:
+                mBleRangingHelper.connect();
+                break;
             case R.id.menu_reconnect_ble_pc:
                 mBleRangingHelper.connectToPC();
                 break;
-            case R.id.menu_reconnect_ble:
-                mBleRangingHelper.connect();
+            case R.id.menu_reconnect_ble_remote_control:
+                mBleRangingHelper.connectToRemoteControl();
                 break;
             case R.id.menu_relaunch_ble_scan:
                 mBleRangingHelper.relaunchScan();
@@ -1131,7 +1134,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
                 TrxUtils.appendSettingLogs(connectedCarType,
                         SdkPreferencesHelper.getInstance().getConnectedCarBase(), SdkPreferencesHelper.getInstance().getTrxAddressConnectable(),
-                        SdkPreferencesHelper.getInstance().getTrxAddressConnectable2(), SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft(),
+                        SdkPreferencesHelper.getInstance().getTrxAddressConnectablePC(), SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft(),
                         SdkPreferencesHelper.getInstance().getTrxAddressFrontRight(), SdkPreferencesHelper.getInstance().getTrxAddressLeft(),
                         SdkPreferencesHelper.getInstance().getTrxAddressMiddle(), SdkPreferencesHelper.getInstance().getTrxAddressRight(),
                         SdkPreferencesHelper.getInstance().getTrxAddressTrunk(), SdkPreferencesHelper.getInstance().getTrxAddressRearLeft(),

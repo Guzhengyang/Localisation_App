@@ -19,10 +19,13 @@
             </intent-filter>
         </receiver>
         <service
-            android:name="com.valeo.bleranging.bluetooth.BluetoothLeService"
+            android:name="com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService"
             android:enabled="true" />
         <service
-            android:name="com.valeo.bleranging.bluetooth.BluetoothLeService2"
-        android:enabled="true"/>
+            android:name="com.valeo.bleranging.bluetooth.bleservices.BluetoothLeServiceForPC"
+            android:enabled="true" />
+        <service
+            android:name="com.valeo.bleranging.bluetooth.bleservices.BluetoothLeServiceForRemoteControl"
+            android:enabled="true" />
     </application>
 </manifest>

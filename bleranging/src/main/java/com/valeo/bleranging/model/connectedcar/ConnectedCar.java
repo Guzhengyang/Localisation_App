@@ -67,6 +67,7 @@ public abstract class ConnectedCar {
     int lockMode;
     int unlockMode;
     int startMode;
+    int closeToBeaconThreshold;
     int nearDoorRatioThreshold;
     int nearBackDoorRatioThresholdMin;
     int nearBackDoorRatioThresholdMax;
@@ -107,6 +108,7 @@ public abstract class ConnectedCar {
         this.lockMode = SdkPreferencesHelper.getInstance().getLockMode(connectedCarType);
         this.unlockMode = SdkPreferencesHelper.getInstance().getUnlockMode(connectedCarType);
         this.startMode = SdkPreferencesHelper.getInstance().getStartMode(connectedCarType);
+        this.closeToBeaconThreshold = SdkPreferencesHelper.getInstance().getCloseToBeaconThreshold(connectedCarType);
         this.nearDoorRatioThreshold = SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(connectedCarType);
         this.nearBackDoorRatioThresholdMin = SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMin(connectedCarType);
         this.nearBackDoorRatioThresholdMax = SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMax(connectedCarType);

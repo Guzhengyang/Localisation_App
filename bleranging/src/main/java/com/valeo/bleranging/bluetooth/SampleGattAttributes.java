@@ -19,13 +19,16 @@ package com.valeo.bleranging.bluetooth;
 /**
  * Lists all the services and characteristics used during the application lifecycle 
  */
-class SampleGattAttributes {
+public class SampleGattAttributes {
     //RKE
-    final static String VALEO_GENERIC_SERVICE = "f000ff10-0451-4000-b000-000000000000";
-    final static String VALEO_IN_CHARACTERISTIC = "f000ff11-0451-4000-b000-000000000000";
-    final static String VALEO_OUT_CHARACTERISTIC = "f000ff12-0451-4000-b000-000000000000";
-    final static String VALEO_PC_GENERIC_SERVICE = "F0001130-0451-4000-B000-000000000000";
-    final static String VALEO_PC_IN_CHARACTERISTIC = "F0001131-0451-4000-B000-000000000000";
-    final static String VALEO_PC_OUT_CHARACTERISTIC = "F0001132-0451-4000-B000-000000000000";
-    final static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
+    public final static String VALEO_GENERIC_SERVICE = "f000ff10-0451-4000-b000-000000000000";
+    public final static String VALEO_IN_CHARACTERISTIC = "f000ff11-0451-4000-b000-000000000000";
+    public final static String VALEO_OUT_CHARACTERISTIC = "f000ff12-0451-4000-b000-000000000000";
+    public final static String VALEO_REMOTE_CONTROL_GENERIC_SERVICE = "f000ff13-0451-4000-b000-000000000000";
+    public final static String VALEO_REMOTE_CONTROL_IN_CHARACTERISTIC = "f000ff14-0451-4000-b000-000000000000";
+    public final static String VALEO_REMOTE_CONTROL_OUT_CHARACTERISTIC = "f000ff15-0451-4000-b000-000000000000";
+    public final static String VALEO_PC_GENERIC_SERVICE = "F0001130-0451-4000-B000-000000000000";
+    public final static String VALEO_PC_IN_CHARACTERISTIC = "F0001131-0451-4000-B000-000000000000";
+    public final static String VALEO_PC_OUT_CHARACTERISTIC = "F0001132-0451-4000-B000-000000000000";
+    public final static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
 }

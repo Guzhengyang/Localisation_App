@@ -127,27 +127,34 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             boolean closeToCarRearLeft = TrxUtils.compareWithThreshold(closeToCarRL, thresholdMaxMinRatio, true);
             boolean closeToCarRearRight = TrxUtils.compareWithThreshold(closeToCarRR, thresholdMaxMinRatio, true);
             boolean closeToCarFrontRight = TrxUtils.compareWithThreshold(closeToCarFR, thresholdMaxMinRatio, true);
+
+            boolean closeToBeaconFL = compareTrxWithThreshold(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
+            boolean closeToBeaconFR = compareTrxWithThreshold(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
+            boolean closeToBeaconL = compareTrxWithThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
+            boolean closeToBeaconR = compareTrxWithThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
+            boolean closeToBeaconRL = compareTrxWithThreshold(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
+            boolean closeToBeaconRR = compareTrxWithThreshold(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
+
             List<Integer> result = new ArrayList<>();
-            if (closeToCarFrontLeft) { //maxMinFrontLeft ||
+            if (closeToCarFrontLeft || closeToBeaconFL) { //maxMinFrontLeft ||
                 result.add(NUMBER_TRX_FRONT_LEFT);
             }
-            if (isNearDoorLRMax) { //maxMinLeft ||
+            if (isNearDoorLRMax || closeToBeaconL) { //maxMinLeft ||
                 result.add(NUMBER_TRX_LEFT);
             }
-            if (closeToCarRearLeft) { //maxMinRearLeft ||
+            if (closeToCarRearLeft || closeToBeaconRL) { //maxMinRearLeft ||
                 result.add(NUMBER_TRX_REAR_LEFT);
             }
-            if (closeToCarFrontRight) { //maxMinFrontRight ||
+            if (closeToCarFrontRight || closeToBeaconFR) { //maxMinFrontRight ||
                 result.add(NUMBER_TRX_FRONT_RIGHT);
             }
-            if (isNearDoorLRMin) { //maxMinRight ||
+            if (isNearDoorLRMin || closeToBeaconR) { //maxMinRight ||
                 result.add(NUMBER_TRX_RIGHT);
             }
-            if (closeToCarRearRight) { //maxMinRearRight ||
+            if (closeToCarRearRight || closeToBeaconRR) { //maxMinRearRight ||
                 result.add(NUMBER_TRX_REAR_RIGHT);
             }
-            //TODO ADD TRUNK
-            if ((closeToCarRL + closeToCarRR) > (2 * thresholdMaxMinRatio)) {
+            if ((closeToCarRL + closeToCarRR) > (2 * thresholdMaxMinRatio) || closeToBeaconRL || closeToBeaconRR) {
                 result.add(NUMBER_TRX_BACK);
             }
             if (result.isEmpty()) {

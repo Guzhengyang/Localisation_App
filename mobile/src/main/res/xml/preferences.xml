@@ -67,6 +67,10 @@
             android:title="@string/pref_threshold_welcome" />
         <EditTextPreference
             android:inputType="numberSigned"
+            android:key="com.inblue.PREFERENCE_CLOSE_TO_BEACON_THR"
+            android:title="@string/pref_threshold_close_to_beacon" />
+        <EditTextPreference
+            android:inputType="numberSigned"
             android:key="com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR"
             android:title="@string/pref_threshold_near_door_ratio" />
         <EditTextPreference

@@ -30,8 +30,11 @@
             android:key="com.inblue.PREFERENCE_ADDRESS_CONNECTABLE"
             android:title="@string/pref_ble_address_connectable" />
         <EditTextPreference
-            android:key="com.inblue.PREFERENCE_ADDRESS_CONNECTABLE_2"
-            android:title="@string/pref_ble_address_connectable_2" />
+            android:key="com.inblue.PREFERENCE_ADDRESS_CONNECTABLE_PC"
+            android:title="@string/pref_ble_address_connectable_pc" />
+        <EditTextPreference
+            android:key="com.inblue.PREFERENCE_ADDRESS_CONNECTABLE_REMOTE_CONTROL"
+            android:title="@string/pref_ble_address_connectable_remote_control" />
         <EditTextPreference
             android:key="com.inblue.PREFERENCE_ADDRESS_FRONT_LEFT"
             android:title="@string/pref_ble_address_front_left" />

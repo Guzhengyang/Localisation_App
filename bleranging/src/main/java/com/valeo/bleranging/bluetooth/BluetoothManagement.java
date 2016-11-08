@@ -11,6 +11,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 
+import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
+import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeServiceForPC;
+import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeServiceForRemoteControl;
 import com.valeo.bleranging.bluetooth.compat.BluetoothAdapterCompat;
 import com.valeo.bleranging.bluetooth.compat.ScanCallbackCompat;
 import com.valeo.bleranging.bluetooth.compat.ScanTask;
@@ -62,9 +65,6 @@ public class BluetoothManagement {
             };
     private boolean isReceiverRegistered = false;
     private BluetoothLeService mBluetoothLeService;
-    /**
-     * Code to manage Service lifecycle.
-     */
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
@@ -83,21 +83,38 @@ public class BluetoothManagement {
             mBluetoothLeService = null;
         }
     };
-    private BluetoothLeService2 mBluetoothLeService2;
-    private final ServiceConnection mServiceConnection2 = new ServiceConnection() {
+    private BluetoothLeServiceForPC mBluetoothLeServiceForPC;
+    private final ServiceConnection mServiceConnectionForPC = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             PSALogs.i("NIH_PC", "onServiceConnected()");
-            mBluetoothLeService2 = (((BluetoothLeService2.LocalBinder2) service).getService());
-            if (mBluetoothLeService2.initialize()) {
-                mBluetoothLeService2.connectToDevice(SdkPreferencesHelper.getInstance().getTrxAddressConnectable2());
+            mBluetoothLeServiceForPC = (((BluetoothLeServiceForPC.LocalBinder2) service).getService());
+            if (mBluetoothLeServiceForPC.initialize()) {
+                mBluetoothLeServiceForPC.connectToDevice(SdkPreferencesHelper.getInstance().getTrxAddressConnectablePC());
             }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             PSALogs.i("NIH_PC", "onServiceDisconnected()");
-            mBluetoothLeService2 = null;
+            mBluetoothLeServiceForPC = null;
+        }
+    };
+    private BluetoothLeServiceForRemoteControl mBluetoothLeServiceForRemoteControl;
+    private final ServiceConnection mServiceConnectionForRemoteControl = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            PSALogs.i("NIH_REMOTE", "onServiceConnected()");
+            mBluetoothLeServiceForRemoteControl = (((BluetoothLeServiceForRemoteControl.LocalBinder3) service).getService());
+            if (mBluetoothLeServiceForRemoteControl.initialize()) {
+                mBluetoothLeServiceForRemoteControl.connectToDevice(SdkPreferencesHelper.getInstance().getTrxAddressConnectableRemoteControl());
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            PSALogs.i("NIH_REMOTE", "onServiceDisconnected()");
+            mBluetoothLeServiceForRemoteControl = null;
         }
     };
     private BroadcastReceiver mTrxUpdateReceiver;
@@ -151,19 +168,39 @@ public class BluetoothManagement {
     }
 
     /**
-     * Close the connection between the phone and the current device
+     * Close the connection between the phone and the pc
      */
     public void disconnectPc() {
         try {
             if (isFullyConnected2()) {
-                mBluetoothLeService2.disconnect();
+                mBluetoothLeServiceForPC.disconnect();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         try {
             if (isBound2()) {
-                mContext.unbindService(mServiceConnection2);
+                mContext.unbindService(mServiceConnectionForPC);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Close the connection between the phone and the RemoteControl
+     */
+    public void disconnectRemoteControl() {
+        try {
+            if (isFullyConnected3()) {
+                mBluetoothLeServiceForRemoteControl.disconnect();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            if (isBound3()) {
+                mContext.unbindService(mServiceConnectionForRemoteControl);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -199,11 +236,27 @@ public class BluetoothManagement {
         if (!isFullyConnected2()) {
             if (!isBound2()) {
                 PSALogs.i("NIH_PC", "BluetoothManagement bindService: " + address);
-                Intent gattServiceIntent = new Intent(mContext, BluetoothLeService2.class);
-                mContext.bindService(gattServiceIntent, mServiceConnection2, Context.BIND_AUTO_CREATE);
-            } else if (mBluetoothLeService2 != null) {
+                Intent gattServiceIntent = new Intent(mContext, BluetoothLeServiceForPC.class);
+                mContext.bindService(gattServiceIntent, mServiceConnectionForPC, Context.BIND_AUTO_CREATE);
+            } else if (mBluetoothLeServiceForPC != null) {
                 PSALogs.i("NIH_PC", "BluetoothManagement connectToPC: " + address);
-                mBluetoothLeService2.connectToDevice(address);
+                mBluetoothLeServiceForPC.connectToDevice(address);
+            }
+        }
+    }
+
+    /**
+     * Open the connection between the phone and the RemoteControl
+     */
+    public void connectToRemoteControl(String address) {
+        if (!isFullyConnected3()) {
+            if (!isBound3()) {
+                PSALogs.i("NIH_REMOTE", "BluetoothManagement bindService: " + address);
+                Intent gattServiceIntent = new Intent(mContext, BluetoothLeServiceForRemoteControl.class);
+                mContext.bindService(gattServiceIntent, mServiceConnectionForRemoteControl, Context.BIND_AUTO_CREATE);
+            } else if (mBluetoothLeServiceForRemoteControl != null) {
+                PSALogs.i("NIH_REMOTE", "BluetoothManagement connectToRemoteControl: " + address);
+                mBluetoothLeServiceForRemoteControl.connectToDevice(address);
             }
         }
     }
@@ -418,22 +471,41 @@ public class BluetoothManagement {
         firePassiveEntryTry(device, rssi, scanResponse, advertisedData);
     }
 
-    public void sendPackets(byte[] byteToSend, byte[] byteReceived) {
+    public void sendPackets(final byte[] byteToSend, final byte[] byteReceived) {
         mBluetoothLeService.sendPackets(byteToSend);
-        if (isFullyConnected2() && mBluetoothLeService2.getBLEGattService() != null) {
-            if (byteToSend != null && byteReceived != null) {
-                try {
-                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                    outputStream.write(byteToSend);
-                    outputStream.write(byteReceived);
-                    byte[] concatBytes = outputStream.toByteArray();
-                    PSALogs.d("NIH_PC", "send: " + TextUtils.printBleBytes(concatBytes));
-                    if (!mBluetoothLeService2.sendPackets(concatBytes)) {
-                        disconnectPc();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        final byte[] concatBytes = concatByte(byteToSend, byteReceived);
+        sendToPC(concatBytes);
+        sendToRemoteControl(concatBytes);
+    }
+
+    private byte[] concatByte(final byte[] byteToSend, final byte[] byteReceived) {
+        if (byteToSend != null && byteReceived != null) {
+            try {
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                outputStream.write(byteToSend);
+                outputStream.write(byteReceived);
+                byte[] concatBytes = outputStream.toByteArray();
+                PSALogs.d("NIH", "send: " + TextUtils.printBleBytes(concatBytes));
+                return concatBytes;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return byteToSend;
+    }
+
+    private void sendToPC(final byte[] concatBytes) {
+        if (isFullyConnected2() && mBluetoothLeServiceForPC.getBLEGattService() != null) {
+            if (!mBluetoothLeServiceForPC.sendPackets(concatBytes)) {
+                disconnectPc();
+            }
+        }
+    }
+
+    private void sendToRemoteControl(final byte[] concatBytes) {
+        if (isFullyConnected3() && mBluetoothLeServiceForRemoteControl.getBLEGattService() != null) {
+            if (!mBluetoothLeServiceForRemoteControl.sendPackets(concatBytes)) {
+                disconnectRemoteControl();
             }
         }
     }
@@ -465,7 +537,11 @@ public class BluetoothManagement {
     }
 
     public boolean isFullyConnected2() {
-        return mBluetoothLeService2 != null && mBluetoothLeService2.isFullyConnected2();
+        return mBluetoothLeServiceForPC != null && mBluetoothLeServiceForPC.isFullyConnected2();
+    }
+
+    public boolean isFullyConnected3() {
+        return mBluetoothLeServiceForRemoteControl != null && mBluetoothLeServiceForRemoteControl.isFullyConnected3();
     }
 
     private boolean isBound() {
@@ -473,6 +549,10 @@ public class BluetoothManagement {
     }
 
     private boolean isBound2() {
-        return mBluetoothLeService2 != null && mBluetoothLeService2.isBound2();
+        return mBluetoothLeServiceForPC != null && mBluetoothLeServiceForPC.isBound2();
+    }
+
+    private boolean isBound3() {
+        return mBluetoothLeServiceForRemoteControl != null && mBluetoothLeServiceForRemoteControl.isBound3();
     }
 }

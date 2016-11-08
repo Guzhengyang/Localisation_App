@@ -293,6 +293,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference unlock_thr;
         private EditTextPreference lock_thr;
         private EditTextPreference welcome_thr;
+        private EditTextPreference close_to_beacon_thr;
         private EditTextPreference near_door_ratio;
         private EditTextPreference near_back_door_thr_min;
         private EditTextPreference near_back_door_thr_max;
@@ -369,6 +370,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             unlock_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.UNLOCK_THR_PREFERENCES_NAME));
             lock_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.LOCK_THR_PREFERENCES_NAME));
             welcome_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.WELCOME_THR_PREFERENCES_NAME));
+            close_to_beacon_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.CLOSE_TO_BEACON_THR_PREFERENCES_NAME));
             near_door_ratio = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEAR_DOOR_RATIO_THR_PREFERENCES_NAME));
             near_back_door_thr_min = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEAR_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME));
             near_back_door_thr_max = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEAR_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME));
@@ -416,6 +418,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             unlock_thr.setText(unlock_thr.getSummary().toString());
             lock_thr.setText(lock_thr.getSummary().toString());
             welcome_thr.setText(welcome_thr.getSummary().toString());
+            close_to_beacon_thr.setText(close_to_beacon_thr.getSummary().toString());
             near_door_ratio.setText(near_door_ratio.getSummary().toString());
             near_back_door_thr_min.setText(near_back_door_thr_min.getSummary().toString());
             near_back_door_thr_max.setText(near_back_door_thr_max.getSummary().toString());
@@ -467,6 +470,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(unlock_thr, String.valueOf(SdkPreferencesHelper.UNLOCK_IN_THE_RUN_THRESHOLD));
             bindPreferenceSummaryToValue(lock_thr, String.valueOf(SdkPreferencesHelper.WALK_AWAY_LOCKING_THRESHOLD));
             bindPreferenceSummaryToValue(welcome_thr, String.valueOf(SdkPreferencesHelper.WELCOME_THRESHOLD));
+            bindPreferenceSummaryToValue(close_to_beacon_thr, String.valueOf(SdkPreferencesHelper.CLOSE_TO_BEACON_THRESHOLD));
             bindPreferenceSummaryToValue(near_door_ratio, String.valueOf(SdkPreferencesHelper.NEAR_DOOR_RATIO_THRESHOLD));
             bindPreferenceSummaryToValue(near_back_door_thr_min, String.valueOf(SdkPreferencesHelper.NEAR_BACKDOOR_RATIO_THRESHOLD_MIN));
             bindPreferenceSummaryToValue(near_back_door_thr_max, String.valueOf(SdkPreferencesHelper.NEAR_BACKDOOR_RATIO_THRESHOLD_MAX));
@@ -534,7 +538,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference correction_lin_acc;
         private EditTextPreference frozen_threshold;
         private EditTextPreference address_connectable;
-        private EditTextPreference address_connectable_2;
+        private EditTextPreference address_connectable_pc;
+        private EditTextPreference address_connectable_remote_control;
         private EditTextPreference address_front_left;
         private EditTextPreference address_front_right;
         private EditTextPreference address_left;
@@ -583,7 +588,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             correction_lin_acc = ((EditTextPreference) findPreference(SdkPreferencesHelper.CORRECTION_LIN_ACC_PREFERENCES_NAME));
             frozen_threshold = ((EditTextPreference) findPreference(SdkPreferencesHelper.FROZEN_THRESHOLD_PREFERENCES_NAME));
             address_connectable = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_PREFERENCE_NAME));
-            address_connectable_2 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_2_PREFERENCE_NAME));
+            address_connectable_pc = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_PC_PREFERENCE_NAME));
+            address_connectable_remote_control = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_REMOTE_CONTROL_PREFERENCE_NAME));
             address_front_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_FRONT_LEFT_PREFERENCE_NAME));
             address_front_right = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_FRONT_RIGHT_PREFERENCE_NAME));
             address_left = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_LEFT_PREFERENCE_NAME));
@@ -611,7 +617,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             correction_lin_acc.setText(correction_lin_acc.getSummary().toString());
             frozen_threshold.setText(frozen_threshold.getSummary().toString());
             address_connectable.setText(address_connectable.getSummary().toString());
-            address_connectable_2.setText(address_connectable_2.getSummary().toString());
+            address_connectable_pc.setText(address_connectable_pc.getSummary().toString());
+            address_connectable_remote_control.setText(address_connectable_remote_control.getSummary().toString());
             address_front_left.setText(address_front_left.getSummary().toString());
             address_front_right.setText(address_front_right.getSummary().toString());
             address_left.setText(address_left.getSummary().toString());
@@ -647,7 +654,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(correction_lin_acc, String.valueOf(SdkPreferencesHelper.CORRECTION_LIN_ACC));
             bindPreferenceSummaryToValue(frozen_threshold, String.valueOf(SdkPreferencesHelper.FROZEN_THRESHOLD));
             bindPreferenceSummaryToValue(address_connectable, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE);
-            bindPreferenceSummaryToValue(address_connectable_2, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE_2);
+            bindPreferenceSummaryToValue(address_connectable_pc, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE_PC);
+            bindPreferenceSummaryToValue(address_connectable_remote_control, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL);
             bindPreferenceSummaryToValue(address_front_left, SdkPreferencesHelper.BLE_ADDRESS_FRONT_LEFT);
             bindPreferenceSummaryToValue(address_front_right, SdkPreferencesHelper.BLE_ADDRESS_FRONT_RIGHT);
             bindPreferenceSummaryToValue(address_left, SdkPreferencesHelper.BLE_ADDRESS_LEFT);

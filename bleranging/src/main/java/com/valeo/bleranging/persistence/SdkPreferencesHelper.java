@@ -20,6 +20,7 @@ public final class SdkPreferencesHelper {
     public final static int UNLOCK_IN_THE_RUN_THRESHOLD = -65;
     public final static int WALK_AWAY_LOCKING_THRESHOLD = -70;
     public final static int WELCOME_THRESHOLD = -95;
+    public final static int CLOSE_TO_BEACON_THRESHOLD = -50;
     public final static int NEAR_DOOR_RATIO_THRESHOLD = 8;
     public final static int NEAR_BACKDOOR_RATIO_THRESHOLD_MIN = -5;
     public final static int NEAR_BACKDOOR_RATIO_THRESHOLD_MAX = 5;
@@ -69,7 +70,8 @@ public final class SdkPreferencesHelper {
     public static final int RATIO_MAX_MIN_THR = 20;
     public static final int RATIO_CLOSE_TO_CAR_THR = 30;
     public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:73:88";
-    public final static String BLE_ADDRESS_CONNECTABLE_2 = "5C:E0:C5:34:4D:32";
+    public final static String BLE_ADDRESS_CONNECTABLE_PC = "B0:B4:48:BD:56:85";
+    public final static String BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL = "5C:E0:C5:34:4D:32";
     public final static String BLE_ADDRESS_FRONT_LEFT = "D4:F5:13:56:5C:F0";
     public final static String BLE_ADDRESS_FRONT_RIGHT = "D4:F5:13:56:7C:C2";
     public final static String BLE_ADDRESS_LEFT = "D4:F5:13:56:39:A5";
@@ -85,7 +87,8 @@ public final class SdkPreferencesHelper {
     public static final String SAVED_CC_GENERIC_OPTION = "savedConnectedCarGenericOption";
     /** Key formatter. */
     public static final String ADDRESS_CONNECTABLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE";
-    public static final String ADDRESS_CONNECTABLE_2_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE_2";
+    public static final String ADDRESS_CONNECTABLE_PC_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE_PC";
+    public static final String ADDRESS_CONNECTABLE_REMOTE_CONTROL_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE_REMOTE_CONTROL";
     public static final String ADDRESS_LEFT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_LEFT";
     public static final String ADDRESS_MIDDLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_MIDDLE";
     public static final String ADDRESS_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_RIGHT";
@@ -109,6 +112,7 @@ public final class SdkPreferencesHelper {
     public static final String UNLOCK_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_THR";
     public static final String LOCK_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOCK_THR";
     public static final String WELCOME_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_WELCOME_THR";
+    public static final String CLOSE_TO_BEACON_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_CLOSE_TO_BEACON_THR";
     public static final String NEAR_DOOR_RATIO_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR";
     public static final String NEAR_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_BACKDOOR_RATIO_THR_MIN";
     public static final String NEAR_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_BACKDOOR_RATIO_THR_MAX";
@@ -411,6 +415,10 @@ public final class SdkPreferencesHelper {
 //        saveInt(fileName, WELCOME_THR_PREFERENCES_NAME, welcomeThreshold);
 //    }
 // --Commented out by Inspection STOP (30/09/2016 11:26)
+
+    public int getCloseToBeaconThreshold(final String fileName) {
+        return readInt(fileName, CLOSE_TO_BEACON_THR_PREFERENCES_NAME, CLOSE_TO_BEACON_THRESHOLD);
+    }
 
     public int getNearDoorRatioThreshold(final String fileName) {
         return readInt(fileName, NEAR_DOOR_RATIO_THR_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD);
@@ -732,12 +740,20 @@ public final class SdkPreferencesHelper {
         return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, BLE_ADDRESS_CONNECTABLE);
     }
 
-    public String getTrxAddressConnectable2() {
-        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_2_PREFERENCE_NAME, BLE_ADDRESS_CONNECTABLE_2);
+    public String getTrxAddressConnectablePC() {
+        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PC_PREFERENCE_NAME, BLE_ADDRESS_CONNECTABLE_PC);
     }
 
-    public void setTrxAddressConnectable2(String address) {
-        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_2_PREFERENCE_NAME, address);
+    public void setTrxAddressConnectablePC(String address) {
+        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PC_PREFERENCE_NAME, address);
+    }
+
+    public String getTrxAddressConnectableRemoteControl() {
+        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_REMOTE_CONTROL_PREFERENCE_NAME, BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL);
+    }
+
+    public void setTrxAddressConnectableRemoteControl(String address) {
+        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_REMOTE_CONTROL_PREFERENCE_NAME, address);
     }
 
 // --Commented out by Inspection START (30/09/2016 11:26):
