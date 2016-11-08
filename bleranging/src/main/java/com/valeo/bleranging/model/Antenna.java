@@ -89,14 +89,44 @@ public class Antenna {
         }
     }
 
-    private float getEcretageValue(int lastN2Rssi) {
+    private int getEcretageReferenceIndex(int lastN2Rssi) {
         if (lastN2Rssi >= -170 && lastN2Rssi < -70) {
-            return SdkPreferencesHelper.getInstance().getEcretage70_100(SdkPreferencesHelper.getInstance().getConnectedCarType());
+            return SdkPreferencesHelper.getInstance().getEcretageReference_70_100(SdkPreferencesHelper.getInstance().getConnectedCarType());
         } else if (lastN2Rssi >= -70 && lastN2Rssi < -50) {
-            return SdkPreferencesHelper.getInstance().getEcretage50_70(SdkPreferencesHelper.getInstance().getConnectedCarType());
+            return SdkPreferencesHelper.getInstance().getEcretageReference_50_70(SdkPreferencesHelper.getInstance().getConnectedCarType());
         } else if (lastN2Rssi >= -50 && lastN2Rssi < -30) {
-            return SdkPreferencesHelper.getInstance().getEcretage30_50(SdkPreferencesHelper.getInstance().getConnectedCarType());
+            return SdkPreferencesHelper.getInstance().getEcretageReference_30_50(SdkPreferencesHelper.getInstance().getConnectedCarType());
         } else if (lastN2Rssi >= -30 && lastN2Rssi < +30) {
+            return SdkPreferencesHelper.getInstance().getEcretageReference_30_30(SdkPreferencesHelper.getInstance().getConnectedCarType());
+        }
+        return 0;
+    }
+
+    /**
+     * Get the n-X value
+     *
+     * @param ecretageRefIndex the X-th previous values
+     * @return the n-ecretageRefIndex rssi value
+     */
+    private int getEcretageReferenceValue(int ecretageRefIndex) {
+        if (rssiHistoric != null && !rssiHistoric.isEmpty()) {
+            if (ecretageRefIndex >= rssiHistoric.size()) {
+                return rssiHistoric.get(0);
+            } else {
+                return rssiHistoric.get(rssiHistoric.size() - ecretageRefIndex);
+            }
+        }
+        return -90;
+    }
+
+    private float getEcretageValue(int referenceRssi) {
+        if (referenceRssi >= -170 && referenceRssi < -70) {
+            return SdkPreferencesHelper.getInstance().getEcretage70_100(SdkPreferencesHelper.getInstance().getConnectedCarType());
+        } else if (referenceRssi >= -70 && referenceRssi < -50) {
+            return SdkPreferencesHelper.getInstance().getEcretage50_70(SdkPreferencesHelper.getInstance().getConnectedCarType());
+        } else if (referenceRssi >= -50 && referenceRssi < -30) {
+            return SdkPreferencesHelper.getInstance().getEcretage30_50(SdkPreferencesHelper.getInstance().getConnectedCarType());
+        } else if (referenceRssi >= -30 && referenceRssi < +30) {
             return SdkPreferencesHelper.getInstance().getEcretage30_30(SdkPreferencesHelper.getInstance().getConnectedCarType());
         }
         return 0;
@@ -109,9 +139,13 @@ public class Antenna {
      * @param bleChannel the ble channel from which the rssi come
      * @return the corrected rssi
      */
-    private int getCorrectedRssi(int rssi, BLEChannel bleChannel) {
-        float borneInf = lastRssi - getEcretageValue(lastRssi);
-        float borneSup = lastRssi + getEcretageValue(lastRssi);
+    private synchronized int getCorrectedRssi(int rssi, BLEChannel bleChannel) {
+        int referenceRssi = getEcretageReferenceValue(getEcretageReferenceIndex(lastRssi));
+        float ecretage = getEcretageValue(referenceRssi);
+        float borneInf = referenceRssi - ecretage;
+        float borneSup = referenceRssi + ecretage;
+//        float borneInf = lastRssi - getEcretageValue(lastRssi);
+//        float borneSup = lastRssi + getEcretageValue(lastRssi);
         switch (bleChannel) {
             case BLE_CHANNEL_37:
                 offsetBleChannel38 = 0;

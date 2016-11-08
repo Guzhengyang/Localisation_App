@@ -118,6 +118,10 @@
     <string name="pref_mode_lock">Lock Mode</string>
     <string name="pref_mode_start">Start Mode</string>
     <string name="pref_ecretage">ECRETAGE</string>
+    <string name="pref_ecretage_reference_100">70_100 Ecretage Reference</string>
+    <string name="pref_ecretage_reference_70">50_70 Ecretage Reference</string>
+    <string name="pref_ecretage_reference_50">30_50 Ecretage Reference</string>
+    <string name="pref_ecretage_reference_30">30_30 Ecretage Reference</string>
     <string name="pref_ecretage_100">70_100 Ecretage</string>
     <string name="pref_ecretage_70">50_70 Ecretage</string>
     <string name="pref_ecretage_50">30_50 Ecretage</string>

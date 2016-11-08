@@ -310,6 +310,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference unlock_mode;
         private EditTextPreference lock_mode;
         private EditTextPreference start_mode;
+        private EditTextPreference ecretage_reference_100;
+        private EditTextPreference ecretage_reference_70;
+        private EditTextPreference ecretage_reference_50;
+        private EditTextPreference ecretage_reference_30;
         private EditTextPreference ecretage_100;
         private EditTextPreference ecretage_70;
         private EditTextPreference ecretage_50;
@@ -387,6 +391,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             unlock_mode = ((EditTextPreference) findPreference(SdkPreferencesHelper.UNLOCK_MODE_PREFERENCES_NAME));
             lock_mode = ((EditTextPreference) findPreference(SdkPreferencesHelper.LOCK_MODE_PREFERENCES_NAME));
             start_mode = ((EditTextPreference) findPreference(SdkPreferencesHelper.START_MODE_PREFERENCES_NAME));
+            ecretage_reference_100 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ECRETAGE_REFERENCE_70_100_PREFERENCES_NAME));
+            ecretage_reference_70 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ECRETAGE_REFERENCE_50_70_PREFERENCES_NAME));
+            ecretage_reference_50 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ECRETAGE_REFERENCE_30_50_PREFERENCES_NAME));
+            ecretage_reference_30 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ECRETAGE_REFERENCE_30_30_PREFERENCES_NAME));
             ecretage_100 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ECRETAGE_70_100_PREFERENCES_NAME));
             ecretage_70 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ECRETAGE_50_70_PREFERENCES_NAME));
             ecretage_50 = ((EditTextPreference) findPreference(SdkPreferencesHelper.ECRETAGE_30_50_PREFERENCES_NAME));
@@ -435,6 +443,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             unlock_mode.setText(unlock_mode.getSummary().toString());
             lock_mode.setText(lock_mode.getSummary().toString());
             start_mode.setText(start_mode.getSummary().toString());
+            ecretage_reference_100.setText(ecretage_reference_100.getSummary().toString());
+            ecretage_reference_70.setText(ecretage_reference_70.getSummary().toString());
+            ecretage_reference_50.setText(ecretage_reference_50.getSummary().toString());
+            ecretage_reference_30.setText(ecretage_reference_30.getSummary().toString());
             ecretage_100.setText(ecretage_100.getSummary().toString());
             ecretage_70.setText(ecretage_70.getSummary().toString());
             ecretage_50.setText(ecretage_50.getSummary().toString());
@@ -487,6 +499,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(unlock_mode, String.valueOf(SdkPreferencesHelper.UNLOCK_MODE));
             bindPreferenceSummaryToValue(lock_mode, String.valueOf(SdkPreferencesHelper.LOCK_MODE));
             bindPreferenceSummaryToValue(start_mode, String.valueOf(SdkPreferencesHelper.START_MODE));
+            bindPreferenceSummaryToValue(ecretage_reference_100, String.valueOf(SdkPreferencesHelper.ECRETAGE_REFERENCE_70_100));
+            bindPreferenceSummaryToValue(ecretage_reference_70, String.valueOf(SdkPreferencesHelper.ECRETAGE_REFERENCE_50_70));
+            bindPreferenceSummaryToValue(ecretage_reference_50, String.valueOf(SdkPreferencesHelper.ECRETAGE_REFERENCE_30_50));
+            bindPreferenceSummaryToValue(ecretage_reference_30, String.valueOf(SdkPreferencesHelper.ECRETAGE_REFERENCE_30_30));
             bindPreferenceSummaryToValue(ecretage_100, String.valueOf(SdkPreferencesHelper.ECRETAGE_70_100));
             bindPreferenceSummaryToValue(ecretage_70, String.valueOf(SdkPreferencesHelper.ECRETAGE_50_70));
             bindPreferenceSummaryToValue(ecretage_50, String.valueOf(SdkPreferencesHelper.ECRETAGE_30_50));

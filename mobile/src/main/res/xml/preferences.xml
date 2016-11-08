@@ -138,6 +138,22 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_ecretage">
         <EditTextPreference
+            android:inputType="number"
+            android:key="com.inblue.PREFERENCE_ECRETAGE_REFERENCE_70_100"
+            android:title="@string/pref_ecretage_reference_100" />
+        <EditTextPreference
+            android:inputType="number"
+            android:key="com.inblue.PREFERENCE_ECRETAGE_REFERENCE_50_70"
+            android:title="@string/pref_ecretage_reference_70" />
+        <EditTextPreference
+            android:inputType="number"
+            android:key="com.inblue.PREFERENCE_ECRETAGE_REFERENCE_30_50"
+            android:title="@string/pref_ecretage_reference_50" />
+        <EditTextPreference
+            android:inputType="number"
+            android:key="com.inblue.PREFERENCE_ECRETAGE_REFERENCE_30_30"
+            android:title="@string/pref_ecretage_reference_30" />
+        <EditTextPreference
             android:inputType="number|numberDecimal"
             android:key="com.inblue.PREFERENCE_ECRETAGE_70_100"
             android:title="@string/pref_ecretage_100" />

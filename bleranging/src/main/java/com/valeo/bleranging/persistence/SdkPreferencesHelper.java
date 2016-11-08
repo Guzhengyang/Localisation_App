@@ -48,6 +48,10 @@ public final class SdkPreferencesHelper {
     public final static int UNLOCK_MODE = 7;
     public final static int LOCK_MODE = 3;
     public final static int START_MODE = 12;
+    public final static int ECRETAGE_REFERENCE_70_100 = 5;
+    public final static int ECRETAGE_REFERENCE_50_70 = 2;
+    public final static int ECRETAGE_REFERENCE_30_50 = 4;
+    public final static int ECRETAGE_REFERENCE_30_30 = 3;
     public final static float ECRETAGE_70_100 = 20.0f;
     public final static float ECRETAGE_50_70 = 20.0f;
     public final static float ECRETAGE_30_50 = 25.0f;
@@ -140,6 +144,10 @@ public final class SdkPreferencesHelper {
     public static final String UNLOCK_MODE_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_MODE";
     public static final String LOCK_MODE_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOCK_MODE";
     public static final String START_MODE_PREFERENCES_NAME = "com.inblue.PREFERENCE_START_MODE";
+    public static final String ECRETAGE_REFERENCE_70_100_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_REFERENCE_70_100";
+    public static final String ECRETAGE_REFERENCE_50_70_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_REFERENCE_50_70";
+    public static final String ECRETAGE_REFERENCE_30_50_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_REFERENCE_30_50";
+    public static final String ECRETAGE_REFERENCE_30_30_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_REFERENCE_30_30";
     public static final String ECRETAGE_70_100_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_70_100";
     public static final String ECRETAGE_50_70_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_50_70";
     public static final String ECRETAGE_30_50_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_30_50";
@@ -537,6 +545,22 @@ public final class SdkPreferencesHelper {
 //        saveInt(fileName, START_MODE_PREFERENCES_NAME, startMode);
 //    }
 // --Commented out by Inspection STOP (30/09/2016 11:26)
+
+    public int getEcretageReference_70_100(final String fileName) {
+        return readInt(fileName, ECRETAGE_REFERENCE_70_100_PREFERENCES_NAME, ECRETAGE_REFERENCE_70_100);
+    }
+
+    public int getEcretageReference_50_70(final String fileName) {
+        return readInt(fileName, ECRETAGE_REFERENCE_50_70_PREFERENCES_NAME, ECRETAGE_REFERENCE_50_70);
+    }
+
+    public int getEcretageReference_30_50(final String fileName) {
+        return readInt(fileName, ECRETAGE_REFERENCE_30_50_PREFERENCES_NAME, ECRETAGE_REFERENCE_30_50);
+    }
+
+    public int getEcretageReference_30_30(final String fileName) {
+        return readInt(fileName, ECRETAGE_REFERENCE_30_30_PREFERENCES_NAME, ECRETAGE_REFERENCE_30_30);
+    }
 
     public float getEcretage70_100(final String fileName) {
         return readFloat(fileName, ECRETAGE_70_100_PREFERENCES_NAME, ECRETAGE_70_100);
