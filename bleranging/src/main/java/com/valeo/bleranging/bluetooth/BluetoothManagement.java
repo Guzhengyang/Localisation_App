@@ -532,6 +532,14 @@ public class BluetoothManagement {
         return mBluetoothLeService != null && mBluetoothLeService.isConnecting();
     }
 
+    public boolean isConnecting2() {
+        return mBluetoothLeServiceForPC != null && mBluetoothLeServiceForPC.isConnecting2();
+    }
+
+    public boolean isConnecting3() {
+        return mBluetoothLeServiceForRemoteControl != null && mBluetoothLeServiceForRemoteControl.isConnecting3();
+    }
+
     public boolean isFullyConnected() {
         return mBluetoothLeService != null && mBluetoothLeService.isFullyConnected();
     }

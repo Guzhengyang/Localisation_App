@@ -39,6 +39,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
     private final IBinder mBinder = new LocalBinder3();
     private boolean mIsServiceDiscovered = false;
     private boolean isFullyConnected = false;
+    private boolean isConnecting = false;
     private boolean isBound = false;
     private int mPacketToWriteCount = 0;
 
@@ -111,10 +112,12 @@ public class BluetoothLeServiceForRemoteControl extends Service {
             if (status == 8) {
                 PSALogs.i("NIH_REMOTE", "Connection loss, error = 8");
                 isFullyConnected = false;
+                isConnecting = false;
             } else if (status != BluetoothGatt.GATT_SUCCESS && status != 19) {
                 if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                     PSALogs.i("NIH_REMOTE", "Error lead to disconnection from GATT server.");
                     isFullyConnected = false;
+                    isConnecting = false;
                 } else {
                     PSALogs.i("NIH_REMOTE", "Failed to Connected to GATT server, New State = " + newState);
                     if (mBluetoothGatt != null) {
@@ -132,6 +135,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 PSALogs.i("NIH_REMOTE", "Disconnected from GATT server.");
                 isFullyConnected = false;
+                isConnecting = false;
                 mIsServiceDiscovered = false;
             }
         }
@@ -183,6 +187,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
                                             BluetoothGattCharacteristic characteristic) {
             PSALogs.i("NIH_REMOTE", "onCharacteristicChanged(): " + Arrays.toString(characteristic.getValue()));
             isFullyConnected = true;
+            isConnecting = false;
         }
 
         @Override
@@ -191,6 +196,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
             PSALogs.i("NIH_REMOTE", "onDescriptorWrite(): " + status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 isFullyConnected = true;
+                isConnecting = false;
             }
         }
 
@@ -200,6 +206,10 @@ public class BluetoothLeServiceForRemoteControl extends Service {
         }
 
     };
+
+    public boolean isConnecting3() {
+        return isConnecting;
+    }
 
     public boolean isFullyConnected3() {
         return isBound && isFullyConnected;
@@ -265,6 +275,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
      */
     public void connectToDevice(final String address) {
         PSALogs.d("NIH_REMOTE", "connectToDevice.");
+        isConnecting = true;
         if (mBluetoothAdapter == null || address == null) {
             PSALogs.w("NIH_REMOTE", "BluetoothAdapter not initialized or unspecified address.");
             return;

@@ -154,7 +154,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             if (closeToCarRearRight || closeToBeaconRR) { //maxMinRearRight ||
                 result.add(NUMBER_TRX_REAR_RIGHT);
             }
-            if ((closeToCarRL + closeToCarRR) > (2 * thresholdMaxMinRatio) || closeToBeaconRL || closeToBeaconRR) {
+            if (((closeToCarRL + closeToCarRR) > (2 * thresholdMaxMinRatio)) || closeToBeaconRL || closeToBeaconRR) {
                 result.add(NUMBER_TRX_BACK);
             }
             if (result.isEmpty()) {

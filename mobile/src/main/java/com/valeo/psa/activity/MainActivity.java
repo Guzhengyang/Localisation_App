@@ -1102,7 +1102,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 
     @Override
     public void showSnackBar(String message) {
-        Snackbar.make(main_scroll, message, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(main_scroll, message, Snackbar.LENGTH_LONG).show();
     }
 
     private void startButtonAnimation(boolean isAnimated) {
