@@ -33,6 +33,7 @@ public final class SdkPreferencesHelper {
     public final static int NEAR_DOOR_RATIO_THRESHOLD_TRL_TRR = 10;
     public final static int AVERAGE_DELTA_UNLOCK_THRESHOLD = 10;
     public final static int AVERAGE_DELTA_LOCK_THRESHOLD = -10;
+    public final static float BACK_TIMEOUT = 3.5f;
     public final static float THATCHAM_TIMEOUT = 3.5f;
     public final static float CRYPTO_PRE_AUTH_TIMEOUT = 0f;
     public final static float CRYPTO_ACTION_TIMEOUT = 0f;
@@ -130,6 +131,7 @@ public final class SdkPreferencesHelper {
     public static final String AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_LOCK_THRESHOLD";
     public static final String AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD";
     public static final String UNLOCK_VALID_NB_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_VALID_NB_ELEMENT";
+    public static final String BACK_TIMEOUT_PREFERENCES_NAME = "com.inblue.PREFERENCE_BACK_TIMEOUT";
     public static final String THATCHAM_TIMEOUT_PREFERENCES_NAME = "com.inblue.PREFERENCE_THATCHAM_TIMEOUT";
     public static final String CRYPTO_PRE_AUTH_TIMEOUT_PREFERENCES_NAME = "com.inblue.PREFERENCE_CRYPTO_PRE_AUTH_TIMEOUT";
     public static final String CRYPTO_ACTION_TIMEOUT_PREFERENCES_NAME = "com.inblue.PREFERENCE_CRYPTO_ACTION_TIMEOUT";
@@ -666,6 +668,10 @@ public final class SdkPreferencesHelper {
 
     public float getThatchamTimeout() {
         return readFloat(SAVED_CC_GENERIC_OPTION, THATCHAM_TIMEOUT_PREFERENCES_NAME, THATCHAM_TIMEOUT);
+    }
+
+    public float getBackTimeout() {
+        return readFloat(SAVED_CC_GENERIC_OPTION, BACK_TIMEOUT_PREFERENCES_NAME, BACK_TIMEOUT);
     }
 
     public float getCryptoPreAuthTimeout() {

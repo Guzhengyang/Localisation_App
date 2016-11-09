@@ -102,6 +102,7 @@ public abstract class ScanCallbackCompat {
                 }
 
                 public void onScanFailed(int errorCode) {
+                    super.onScanFailed(errorCode);
                     PSALogs.e("NIH", "Scan Failed");
                 }
             };

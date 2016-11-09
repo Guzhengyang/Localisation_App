@@ -539,6 +539,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private ListPreference connected_car_base;
         private CheckBoxPreference connected_car_trame_enabled;
         private EditTextPreference connected_car_trame;
+        private EditTextPreference back_timeout;
         private EditTextPreference thatcham_timeout;
         private EditTextPreference crypto_pre_auth_timeout;
         private EditTextPreference crypto_action_timeout;
@@ -589,6 +590,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             connected_car_base = ((ListPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_BASE_PREFERENCES_NAME));
             connected_car_trame_enabled = ((CheckBoxPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_TRAME_ENABLED_PREFERENCES_NAME));
             connected_car_trame = ((EditTextPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_TRAME_PREFERENCES_NAME));
+            back_timeout = ((EditTextPreference) findPreference(SdkPreferencesHelper.BACK_TIMEOUT_PREFERENCES_NAME));
             thatcham_timeout = ((EditTextPreference) findPreference(SdkPreferencesHelper.THATCHAM_TIMEOUT_PREFERENCES_NAME));
             crypto_pre_auth_timeout = ((EditTextPreference) findPreference(SdkPreferencesHelper.CRYPTO_PRE_AUTH_TIMEOUT_PREFERENCES_NAME));
             crypto_action_timeout = ((EditTextPreference) findPreference(SdkPreferencesHelper.CRYPTO_ACTION_TIMEOUT_PREFERENCES_NAME));
@@ -618,6 +620,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         private void setDefaultValues() {
+            back_timeout.setText(back_timeout.getSummary().toString());
             thatcham_timeout.setText(thatcham_timeout.getSummary().toString());
             crypto_pre_auth_timeout.setText(crypto_pre_auth_timeout.getSummary().toString());
             crypto_action_timeout.setText(crypto_action_timeout.getSummary().toString());
@@ -655,6 +658,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
             connected_car_trame_enabled.setSummary(R.string.pref_car_forced_trame_enabled_summary);
             bindPreferenceSummaryToValue(connected_car_trame, "");
+            bindPreferenceSummaryToValue(back_timeout, String.valueOf(SdkPreferencesHelper.BACK_TIMEOUT));
             bindPreferenceSummaryToValue(thatcham_timeout, String.valueOf(SdkPreferencesHelper.THATCHAM_TIMEOUT));
             bindPreferenceSummaryToValue(crypto_pre_auth_timeout, String.valueOf(SdkPreferencesHelper.CRYPTO_PRE_AUTH_TIMEOUT));
             bindPreferenceSummaryToValue(crypto_action_timeout, String.valueOf(SdkPreferencesHelper.CRYPTO_ACTION_TIMEOUT));

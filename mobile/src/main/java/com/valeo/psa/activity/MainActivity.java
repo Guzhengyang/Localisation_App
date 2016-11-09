@@ -988,6 +988,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     @Override
     public void updateCarDoorStatus(boolean lockStatus) {
         if (lockStatus) {
+            PSALogs.d("NIH rearm", "abortCommand update lock");
             car_door_status.setText(getString(R.string.vehicle_locked));
             carDoorStatus = CarDoorStatus.LOCKED;
             vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
@@ -995,6 +996,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             vehicle_unlocked.setBackgroundResource(0);
             startButtonAnimation(false);
         } else {
+            PSALogs.d("NIH rearm", "abortCommand update unlock");
             car_door_status.setText(getString(R.string.vehicle_unlocked));
             carDoorStatus = CarDoorStatus.UNLOCKED;
             vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);

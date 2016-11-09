@@ -14,6 +14,7 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.BASE_1
  * Temporary class providing methods to handle 'New' Inblue BLE protocol
  */
 public class InblueProtocolManager {
+    public final static int MAX_BLE_TRAME_BYTE = 6;
     private int packetOneCounter = 0;
     private boolean isStartRequested = false;
     private boolean isWelcomeRequested = false;
@@ -86,7 +87,7 @@ public class InblueProtocolManager {
     public byte[] getPacketOnePayload(boolean isRKE, List<Integer> isUnlockStrategyValid,
                                       boolean isInUnlockArea, List<Integer> isStartStrategyValid,
                                       boolean isInStartArea, boolean isInLockArea) {
-        byte[] payload = new byte[6];
+        byte[] payload = new byte[MAX_BLE_TRAME_BYTE];
         payload[0] = (byte) ((packetOneCounter>>8)&0xFF);
         payload[1] = (byte) ((packetOneCounter)&0xFF);
         payload[2] = (0x01);
