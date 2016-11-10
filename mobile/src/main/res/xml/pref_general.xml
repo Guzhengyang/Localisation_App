@@ -27,39 +27,51 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_ble_address">
         <EditTextPreference
+            android:inputType="textCapCharacters"
             android:key="com.inblue.PREFERENCE_ADDRESS_CONNECTABLE"
             android:title="@string/pref_ble_address_connectable" />
         <EditTextPreference
+            android:inputType="textCapCharacters"
             android:key="com.inblue.PREFERENCE_ADDRESS_CONNECTABLE_PC"
             android:title="@string/pref_ble_address_connectable_pc" />
         <EditTextPreference
+            android:inputType="textCapCharacters"
             android:key="com.inblue.PREFERENCE_ADDRESS_CONNECTABLE_REMOTE_CONTROL"
             android:title="@string/pref_ble_address_connectable_remote_control" />
         <EditTextPreference
+            android:inputType="textCapCharacters"
             android:key="com.inblue.PREFERENCE_ADDRESS_FRONT_LEFT"
             android:title="@string/pref_ble_address_front_left" />
         <EditTextPreference
+            android:inputType="textCapCharacters"
             android:key="com.inblue.PREFERENCE_ADDRESS_FRONT_RIGHT"
             android:title="@string/pref_ble_address_front_right" />
         <EditTextPreference
+            android:inputType="textCapCharacters"
             android:key="com.inblue.PREFERENCE_ADDRESS_LEFT"
             android:title="@string/pref_ble_address_left" />
         <EditTextPreference
+            android:inputType="textCapCharacters"
             android:key="com.inblue.PREFERENCE_ADDRESS_MIDDLE"
             android:title="@string/pref_ble_address_middle" />
         <EditTextPreference
+            android:inputType="textCapCharacters"
             android:key="com.inblue.PREFERENCE_ADDRESS_RIGHT"
             android:title="@string/pref_ble_address_right" />
         <EditTextPreference
+            android:inputType="textCapCharacters"
             android:key="com.inblue.PREFERENCE_ADDRESS_TRUNK"
             android:title="@string/pref_ble_address_trunk" />
         <EditTextPreference
+            android:inputType="textCapCharacters"
             android:key="com.inblue.PREFERENCE_ADDRESS_REAR_LEFT"
             android:title="@string/pref_ble_address_rear_left" />
         <EditTextPreference
+            android:inputType="textCapCharacters"
             android:key="com.inblue.PREFERENCE_ADDRESS_BACK"
             android:title="@string/pref_ble_address_back" />
         <EditTextPreference
+            android:inputType="textCapCharacters"
             android:key="com.inblue.PREFERENCE_ADDRESS_REAR_RIGHT"
             android:title="@string/pref_ble_address_rear_right" />
     </PreferenceCategory>

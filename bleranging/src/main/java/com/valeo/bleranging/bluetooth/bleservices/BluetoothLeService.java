@@ -104,6 +104,9 @@ public class BluetoothLeService extends Service {
                 }
                 PSALogs.d("NIH", "onMtuChanged mtu request FAILED " + status);
                 intentAction = ACTION_GATT_SERVICES_FAILED;
+                isFullyConnected = false;
+                isConnecting = false;
+                mIsServiceDiscovered = false;
                 broadcastUpdate(intentAction);
                 if (mBluetoothGatt != null) {
                     mBluetoothGatt.close();
@@ -116,9 +119,14 @@ public class BluetoothLeService extends Service {
                 mPacketToWriteCount = 0;
                 try {
                     // Attempts to discover services after successful connection.
+                    PSALogs.i("NIH", "mIsServiceDiscovered = " + mIsServiceDiscovered);
                     if (!mIsServiceDiscovered) {
                         boolean isStarted = mBluetoothGatt.discoverServices();
                         PSALogs.i("NIH", "Attempting to start service discovery:" + isStarted);
+                    } else {
+                        isFullyConnected = false;
+                        isConnecting = false;
+                        mIsServiceDiscovered = false;
                     }
                 } catch (Exception e) {
                     PSALogs.w("NIH", "An exception occurred while trying to start the services discovery");
@@ -134,8 +142,12 @@ public class BluetoothLeService extends Service {
                 intentAction = ACTION_GATT_CONNECTION_LOSS;
                 isFullyConnected = false;
                 isConnecting = false;
+                mIsServiceDiscovered = false;
                 broadcastUpdate(intentAction);
             } else if (status != BluetoothGatt.GATT_SUCCESS && status != 19) {
+                isFullyConnected = false;
+                isConnecting = false;
+                mIsServiceDiscovered = false;
                 // makeNoise when connexion failed
                 try {
                     final ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_SYSTEM, 70);
@@ -146,8 +158,6 @@ public class BluetoothLeService extends Service {
                 if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                     intentAction = ACTION_GATT_DISCONNECTED;
                     PSALogs.i("NIH", "Error lead to disconnection from GATT server.");
-                    isFullyConnected = false;
-                    isConnecting = false;
                     if (mBSHandler != null) {
                         // Send a message to the right handler
                         // Return the result from the requested action
@@ -168,6 +178,8 @@ public class BluetoothLeService extends Service {
                     gatt.requestMtu(23);
                 } else {
                     PSALogs.d("NIH", "onConnectionStateChange no mtu request");
+                    isFullyConnected = true;
+                    isConnecting = false;
                 }
                 // Result from the requested action: should be 1 or 15 at the end
                 // Otherwise an error occurred during the process
@@ -176,6 +188,7 @@ public class BluetoothLeService extends Service {
                 PSALogs.i("NIH", "Disconnected from GATT server.");
                 isFullyConnected = false;
                 isConnecting = false;
+                mIsServiceDiscovered = false;
                 if (mBSHandler != null) {
                     // Send a message to the right handler
                     // Return the result from the requested action
@@ -197,6 +210,9 @@ public class BluetoothLeService extends Service {
                 subscribeToReadCharacteristic(true);
                 broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
             } else {
+                isFullyConnected = false;
+                isConnecting = false;
+                mIsServiceDiscovered = false;
                 broadcastUpdate(ACTION_GATT_SERVICES_FAILED);
                 if (mBluetoothGatt != null) {
                     mBluetoothGatt.close();
@@ -236,7 +252,6 @@ public class BluetoothLeService extends Service {
             PSALogs.i("NIH", "onCharacteristicChanged(): " + Arrays.toString(characteristic.getValue()));
             mReceiveQueue.add(characteristic.getValue());
             isFullyConnected = true;
-            isConnecting = false;
             broadcastUpdate(ACTION_DATA_AVAILABLE);
         }
 

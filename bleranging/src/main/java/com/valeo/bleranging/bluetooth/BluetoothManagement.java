@@ -146,23 +146,23 @@ public class BluetoothManagement {
      * Close the connection between the phone and the current device
      */
     public void disconnect() {
-        try {
-            if (isFullyConnected()) {
+        if (isFullyConnected()) {
+            try {
                 mBluetoothLeService.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            if (isBound()) {
-                mContext.unbindService(mServiceConnection);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (isReceiverRegistered) {
-                mContext.unregisterReceiver(mTrxUpdateReceiver);
-                isReceiverRegistered = false;
+            try {
+                if (isBound()) {
+                    mContext.unbindService(mServiceConnection);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (isReceiverRegistered) {
+                    mContext.unregisterReceiver(mTrxUpdateReceiver);
+                    isReceiverRegistered = false;
+                }
             }
         }
     }
@@ -171,19 +171,19 @@ public class BluetoothManagement {
      * Close the connection between the phone and the pc
      */
     public void disconnectPc() {
-        try {
-            if (isFullyConnected2()) {
+        if (isFullyConnected2()) {
+            try {
                 mBluetoothLeServiceForPC.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            if (isBound2()) {
-                mContext.unbindService(mServiceConnectionForPC);
+            try {
+                if (isBound2()) {
+                    mContext.unbindService(mServiceConnectionForPC);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -191,19 +191,19 @@ public class BluetoothManagement {
      * Close the connection between the phone and the RemoteControl
      */
     public void disconnectRemoteControl() {
-        try {
-            if (isFullyConnected3()) {
+        if (isFullyConnected3()) {
+            try {
                 mBluetoothLeServiceForRemoteControl.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            if (isBound3()) {
-                mContext.unbindService(mServiceConnectionForRemoteControl);
+            try {
+                if (isBound3()) {
+                    mContext.unbindService(mServiceConnectionForRemoteControl);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -211,7 +211,7 @@ public class BluetoothManagement {
      * Open the connection between the phone and the current device
      */
     public void connect(BroadcastReceiver mTrxUpdateReceiver) {
-        if (!isFullyConnected()) {
+        if (!isFullyConnected() && !isConnecting()) {
             if (!isReceiverRegistered) {
                 this.mTrxUpdateReceiver = mTrxUpdateReceiver;
                 mContext.registerReceiver(this.mTrxUpdateReceiver, makeTrxUpdateIntentFilter());
@@ -233,7 +233,7 @@ public class BluetoothManagement {
      * Open the connection between the phone and the pc
      */
     public void connectToPC(String address) {
-        if (!isFullyConnected2()) {
+        if (!isFullyConnected2() && !isConnecting2()) {
             if (!isBound2()) {
                 PSALogs.i("NIH_PC", "BluetoothManagement bindService: " + address);
                 Intent gattServiceIntent = new Intent(mContext, BluetoothLeServiceForPC.class);
@@ -249,7 +249,7 @@ public class BluetoothManagement {
      * Open the connection between the phone and the RemoteControl
      */
     public void connectToRemoteControl(String address) {
-        if (!isFullyConnected3()) {
+        if (!isFullyConnected3() && !isConnecting3()) {
             if (!isBound3()) {
                 PSALogs.i("NIH_REMOTE", "BluetoothManagement bindService: " + address);
                 Intent gattServiceIntent = new Intent(mContext, BluetoothLeServiceForRemoteControl.class);

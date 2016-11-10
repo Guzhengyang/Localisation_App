@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int NOTIFICATION_ID_1 = 1;
     private final static int RKE_USE_TIMEOUT = 5000;
     private final Handler mHandler = new Handler();
+    private final Handler mHandlerCryptoTimeOut = new Handler();
     private boolean isRKEAvailable = true;
     private Toolbar toolbar;
     private FrameLayout main_frame;
@@ -381,8 +382,13 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     driver_s_door_unlocked.setBackgroundResource(0);
                     vehicle_unlocked.setBackgroundResource(0);
                     startButtonAnimation(false);
-                    mBleRangingHelper.setIsRKE(true);
-                    mBleRangingHelper.performLockVehicleRequest(true); //lockVehicle
+                    mHandlerCryptoTimeOut.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mBleRangingHelper.setIsRKE(true);
+                            mBleRangingHelper.performLockVehicleRequest(true);
+                        }
+                    }, (long) (SdkPreferencesHelper.getInstance().getCryptoActionTimeout() * 1000)); //lockVehicle
                 }
             }
         });
@@ -400,8 +406,13 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     vehicle_unlocked.setBackgroundResource(0);
                     start_button.setBackgroundResource(0);
                     startButtonAnimation(false);
-                    mBleRangingHelper.setIsRKE(true);
-                    mBleRangingHelper.performLockVehicleRequest(false); //unlockVehicle
+                    mHandlerCryptoTimeOut.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mBleRangingHelper.setIsRKE(true);
+                            mBleRangingHelper.performLockVehicleRequest(false);
+                        }
+                    }, (long) (SdkPreferencesHelper.getInstance().getCryptoActionTimeout() * 1000)); //unlockVehicle
                 }
             }
         });
@@ -418,8 +429,13 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     driver_s_door_unlocked.setBackgroundResource(0);
                     vehicle_locked.setBackgroundResource(0);
                     startButtonAnimation(true);
-                    mBleRangingHelper.setIsRKE(true);
-                    mBleRangingHelper.performLockVehicleRequest(false); //unlockVehicle
+                    mHandlerCryptoTimeOut.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mBleRangingHelper.setIsRKE(true);
+                            mBleRangingHelper.performLockVehicleRequest(false);
+                        }
+                    }, (long) (SdkPreferencesHelper.getInstance().getCryptoActionTimeout() * 1000)); //unlockVehicle
                     createNotification(NOTIFICATION_ID_1, getString(R.string.notif_unlock_it),
                             R.mipmap.car_all_doors_button, getString(R.string.vehicle_unlocked));
                 }
@@ -988,7 +1004,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     @Override
     public void updateCarDoorStatus(boolean lockStatus) {
         if (lockStatus) {
-            PSALogs.d("NIH rearm", "abortCommand update lock");
+            PSALogs.d("NIH rearm", "update lock");
             car_door_status.setText(getString(R.string.vehicle_locked));
             carDoorStatus = CarDoorStatus.LOCKED;
             vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
@@ -996,7 +1012,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             vehicle_unlocked.setBackgroundResource(0);
             startButtonAnimation(false);
         } else {
-            PSALogs.d("NIH rearm", "abortCommand update unlock");
+            PSALogs.d("NIH rearm", "update unlock");
             car_door_status.setText(getString(R.string.vehicle_unlocked));
             carDoorStatus = CarDoorStatus.UNLOCKED;
             vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);

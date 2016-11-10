@@ -16,6 +16,7 @@ import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -219,43 +220,43 @@ public final class BluetoothAdapterCompat {
         List<ScanFilter> scanFilters = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             ScanFilter scanFilterConnectable = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressConnectable().toUpperCase(Locale.FRANCE))
                     .build();
             scanFilters.add(scanFilterConnectable);
             ScanFilter scanFilterLeft = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressLeft())
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressLeft().toUpperCase(Locale.FRANCE))
                     .build();
             scanFilters.add(scanFilterLeft);
             ScanFilter scanFilterMiddle = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressMiddle())
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressMiddle().toUpperCase(Locale.FRANCE))
                     .build();
             scanFilters.add(scanFilterMiddle);
             ScanFilter scanFilterRight = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRight())
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRight().toUpperCase(Locale.FRANCE))
                     .build();
             scanFilters.add(scanFilterRight);
             ScanFilter scanFilterTrunk = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressTrunk())
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressTrunk().toUpperCase(Locale.FRANCE))
                     .build();
             scanFilters.add(scanFilterTrunk);
             ScanFilter scanFilterBack = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressBack())
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressBack().toUpperCase(Locale.FRANCE))
                     .build();
             scanFilters.add(scanFilterBack);
             ScanFilter scanFilterFrontLeft = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft())
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft().toUpperCase(Locale.FRANCE))
                     .build();
             scanFilters.add(scanFilterFrontLeft);
             ScanFilter scanFilterFrontRight = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressFrontRight())
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressFrontRight().toUpperCase(Locale.FRANCE))
                     .build();
             scanFilters.add(scanFilterFrontRight);
             ScanFilter scanFilterRearLeft = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRearLeft())
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRearLeft().toUpperCase(Locale.FRANCE))
                     .build();
             scanFilters.add(scanFilterRearLeft);
             ScanFilter scanFilterRearRight = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRearRight())
+                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRearRight().toUpperCase(Locale.FRANCE))
                     .build();
             scanFilters.add(scanFilterRearRight);
             ScanFilter scanFilterConnectable2 = new ScanFilter.Builder()

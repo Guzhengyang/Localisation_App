@@ -87,6 +87,8 @@ public class BluetoothLeServiceForPC extends Service {
         public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
             if (status != BluetoothGatt.GATT_SUCCESS) {
                 PSALogs.d("NIH_PC", "onMtuChanged mtu request FAILED " + status);
+                isFullyConnected = false;
+                isConnecting = false;
                 if (mBluetoothGatt != null) {
                     mBluetoothGatt.close();
                 }
@@ -99,6 +101,9 @@ public class BluetoothLeServiceForPC extends Service {
                     if (!mIsServiceDiscovered) {
                         boolean isStarted = mBluetoothGatt.discoverServices();
                         PSALogs.i("NIH_PC", "Attempting to start service discovery:" + isStarted);
+                    } else {
+                        isFullyConnected = false;
+                        isConnecting = false;
                     }
                 } catch (Exception e) {
                     PSALogs.w("NIH_PC", "An exception occurred while trying to start the services discovery");
@@ -129,6 +134,8 @@ public class BluetoothLeServiceForPC extends Service {
                     gatt.requestMtu(23);
                 } else {
                     PSALogs.d("NIH_PC", "onConnectionStateChange no mtu request");
+                    isFullyConnected = true;
+                    isConnecting = false;
                 }
                 // Result from the requested action: should be 1 or 15 at the end
                 // Otherwise an error occurred during the process
@@ -150,6 +157,8 @@ public class BluetoothLeServiceForPC extends Service {
                 mIsServiceDiscovered = true;
                 subscribeToReadCharacteristic(true);
             } else {
+                isFullyConnected = false;
+                isConnecting = false;
                 if (mBluetoothGatt != null) {
                     mBluetoothGatt.close();
                 }
@@ -187,7 +196,6 @@ public class BluetoothLeServiceForPC extends Service {
                                             BluetoothGattCharacteristic characteristic) {
             PSALogs.i("NIH_PC", "onCharacteristicChanged(): " + Arrays.toString(characteristic.getValue()));
             isFullyConnected = true;
-            isConnecting = false;
         }
 
         @Override

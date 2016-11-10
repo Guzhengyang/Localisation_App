@@ -87,6 +87,8 @@ public class BluetoothLeServiceForRemoteControl extends Service {
         public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
             if (status != BluetoothGatt.GATT_SUCCESS) {
                 PSALogs.d("NIH_REMOTE", "onMtuChanged mtu request FAILED " + status);
+                isFullyConnected = false;
+                isConnecting = false;
                 if (mBluetoothGatt != null) {
                     mBluetoothGatt.close();
                 }
@@ -99,6 +101,9 @@ public class BluetoothLeServiceForRemoteControl extends Service {
                     if (!mIsServiceDiscovered) {
                         boolean isStarted = mBluetoothGatt.discoverServices();
                         PSALogs.i("NIH_REMOTE", "Attempting to start service discovery:" + isStarted);
+                    } else {
+                        isFullyConnected = false;
+                        isConnecting = false;
                     }
                 } catch (Exception e) {
                     PSALogs.w("NIH_REMOTE", "An exception occurred while trying to start the services discovery");
@@ -129,6 +134,8 @@ public class BluetoothLeServiceForRemoteControl extends Service {
                     gatt.requestMtu(23);
                 } else {
                     PSALogs.d("NIH_REMOTE", "onConnectionStateChange no mtu request");
+                    isFullyConnected = true;
+                    isConnecting = false;
                 }
                 // Result from the requested action: should be 1 or 15 at the end
                 // Otherwise an error occurred during the process
@@ -150,6 +157,8 @@ public class BluetoothLeServiceForRemoteControl extends Service {
                 mIsServiceDiscovered = true;
                 subscribeToReadCharacteristic(true);
             } else {
+                isFullyConnected = false;
+                isConnecting = false;
                 if (mBluetoothGatt != null) {
                     mBluetoothGatt.close();
                 }
@@ -187,7 +196,6 @@ public class BluetoothLeServiceForRemoteControl extends Service {
                                             BluetoothGattCharacteristic characteristic) {
             PSALogs.i("NIH_REMOTE", "onCharacteristicChanged(): " + Arrays.toString(characteristic.getValue()));
             isFullyConnected = true;
-            isConnecting = false;
         }
 
         @Override
