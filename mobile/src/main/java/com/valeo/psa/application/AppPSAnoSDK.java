@@ -17,10 +17,23 @@ public class AppPSAnoSDK extends Application {
         super.onCreate();
         SdkPreferencesHelper.initializeInstance(this);
         createLogsDir();
+        createConfigDir();
     }
 
     private void createLogsDir() {
         File dir = new File("sdcard/InBlueRssi/");
+        //if the folder doesn't exist
+        if (!dir.exists()) {
+            if (dir.mkdir()) {
+                PSALogs.d("make", "dir Success");
+            } else {
+                PSALogs.d("make", "dir Failed");
+            }
+        }
+    }
+
+    private void createConfigDir() {
+        File dir = new File("sdcard/InBlueConfig/");
         //if the folder doesn't exist
         if (!dir.exists()) {
             if (dir.mkdir()) {

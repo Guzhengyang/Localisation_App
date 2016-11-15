@@ -208,4 +208,12 @@
             android:key="com.inblue.PREFERENCE_EQUALIZER_REAR_RIGHT"
             android:title="@string/pref_equalizer_rear_right" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_import_export">
+        <Preference
+            android:key="com.inblue.PREFERENCE_EXPORT"
+            android:title="@string/pref_export" />
+        <Preference
+            android:key="com.inblue.PREFERENCE_IMPORT"
+            android:title="@string/pref_import" />
+    </PreferenceCategory>
 </PreferenceScreen>

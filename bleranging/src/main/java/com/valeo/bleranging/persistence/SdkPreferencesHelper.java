@@ -166,6 +166,8 @@ public final class SdkPreferencesHelper {
     public static final String EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_FRONT_RIGHT";
     public static final String EQUALIZER_REAR_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_REAR_LEFT";
     public static final String EQUALIZER_REAR_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_REAR_RIGHT";
+    public static final String EXPORT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EXPORT";
+    public static final String IMPORT_PREFERENCES_NAME = "com.inblue.PREFERENCE_IMPORT";
     //    public static final String NEAR_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_THR";
 //    public static final String EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALLY_NEAR_DOOR_THR";
 //    public static final String NEARER_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEARER_DOOR_THR";
