@@ -267,18 +267,6 @@ public final class BluetoothAdapterCompat {
                     .setServiceUuid(ParcelUuid.fromString("f000ff15-0451-4000-b000-000000000000"))
                     .build();
             scanFilters.add(scanFilterLogger);
-            ScanFilter scanFilter37 = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.BLE_ADDRESS_37)
-                    .build();
-            scanFilters.add(scanFilter37);
-            ScanFilter scanFilter38 = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.BLE_ADDRESS_38)
-                    .build();
-            scanFilters.add(scanFilter38);
-            ScanFilter scanFilter39 = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.BLE_ADDRESS_39)
-                    .build();
-            scanFilters.add(scanFilter39);
         }
         return scanFilters;
     }
