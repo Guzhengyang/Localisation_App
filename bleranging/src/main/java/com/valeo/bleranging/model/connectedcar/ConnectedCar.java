@@ -272,10 +272,15 @@ public abstract class ConnectedCar {
 
     /**
      * Check all trx antenna to see if they are active
+     * @param bleChannel
+     * @param smartphoneIsMovingSlowly
      */
-    public void compareCheckerAndSetAntennaActive() {
+    public void compareCheckerAndSetAntennaActive(Antenna.BLEChannel bleChannel, boolean smartphoneIsMovingSlowly) {
         for (Trx trx : trxLinkedHMap.values()) {
             trx.compareCheckerAndSetAntennaActive();
+            if (trx.isEnabled() && !trx.isActive()) {
+                trx.saveRssi(Trx.ANTENNA_ID_0, trxLinkedHMap.get(NUMBER_TRX_MIDDLE).getCurrentModifiedRssi(Trx.ANTENNA_ID_1), bleChannel, smartphoneIsMovingSlowly);
+            }
         }
     }
 
