@@ -117,12 +117,10 @@ public final class BluetoothAdapterCompat {
      * @param scanCallbackCompat used to identify which scan to stop. Must be the same handle used to start the scan.
      */
     public void stopLeScan(final ScanCallbackCompat scanCallbackCompat) {
-        PSALogs.w("NIH", "stopLeScan()");
         ScanTask scanTask = mRunningDetections.get(scanCallbackCompat);
-
         if (scanTask != null) {
             scanTask.stop();
-
+            PSALogs.w("NIH", "stopLeScan()");
             mRunningDetections.remove(scanCallbackCompat);
         }
     }

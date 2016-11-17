@@ -278,7 +278,7 @@ public class TrxUtils {
      * Function used to debug and write logs into a file.
      */
     private static void appendRssiLog(String text) {
-        PSALogs.d("log", text);
+//        PSALogs.d("log", text);
         try {
             SimpleDateFormat s = new SimpleDateFormat("HH:mm:ss:SSS", Locale.FRANCE);
             String timestamp = s.format(new Date());
