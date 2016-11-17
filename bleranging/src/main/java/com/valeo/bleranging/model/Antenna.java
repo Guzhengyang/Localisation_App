@@ -2,7 +2,6 @@ package com.valeo.bleranging.model;
 
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -167,16 +166,16 @@ public class Antenna {
                 break;
         }
         if (rssi > borneSup) {
-            PSALogs.d("ecretage" + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi
-                    + " borneInf:" + borneInf + " borneSup:" + borneSup + " savedRssi:" + (int) Math.ceil(borneSup));
+//            PSALogs.d("ecretage " + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi
+//                    + " borneInf:" + borneInf + " borneSup:" + borneSup + " savedRssi:" + (int) Math.ceil(borneSup));
             return (int) Math.ceil(borneSup);
         } else if (rssi < borneInf) {
-            PSALogs.d("ecretage" + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi
-                    + " borneInf:" + borneInf + " borneSup:" + borneSup + " savedRssi:" + (int) Math.floor(borneInf));
+//            PSALogs.d("ecretage " + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi
+//                    + " borneInf:" + borneInf + " borneSup:" + borneSup + " savedRssi:" + (int) Math.floor(borneInf));
             return (int) Math.floor(borneInf);
         } else {
-            PSALogs.d("ecretage" + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi
-                    + " borneInf:" + borneInf + " borneSup:" + borneSup + " savedRssi:" + rssi);
+//            PSALogs.d("ecretage " + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi
+//                    + " borneInf:" + borneInf + " borneSup:" + borneSup + " savedRssi:" + rssi);
             return rssi;
         }
     }
@@ -325,7 +324,8 @@ public class Antenna {
      * @param rssi the rssi of the packet received
      * @param bleChannel the ble channel of the packet received
      */
-    public synchronized void saveRssi(int rssi, BLEChannel bleChannel, boolean isSmartphoneMovingSlowly) {
+    public synchronized void saveRssi(int rssi, BLEChannel bleChannel,
+                                      boolean isSmartphoneMovingSlowly, boolean isRssiReceived) {
         if (!hasBeenInitialized) {
             this.currentOriginalRssi = rssi;
             this.lastOriginalRssi = rssi;
@@ -353,7 +353,7 @@ public class Antenna {
             lastIsSmartphoneMovingSlowly = isSmartphoneMovingSlowly;
         }
         rollingAverageRssi(isSmartphoneMovingSlowly);
-        hasReceivedRssi.set(true);
+        hasReceivedRssi.set(isRssiReceived);
     }
 
     /**

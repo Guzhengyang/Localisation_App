@@ -129,7 +129,7 @@ public class Trx {
      * @return true if the rssi of each antenna is greater than the threshold, false otherwise
      */
     public boolean compareTrxWithThreshold(int mode, int averageMode, int threshold, boolean isGreater) {
-        if(isActive()) {
+        if (isEnabled()) {
             switch (mode) {
                 case ANTENNA_OR:
                     return TrxUtils.compareWithThreshold(antenna1.getAntennaRssiAverage(averageMode), threshold, isGreater) ||
@@ -169,27 +169,28 @@ public class Trx {
      * @param bleChannel               the ble channel use to send signal
      * @param smartphoneIsMovingSlowly the boolean which determines if the smartphone is moving or not
      */
-    public void saveRssi(int antennaId, int rssi, Antenna.BLEChannel bleChannel, boolean smartphoneIsMovingSlowly) {
+    public void saveRssi(int antennaId, int rssi, Antenna.BLEChannel bleChannel,
+                         boolean smartphoneIsMovingSlowly, boolean hasReceivedRssi) {
         switch (antennaId) {
             case ANTENNA_ID_0:
-                antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
-                antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
+                antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, hasReceivedRssi);
+                antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, hasReceivedRssi);
                 break;
             case ANTENNA_ID_1:
-                antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
+                antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, hasReceivedRssi);
                 if (!antenna2.isAntennaActive()) {
-                    antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
+                    antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, false);
                 }
                 break;
             case ANTENNA_ID_2:
-                antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
+                antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, hasReceivedRssi);
                 if (!antenna1.isAntennaActive()) {
-                    antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
+                    antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, false);
                 }
                 break;
             default:
-                antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
-                antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly);
+                antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, hasReceivedRssi);
+                antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, hasReceivedRssi);
                 break;
         }
     }

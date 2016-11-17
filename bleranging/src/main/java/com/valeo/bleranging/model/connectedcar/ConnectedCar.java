@@ -10,7 +10,6 @@ import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Ranging;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.TextUtils;
 import com.valeo.bleranging.utils.TrxUtils;
 
@@ -240,9 +239,11 @@ public abstract class ConnectedCar {
      * @param bleChannel               the ble channel used to sent
      * @param smartphoneIsMovingSlowly the boolean that determines if the smartphone is moving or not
      */
-    public void saveRssi(int trxNumber, int antennaId, int rssi, Antenna.BLEChannel bleChannel, boolean smartphoneIsMovingSlowly) {
+    public void saveRssi(int trxNumber, int antennaId, int rssi, Antenna.BLEChannel bleChannel,
+                         boolean smartphoneIsMovingSlowly) {
         if (trxLinkedHMap.get(trxNumber) != null) {
-            trxLinkedHMap.get(trxNumber).saveRssi(antennaId, rssi, bleChannel, smartphoneIsMovingSlowly);
+            trxLinkedHMap.get(trxNumber).saveRssi(antennaId, rssi,
+                    bleChannel, smartphoneIsMovingSlowly, true);
         }
     }
 
@@ -275,11 +276,14 @@ public abstract class ConnectedCar {
      * @param bleChannel
      * @param smartphoneIsMovingSlowly
      */
-    public void compareCheckerAndSetAntennaActive(Antenna.BLEChannel bleChannel, boolean smartphoneIsMovingSlowly) {
+    public void compareCheckerAndSetAntennaActive(Antenna.BLEChannel bleChannel,
+                                                  boolean smartphoneIsMovingSlowly) {
         for (Trx trx : trxLinkedHMap.values()) {
             trx.compareCheckerAndSetAntennaActive();
             if (trx.isEnabled() && !trx.isActive()) {
-                trx.saveRssi(Trx.ANTENNA_ID_0, trxLinkedHMap.get(NUMBER_TRX_MIDDLE).getCurrentModifiedRssi(Trx.ANTENNA_ID_1), bleChannel, smartphoneIsMovingSlowly);
+                trx.saveRssi(Trx.ANTENNA_ID_0,
+                        trxLinkedHMap.get(NUMBER_TRX_MIDDLE).getCurrentModifiedRssi(Trx.ANTENNA_ID_1),
+                        bleChannel, smartphoneIsMovingSlowly, false);
             }
         }
     }
@@ -295,7 +299,7 @@ public abstract class ConnectedCar {
         int totalAverage = 0;
         int numberOfAntenna = 0;
         for (Trx trx : trxLinkedHMap.values()) {
-            if (trx.isActive()) {
+            if (trx.isEnabled()) {
                 totalAverage += (trx.getTrxRssiAverage(averageMode));
                 numberOfAntenna++;
             }
@@ -329,7 +333,7 @@ public abstract class ConnectedCar {
             Trx trxOne = trxLinkedHMap.get(trx1);
             Trx trxTwo = trxLinkedHMap.get(trx2);
             if (trxOne != null && trxTwo != null) {
-                if (trxOne.isActive() && trxTwo.isActive()) {
+                if (trxOne.isEnabled() && trxTwo.isEnabled()) {
                     int trxAverageRssi1 = trxOne.getTrxRssiAverage(mode);
                     int trxAverageRssi2 = trxTwo.getTrxRssiAverage(mode);
                     return trxAverageRssi1 - trxAverageRssi2;
@@ -400,7 +404,7 @@ public abstract class ConnectedCar {
                     }
                 }
             }
-            PSALogs.d("max", "maxOne " + maxOne);
+//            PSALogs.d("max", "maxOne " + maxOne);
             int maxTwo = -100;
             int minTwo = 0;
             for (Integer trxNumber : trxLinkedHMap.keySet()) {
@@ -412,7 +416,7 @@ public abstract class ConnectedCar {
                 }
             }
             int result = ((maxTwo - minTwo) * 80) / 100;
-            PSALogs.d("max", "maxTwo " + maxTwo + ", minTwo " + minTwo + ", result " + result);
+//            PSALogs.d("max", "maxTwo " + maxTwo + ", minTwo " + minTwo + ", result " + result);
             if (result < 15) {
                 return 15;
             } else {
