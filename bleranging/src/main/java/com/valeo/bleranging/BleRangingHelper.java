@@ -16,7 +16,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.SpannableStringBuilder;
-import android.util.SparseIntArray;
 
 import com.valeo.bleranging.bluetooth.BluetoothManagement;
 import com.valeo.bleranging.bluetooth.BluetoothManagementListener;
@@ -36,9 +35,11 @@ import com.valeo.bleranging.utils.TrxUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -54,6 +55,8 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_RE
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_REAR_RIGHT;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_RIGHT;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_TRUNK;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.ALGO_STANDARD;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.MACHINE_LEARNING;
 
 /**
  * Created by l-avaratha on 19/07/2016
@@ -71,15 +74,11 @@ public class BleRangingHelper implements SensorEventListener {
     public final static int UNLOCK_REAR_RIGHT_AREA = 10;
     public final static int START_TRUNK_AREA = 11;
     public final static int THATCHAM_AREA = 12;
-    //    private final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
-//    private final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
-//    private final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
     private final static int LOCK_STATUS_CHANGED_TIMEOUT = 5000;
-    private final static int PREDICTION_MAX = 16;
+    private final static int PREDICTION_MAX = 11;
     private final Context mContext;
     private final BluetoothManagement mBluetoothManager;
     private final LinkedList<Integer> predictionHistoric;
-    private final SparseIntArray mostCommon;
     private final byte[] lastPacketIdNumber = new byte[2];
     private final float R[] = new float[9];
     private final float I[] = new float[9];
@@ -272,125 +271,22 @@ public class BleRangingHelper implements SensorEventListener {
             mMainHandler.postDelayed(this, 400);
         }
     };
-    private final Runnable checkNewPacketsRunner = new Runnable() {
+    private final Runnable fillPredictionArray = new Runnable() {
         @Override
         public void run() {
-            if (bytesReceived != null) {
-                lock.readLock().lock();
-                PSALogs.d("NIH", "checkNewPacketsRunnable " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
-                if ((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
-                    lock.readLock().unlock();
-                    PSALogs.w("NIH", "LAST_EQUALS_NEW_PACKETS_RECEIVED");
-                    PSALogs.i("restartConnection", "received packet have not changed in a second");
-                    restartConnection(false);
-                    bleRangingListener.updateBLEStatus();
-                } else {
-                    lastPacketIdNumber[0] = bytesReceived[0];
-                    lastPacketIdNumber[1] = bytesReceived[1];
-                    lock.readLock().unlock();
-                    if (isFullyConnected()) {
-                        mMainHandler.postDelayed(this, 1000);
-                    }
+            connectedCar.prepareRanging();
+            if (predictionHistoric.size() == PREDICTION_MAX) {
+                if (predictionHistoric.get(0) != null) {
+                    predictionHistoric.remove(0);
                 }
-            } else {
-                PSALogs.w("NIH", "PACKETS_RECEIVED_ARE_NULL");
-                PSALogs.i("restartConnection", "received packet is null");
-                restartConnection(false);
-                bleRangingListener.updateBLEStatus();
             }
+            int prediction = connectedCar.predict2int();
+            predictionHistoric.add(prediction);
+            PSALogs.d("prediction", "Add prediction: " + prediction);
+            mMainHandler.postDelayed(this, 100);
         }
     };
     private int counter = 0;
-    private byte welcomeByte = 0;
-    private byte lockByte = 0;
-    private byte startByte = 0;
-    private byte leftAreaByte = 0;
-    private byte rightAreaByte = 0;
-    private byte backAreaByte = 0;
-    private byte walkAwayByte = 0;
-    private byte approachByte = 0;
-    private byte leftTurnByte = 0;
-    private byte fullTurnByte = 0;
-    private byte rightTurnByte = 0;
-    private byte recordByte = 0;
-    private double deltaLinAcc = 0;
-    private final Runnable printRunner = new Runnable() {
-        @Override
-        public void run() {
-            PSALogs.w(" rssiHistorics", "************************************** IHM LOOP START *************************************************");
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-            lock.readLock().lock();
-            spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder,
-                    bytesToSend, bytesReceived, mBluetoothManager.isFullyConnected());
-            lock.readLock().unlock();
-            totalAverage = connectedCar.getAllTrxAverage(Antenna.AVERAGE_DEFAULT);
-            spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
-            spannableStringBuilder
-                    .append("blockStart: ").append(String.valueOf(blockStart)).append(" ")
-                    .append("forcedStart: ").append(String.valueOf(forcedStart)).append("\n")
-                    .append("blockLock: ").append(String.valueOf(blockLock)).append(" ")
-                    .append("forcedLock: ").append(String.valueOf(forcedLock)).append("\n")
-                    .append("blockUnlock: ").append(String.valueOf(blockUnlock)).append(" ")
-                    .append("forcedUnlock: ").append(String.valueOf(forcedUnlock)).append("\n")
-                    .append("frozen: ").append(String.valueOf(smartphoneIsFrozen)).append(" ");
-            spannableStringBuilder = connectedCar.createSecondFooterDebugData(spannableStringBuilder,
-                    smartphoneIsInPocket, smartphoneIsMovingSlowly, totalAverage, rearmLock.get(), rearmUnlock.get());
-            spannableStringBuilder = connectedCar.createThirdFooterDebugData(spannableStringBuilder,
-                    bleChannel, deltaLinAcc, smartphoneIsMovingSlowly);
-            spannableStringBuilder //TODO Remove after test
-                    .append(String.format(Locale.FRANCE, "%1$.03f", orientation[0])).append("\n")
-                    .append(String.format(Locale.FRANCE, "%1$.03f", orientation[1])).append("\n")
-                    .append(String.format(Locale.FRANCE, "%1$.03f", orientation[2])).append("\n");
-            bleRangingListener.printDebugInfo(spannableStringBuilder);
-            PSALogs.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
-            mMainHandler.postDelayed(this, 105);
-        }
-    };
-    private boolean isLaidRunnableAlreadyLaunched = false;
-    private boolean isFrozenRunnableAlreadyLaunched = false;
-    private float[] mGravity;
-    private float[] mGeomagnetic;
-    private boolean isLoggable = true;
-    private final Runnable logRunner = new Runnable() {
-        @Override
-        public void run() {
-            if (isLoggable) {
-                TrxUtils.appendRssiLogs(connectedCar.getCurrentModifiedRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1),
-                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_2),
-                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_TRUNK, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_2),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_TRUNK, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_0),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_0),
-                        orientation[0], orientation[1], orientation[2],
-                        smartphoneIsInPocket, smartphoneIsMovingSlowly, areLockActionsAvailable.get(),
-                        blockStart, forcedStart, blockLock, forcedLock, blockUnlock, forcedUnlock,
-                        smartphoneIsFrozen,
-                        rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), newLockStatus, welcomeByte,
-                        lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
-                        walkAwayByte, approachByte, leftTurnByte,
-                        fullTurnByte, rightTurnByte, recordByte, rangingPredictionInt,
-                        mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(),
-                        mProtocolManager.isStartRequested(), mProtocolManager.isThatcham());
-            }
-            if (isFullyConnected()) {
-                mMainHandler.postDelayed(this, 105);
-            }
-        }
-    };
     /**
      * Handles various events fired by the Service.
      * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
@@ -498,13 +394,130 @@ public class BleRangingHelper implements SensorEventListener {
             }
         }
     };
+    private byte welcomeByte = 0;
+    private byte lockByte = 0;
+    private byte startByte = 0;
+    private byte leftAreaByte = 0;
+    private byte rightAreaByte = 0;
+    private byte backAreaByte = 0;
+    private byte walkAwayByte = 0;
+    private byte approachByte = 0;
+    private byte leftTurnByte = 0;
+    private byte fullTurnByte = 0;
+    private byte rightTurnByte = 0;
+    private byte recordByte = 0;
+    private double deltaLinAcc = 0;
+    private final Runnable printRunner = new Runnable() {
+        @Override
+        public void run() {
+            PSALogs.w(" rssiHistorics", "************************************** IHM LOOP START *************************************************");
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+            lock.readLock().lock();
+            spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder,
+                    bytesToSend, bytesReceived, mBluetoothManager.isFullyConnected());
+            lock.readLock().unlock();
+            totalAverage = connectedCar.getAllTrxAverage(Antenna.AVERAGE_DEFAULT);
+            spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
+            spannableStringBuilder
+                    .append("blockStart: ").append(String.valueOf(blockStart)).append(" ")
+                    .append("forcedStart: ").append(String.valueOf(forcedStart)).append("\n")
+                    .append("blockLock: ").append(String.valueOf(blockLock)).append(" ")
+                    .append("forcedLock: ").append(String.valueOf(forcedLock)).append("\n")
+                    .append("blockUnlock: ").append(String.valueOf(blockUnlock)).append(" ")
+                    .append("forcedUnlock: ").append(String.valueOf(forcedUnlock)).append("\n")
+                    .append("frozen: ").append(String.valueOf(smartphoneIsFrozen)).append(" ");
+            spannableStringBuilder = connectedCar.createSecondFooterDebugData(spannableStringBuilder,
+                    smartphoneIsInPocket, smartphoneIsMovingSlowly, totalAverage, rearmLock.get(), rearmUnlock.get());
+            spannableStringBuilder = connectedCar.createThirdFooterDebugData(spannableStringBuilder,
+                    bleChannel, deltaLinAcc, smartphoneIsMovingSlowly);
+            spannableStringBuilder //TODO Remove after test
+                    .append(String.format(Locale.FRANCE, "%1$.03f", orientation[0])).append("\n")
+                    .append(String.format(Locale.FRANCE, "%1$.03f", orientation[1])).append("\n")
+                    .append(String.format(Locale.FRANCE, "%1$.03f", orientation[2])).append("\n");
+            bleRangingListener.printDebugInfo(spannableStringBuilder);
+            PSALogs.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
+            mMainHandler.postDelayed(this, 105);
+        }
+    };
+    private boolean isLaidRunnableAlreadyLaunched = false;
+    private boolean isFrozenRunnableAlreadyLaunched = false;
+    private float[] mGravity;
+    private float[] mGeomagnetic;
+    private boolean isLoggable = true;
+    private final Runnable logRunner = new Runnable() {
+        @Override
+        public void run() {
+            if (isLoggable) {
+                TrxUtils.appendRssiLogs(connectedCar.getCurrentModifiedRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1),
+                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_2),
+                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_TRUNK, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentModifiedRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_2),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_TRUNK, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_ID_0),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_0),
+                        orientation[0], orientation[1], orientation[2],
+                        smartphoneIsInPocket, smartphoneIsMovingSlowly, areLockActionsAvailable.get(),
+                        blockStart, forcedStart, blockLock, forcedLock, blockUnlock, forcedUnlock,
+                        smartphoneIsFrozen,
+                        rearmLock.get(), rearmUnlock.get(), rearmWelcome.get(), newLockStatus, welcomeByte,
+                        lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
+                        walkAwayByte, approachByte, leftTurnByte,
+                        fullTurnByte, rightTurnByte, recordByte, rangingPredictionInt,
+                        mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(),
+                        mProtocolManager.isStartRequested(), mProtocolManager.isThatcham());
+            }
+            if (isFullyConnected()) {
+                mMainHandler.postDelayed(this, 105);
+            }
+        }
+    };
+    private final Runnable checkNewPacketsRunner = new Runnable() {
+        @Override
+        public void run() {
+            if (bytesReceived != null) {
+                lock.readLock().lock();
+                PSALogs.d("NIH", "checkNewPacketsRunnable " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
+                if ((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
+                    lock.readLock().unlock();
+                    PSALogs.w("NIH", "LAST_EQUALS_NEW_PACKETS_RECEIVED");
+                    PSALogs.i("restartConnection", "received packet have not changed in a second");
+                    restartConnection(false);
+                    bleRangingListener.updateBLEStatus();
+                } else {
+                    lastPacketIdNumber[0] = bytesReceived[0];
+                    lastPacketIdNumber[1] = bytesReceived[1];
+                    lock.readLock().unlock();
+                    if (isFullyConnected()) {
+                        mMainHandler.postDelayed(this, 1000);
+                    }
+                }
+            } else {
+                PSALogs.w("NIH", "PACKETS_RECEIVED_ARE_NULL");
+                PSALogs.i("restartConnection", "received packet is null");
+                restartConnection(false);
+                bleRangingListener.updateBLEStatus();
+            }
+        }
+    };
 
     public BleRangingHelper(Context context, BleRangingListener bleRangingListener) {
         this.mContext = context;
         this.mBluetoothManager = new BluetoothManagement(context);
         this.bleRangingListener = bleRangingListener;
         this.predictionHistoric = new LinkedList<>();
-        this.mostCommon = new SparseIntArray();
         this.mProtocolManager = new InblueProtocolManager();
         this.mMainHandler = new Handler(Looper.getMainLooper());
         this.mLockStatusChangedHandler = new Handler();
@@ -539,7 +552,6 @@ public class BleRangingHelper implements SensorEventListener {
         mContext.registerReceiver(bleStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         mBluetoothManager.resumeLeScan();
         mMainHandler.post(printRunner);
-        mMainHandler.post(updateCarLocalizationRunnable);
     }
 
     private void reconnectAfterDisconnection() {
@@ -802,19 +814,6 @@ public class BleRangingHelper implements SensorEventListener {
                         return;
                     }
                 }
-                connectedCar.prepareRanging(smartphoneIsInPocket);
-                if (predictionHistoric.size() == PREDICTION_MAX) {
-                    if (predictionHistoric.get(0) != null) {
-                        int removeEntry = predictionHistoric.get(0);
-                        Integer removeEntryValue = mostCommon.get(removeEntry);
-                        mostCommon.put(removeEntry, removeEntryValue - 1);
-                        predictionHistoric.remove(0);
-                    }
-                }
-                int prediction = connectedCar.predict2int();
-                predictionHistoric.add(prediction);
-                Integer val = mostCommon.get(prediction);
-                mostCommon.put(prediction, val + 1);
             } else { // not connected after first connection has been established
                 PSALogs.i("NIH", "overload nothing works");
                 if (isRestartAuthorized) {
@@ -825,16 +824,22 @@ public class BleRangingHelper implements SensorEventListener {
         }
     }
 
-    private synchronized Integer mostCommon(final SparseIntArray map) {
-        Integer max = null;
-        int index = 0;
-        for (int i = 0; i < map.size(); i++) {
-            if (max == null || map.get(i) > max) {
-                max = map.get(i);
-                index = i;
+    private synchronized Integer mostCommon(final List<Integer> list) {
+        if (list.size() == 0) {
+            return null;
+        }
+        Map<Integer, Integer> map = new HashMap<>();
+        for (Integer t : list) {
+            Integer val = map.get(t);
+            map.put(t, val == null ? 1 : val + 1);
+        }
+        Map.Entry<Integer, Integer> max = null;
+        for (Map.Entry<Integer, Integer> e : map.entrySet()) {
+            if (max == null || e.getValue() >= max.getValue()) {
+                max = e;
             }
         }
-        return max == null ? -1 : index;
+        return max == null ? null : max.getKey();
     }
 
     /**
@@ -917,16 +922,54 @@ public class BleRangingHelper implements SensorEventListener {
         if (isFullyConnected()) {
             boolean isStartAllowed = false;
             boolean isWelcomeAllowed = false;
+            boolean isLockStrategyValid = false;
+            boolean isWelcomeStrategyValid = false;
             String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
 //            AudioManager audM = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 //            PSALogs.d("test", "smartphoneComIsActivated " + CallReceiver.smartphoneComIsActivated + " " +
 //                    audM.isBluetoothScoOn() + " " + audM.isSpeakerphoneOn() + " " + smartphoneIsInPocket);
             connectedCar.updateThresholdValues(smartphoneIsInPocket, CallReceiver.smartphoneComIsActivated);
-            isStartStrategyValid = connectedCar.startStrategy();
-            isUnlockStrategyValid = connectedCar.unlockStrategy();
-            setIsBackValid(); // activate a timer when back is detected
-            boolean isLockStrategyValid = connectedCar.lockStrategy();
-            boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus);
+            if (SdkPreferencesHelper.getInstance().getSelectedAlgo().equalsIgnoreCase(ALGO_STANDARD)) {
+                isStartStrategyValid = connectedCar.startStrategy();
+                isUnlockStrategyValid = connectedCar.unlockStrategy();
+                setIsBackValid(); // activate a timer when back is detected
+                isLockStrategyValid = connectedCar.lockStrategy();
+                isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus);
+            } else if (SdkPreferencesHelper.getInstance().getSelectedAlgo().equalsIgnoreCase(MACHINE_LEARNING)) {
+                rangingPredictionInt = mostCommon(predictionHistoric);
+                if (rangingPredictionInt != null) {
+                    PSALogs.d("prediction", "rangingPredictionInt = " + rangingPredictionInt);
+                    switch (rangingPredictionInt) {
+                        case 0:
+                            List<Integer> result0 = new ArrayList<>(2);
+                            result0.add(START_PASSENGER_AREA);
+                            result0.add(START_TRUNK_AREA);
+                            isStartStrategyValid = result0;
+                            break;
+                        case 1:
+                            List<Integer> result1 = new ArrayList<>(1);
+                            result1.add(NUMBER_TRX_LEFT);
+                            isUnlockStrategyValid = result1;
+                            break;
+                        case 2:
+                            List<Integer> result2 = new ArrayList<>(1);
+                            result2.add(NUMBER_TRX_RIGHT);
+                            isUnlockStrategyValid = result2;
+                            break;
+                        case 3:
+                            List<Integer> result3 = new ArrayList<>(1);
+                            result3.add(NUMBER_TRX_BACK);
+                            isUnlockStrategyValid = result3;
+                            break;
+                        case 4:
+                            isLockStrategyValid = true;
+                            break;
+                        default:
+                            PSALogs.d("prediction", "NOOO rangingPredictionInt !");
+                            break;
+                    }
+                }
+            }
             isInLockArea = forcedLock || (!blockLock && isLockStrategyValid && (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)));
             isInUnlockArea = forcedUnlock || (!blockUnlock && !isLockStrategyValid && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType));
             isInStartArea = forcedStart || (!blockStart && isStartStrategyValid != null);
@@ -936,7 +979,6 @@ public class BleRangingHelper implements SensorEventListener {
                 rearmForcedBlock(isInLockArea, isInUnlockArea, isInStartArea);
                 lastSmartphoneIsFrozen = smartphoneIsFrozen;
             }
-            rangingPredictionInt = mostCommon(mostCommon);
             if (isInWelcomeArea) {
                 isWelcomeAllowed = true;
                 rearmWelcome.set(false);
@@ -1091,6 +1133,21 @@ public class BleRangingHelper implements SensorEventListener {
         if (mMainHandler != null) {
             mMainHandler.post(checkAntennaRunner);
             mMainHandler.post(logRunner);
+            mMainHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    PSALogs.d("prediction", String.format(Locale.FRANCE, "%1d %2d %3d %4d", connectedCar.getCurrentOriginalRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1),
+                            connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1),
+                            connectedCar.getCurrentOriginalRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_1),
+                            connectedCar.getCurrentOriginalRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_1)));
+                    connectedCar.createRangingObject(connectedCar.getCurrentOriginalRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1),
+                            connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1),
+                            connectedCar.getCurrentOriginalRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_1),
+                            connectedCar.getCurrentOriginalRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_1));
+                }
+            }, 500);
+            mMainHandler.postDelayed(fillPredictionArray, 600);
+            mMainHandler.postDelayed(updateCarLocalizationRunnable, 1000);
         }
     }
 
@@ -1252,6 +1309,7 @@ public class BleRangingHelper implements SensorEventListener {
         if (mMainHandler != null) {
             mMainHandler.removeCallbacks(printRunner);
             mMainHandler.removeCallbacks(updateCarLocalizationRunnable);
+            mMainHandler.removeCallbacks(fillPredictionArray);
             mMainHandler.removeCallbacks(null);
         }
         mBluetoothManager.suspendLeScan();
