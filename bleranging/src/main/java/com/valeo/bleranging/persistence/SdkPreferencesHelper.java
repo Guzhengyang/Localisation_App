@@ -74,7 +74,7 @@ public final class SdkPreferencesHelper {
 //    public static final int NEARER_DOOR_THR = 10;
     public static final int RATIO_MAX_MIN_THR = 20;
     public static final int RATIO_CLOSE_TO_CAR_THR = 30;
-    public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:73:88";
+    public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:2A:B8";
     public final static String BLE_ADDRESS_CONNECTABLE_PC = "B0:B4:48:BD:56:85";
     public final static String BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL = "5C:E0:C5:34:4D:32";
     public final static String BLE_ADDRESS_FRONT_LEFT = "D4:F5:13:56:5C:F0";
@@ -86,9 +86,6 @@ public final class SdkPreferencesHelper {
     public final static String BLE_ADDRESS_REAR_LEFT = "D4:F5:13:56:7A:55";
     public final static String BLE_ADDRESS_BACK = "78:A5:04:81:5A:21";
     public final static String BLE_ADDRESS_REAR_RIGHT = "D4:F5:13:56:71:4B";
-    public final static String BLE_ADDRESS_37 = "D4:F5:13:56:7A:12";
-    public final static String BLE_ADDRESS_38 = "D4:F5:13:56:37:32";
-    public final static String BLE_ADDRESS_39 = "D4:F5:13:56:39:E7";
     public static final String SAVED_CC_GENERIC_OPTION = "savedConnectedCarGenericOption";
     /** Key formatter. */
     public static final String ADDRESS_CONNECTABLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE";
@@ -105,6 +102,7 @@ public final class SdkPreferencesHelper {
     public static final String ADDRESS_REAR_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_REAR_RIGHT";
     public static final String CONNECTED_CAR_TYPE_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_TYPE";
     public static final String CONNECTED_CAR_BASE_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_BASE";
+    public static final String SELECTED_ALGO_PREFERENCES_NAME = "com.inblue.PREFERENCE_SELECTED_ALGO";
     public static final String CONNECTED_CAR_TRAME_ENABLED_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_TRAME_ENABLED";
     public static final String CONNECTED_CAR_TRAME_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_TRAME";
     public static final String OFFSET_EAR_FOR_START_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_EAR_FOR_START";
@@ -658,6 +656,10 @@ public final class SdkPreferencesHelper {
 
     public String getConnectedCarBase() {
         return readString(SAVED_CC_GENERIC_OPTION, CONNECTED_CAR_BASE_PREFERENCES_NAME, ConnectedCarFactory.BASE_3);
+    }
+
+    public String getSelectedAlgo() {
+        return readString(SAVED_CC_GENERIC_OPTION, SELECTED_ALGO_PREFERENCES_NAME, ConnectedCarFactory.ALGO_STANDARD);
     }
 
     public Boolean getConnectedCarTrameEnabled() {

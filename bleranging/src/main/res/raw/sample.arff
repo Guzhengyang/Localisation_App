@@ -1,0 +1,11 @@
+@relation newdataset
+
+@attribute L numeric
+@attribute M numeric
+@attribute R numeric
+@attribute B numeric
+@attribute class {back,left,lock,start,right}
+
+@data
+4.179228,0.435257,3.194348,0.974418,back
+

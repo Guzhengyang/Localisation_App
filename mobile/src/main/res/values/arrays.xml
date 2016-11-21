@@ -30,6 +30,14 @@
         <item>Base_3</item>
         <item>Base_4</item>
     </string-array>
+    <string-array name="algo_list_preference">
+        <item>Algo standard</item>
+        <item>Machine Learning</item>
+    </string-array>
+    <string-array name="algo_entryvalues_list_preference">
+        <item>ALGO_STANDARD</item>
+        <item>MACHINE_LEARNING</item>
+    </string-array>
     <string-array name="default_big_button_text">
         <item>0</item>
         <item>1</item>

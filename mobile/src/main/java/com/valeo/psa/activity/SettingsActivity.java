@@ -700,6 +700,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public static class GeneralPreferenceFragment extends PreferenceFragment {
         private ListPreference connected_car_type;
         private ListPreference connected_car_base;
+        private ListPreference selected_algo;
         private CheckBoxPreference connected_car_trame_enabled;
         private EditTextPreference connected_car_trame;
         private EditTextPreference back_timeout;
@@ -751,6 +752,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void setViews() {
             connected_car_type = ((ListPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_TYPE_PREFERENCES_NAME));
             connected_car_base = ((ListPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_BASE_PREFERENCES_NAME));
+            selected_algo = ((ListPreference) findPreference(SdkPreferencesHelper.SELECTED_ALGO_PREFERENCES_NAME));
             connected_car_trame_enabled = ((CheckBoxPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_TRAME_ENABLED_PREFERENCES_NAME));
             connected_car_trame = ((EditTextPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_TRAME_PREFERENCES_NAME));
             back_timeout = ((EditTextPreference) findPreference(SdkPreferencesHelper.BACK_TIMEOUT_PREFERENCES_NAME));
@@ -819,6 +821,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void bindSummaries() {
             bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_A);
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
+            bindPreferenceSummaryToValue(selected_algo, ConnectedCarFactory.ALGO_STANDARD);
             connected_car_trame_enabled.setSummary(R.string.pref_car_forced_trame_enabled_summary);
             bindPreferenceSummaryToValue(connected_car_trame, "");
             bindPreferenceSummaryToValue(back_timeout, String.valueOf(SdkPreferencesHelper.BACK_TIMEOUT));

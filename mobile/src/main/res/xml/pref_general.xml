@@ -16,6 +16,12 @@
             android:entryValues="@array/base_entryvalues_list_preference"
             android:key="com.inblue.PREFERENCE_CONNECTED_CAR_BASE"
             android:title="@string/pref_car_base_title" />
+        <ListPreference
+            android:dialogTitle="@string/algo_title_list_preference"
+            android:entries="@array/algo_list_preference"
+            android:entryValues="@array/algo_entryvalues_list_preference"
+            android:key="com.inblue.PREFERENCE_SELECTED_ALGO"
+            android:title="@string/pref_algo_title" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="com.inblue.PREFERENCE_CONNECTED_CAR_TRAME_ENABLED"

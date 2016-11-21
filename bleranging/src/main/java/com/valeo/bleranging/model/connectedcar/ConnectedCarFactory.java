@@ -14,6 +14,8 @@ public class ConnectedCarFactory {
     public final static String TYPE_5_A = "fiveLMRTB";
     public final static String TYPE_7_A = "sevenFlFrLMRRlRr";
     public final static String TYPE_8_A = "eightFlFrLMRTRlRr";
+    public final static String ALGO_STANDARD = "ALGO_STANDARD";
+    public final static String MACHINE_LEARNING = "MACHINE_LEARNING";
 
     /**
      * Return a connected car

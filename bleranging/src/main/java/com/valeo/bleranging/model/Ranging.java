@@ -14,59 +14,54 @@ import weka.core.converters.ConverterUtils;
  * Created by Zhengyang on 29/08/2016
  */
 public class Ranging {
-    private final Instance instance;
-    private Instances testSet;
+    private Instance sample;
     private RandomForest rf;
-    private String[] classValues;
+    private double f = 2.45 * Math.pow(10, 9);
+    private double c = 3 * Math.pow(10, 8);
+    private double P = -19;
+    private double threshold = 0.15;
+    private double[] dist = new double[4];
 
-    public Ranging(Context context) {
+    public Ranging(Context context, double rssi_left, double rssi_middle, double rssi_right, double rssi_back) {
         try {
+            this.dist[0] = rssi2dist(rssi_left);
+            this.dist[1] = rssi2dist(rssi_middle);
+            this.dist[2] = rssi2dist(rssi_right);
+            this.dist[3] = rssi2dist(rssi_back);
+
             rf = (RandomForest) SerializationHelper.read(context.getResources().openRawResource(R.raw.rf));
-            classValues = (String[]) SerializationHelper.read(context.getResources().openRawResource(R.raw.classvalues));
-            testSet = ConverterUtils.DataSource.read(context.getResources().openRawResource(R.raw.test));
+            Instances instances = ConverterUtils.DataSource.read(context.getResources().openRawResource(R.raw.sample));
+            instances.setClassIndex(instances.numAttributes() - 1);
+            sample = instances.instance(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        testSet.setClassIndex(testSet.numAttributes() - 1);
-        instance = testSet.instance(0);
     }
 
-    public void setLeft(double left) {
-        this.instance.setValue(0, left);
+    public double rssi2dist(double rssi) {
+        return c / f / 4 / Math.PI * Math.pow(10, -(rssi - P) / 20);
     }
 
-    public void setMiddle(double middle) {
-        this.instance.setValue(1, middle);
-    }
-
-    public void setRight(double right) {
-        this.instance.setValue(2, right);
-    }
-
-    public void setBack(double back) {
-        this.instance.setValue(3, back);
-    }
-
-    public void setPocket(double pocket) {
-        this.instance.setValue(4, pocket);
+    public void set(int index, double rssi) {
+        double new_dist = rssi2dist(rssi);
+        if (new_dist < this.dist[index])
+            this.dist[index] = new_dist;
+        else {
+            if (new_dist - this.dist[index] > threshold)
+                this.dist[index] = this.dist[index] + threshold;
+            else
+                this.dist[index] = new_dist;
+        }
+        this.sample.setValue(index, this.dist[index]);
     }
 
     public int predict2int() {
         try {
-            return (int) rf.classifyInstance(instance);
+            return (int) rf.classifyInstance(sample);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return -1;
-    }
-
-    public String predict2str() {
-        try {
-            return classValues[(int) rf.classifyInstance(instance)];
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "null";
     }
 }
 

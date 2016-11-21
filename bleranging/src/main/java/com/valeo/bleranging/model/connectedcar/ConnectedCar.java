@@ -54,7 +54,6 @@ public abstract class ConnectedCar {
     private final static String trxAddressBack = SdkPreferencesHelper.getInstance().getTrxAddressBack();
     private final static String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
     final LinkedHashMap<Integer, Trx> trxLinkedHMap;
-    private final Ranging ranging;
     private final ConnectionNumber connectionNumber;
     String connectedCarType;
     int welcomeThreshold;
@@ -86,12 +85,14 @@ public abstract class ConnectedCar {
     Trx trxRearLeft;
     Trx trxBack;
     Trx trxRearRight;
+    private Ranging ranging;
+    private Context mContext;
     private float linAccThreshold;
 
     ConnectedCar(Context mContext, ConnectionNumber connectionNumber) {
+        this.mContext = mContext;
         this.connectionNumber = connectionNumber;
         this.trxLinkedHMap = new LinkedHashMap<>();
-        this.ranging = new Ranging(mContext);
         resetSettings();
     }
 
@@ -715,16 +716,15 @@ public abstract class ConnectedCar {
         }
     }
 
-    public void prepareRanging(boolean smartphoneIsInPocket) {
-        ranging.setLeft(getCurrentOriginalRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1));
-        ranging.setMiddle(getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1));
-        ranging.setRight(getCurrentOriginalRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_1));
-        ranging.setBack(getCurrentOriginalRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_1));
-        if (smartphoneIsInPocket) {
-            ranging.setPocket(1);
-        } else {
-            ranging.setPocket(0);
-        }
+    public void createRangingObject(double rssiLeft, double rssiMiddle, double rssiRight, double rssiBack) {
+        this.ranging = new Ranging(mContext, rssiLeft, rssiMiddle, rssiRight, rssiBack);
+    }
+
+    public void prepareRanging() {
+        ranging.set(0, getCurrentOriginalRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1));
+        ranging.set(1, getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1));
+        ranging.set(2, getCurrentOriginalRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_1));
+        ranging.set(3, getCurrentOriginalRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_1));
     }
 
     public int predict2int() {
