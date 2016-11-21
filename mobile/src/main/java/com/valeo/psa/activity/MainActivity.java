@@ -325,6 +325,21 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_ENABLE_BT:
+                if (resultCode == RESULT_OK) {
+                    mBleRangingHelper.toggleBluetooth(true);
+                } else {
+                    Toast.makeText(this, "This app won't work without bluetooth.",
+                            Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
     /**
      * Set OnClickListeners
      */
@@ -1149,6 +1164,15 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     public void onBackPressed() {
         super.onBackPressed();
         mBleRangingHelper.closeApp();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mBleRangingHelper != null && !mBleRangingHelper.isBluetoothEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT); // TODO Check
+        }
     }
 
     @Override

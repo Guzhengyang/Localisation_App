@@ -567,4 +567,8 @@ public class BluetoothManagement {
     public boolean setBluetooth(boolean enable) {
         return mBluetoothAdapterCompat.enable(enable);
     }
+
+    public boolean isBluetoothEnabled() {
+        return mBluetoothAdapterCompat.isEnabled();
+    }
 }
