@@ -1011,11 +1011,16 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 
     @Override
     public void updateBLEStatus() {
-        if (mBleRangingHelper.isFullyConnected()) {
-            ble_status.setText(R.string.connected_over_ble);
-        } else {
-            ble_status.setText(R.string.not_connected_over_ble);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mBleRangingHelper.isFullyConnected()) {
+                    ble_status.setText(R.string.connected_over_ble);
+                } else {
+                    ble_status.setText(R.string.not_connected_over_ble);
+                }
+            }
+        });
     }
 
     @Override
@@ -1171,7 +1176,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         super.onStart();
         if (mBleRangingHelper != null && !mBleRangingHelper.isBluetoothEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT); // TODO Check
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
     }
 

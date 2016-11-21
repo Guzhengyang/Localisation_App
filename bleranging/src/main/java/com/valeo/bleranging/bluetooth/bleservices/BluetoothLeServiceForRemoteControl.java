@@ -43,6 +43,9 @@ public class BluetoothLeServiceForRemoteControl extends Service {
     private boolean isBound = false;
     private int mPacketToWriteCount = 0;
 
+    /* Handler to send action to main looper */
+    private Handler mainHandler;
+
     /**
      * Bluetooth Manager.
      */
@@ -270,6 +273,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
             PSALogs.e("NIH_REMOTE", "Unable to obtain a BluetoothAdapter.");
             return false;
         }
+        mainHandler = new Handler(getApplicationContext().getMainLooper());
         return true;
     }
 
@@ -293,7 +297,6 @@ public class BluetoothLeServiceForRemoteControl extends Service {
         //This is due to an issue on some devices such as the Galaxy S4
         //Details here: http://stackoverflow.com/questions/20069507/gatt-callback-fails-to-register
         //How to call something from main thread: http://stackoverflow.com/questions/11123621/running-code-in-main-thread-from-another-thread
-        Handler mainHandler = new Handler(getApplicationContext().getMainLooper());
         Runnable runFromMainThread = new Runnable() {
             @Override
             public void run() {
@@ -327,7 +330,13 @@ public class BluetoothLeServiceForRemoteControl extends Service {
             }
             return;
         }
-        mBluetoothGatt.disconnect();
+        Runnable runFromMainThread = new Runnable() {
+            @Override
+            public void run() {
+                mBluetoothGatt.disconnect();
+            } // This is your code
+        };
+        mainHandler.post(runFromMainThread);
     }
 
     /**
@@ -339,9 +348,15 @@ public class BluetoothLeServiceForRemoteControl extends Service {
         if (mBluetoothGatt == null) {
             return;
         }
-        mIsServiceDiscovered = false;
-        mBluetoothGatt.close();
-        mBluetoothGatt = null;
+        Runnable runFromMainThread = new Runnable() {
+            @Override
+            public void run() {
+                mIsServiceDiscovered = false;
+                mBluetoothGatt.close();
+                mBluetoothGatt = null;
+            } // This is your code
+        };
+        mainHandler.post(runFromMainThread);
     }
 
     private void subscribeToReadCharacteristic(boolean enabled) {
