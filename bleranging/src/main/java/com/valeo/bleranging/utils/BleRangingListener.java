@@ -17,6 +17,7 @@ public interface BleRangingListener {
 
     void updateCarDrawable();
 
+    void askBleOn();
     void doWelcome();
 
     void showSnackBar(String message);

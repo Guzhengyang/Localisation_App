@@ -88,6 +88,17 @@ public final class BluetoothAdapterCompat {
         return (mBluetoothAdapter != null) && mBluetoothAdapter.isEnabled();
     }
 
+    public boolean enable(boolean enable) {
+        boolean isEnabled = mBluetoothAdapter.isEnabled();
+        if (enable && !isEnabled) {
+            return mBluetoothAdapter.enable();
+        } else if (!enable && isEnabled) {
+            return mBluetoothAdapter.disable();
+        }
+        // No need to change bluetooth state
+        return true;
+    }
+
     /**
      * Starts a scan for Bluetooth LE devices. Results of the scan are reported using the <code>scanCallbackCompat</code> callback.
      * Requires BLUETOOTH_ADMIN permission.

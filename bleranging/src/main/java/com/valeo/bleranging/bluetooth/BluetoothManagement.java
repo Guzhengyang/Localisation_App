@@ -563,4 +563,8 @@ public class BluetoothManagement {
     private boolean isBound3() {
         return mBluetoothLeServiceForRemoteControl != null && mBluetoothLeServiceForRemoteControl.isBound3();
     }
+
+    public boolean setBluetooth(boolean enable) {
+        return mBluetoothAdapterCompat.enable(enable);
+    }
 }
