@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 25114;
     private static final int REQUEST_READ_PHONE_STATE_PERMISSION = 25115;
     private static final int REQUEST_PROCESS_OUTGOING_CALLS_PERMISSION = 25116;
+    private static final int REQUEST_ENABLE_BT = 25117;
     private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
     private static final int NOTIFICATION_ID_1 = 1;
     private final static int RKE_USE_TIMEOUT = 5000;
@@ -1116,6 +1118,12 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 .setContentIntent(actionPendingIntent)
                 .build();
         notificationManager.notify(NOTIFICATION_ID_1, notification);
+    }
+
+    @Override
+    public void askBleOn() {
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     }
 
     @Override
