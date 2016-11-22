@@ -157,6 +157,7 @@ public final class SdkPreferencesHelper {
     public static final String LIN_ACC_SIZE_PREFERENCES_NAME = "com.inblue.PREFERENCE_LIN_ACC_SIZE";
     public static final String CORRECTION_LIN_ACC_PREFERENCES_NAME = "com.inblue.PREFERENCE_CORRECTION_LIN_ACC";
     public static final String FROZEN_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_FROZEN_THRESHOLD";
+    public static final String USER_SPEED_ENABLED_PREFERENCES_NAME = "com.inblue.PREFERENCE_USER_SPEED_ENABLED";
     public static final String WANTED_SPEED_PREFERENCES_NAME = "com.inblue.PREFERENCE_WANTED_SPEED";
     public static final String ONE_STEP_SIZE_PREFERENCES_NAME = "com.inblue.PREFERENCE_ONE_STEP_SIZE";
     public static final String EQUALIZER_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_LEFT";
@@ -877,6 +878,10 @@ public final class SdkPreferencesHelper {
 
     public float getFrozenThreshold() {
         return readFloat(SAVED_CC_GENERIC_OPTION, FROZEN_THRESHOLD_PREFERENCES_NAME, FROZEN_THRESHOLD);
+    }
+
+    public Boolean getUserSpeedEnabled() {
+        return readBoolean(SAVED_CC_GENERIC_OPTION, USER_SPEED_ENABLED_PREFERENCES_NAME, false);
     }
 
     public float getWantedSpeed() {

@@ -134,8 +134,10 @@
     <string name="pref_acc_correction">Correction Acceleration</string>
     <string name="pref_frozen_threshold">Frozen Threshold</string>
     <string name="pref_user_speed">USER SPEED</string>
-    <string name="pref_wanted_speed">Wanted Speed (in m/s)</string>
-    <string name="pref_one_step_size">One Step Size (in cm)</string>
+    <string name="pref_user_speed_enabled">User Speed Enabled</string>
+    <string name="pref_user_speed_enabled_summary">Enable the user speed beeping</string>
+    <string name="pref_wanted_speed">Wanted Speed (km/h)</string>
+    <string name="pref_one_step_size">One Step Size (cm)</string>
     <string name="pref_equalizer">EQUALIZER</string>
     <string name="pref_equalizer_left">Left Equalizer</string>
     <string name="pref_equalizer_middle">Middle Equalizer</string>

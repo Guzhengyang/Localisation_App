@@ -718,6 +718,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference lin_acc_size;
         private EditTextPreference correction_lin_acc;
         private EditTextPreference frozen_threshold;
+        private CheckBoxPreference user_speed_enabled;
         private EditTextPreference wanted_speed;
         private EditTextPreference one_step_size;
         private EditTextPreference address_connectable;
@@ -772,6 +773,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             lin_acc_size = ((EditTextPreference) findPreference(SdkPreferencesHelper.LIN_ACC_SIZE_PREFERENCES_NAME));
             correction_lin_acc = ((EditTextPreference) findPreference(SdkPreferencesHelper.CORRECTION_LIN_ACC_PREFERENCES_NAME));
             frozen_threshold = ((EditTextPreference) findPreference(SdkPreferencesHelper.FROZEN_THRESHOLD_PREFERENCES_NAME));
+            user_speed_enabled = ((CheckBoxPreference) findPreference(SdkPreferencesHelper.USER_SPEED_ENABLED_PREFERENCES_NAME));
             wanted_speed = ((EditTextPreference) findPreference(SdkPreferencesHelper.WANTED_SPEED_PREFERENCES_NAME));
             one_step_size = ((EditTextPreference) findPreference(SdkPreferencesHelper.ONE_STEP_SIZE_PREFERENCES_NAME));
             address_connectable = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_PREFERENCE_NAME));
@@ -829,6 +831,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
             bindPreferenceSummaryToValue(selected_algo, ConnectedCarFactory.ALGO_STANDARD);
             connected_car_trame_enabled.setSummary(R.string.pref_car_forced_trame_enabled_summary);
+            user_speed_enabled.setSummary(R.string.pref_user_speed_enabled_summary);
             bindPreferenceSummaryToValue(connected_car_trame, "");
             bindPreferenceSummaryToValue(back_timeout, String.valueOf(SdkPreferencesHelper.BACK_TIMEOUT));
             bindPreferenceSummaryToValue(thatcham_timeout, String.valueOf(SdkPreferencesHelper.THATCHAM_TIMEOUT));
