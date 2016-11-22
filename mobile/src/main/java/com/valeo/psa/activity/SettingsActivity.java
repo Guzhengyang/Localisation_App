@@ -718,6 +718,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference lin_acc_size;
         private EditTextPreference correction_lin_acc;
         private EditTextPreference frozen_threshold;
+        private EditTextPreference wanted_speed;
+        private EditTextPreference one_step_size;
         private EditTextPreference address_connectable;
         private EditTextPreference address_connectable_pc;
         private EditTextPreference address_connectable_remote_control;
@@ -770,6 +772,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             lin_acc_size = ((EditTextPreference) findPreference(SdkPreferencesHelper.LIN_ACC_SIZE_PREFERENCES_NAME));
             correction_lin_acc = ((EditTextPreference) findPreference(SdkPreferencesHelper.CORRECTION_LIN_ACC_PREFERENCES_NAME));
             frozen_threshold = ((EditTextPreference) findPreference(SdkPreferencesHelper.FROZEN_THRESHOLD_PREFERENCES_NAME));
+            wanted_speed = ((EditTextPreference) findPreference(SdkPreferencesHelper.WANTED_SPEED_PREFERENCES_NAME));
+            one_step_size = ((EditTextPreference) findPreference(SdkPreferencesHelper.ONE_STEP_SIZE_PREFERENCES_NAME));
             address_connectable = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_PREFERENCE_NAME));
             address_connectable_pc = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_PC_PREFERENCE_NAME));
             address_connectable_remote_control = ((EditTextPreference) findPreference(SdkPreferencesHelper.ADDRESS_CONNECTABLE_REMOTE_CONTROL_PREFERENCE_NAME));
@@ -800,6 +804,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             lin_acc_size.setText(lin_acc_size.getSummary().toString());
             correction_lin_acc.setText(correction_lin_acc.getSummary().toString());
             frozen_threshold.setText(frozen_threshold.getSummary().toString());
+            wanted_speed.setText(wanted_speed.getSummary().toString());
+            one_step_size.setText(one_step_size.getSummary().toString());
             address_connectable.setText(address_connectable.getSummary().toString());
             address_connectable_pc.setText(address_connectable_pc.getSummary().toString());
             address_connectable_remote_control.setText(address_connectable_remote_control.getSummary().toString());
@@ -839,6 +845,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(lin_acc_size, String.valueOf(SdkPreferencesHelper.LIN_ACC_SIZE));
             bindPreferenceSummaryToValue(correction_lin_acc, String.valueOf(SdkPreferencesHelper.CORRECTION_LIN_ACC));
             bindPreferenceSummaryToValue(frozen_threshold, String.valueOf(SdkPreferencesHelper.FROZEN_THRESHOLD));
+            bindPreferenceSummaryToValue(wanted_speed, String.valueOf(SdkPreferencesHelper.WANTED_SPEED));
+            bindPreferenceSummaryToValue(one_step_size, String.valueOf(SdkPreferencesHelper.ONE_STEP_SIZE));
             bindPreferenceSummaryToValue(address_connectable, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE);
             bindPreferenceSummaryToValue(address_connectable_pc, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE_PC);
             bindPreferenceSummaryToValue(address_connectable_remote_control, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL);

@@ -60,6 +60,8 @@ public final class SdkPreferencesHelper {
     public final static int LIN_ACC_SIZE = 50;
     public final static float CORRECTION_LIN_ACC = 4.0f;
     public final static float FROZEN_THRESHOLD = 4.0f;
+    public final static float WANTED_SPEED = 5.0f;
+    public final static int ONE_STEP_SIZE = 77;
     public final static int EQUALIZER_LEFT = 5;
     public final static int EQUALIZER_MIDDLE = 5;
     public final static int EQUALIZER_RIGHT = 5;
@@ -155,6 +157,8 @@ public final class SdkPreferencesHelper {
     public static final String LIN_ACC_SIZE_PREFERENCES_NAME = "com.inblue.PREFERENCE_LIN_ACC_SIZE";
     public static final String CORRECTION_LIN_ACC_PREFERENCES_NAME = "com.inblue.PREFERENCE_CORRECTION_LIN_ACC";
     public static final String FROZEN_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_FROZEN_THRESHOLD";
+    public static final String WANTED_SPEED_PREFERENCES_NAME = "com.inblue.PREFERENCE_WANTED_SPEED";
+    public static final String ONE_STEP_SIZE_PREFERENCES_NAME = "com.inblue.PREFERENCE_ONE_STEP_SIZE";
     public static final String EQUALIZER_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_LEFT";
     public static final String EQUALIZER_MIDDLE_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_MIDDLE";
     public static final String EQUALIZER_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_RIGHT";
@@ -873,6 +877,14 @@ public final class SdkPreferencesHelper {
 
     public float getFrozenThreshold() {
         return readFloat(SAVED_CC_GENERIC_OPTION, FROZEN_THRESHOLD_PREFERENCES_NAME, FROZEN_THRESHOLD);
+    }
+
+    public float getWantedSpeed() {
+        return readFloat(SAVED_CC_GENERIC_OPTION, WANTED_SPEED_PREFERENCES_NAME, WANTED_SPEED);
+    }
+
+    public float getOneStepSize() {
+        return readFloat(SAVED_CC_GENERIC_OPTION, ONE_STEP_SIZE_PREFERENCES_NAME, ONE_STEP_SIZE);
     }
 
 // --Commented out by Inspection START (30/09/2016 11:26):
