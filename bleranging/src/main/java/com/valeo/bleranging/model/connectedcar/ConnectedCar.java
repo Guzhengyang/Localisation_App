@@ -720,11 +720,15 @@ public abstract class ConnectedCar {
         this.ranging = new Ranging(mContext, rssiLeft, rssiMiddle, rssiRight, rssiBack);
     }
 
-    public void prepareRanging() {
-        ranging.set(0, getCurrentOriginalRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1));
-        ranging.set(1, getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1));
-        ranging.set(2, getCurrentOriginalRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_1));
-        ranging.set(3, getCurrentOriginalRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_1));
+    public boolean prepareRanging() {
+        if (ranging != null) {
+            ranging.set(0, getCurrentOriginalRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1));
+            ranging.set(1, getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1));
+            ranging.set(2, getCurrentOriginalRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_1));
+            ranging.set(3, getCurrentOriginalRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_1));
+            return true;
+        }
+        return false;
     }
 
     public int predict2int() {
