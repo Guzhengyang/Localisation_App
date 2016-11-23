@@ -48,6 +48,7 @@ public class Antenna {
     private int min = 0;
     private int max = -100;
     private int offsetBleChannel38 = 0;
+    private int offsetBleChannel39 = 0;
     private boolean hasBeenInitialized = false;
 
     Antenna(int numberTrx, int antennaId) {
@@ -147,7 +148,10 @@ public class Antenna {
 //        float borneSup = lastRssi + getEcretageValue(lastRssi);
         switch (bleChannel) {
             case BLE_CHANNEL_37:
-                offsetBleChannel38 = 0;
+                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
+                    offsetBleChannel38 = 0;
+                    offsetBleChannel39 = 0;
+                }
                 break;
             case BLE_CHANNEL_38:
                 if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
@@ -157,8 +161,9 @@ public class Antenna {
                 break;
             case BLE_CHANNEL_39:
                 if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
-                    offsetBleChannel38 = 0;
+                    offsetBleChannel39 = calculateOffsetChannel(rssi);
                 }
+                rssi += offsetBleChannel39;
                 break;
             case UNKNOWN:
                 break;
@@ -473,6 +478,10 @@ public class Antenna {
 
     public int getOffsetBleChannel38() {
         return offsetBleChannel38;
+    }
+
+    public int getOffsetBleChannel39() {
+        return offsetBleChannel39;
     }
 
     public int getCurrentOriginalRssi() {

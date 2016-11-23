@@ -213,6 +213,22 @@ public class Trx {
     }
 
     /**
+     * Get the offset for channel 39
+     *
+     * @param antennaId the antenna id
+     * @return the offset for channel 39
+     */
+    public int getOffset39(int antennaId) {
+        if (antennaId == ANTENNA_ID_1) {
+            return antenna1.getOffsetBleChannel39();
+        } else if (antennaId == ANTENNA_ID_2) {
+            return antenna2.getOffsetBleChannel39();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
      * Get antenna ratio max min
      *
      * @return the ratio max min over 50 last rssi received

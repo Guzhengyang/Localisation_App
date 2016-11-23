@@ -485,6 +485,14 @@ public abstract class ConnectedCar {
         }
     }
 
+    private int getOffsetBleChannel39(int trxNumber, int antennaId) {
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            return trxLinkedHMap.get(trxNumber).getOffset39(antennaId);
+        } else {
+            return 0;
+        }
+    }
+
     /**
      * Condition to enable Start action
      * @return true if the strategy is verified, false otherwise
@@ -642,6 +650,14 @@ public abstract class ConnectedCar {
             spannableStringBuilder
                     .append(space2)
                     .append(String.format(Locale.FRANCE, "%1$03d", getOffsetBleChannel38(trx.getTrxNumber(), Trx.ANTENNA_ID_1)))
+                    .append(space2);
+        }
+        spannableStringBuilder.append('\n');
+        spannableStringBuilder.append("offset channel 39 :\n");
+        for (Trx trx : trxLinkedHMap.values()) {
+            spannableStringBuilder
+                    .append(space2)
+                    .append(String.format(Locale.FRANCE, "%1$03d", getOffsetBleChannel39(trx.getTrxNumber(), Trx.ANTENNA_ID_1)))
                     .append(space2);
         }
         spannableStringBuilder.append('\n');
