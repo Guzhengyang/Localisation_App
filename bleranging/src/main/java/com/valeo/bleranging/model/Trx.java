@@ -1,6 +1,5 @@
 package com.valeo.bleranging.model;
 
-import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.TrxUtils;
 
 /**
@@ -45,7 +44,6 @@ public class Trx {
      */
     public int getTrxRssiAverage(int mode) {
         int trxRssiAverage = (int) -(Math.sqrt(antenna1.getAntennaRssiAverage(mode) * antenna2.getAntennaRssiAverage(mode)));
-        PSALogs.d("close", "getTrxRssiAverage = " + trxRssiAverage);
         return trxRssiAverage;
     }
 

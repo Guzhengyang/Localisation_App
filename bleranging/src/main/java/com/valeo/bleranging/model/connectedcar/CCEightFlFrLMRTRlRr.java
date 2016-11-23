@@ -118,16 +118,16 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     public List<Integer> unlockStrategy() {
         boolean isInUnlockArea = isInUnlockArea(unlockThreshold);
         lock.writeLock().lock();
-        PSALogs.d("closeR", "1 " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
+        PSALogs.d("closeR", "1 => " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
         closeToCarFL = getRatioCloseToCar(NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
-        PSALogs.d("closeR", "2 " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
+        PSALogs.d("closeR", "2 => " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
         closeToCarFR = getRatioCloseToCar(NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
-        PSALogs.d("closeR", "3 " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
+        PSALogs.d("closeR", "3 => " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
         closeToCarRL = getRatioCloseToCar(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
-        PSALogs.d("closeR", "4 " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
+        PSALogs.d("closeR", "4 => " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
         closeToCarRR = getRatioCloseToCar(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
         int thresholdCloseToCar = SdkPreferencesHelper.getInstance().getRatioCloseToCarThreshold(connectedCarType);
-        PSALogs.d("closeR", "5 " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
+        PSALogs.d("closeR", "5 => " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
         thresholdMaxMinRatio = getThreeCornerLowerMaxMinRatio() + thresholdCloseToCar;
         lock.writeLock().unlock();
         if (isInUnlockArea) {

@@ -2,7 +2,6 @@ package com.valeo.bleranging.model;
 
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -442,28 +441,20 @@ public class Antenna {
     public int getAntennaRssiAverage(int mode) {
         switch (mode) {
             case AVERAGE_DEFAULT:
-                PSALogs.d("close", "antennaId = " + antennaId + " getAntennaRssiAverage = " + antennaRssiAverage);
                 return antennaRssiAverage;
             case AVERAGE_START:
-                PSALogs.d("close", "antennaId = " + antennaId + " getAntennaRssiAverage = " + antennaRssiAverageStart);
                 return antennaRssiAverageStart;
             case AVERAGE_LOCK:
-                PSALogs.d("close", "antennaId = " + antennaId + " getAntennaRssiAverage = " + antennaRssiAverageLock);
                 return antennaRssiAverageLock;
             case AVERAGE_UNLOCK:
-                PSALogs.d("close", "antennaId = " + antennaId + " getAntennaRssiAverage = " + antennaRssiAverageUnlock);
                 return antennaRssiAverageUnlock;
             case AVERAGE_WELCOME:
-                PSALogs.d("close", "antennaId = " + antennaId + " getAntennaRssiAverage = " + antennaRssiAverageWelcome);
                 return antennaRssiAverageWelcome;
             case AVERAGE_LONG:
-                PSALogs.d("close", "antennaId = " + antennaId + " getAntennaRssiAverage = " + antennaRssiAverageLong);
                 return antennaRssiAverageLong;
             case AVERAGE_SHORT:
-                PSALogs.d("close", "antennaId = " + antennaId + " getAntennaRssiAverage = " + antennaRssiAverageShort);
                 return antennaRssiAverageShort;
             default:
-                PSALogs.d("close", "antennaId = " + antennaId + " getAntennaRssiAverage = " + antennaRssiAverage);
                 return antennaRssiAverage;
         }
     }

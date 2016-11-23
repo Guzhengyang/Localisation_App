@@ -364,7 +364,12 @@ public abstract class ConnectedCar {
 
     int getRatioCloseToCar(int trxNumber, int mode1, int mode2) {
         if (trxLinkedHMap != null) {
-            return (trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode1) - getMinAverageRssi(mode2));
+            int average = trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode1);
+            int minimum = getMinAverageRssi(mode2);
+            PSALogs.d("close", "getTrxRssiAverage = " + average);
+            PSALogs.d("close", "getMinAverageRssi = " + minimum);
+            PSALogs.d("close", "getRatioCloseToCar = " + (average - minimum));
+            return (average - minimum);
         }
         return 0;
     }
@@ -384,7 +389,6 @@ public abstract class ConnectedCar {
                 }
             }
         }
-        PSALogs.d("close", "getMinAverageRssi = " + min);
         return min;
     }
 
