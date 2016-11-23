@@ -146,6 +146,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public static class PSASettingsFragment extends PreferenceFragment {
         private ListPreference connected_car_type;
         private ListPreference connected_car_base;
+        private CheckBoxPreference user_speed_enabled;
+        private EditTextPreference wanted_speed;
+        private EditTextPreference one_step_size;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -167,10 +170,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void setViews() {
             connected_car_type = ((ListPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_TYPE_PREFERENCES_NAME));
             connected_car_base = ((ListPreference) findPreference(SdkPreferencesHelper.CONNECTED_CAR_BASE_PREFERENCES_NAME));
+            user_speed_enabled = ((CheckBoxPreference) findPreference(SdkPreferencesHelper.USER_SPEED_ENABLED_PREFERENCES_NAME));
+            wanted_speed = ((EditTextPreference) findPreference(SdkPreferencesHelper.WANTED_SPEED_PREFERENCES_NAME));
+            one_step_size = ((EditTextPreference) findPreference(SdkPreferencesHelper.ONE_STEP_SIZE_PREFERENCES_NAME));
         }
 
         private void setDefaultValues() {
-
+            wanted_speed.setText(wanted_speed.getSummary().toString());
+            one_step_size.setText(one_step_size.getSummary().toString());
         }
 
         // Bind the summaries of EditText/List/Dialog/Ringtone preferences
@@ -180,6 +187,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void bindSummaries() {
             bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_A);
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
+            user_speed_enabled.setSummary(R.string.pref_user_speed_enabled_summary);
+            bindPreferenceSummaryToValue(wanted_speed, String.valueOf(SdkPreferencesHelper.WANTED_SPEED));
+            bindPreferenceSummaryToValue(one_step_size, String.valueOf(SdkPreferencesHelper.ONE_STEP_SIZE));
         }
     }
 
@@ -831,7 +841,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
             bindPreferenceSummaryToValue(selected_algo, ConnectedCarFactory.ALGO_STANDARD);
             connected_car_trame_enabled.setSummary(R.string.pref_car_forced_trame_enabled_summary);
-            user_speed_enabled.setSummary(R.string.pref_user_speed_enabled_summary);
             bindPreferenceSummaryToValue(connected_car_trame, "");
             bindPreferenceSummaryToValue(back_timeout, String.valueOf(SdkPreferencesHelper.BACK_TIMEOUT));
             bindPreferenceSummaryToValue(thatcham_timeout, String.valueOf(SdkPreferencesHelper.THATCHAM_TIMEOUT));
@@ -848,6 +857,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(lin_acc_size, String.valueOf(SdkPreferencesHelper.LIN_ACC_SIZE));
             bindPreferenceSummaryToValue(correction_lin_acc, String.valueOf(SdkPreferencesHelper.CORRECTION_LIN_ACC));
             bindPreferenceSummaryToValue(frozen_threshold, String.valueOf(SdkPreferencesHelper.FROZEN_THRESHOLD));
+            user_speed_enabled.setSummary(R.string.pref_user_speed_enabled_summary);
             bindPreferenceSummaryToValue(wanted_speed, String.valueOf(SdkPreferencesHelper.WANTED_SPEED));
             bindPreferenceSummaryToValue(one_step_size, String.valueOf(SdkPreferencesHelper.ONE_STEP_SIZE));
             bindPreferenceSummaryToValue(address_connectable, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE);

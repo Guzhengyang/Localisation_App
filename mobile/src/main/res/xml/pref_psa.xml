@@ -17,4 +17,20 @@
             android:key="com.inblue.PREFERENCE_CONNECTED_CAR_BASE"
             android:title="@string/pref_car_base_title" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_user_speed">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="com.inblue.PREFERENCE_USER_SPEED_ENABLED"
+            android:title="@string/pref_user_speed_enabled" />
+        <EditTextPreference
+            android:dependency="com.inblue.PREFERENCE_USER_SPEED_ENABLED"
+            android:inputType="number|numberDecimal"
+            android:key="com.inblue.PREFERENCE_WANTED_SPEED"
+            android:title="@string/pref_wanted_speed" />
+        <EditTextPreference
+            android:dependency="com.inblue.PREFERENCE_USER_SPEED_ENABLED"
+            android:inputType="number"
+            android:key="com.inblue.PREFERENCE_ONE_STEP_SIZE"
+            android:title="@string/pref_one_step_size" />
+    </PreferenceCategory>
 </PreferenceScreen>

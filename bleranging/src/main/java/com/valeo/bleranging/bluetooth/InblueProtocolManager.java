@@ -96,6 +96,9 @@ public class InblueProtocolManager {
                 isStartStrategyValid, isInStartArea, isInLockArea);
         payload[5] = getPayloadFifthByte(isRKE, isUnlockStrategyValid);
         packetOneCounter++;
+        if (packetOneCounter > 65534) { // packetOneCounter > FF FE
+            packetOneCounter = 0;
+        }
         return payload;
     }
 
