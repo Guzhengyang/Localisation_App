@@ -8,12 +8,14 @@ import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.TextUtils;
 import com.valeo.bleranging.utils.TrxUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Created by l-avaratha on 07/09/2016
@@ -27,6 +29,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     private int closeToCarRL;
     private int closeToCarRR;
     private int thresholdMaxMinRatio = 0;
+    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     public CCEightFlFrLMRTRlRr(Context mContext) {
         super(mContext, ConnectionNumber.EIGHT_CONNECTION);
@@ -114,20 +117,28 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public List<Integer> unlockStrategy() {
         boolean isInUnlockArea = isInUnlockArea(unlockThreshold);
+        lock.writeLock().lock();
+        PSALogs.d("closeR", "1 " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
         closeToCarFL = getRatioCloseToCar(NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
+        PSALogs.d("closeR", "2 " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
         closeToCarFR = getRatioCloseToCar(NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
+        PSALogs.d("closeR", "3 " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
         closeToCarRL = getRatioCloseToCar(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
+        PSALogs.d("closeR", "4 " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
         closeToCarRR = getRatioCloseToCar(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
         int thresholdCloseToCar = SdkPreferencesHelper.getInstance().getRatioCloseToCarThreshold(connectedCarType);
+        PSALogs.d("closeR", "5 " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
         thresholdMaxMinRatio = getThreeCornerLowerMaxMinRatio() + thresholdCloseToCar;
+        lock.writeLock().unlock();
         if (isInUnlockArea) {
             boolean isNearDoorLRMax = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, nearDoorRatioThreshold, true);
             boolean isNearDoorLRMin = compareRatioWithThreshold(Antenna.AVERAGE_UNLOCK, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -nearDoorRatioThreshold, false);
+            lock.readLock().lock();
             boolean closeToCarFrontLeft = TrxUtils.compareWithThreshold(closeToCarFL, thresholdMaxMinRatio, true);
             boolean closeToCarRearLeft = TrxUtils.compareWithThreshold(closeToCarRL, thresholdMaxMinRatio, true);
             boolean closeToCarRearRight = TrxUtils.compareWithThreshold(closeToCarRR, thresholdMaxMinRatio, true);
             boolean closeToCarFrontRight = TrxUtils.compareWithThreshold(closeToCarFR, thresholdMaxMinRatio, true);
-
+            lock.readLock().unlock();
             boolean closeToBeaconFL = compareTrxWithThreshold(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
             boolean closeToBeaconFR = compareTrxWithThreshold(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
             boolean closeToBeaconL = compareTrxWithThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
@@ -239,6 +250,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                                                               int totalAverage, boolean rearmLock, boolean rearmUnlock) {
         // WELCOME
 //        spannableStringBuilder.append(String.valueOf(ratio)).append("\n");
+        lock.readLock().lock();
         spannableStringBuilder //TODO Remove after test
                 .append(String.valueOf(getThreeCornerLowerMaxMinRatio())).append(" ")
                 .append(String.valueOf(thresholdMaxMinRatio)).append("\n")
@@ -246,6 +258,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 .append("FR:   ").append(String.valueOf(closeToCarFR)).append("   ")
                 .append("RL:   ").append(String.valueOf(closeToCarRL)).append("   ")
                 .append("RR:   ").append(String.valueOf(closeToCarRR)).append("\n");
+        lock.readLock().unlock();
         spannableStringBuilder.append("welcome ");
         StringBuilder footerSB = new StringBuilder();
         footerSB.append("rssi > (")

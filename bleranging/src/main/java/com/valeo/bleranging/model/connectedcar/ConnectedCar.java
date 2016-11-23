@@ -10,6 +10,7 @@ import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Ranging;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.TextUtils;
 import com.valeo.bleranging.utils.TrxUtils;
 
@@ -383,6 +384,7 @@ public abstract class ConnectedCar {
                 }
             }
         }
+        PSALogs.d("close", "getMinAverageRssi = " + min);
         return min;
     }
 
