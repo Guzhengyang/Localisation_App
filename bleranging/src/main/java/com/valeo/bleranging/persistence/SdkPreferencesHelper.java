@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
+import com.valeo.bleranging.R;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 
 /**
@@ -16,23 +17,40 @@ public final class SdkPreferencesHelper {
     public final static int OFFSET_POCKET_FOR_START = -5;
     public final static int OFFSET_POCKET_FOR_LOCK = -5;
     public final static int OFFSET_POCKET_FOR_UNLOCK = -5;
-    public final static int START_THRESHOLD = -73;
-    public final static int UNLOCK_IN_THE_RUN_THRESHOLD = -65;
-    public final static int WALK_AWAY_LOCKING_THRESHOLD = -70;
-    public final static int WELCOME_THRESHOLD = -95;
-    public final static int CLOSE_TO_BEACON_THRESHOLD = -50;
-    public final static int NEAR_DOOR_RATIO_THRESHOLD = 8;
-    public final static int NEAR_BACKDOOR_RATIO_THRESHOLD_MIN = -5;
-    public final static int NEAR_BACKDOOR_RATIO_THRESHOLD_MAX = 5;
-    public final static int NEAR_DOOR_RATIO_THRESHOLD_MB = 0;
-    public final static int NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MAX = 12;
-    public final static int NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MIN = 2;
-    public final static int NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MAX = 12;
-    public final static int NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MIN = 2;
-    public final static int NEAR_DOOR_RATIO_THRESHOLD_MRL_MRR = 10;
-    public final static int NEAR_DOOR_RATIO_THRESHOLD_TRL_TRR = 10;
-    public final static int AVERAGE_DELTA_UNLOCK_THRESHOLD = 10;
-    public final static int AVERAGE_DELTA_LOCK_THRESHOLD = -10;
+    public final static int INDOOR_START_THRESHOLD = -73;
+    public final static int INDOOR_UNLOCK_IN_THE_RUN_THRESHOLD = -65;
+    public final static int INDOOR_WALK_AWAY_LOCKING_THRESHOLD = -70;
+    public final static int INDOOR_WELCOME_THRESHOLD = -95;
+    public final static int INDOOR_CLOSE_TO_BEACON_THRESHOLD = -50;
+    public final static int INDOOR_NEAR_DOOR_RATIO_THRESHOLD = 8;
+    public final static int INDOOR_NEAR_BACKDOOR_RATIO_THRESHOLD_MIN = -5;
+    public final static int INDOOR_NEAR_BACKDOOR_RATIO_THRESHOLD_MAX = 5;
+    public final static int INDOOR_NEAR_DOOR_RATIO_THRESHOLD_MB = 0;
+    public final static int INDOOR_NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MAX = 12;
+    public final static int INDOOR_NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MIN = 2;
+    public final static int INDOOR_NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MAX = 12;
+    public final static int INDOOR_NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MIN = 2;
+    public final static int INDOOR_NEAR_DOOR_RATIO_THRESHOLD_MRL_MRR = 10;
+    public final static int INDOOR_NEAR_DOOR_RATIO_THRESHOLD_TRL_TRR = 10;
+    public final static int INDOOR_AVERAGE_DELTA_UNLOCK_THRESHOLD = 10;
+    public final static int INDOOR_AVERAGE_DELTA_LOCK_THRESHOLD = -10;
+    public final static int OUTSIDE_START_THRESHOLD = -73;
+    public final static int OUTSIDE_UNLOCK_IN_THE_RUN_THRESHOLD = -65;
+    public final static int OUTSIDE_WALK_AWAY_LOCKING_THRESHOLD = -70;
+    public final static int OUTSIDE_WELCOME_THRESHOLD = -95;
+    public final static int OUTSIDE_CLOSE_TO_BEACON_THRESHOLD = -50;
+    public final static int OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD = 8;
+    public final static int OUTSIDE_NEAR_BACKDOOR_RATIO_THRESHOLD_MIN = -5;
+    public final static int OUTSIDE_NEAR_BACKDOOR_RATIO_THRESHOLD_MAX = 5;
+    public final static int OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD_MB = 0;
+    public final static int OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MAX = 12;
+    public final static int OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MIN = 2;
+    public final static int OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MAX = 12;
+    public final static int OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MIN = 2;
+    public final static int OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD_MRL_MRR = 10;
+    public final static int OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD_TRL_TRR = 10;
+    public final static int OUTSIDE_AVERAGE_DELTA_UNLOCK_THRESHOLD = 10;
+    public final static int OUTSIDE_AVERAGE_DELTA_LOCK_THRESHOLD = -10;
     public final static float BACK_TIMEOUT = 3.5f;
     public final static float THATCHAM_TIMEOUT = 3.5f;
     public final static float CRYPTO_PRE_AUTH_TIMEOUT = 0f;
@@ -71,11 +89,10 @@ public final class SdkPreferencesHelper {
     public final static int EQUALIZER_FRONT_RIGHT = 5;
     public final static int EQUALIZER_REAR_LEFT = 5;
     public final static int EQUALIZER_REAR_RIGHT = 5;
-    //    public static final int NEAR_DOOR_THR = 10;
-//    public static final int EQUALLY_NEAR_DOOR_THR = 10;
-//    public static final int NEARER_DOOR_THR = 10;
-    public static final int RATIO_MAX_MIN_THR = 20;
-    public static final int RATIO_CLOSE_TO_CAR_THR = 30;
+    public static final int INDOOR_RATIO_MAX_MIN_THR = 20;
+    public static final int OUTSIDE_RATIO_MAX_MIN_THR = 20;
+    public static final int INDOOR_RATIO_CLOSE_TO_CAR_THR = 30;
+    public static final int OUTSIDE_RATIO_CLOSE_TO_CAR_THR = 30;
     public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:2A:B8";
     public final static String BLE_ADDRESS_CONNECTABLE_PC = "B0:B4:48:BD:56:85";
     public final static String BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL = "5C:E0:C5:34:4D:32";
@@ -89,93 +106,6 @@ public final class SdkPreferencesHelper {
     public final static String BLE_ADDRESS_BACK = "78:A5:04:81:5A:21";
     public final static String BLE_ADDRESS_REAR_RIGHT = "D4:F5:13:56:71:4B";
     public static final String SAVED_CC_GENERIC_OPTION = "savedConnectedCarGenericOption";
-    /** Key formatter. */
-    public static final String ADDRESS_CONNECTABLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE";
-    public static final String ADDRESS_CONNECTABLE_PC_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE_PC";
-    public static final String ADDRESS_CONNECTABLE_REMOTE_CONTROL_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_CONNECTABLE_REMOTE_CONTROL";
-    public static final String ADDRESS_LEFT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_LEFT";
-    public static final String ADDRESS_MIDDLE_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_MIDDLE";
-    public static final String ADDRESS_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_RIGHT";
-    public static final String ADDRESS_TRUNK_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_TRUNK";
-    public static final String ADDRESS_BACK_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_BACK";
-    public static final String ADDRESS_FRONT_LEFT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_FRONT_LEFT";
-    public static final String ADDRESS_REAR_LEFT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_REAR_LEFT";
-    public static final String ADDRESS_FRONT_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_FRONT_RIGHT";
-    public static final String ADDRESS_REAR_RIGHT_PREFERENCE_NAME = "com.inblue.PREFERENCE_ADDRESS_REAR_RIGHT";
-    public static final String CONNECTED_CAR_TYPE_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_TYPE";
-    public static final String CONNECTED_CAR_BASE_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_BASE";
-    public static final String SELECTED_ALGO_PREFERENCES_NAME = "com.inblue.PREFERENCE_SELECTED_ALGO";
-    public static final String CONNECTED_CAR_TRAME_ENABLED_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_TRAME_ENABLED";
-    public static final String CONNECTED_CAR_TRAME_PREFERENCES_NAME = "com.inblue.PREFERENCE_CONNECTED_CAR_TRAME";
-    public static final String OFFSET_EAR_FOR_START_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_EAR_FOR_START";
-    public static final String OFFSET_EAR_FOR_LOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_EAR_FOR_LOCK";
-    public static final String OFFSET_EAR_FOR_UNLOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_EAR_FOR_UNLOCK";
-    public static final String OFFSET_POCKET_FOR_START_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_START";
-    public static final String OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_LOCK";
-    public static final String OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME = "com.inblue.PREFERENCE_OFFSET_POCKET_FOR_UNLOCK";
-    public static final String START_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_START_THR";
-    public static final String UNLOCK_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_THR";
-    public static final String LOCK_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOCK_THR";
-    public static final String WELCOME_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_WELCOME_THR";
-    public static final String CLOSE_TO_BEACON_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_CLOSE_TO_BEACON_THR";
-    public static final String NEAR_DOOR_RATIO_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR";
-    public static final String NEAR_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_BACKDOOR_RATIO_THR_MIN";
-    public static final String NEAR_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_BACKDOOR_RATIO_THR_MAX";
-    public static final String NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_ML_MR_MAX";
-    public static final String NEAR_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_ML_MR_MIN";
-    public static final String NEAR_DOOR_RATIO_THR_TL_TR_MAX_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_TL_TR_MAX";
-    public static final String NEAR_DOOR_RATIO_THR_TL_TR_MIN_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_TL_TR_MIN";
-    public static final String NEAR_DOOR_RATIO_THR_MRL_MRR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_MRL_MRR";
-    public static final String NEAR_DOOR_RATIO_THR_TRL_TRR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_TRL_TRR";
-    public static final String NEAR_DOOR_RATIO_THR_MB_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_MB";
-    public static final String AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_LOCK_THRESHOLD";
-    public static final String AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD";
-    public static final String UNLOCK_VALID_NB_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_VALID_NB_ELEMENT";
-    public static final String BACK_TIMEOUT_PREFERENCES_NAME = "com.inblue.PREFERENCE_BACK_TIMEOUT";
-    public static final String THATCHAM_TIMEOUT_PREFERENCES_NAME = "com.inblue.PREFERENCE_THATCHAM_TIMEOUT";
-    public static final String CRYPTO_PRE_AUTH_TIMEOUT_PREFERENCES_NAME = "com.inblue.PREFERENCE_CRYPTO_PRE_AUTH_TIMEOUT";
-    public static final String CRYPTO_ACTION_TIMEOUT_PREFERENCES_NAME = "com.inblue.PREFERENCE_CRYPTO_ACTION_TIMEOUT";
-    public static final String RSSI_LOG_NUMBER_PREFERENCES_NAME = "com.inblue.PREFERENCE_RSSI_LOG_NUMBER";
-    public static final String ROLLING_AV_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_ROLLING_AV_ELEMENT";
-    public static final String START_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_START_NB_ELEMENT";
-    public static final String LOCK_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOCK_NB_ELEMENT";
-    public static final String UNLOCK_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_NB_ELEMENT";
-    public static final String WELCOME_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_WELCOME_NB_ELEMENT";
-    public static final String LONG_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_LONG_NB_ELEMENT";
-    public static final String SHORT_NB_ELEMENT_PREFERENCES_NAME = "com.inblue.PREFERENCE_SHORT_NB_ELEMENT";
-    public static final String UNLOCK_MODE_PREFERENCES_NAME = "com.inblue.PREFERENCE_UNLOCK_MODE";
-    public static final String LOCK_MODE_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOCK_MODE";
-    public static final String START_MODE_PREFERENCES_NAME = "com.inblue.PREFERENCE_START_MODE";
-    public static final String ECRETAGE_REFERENCE_70_100_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_REFERENCE_70_100";
-    public static final String ECRETAGE_REFERENCE_50_70_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_REFERENCE_50_70";
-    public static final String ECRETAGE_REFERENCE_30_50_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_REFERENCE_30_50";
-    public static final String ECRETAGE_REFERENCE_30_30_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_REFERENCE_30_30";
-    public static final String ECRETAGE_70_100_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_70_100";
-    public static final String ECRETAGE_50_70_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_50_70";
-    public static final String ECRETAGE_30_50_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_30_50";
-    public static final String ECRETAGE_30_30_PREFERENCES_NAME = "com.inblue.PREFERENCE_ECRETAGE_30_30";
-    public static final String LIN_ACC_SIZE_PREFERENCES_NAME = "com.inblue.PREFERENCE_LIN_ACC_SIZE";
-    public static final String CORRECTION_LIN_ACC_PREFERENCES_NAME = "com.inblue.PREFERENCE_CORRECTION_LIN_ACC";
-    public static final String FROZEN_THRESHOLD_PREFERENCES_NAME = "com.inblue.PREFERENCE_FROZEN_THRESHOLD";
-    public static final String USER_SPEED_ENABLED_PREFERENCES_NAME = "com.inblue.PREFERENCE_USER_SPEED_ENABLED";
-    public static final String WANTED_SPEED_PREFERENCES_NAME = "com.inblue.PREFERENCE_WANTED_SPEED";
-    public static final String ONE_STEP_SIZE_PREFERENCES_NAME = "com.inblue.PREFERENCE_ONE_STEP_SIZE";
-    public static final String EQUALIZER_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_LEFT";
-    public static final String EQUALIZER_MIDDLE_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_MIDDLE";
-    public static final String EQUALIZER_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_RIGHT";
-    public static final String EQUALIZER_TRUNK_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_TRUNK";
-    public static final String EQUALIZER_BACK_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_BACK";
-    public static final String EQUALIZER_FRONT_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_FRONT_LEFT";
-    public static final String EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_FRONT_RIGHT";
-    public static final String EQUALIZER_REAR_LEFT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_REAR_LEFT";
-    public static final String EQUALIZER_REAR_RIGHT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALIZER_REAR_RIGHT";
-    public static final String EXPORT_PREFERENCES_NAME = "com.inblue.PREFERENCE_EXPORT";
-    public static final String IMPORT_PREFERENCES_NAME = "com.inblue.PREFERENCE_IMPORT";
-    //    public static final String NEAR_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEAR_DOOR_THR";
-//    public static final String EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_EQUALLY_NEAR_DOOR_THR";
-//    public static final String NEARER_DOOR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_NEARER_DOOR_THR";
-    public static final String RATIO_MAX_MIN_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_RATIO_MAX_MIN_THR";
-    public static final String RATIO_CLOSE_TO_CAR_THR_PREFERENCES_NAME = "com.inblue.PREFERENCE_CLOSE_TO_CAR_THR";
     private final static String LOG_FILE_NAME = "sdcard/InBlueRssi/allRssi_0_0000.csv";
     /**
      * Preferences file name.
@@ -222,697 +152,421 @@ public final class SdkPreferencesHelper {
         return sSingleInstance;
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setNearDoorThreshold(final String fileName, int nearDoorThreshold) {
-//        saveInt(fileName, NEAR_DOOR_THR_PREFERENCES_NAME, nearDoorThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setEquallyNearThreshold(final String fileName, int equallyNearDoorThreshold) {
-//        saveInt(fileName, EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME, equallyNearDoorThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setNearerThreshold(final String fileName, int nearerDoorThreshold) {
-//        saveInt(fileName, NEARER_DOOR_THR_PREFERENCES_NAME, nearerDoorThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setRatioMaxMinThreshold(final String fileName, int ratioMaxMinThreshold) {
-//        saveInt(fileName, RATIO_MAX_MIN_THR_PREFERENCES_NAME, ratioMaxMinThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-    // --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setRatioCloseToCarThreshold(final String fileName, int ratioCloseToCarThreshold) {
-//        saveInt(fileName, RATIO_CLOSE_TO_CAR_THR_PREFERENCES_NAME, ratioCloseToCarThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public int getNearDoorThreshold(final String fileName) {
-//        return readInt(fileName, NEAR_DOOR_THR_PREFERENCES_NAME, NEAR_DOOR_THR);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public int getEquallyNearThreshold(final String fileName) {
-//        return readInt(fileName, EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME, EQUALLY_NEAR_DOOR_THR);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public int getNearerThreshold(final String fileName) {
-//        return readInt(fileName, NEARER_DOOR_THR_PREFERENCES_NAME, NEARER_DOOR_THR);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-    public int getRatioMaxMinThreshold(final String fileName) {
-        return readInt(fileName, RATIO_MAX_MIN_THR_PREFERENCES_NAME, RATIO_MAX_MIN_THR);
+    public int getIndoorRatioMaxMinThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_ratio_max_min_thr_pref_name), INDOOR_RATIO_MAX_MIN_THR);
     }
 
-    public int getRatioCloseToCarThreshold(final String fileName) {
-        return readInt(fileName, RATIO_CLOSE_TO_CAR_THR_PREFERENCES_NAME, RATIO_CLOSE_TO_CAR_THR);
+    public int getOutsideRatioMaxMinThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_ratio_max_min_thr_pref_name), OUTSIDE_RATIO_MAX_MIN_THR);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setNearDoorThresholdLMorMRMax(final String fileName, int nearDoorRatioThreshold) {
-//        saveInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME, nearDoorRatioThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
+    public int getIndoorRatioCloseToCarThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_ratio_close_to_car_thr_pref_name), INDOOR_RATIO_CLOSE_TO_CAR_THR);
+    }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setNearDoorThresholdMB(final String fileName, int nearDoorRatioThreshold) {
-//        saveInt(fileName, NEAR_DOOR_RATIO_THR_MB_PREFERENCES_NAME, nearDoorRatioThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setNearDoorThresholdLMorMRMin(final String fileName, int nearDoorRatioThreshold) {
-//        saveInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME, nearDoorRatioThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setEqualizerLeft(final String fileName, int equalizer) {
-//        saveInt(fileName, EQUALIZER_LEFT_PREFERENCES_NAME, equalizer);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setEqualizerMiddle(final String fileName, int equalizer) {
-//        saveInt(fileName, EQUALIZER_MIDDLE_PREFERENCES_NAME, equalizer);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setEqualizerRight(final String fileName, int equalizer) {
-//        saveInt(fileName, EQUALIZER_RIGHT_PREFERENCES_NAME, equalizer);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setEqualizerBack(final String fileName, int equalizer) {
-//        saveInt(fileName, EQUALIZER_BACK_PREFERENCES_NAME, equalizer);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setEqualizerFrontLeft(final String fileName, int equalizer) {
-//        saveInt(fileName, EQUALIZER_FRONT_LEFT_PREFERENCES_NAME, equalizer);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setEqualizerFrontRight(final String fileName, int equalizer) {
-//        saveInt(fileName, EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME, equalizer);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setEqualizerRearLeft(final String fileName, int equalizer) {
-//        saveInt(fileName, EQUALIZER_REAR_LEFT_PREFERENCES_NAME, equalizer);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setEqualizerRearRight(final String fileName, int equalizer) {
-//        saveInt(fileName, EQUALIZER_REAR_RIGHT_PREFERENCES_NAME, equalizer);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setSelectedLocation(final String fileName, final String selectedLocation) {
-//        saveString(fileName, SELECTED_LOCATION_PREFERENCES_NAME, selectedLocation);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public String getSelectedLocation(final String fileName, final String defaultValue) {
-//        return readString(fileName, SELECTED_LOCATION_PREFERENCES_NAME, defaultValue);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
+    public int getOutsideRatioCloseToCarThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_ratio_close_to_car_thr_pref_name), OUTSIDE_RATIO_CLOSE_TO_CAR_THR);
+    }
 
     public int getOffsetPocketForStart(final String fileName) {
-        return readInt(fileName, OFFSET_POCKET_FOR_START_PREFERENCES_NAME, OFFSET_POCKET_FOR_START);
+        return readInt(fileName, mApplicationContext.getString(R.string.offset_pocket_for_start_pref_name), OFFSET_POCKET_FOR_START);
     }
 
     public int getOffsetEarForStart(final String fileName) {
-        return readInt(fileName, OFFSET_EAR_FOR_START_PREFERENCES_NAME, OFFSET_EAR_FOR_START);
+        return readInt(fileName, mApplicationContext.getString(R.string.offset_ear_for_start_pref_name), OFFSET_EAR_FOR_START);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setOffsetPocketForStart(final String fileName, int offsetPocket) {
-//        saveInt(fileName, OFFSET_POCKET_FOR_START_PREFERENCES_NAME, offsetPocket);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
     public int getOffsetPocketForLock(final String fileName) {
-        return readInt(fileName, OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME, OFFSET_POCKET_FOR_LOCK);
+        return readInt(fileName, mApplicationContext.getString(R.string.offset_pocket_for_lock_pref_name), OFFSET_POCKET_FOR_LOCK);
     }
 
     public int getOffsetEarForLock(final String fileName) {
-        return readInt(fileName, OFFSET_EAR_FOR_LOCK_PREFERENCES_NAME, OFFSET_EAR_FOR_LOCK);
+        return readInt(fileName, mApplicationContext.getString(R.string.offset_ear_for_lock_pref_name), OFFSET_EAR_FOR_LOCK);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setOffsetPocketForLock(final String fileName, int offsetPocket) {
-//        saveInt(fileName, OFFSET_POCKET_FOR_LOCK_PREFERENCES_NAME, offsetPocket);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
     public int getOffsetPocketForUnlock(final String fileName) {
-        return readInt(fileName, OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME, OFFSET_POCKET_FOR_UNLOCK);
+        return readInt(fileName, mApplicationContext.getString(R.string.offset_pocket_for_unlock_pref_name), OFFSET_POCKET_FOR_UNLOCK);
     }
 
     public int getOffsetEarForUnlock(final String fileName) {
-        return readInt(fileName, OFFSET_EAR_FOR_UNLOCK_PREFERENCES_NAME, OFFSET_EAR_FOR_UNLOCK);
+        return readInt(fileName, mApplicationContext.getString(R.string.offset_ear_for_unlock_pref_name), OFFSET_EAR_FOR_UNLOCK);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setOffsetPocketForUnlock(final String fileName, int offsetPocket) {
-//        saveInt(fileName, OFFSET_POCKET_FOR_UNLOCK_PREFERENCES_NAME, offsetPocket);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-    public int getStartThreshold(final String fileName) {
-        return readInt(fileName, START_THR_PREFERENCES_NAME, START_THRESHOLD);
+    public int getIndoorStartThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_start_thr_pref_name), INDOOR_START_THRESHOLD);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setStartThreshold(final String fileName, int startThreshold) {
-//        saveInt(fileName, START_THR_PREFERENCES_NAME, startThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-    public int getUnlockThreshold(final String fileName) {
-        return readInt(fileName, UNLOCK_THR_PREFERENCES_NAME, UNLOCK_IN_THE_RUN_THRESHOLD);
+    public int getIndoorUnlockThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_unlock_thr_pref_name), INDOOR_UNLOCK_IN_THE_RUN_THRESHOLD);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setUnlockThreshold(final String fileName, int unlockThreshold) {
-//        saveInt(fileName, UNLOCK_THR_PREFERENCES_NAME, unlockThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-    public int getLockThreshold(final String fileName) {
-        return readInt(fileName, LOCK_THR_PREFERENCES_NAME, WALK_AWAY_LOCKING_THRESHOLD);
+    public int getIndoorLockThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_lock_thr_pref_name), INDOOR_WALK_AWAY_LOCKING_THRESHOLD);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setLockThreshold(final String fileName, int lockThreshold) {
-//        saveInt(fileName, LOCK_THR_PREFERENCES_NAME, lockThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-    public int getWelcomeThreshold(final String fileName) {
-        return readInt(fileName, WELCOME_THR_PREFERENCES_NAME, WELCOME_THRESHOLD);
+    public int getIndoorWelcomeThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_welcome_thr_pref_name), INDOOR_WELCOME_THRESHOLD);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setWelcomeThreshold(final String fileName, int welcomeThreshold) {
-//        saveInt(fileName, WELCOME_THR_PREFERENCES_NAME, welcomeThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-    public int getCloseToBeaconThreshold(final String fileName) {
-        return readInt(fileName, CLOSE_TO_BEACON_THR_PREFERENCES_NAME, CLOSE_TO_BEACON_THRESHOLD);
+    public int getIndoorCloseToBeaconThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_close_to_beacon_pref_name), INDOOR_CLOSE_TO_BEACON_THRESHOLD);
     }
 
-    public int getNearDoorRatioThreshold(final String fileName) {
-        return readInt(fileName, NEAR_DOOR_RATIO_THR_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD);
+    public int getIndoorNearDoorRatioThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_near_door_ratio_thr_pref_name), INDOOR_NEAR_DOOR_RATIO_THRESHOLD);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setNearDoorRatioThreshold(final String fileName, int nearDoorRatioThreshold) {
-//        saveInt(fileName, NEAR_DOOR_RATIO_THR_PREFERENCES_NAME, nearDoorRatioThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-    public int getNearBackDoorRatioThresholdMin(final String fileName) {
-        return readInt(fileName, NEAR_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME, NEAR_BACKDOOR_RATIO_THRESHOLD_MIN);
+    public int getIndoorNearBackDoorRatioThresholdMin(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_near_backdoor_ratio_thr_min_pref_name), INDOOR_NEAR_BACKDOOR_RATIO_THRESHOLD_MIN);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setNearBackDoorRatioThresholdMin(final String fileName, int nearBackDoorRatioThresholdMin) {
-//        saveInt(fileName, NEAR_BACKDOOR_RATIO_THR_MIN_PREFERENCES_NAME, nearBackDoorRatioThresholdMin);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-    public int getNearBackDoorRatioThresholdMax(final String fileName) {
-        return readInt(fileName, NEAR_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME, NEAR_BACKDOOR_RATIO_THRESHOLD_MAX);
+    public int getIndoorNearBackDoorRatioThresholdMax(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_near_backdoor_ratio_thr_max_pref_name), INDOOR_NEAR_BACKDOOR_RATIO_THRESHOLD_MAX);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setNearBackDoorRatioThresholdMax(final String fileName, int nearBackDoorRatioThresholdMax) {
-//        saveInt(fileName, NEAR_BACKDOOR_RATIO_THR_MAX_PREFERENCES_NAME, nearBackDoorRatioThresholdMax);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-    public int getNearDoorThresholdMLorMRMax(final String fileName) {
-        return readInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MAX_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MAX);
+    public int getIndoorNearDoorThresholdMLorMRMax(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_near_door_ratio_thr_ml_mr_max_pref_name), INDOOR_NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MAX);
     }
 
-    public int getNearDoorThresholdTLorTRMax(final String fileName) {
-        return readInt(fileName, NEAR_DOOR_RATIO_THR_TL_TR_MAX_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MAX);
+    public int getIndoorNearDoorThresholdTLorTRMax(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_near_door_ratio_thr_tl_tr_max_pref_name), INDOOR_NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MAX);
     }
 
-    public int getNearDoorThresholdMB(final String fileName) {
-        return readInt(fileName, NEAR_DOOR_RATIO_THR_MB_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_MB);
+    public int getIndoorNearDoorThresholdMB(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_near_door_ratio_thr_mb_pref_name), INDOOR_NEAR_DOOR_RATIO_THRESHOLD_MB);
     }
 
-    public int getNearDoorThresholdMLorMRMin(final String fileName) {
-        return readInt(fileName, NEAR_DOOR_RATIO_THR_ML_MR_MIN_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MIN);
+    public int getIndoorNearDoorThresholdMLorMRMin(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_near_door_ratio_thr_ml_mr_min_pref_name), INDOOR_NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MIN);
     }
 
-    public int getNearDoorThresholdTLorTRMin(final String fileName) {
-        return readInt(fileName, NEAR_DOOR_RATIO_THR_TL_TR_MIN_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MIN);
+    public int getIndoorNearDoorThresholdTLorTRMin(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_near_door_ratio_thr_tl_tr_min_pref_name), INDOOR_NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MIN);
     }
 
-    public int getNearDoorThresholdMRLorMRR(final String fileName) {
-        return readInt(fileName, NEAR_DOOR_RATIO_THR_MRL_MRR_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_MRL_MRR);
+    public int getIndoorNearDoorThresholdMRLorMRR(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_near_door_ratio_thr_mrl_mrr_pref_name), INDOOR_NEAR_DOOR_RATIO_THRESHOLD_MRL_MRR);
     }
 
-    public int getNearDoorThresholdTRLorTRR(final String fileName) {
-        return readInt(fileName, NEAR_DOOR_RATIO_THR_TRL_TRR_PREFERENCES_NAME, NEAR_DOOR_RATIO_THRESHOLD_TRL_TRR);
+    public int getIndoorNearDoorThresholdTRLorTRR(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_near_door_ratio_thr_trl_trr_pref_name), INDOOR_NEAR_DOOR_RATIO_THRESHOLD_TRL_TRR);
     }
 
-    public int getAverageDeltaUnlockThreshold(final String fileName) {
-        return readInt(fileName, AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME, AVERAGE_DELTA_UNLOCK_THRESHOLD);
+    public int getIndoorAverageDeltaUnlockThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_average_delta_unlock_threshold_pref_name), INDOOR_AVERAGE_DELTA_UNLOCK_THRESHOLD);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setAverageDeltaUnlockThreshold(final String fileName, int averageDeltaThreshold) {
-//        saveInt(fileName, AVERAGE_DELTA_UNLOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-    public int getAverageDeltaLockThreshold(final String fileName) {
-        return readInt(fileName, AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME, AVERAGE_DELTA_LOCK_THRESHOLD);
+    public int getIndoorAverageDeltaLockThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.indoor_average_delta_lock_threshold_pref_name), INDOOR_AVERAGE_DELTA_LOCK_THRESHOLD);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setAverageDeltaLockThreshold(final String fileName, int averageDeltaThreshold) {
-//        saveInt(fileName, AVERAGE_DELTA_LOCK_THRESHOLD_PREFERENCES_NAME, averageDeltaThreshold);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
+    public int getOutsideStartThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_start_thr_pref_name), OUTSIDE_START_THRESHOLD);
+    }
+
+    public int getOutsideUnlockThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_unlock_thr_pref_name), OUTSIDE_UNLOCK_IN_THE_RUN_THRESHOLD);
+    }
+
+    public int getOutsideLockThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_lock_thr_pref_name), OUTSIDE_WALK_AWAY_LOCKING_THRESHOLD);
+    }
+
+    public int getOutsideWelcomeThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_welcome_thr_pref_name), OUTSIDE_WELCOME_THRESHOLD);
+    }
+
+    public int getOutsideCloseToBeaconThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_close_to_beacon_pref_name), OUTSIDE_CLOSE_TO_BEACON_THRESHOLD);
+    }
+
+    public int getOutsideNearDoorRatioThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_near_door_ratio_thr_pref_name), OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD);
+    }
+
+    public int getOutsideNearBackDoorRatioThresholdMin(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_near_backdoor_ratio_thr_min_pref_name), OUTSIDE_NEAR_BACKDOOR_RATIO_THRESHOLD_MIN);
+    }
+
+    public int getOutsideNearBackDoorRatioThresholdMax(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_near_backdoor_ratio_thr_max_pref_name), OUTSIDE_NEAR_BACKDOOR_RATIO_THRESHOLD_MAX);
+    }
+
+    public int getOutsideNearDoorThresholdMLorMRMax(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_near_door_ratio_thr_ml_mr_max_pref_name), OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MAX);
+    }
+
+    public int getOutsideNearDoorThresholdTLorTRMax(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_near_door_ratio_thr_tl_tr_max_pref_name), OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MAX);
+    }
+
+    public int getOutsideNearDoorThresholdMB(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_near_door_ratio_thr_mb_pref_name), OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD_MB);
+    }
+
+    public int getOutsideNearDoorThresholdMLorMRMin(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_near_door_ratio_thr_ml_mr_min_pref_name), OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD_ML_MR_MIN);
+    }
+
+    public int getOutsideNearDoorThresholdTLorTRMin(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_near_door_ratio_thr_tl_tr_min_pref_name), OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD_TL_TR_MIN);
+    }
+
+    public int getOutsideNearDoorThresholdMRLorMRR(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_near_door_ratio_thr_mrl_mrr_pref_name), OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD_MRL_MRR);
+    }
+
+    public int getOutsideNearDoorThresholdTRLorTRR(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_near_door_ratio_thr_trl_trr_pref_name), OUTSIDE_NEAR_DOOR_RATIO_THRESHOLD_TRL_TRR);
+    }
+
+    public int getOutsideAverageDeltaUnlockThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_average_delta_unlock_threshold_pref_name), OUTSIDE_AVERAGE_DELTA_UNLOCK_THRESHOLD);
+    }
+
+    public int getOutsideAverageDeltaLockThreshold(final String fileName) {
+        return readInt(fileName, mApplicationContext.getString(R.string.outside_average_delta_lock_threshold_pref_name), OUTSIDE_AVERAGE_DELTA_LOCK_THRESHOLD);
+    }
 
     public int getUnlockValidNb(final String fileName) {
-        return readInt(fileName, UNLOCK_VALID_NB_PREFERENCES_NAME, UNLOCK_VALID_NB);
+        return readInt(fileName, mApplicationContext.getString(R.string.unlock_valid_nb_pref_name), UNLOCK_VALID_NB);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setUnlockValidNb(final String fileName, int unlockValidNb) {
-//        saveInt(fileName, UNLOCK_VALID_NB_PREFERENCES_NAME, unlockValidNb);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getUnlockMode(final String fileName) {
-        return readInt(fileName, UNLOCK_MODE_PREFERENCES_NAME, UNLOCK_MODE);
+        return readInt(fileName, mApplicationContext.getString(R.string.unlock_mode_pref_name), UNLOCK_MODE);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setUnlockMode(final String fileName, int unlockMode) {
-//        saveInt(fileName, UNLOCK_MODE_PREFERENCES_NAME, unlockMode);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getLockMode(final String fileName) {
-        return readInt(fileName, LOCK_MODE_PREFERENCES_NAME, LOCK_MODE);
+        return readInt(fileName, mApplicationContext.getString(R.string.lock_mode_pref_name), LOCK_MODE);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setLockMode(final String fileName, int lockMode) {
-//        saveInt(fileName, LOCK_MODE_PREFERENCES_NAME, lockMode);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getStartMode(final String fileName) {
-        return readInt(fileName, START_MODE_PREFERENCES_NAME, START_MODE);
+        return readInt(fileName, mApplicationContext.getString(R.string.start_mode_pref_name), START_MODE);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setStartMode(final String fileName, int startMode) {
-//        saveInt(fileName, START_MODE_PREFERENCES_NAME, startMode);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
     public int getEcretageReference_70_100(final String fileName) {
-        return readInt(fileName, ECRETAGE_REFERENCE_70_100_PREFERENCES_NAME, ECRETAGE_REFERENCE_70_100);
+        return readInt(fileName, mApplicationContext.getString(R.string.ecretage_reference_70_100_pref_name), ECRETAGE_REFERENCE_70_100);
     }
 
     public int getEcretageReference_50_70(final String fileName) {
-        return readInt(fileName, ECRETAGE_REFERENCE_50_70_PREFERENCES_NAME, ECRETAGE_REFERENCE_50_70);
+        return readInt(fileName, mApplicationContext.getString(R.string.ecretage_reference_50_70_pref_name), ECRETAGE_REFERENCE_50_70);
     }
 
     public int getEcretageReference_30_50(final String fileName) {
-        return readInt(fileName, ECRETAGE_REFERENCE_30_50_PREFERENCES_NAME, ECRETAGE_REFERENCE_30_50);
+        return readInt(fileName, mApplicationContext.getString(R.string.ecretage_reference_30_50_pref_name), ECRETAGE_REFERENCE_30_50);
     }
 
     public int getEcretageReference_30_30(final String fileName) {
-        return readInt(fileName, ECRETAGE_REFERENCE_30_30_PREFERENCES_NAME, ECRETAGE_REFERENCE_30_30);
+        return readInt(fileName, mApplicationContext.getString(R.string.ecretage_reference_30_30_pref_name), ECRETAGE_REFERENCE_30_30);
     }
 
     public float getEcretage70_100(final String fileName) {
-        return readFloat(fileName, ECRETAGE_70_100_PREFERENCES_NAME, ECRETAGE_70_100);
+        return readFloat(fileName, mApplicationContext.getString(R.string.ecretage_70_100_pref_name), ECRETAGE_70_100);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setEcretage70_100(final String fileName, float ecretage) {
-//        saveFloat(fileName, ECRETAGE_70_100_PREFERENCES_NAME, ecretage);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public float getEcretage50_70(final String fileName) {
-        return readFloat(fileName, ECRETAGE_50_70_PREFERENCES_NAME, ECRETAGE_50_70);
+        return readFloat(fileName, mApplicationContext.getString(R.string.ecretage_50_70_pref_name), ECRETAGE_50_70);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setEcretage50_70(final String fileName, float ecretage) {
-//        saveFloat(fileName, ECRETAGE_50_70_PREFERENCES_NAME, ecretage);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public float getEcretage30_50(final String fileName) {
-        return readFloat(fileName, ECRETAGE_30_50_PREFERENCES_NAME, ECRETAGE_30_50);
+        return readFloat(fileName, mApplicationContext.getString(R.string.ecretage_30_50_pref_name), ECRETAGE_30_50);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setEcretage30_50(final String fileName, float ecretage) {
-//        saveFloat(fileName, ECRETAGE_30_50_PREFERENCES_NAME, ecretage);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public float getEcretage30_30(final String fileName) {
-        return readFloat(fileName, ECRETAGE_30_30_PREFERENCES_NAME, ECRETAGE_30_30);
+        return readFloat(fileName, mApplicationContext.getString(R.string.ecretage_30_30_pref_name), ECRETAGE_30_30);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setEcretage30_30(final String fileName, float ecretage) {
-//        saveFloat(fileName, ECRETAGE_30_30_PREFERENCES_NAME, ecretage);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
     public int getTrxRssiEqualizerLeft(final String fileName) {
-        return readInt(fileName, EQUALIZER_LEFT_PREFERENCES_NAME, EQUALIZER_LEFT);
+        return readInt(fileName, mApplicationContext.getString(R.string.equalizer_left_pref_name), EQUALIZER_LEFT);
     }
 
     public int getTrxRssiEqualizerFrontLeft(final String fileName) {
-        return readInt(fileName, EQUALIZER_FRONT_LEFT_PREFERENCES_NAME, EQUALIZER_FRONT_LEFT);
+        return readInt(fileName, mApplicationContext.getString(R.string.equalizer_front_left_pref_name), EQUALIZER_FRONT_LEFT);
     }
 
     public int getTrxRssiEqualizerRearLeft(final String fileName) {
-        return readInt(fileName, EQUALIZER_REAR_LEFT_PREFERENCES_NAME, EQUALIZER_REAR_LEFT);
+        return readInt(fileName, mApplicationContext.getString(R.string.equalizer_rear_left_pref_name), EQUALIZER_REAR_LEFT);
     }
 
     public int getTrxRssiEqualizerMiddle(final String fileName) {
-        return readInt(fileName, EQUALIZER_MIDDLE_PREFERENCES_NAME, EQUALIZER_MIDDLE);
+        return readInt(fileName, mApplicationContext.getString(R.string.equalizer_middle_pref_name), EQUALIZER_MIDDLE);
     }
 
     public int getTrxRssiEqualizerRight(final String fileName) {
-        return readInt(fileName, EQUALIZER_RIGHT_PREFERENCES_NAME, EQUALIZER_RIGHT);
+        return readInt(fileName, mApplicationContext.getString(R.string.equalizer_right_pref_name), EQUALIZER_RIGHT);
     }
 
     public int getTrxRssiEqualizerTrunk(final String fileName) {
-        return readInt(fileName, EQUALIZER_TRUNK_PREFERENCES_NAME, EQUALIZER_TRUNK);
+        return readInt(fileName, mApplicationContext.getString(R.string.equalizer_trunk_pref_name), EQUALIZER_TRUNK);
     }
 
     public int getTrxRssiEqualizerFrontRight(final String fileName) {
-        return readInt(fileName, EQUALIZER_FRONT_RIGHT_PREFERENCES_NAME, EQUALIZER_FRONT_RIGHT);
+        return readInt(fileName, mApplicationContext.getString(R.string.equalizer_front_right_pref_name), EQUALIZER_FRONT_RIGHT);
     }
 
     public int getTrxRssiEqualizerRearRight(final String fileName) {
-        return readInt(fileName, EQUALIZER_REAR_RIGHT_PREFERENCES_NAME, EQUALIZER_REAR_RIGHT);
+        return readInt(fileName, mApplicationContext.getString(R.string.equalizer_rear_right_pref_name), EQUALIZER_REAR_RIGHT);
     }
 
     public int getTrxRssiEqualizerBack(final String fileName) {
-        return readInt(fileName, EQUALIZER_BACK_PREFERENCES_NAME, EQUALIZER_BACK);
+        return readInt(fileName, mApplicationContext.getString(R.string.equalizer_back_pref_name), EQUALIZER_BACK);
     }
 
     public boolean isLightCaptorEnabled() {
         return readBoolean(SAVED_LIGHT_CAPTOR, LIGHT_CAPTOR_PREFERENCES_NAME, false);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void enableLightCaptorEnabled(final boolean enable) {
-//        saveBoolean(SAVED_LIGHT_CAPTOR, LIGHT_CAPTOR_PREFERENCES_NAME, enable);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
     public String getConnectedCarType() {
-        return readString(SAVED_CC_GENERIC_OPTION, CONNECTED_CAR_TYPE_PREFERENCES_NAME, ConnectedCarFactory.TYPE_4_A);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_type_pref_name), ConnectedCarFactory.TYPE_4_A);
     }
 
     public String getConnectedCarBase() {
-        return readString(SAVED_CC_GENERIC_OPTION, CONNECTED_CAR_BASE_PREFERENCES_NAME, ConnectedCarFactory.BASE_3);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_base_pref_name), ConnectedCarFactory.BASE_3);
     }
 
     public String getSelectedAlgo() {
-        return readString(SAVED_CC_GENERIC_OPTION, SELECTED_ALGO_PREFERENCES_NAME, ConnectedCarFactory.ALGO_STANDARD);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.selected_algo_pref_name), ConnectedCarFactory.ALGO_STANDARD);
     }
 
     public Boolean getConnectedCarTrameEnabled() {
-        return readBoolean(SAVED_CC_GENERIC_OPTION, CONNECTED_CAR_TRAME_ENABLED_PREFERENCES_NAME, false);
+        return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_trame_enabled_pref_name), false);
     }
 
     public String getConnectedCarTrame() {
-        return readString(SAVED_CC_GENERIC_OPTION, CONNECTED_CAR_TRAME_PREFERENCES_NAME, "");
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_trame_pref_name), "");
     }
 
     public float getThatchamTimeout() {
-        return readFloat(SAVED_CC_GENERIC_OPTION, THATCHAM_TIMEOUT_PREFERENCES_NAME, THATCHAM_TIMEOUT);
+        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.thatcham_timeout_pref_name), THATCHAM_TIMEOUT);
     }
 
     public float getBackTimeout() {
-        return readFloat(SAVED_CC_GENERIC_OPTION, BACK_TIMEOUT_PREFERENCES_NAME, BACK_TIMEOUT);
+        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.back_timeout_pref_name), BACK_TIMEOUT);
     }
 
     public float getCryptoPreAuthTimeout() {
-        return readFloat(SAVED_CC_GENERIC_OPTION, CRYPTO_PRE_AUTH_TIMEOUT_PREFERENCES_NAME, CRYPTO_PRE_AUTH_TIMEOUT);
+        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.crypto_pre_auth_timeout_pref_name), CRYPTO_PRE_AUTH_TIMEOUT);
     }
 
     public float getCryptoActionTimeout() {
-        return readFloat(SAVED_CC_GENERIC_OPTION, CRYPTO_ACTION_TIMEOUT_PREFERENCES_NAME, CRYPTO_ACTION_TIMEOUT);
+        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.crypto_action_timeout_pref_name), CRYPTO_ACTION_TIMEOUT);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setThatchamTimeout(float thatchamTimeout) {
-//        saveFloat(SAVED_CC_GENERIC_OPTION, THATCHAM_TIMEOUT_PREFERENCES_NAME, thatchamTimeout);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
     public int getRssiLogNumber() {
-        return readInt(SAVED_CC_GENERIC_OPTION, RSSI_LOG_NUMBER_PREFERENCES_NAME, RSSI_LOG_NUMBER);
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.rssi_log_number_pref_name), RSSI_LOG_NUMBER);
     }
 
     public void setRssiLogNumber(int rssiLogNumber) {
-        saveInt(SAVED_CC_GENERIC_OPTION, RSSI_LOG_NUMBER_PREFERENCES_NAME, rssiLogNumber);
+        saveInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.rssi_log_number_pref_name), rssiLogNumber);
     }
 
     public int getRollingAvElement() {
-        return readInt(SAVED_CC_GENERIC_OPTION, ROLLING_AV_ELEMENT_PREFERENCES_NAME, ROLLING_AVERAGE_ELEMENTS);
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.rolling_av_element_pref_name), ROLLING_AVERAGE_ELEMENTS);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setRollingAvElement(int rollingAvElement) {
-//        saveInt(SAVED_CC_GENERIC_OPTION, ROLLING_AV_ELEMENT_PREFERENCES_NAME, rollingAvElement);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getStartNbElement() {
-        return readInt(SAVED_CC_GENERIC_OPTION, START_NB_ELEMENT_PREFERENCES_NAME, START_NB_ELEMENT);
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.start_nb_element_pref_name), START_NB_ELEMENT);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setStartNbElement(int startNbElement) {
-//        saveInt(SAVED_CC_GENERIC_OPTION, START_NB_ELEMENT_PREFERENCES_NAME, startNbElement);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getLockNbElement() {
-        return readInt(SAVED_CC_GENERIC_OPTION, LOCK_NB_ELEMENT_PREFERENCES_NAME, LOCK_NB_ELEMENT);
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.lock_nb_element_pref_name), LOCK_NB_ELEMENT);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setLockNbElement(int lockNbElement) {
-//        saveInt(SAVED_CC_GENERIC_OPTION, LOCK_NB_ELEMENT_PREFERENCES_NAME, lockNbElement);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getUnlockNbElement() {
-        return readInt(SAVED_CC_GENERIC_OPTION, UNLOCK_NB_ELEMENT_PREFERENCES_NAME, UNLOCK_NB_ELEMENT);
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.unlock_nb_element_pref_name), UNLOCK_NB_ELEMENT);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setUnlockNbElement(int unlockNbElement) {
-//        saveInt(SAVED_CC_GENERIC_OPTION, UNLOCK_NB_ELEMENT_PREFERENCES_NAME, unlockNbElement);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getWelcomeNbElement() {
-        return readInt(SAVED_CC_GENERIC_OPTION, WELCOME_NB_ELEMENT_PREFERENCES_NAME, WELCOME_NB_ELEMENT);
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.welcome_nb_element_pref_name), WELCOME_NB_ELEMENT);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setWelcomeNbElement(int welcomeNbElement) {
-//        saveInt(SAVED_CC_GENERIC_OPTION, WELCOME_NB_ELEMENT_PREFERENCES_NAME, welcomeNbElement);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getLongNbElement() {
-        return readInt(SAVED_CC_GENERIC_OPTION, LONG_NB_ELEMENT_PREFERENCES_NAME, LONG_NB_ELEMENT);
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.long_nb_element_pref_name), LONG_NB_ELEMENT);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setLongNbElement(int longNbElement) {
-//        saveInt(SAVED_CC_GENERIC_OPTION, LONG_NB_ELEMENT_PREFERENCES_NAME, longNbElement);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public int getShortNbElement() {
-        return readInt(SAVED_CC_GENERIC_OPTION, SHORT_NB_ELEMENT_PREFERENCES_NAME, SHORT_NB_ELEMENT);
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.short_nb_element_pref_name), SHORT_NB_ELEMENT);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setShortNbElement(int shortNbElement) {
-//        saveInt(SAVED_CC_GENERIC_OPTION, SHORT_NB_ELEMENT_PREFERENCES_NAME, shortNbElement);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
     public String getTrxAddressConnectable() {
-        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, BLE_ADDRESS_CONNECTABLE);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_connectable_pref_name), BLE_ADDRESS_CONNECTABLE);
     }
 
     public String getTrxAddressConnectablePC() {
-        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PC_PREFERENCE_NAME, BLE_ADDRESS_CONNECTABLE_PC);
-    }
-
-    public void setTrxAddressConnectablePC(String address) {
-        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PC_PREFERENCE_NAME, address);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_connectable_pc_pref_name), BLE_ADDRESS_CONNECTABLE_PC);
     }
 
     public String getTrxAddressConnectableRemoteControl() {
-        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_REMOTE_CONTROL_PREFERENCE_NAME, BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_connectable_remote_control_pref_name), BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL);
     }
 
     public void setTrxAddressConnectableRemoteControl(String address) {
-        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_REMOTE_CONTROL_PREFERENCE_NAME, address);
+        saveString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_connectable_remote_control_pref_name), address);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setTrxAddressConnectable(String address) {
-//        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_CONNECTABLE_PREFERENCE_NAME, address);
-//    }
-//
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public String getTrxAddressLeft() {
-        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_LEFT_PREFERENCE_NAME, BLE_ADDRESS_LEFT);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_left_pref_name), BLE_ADDRESS_LEFT);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setTrxAddressLeft(String address) {
-//        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_LEFT_PREFERENCE_NAME, address);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public String getTrxAddressMiddle() {
-        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_MIDDLE_PREFERENCE_NAME, BLE_ADDRESS_MIDDLE);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_middle_pref_name), BLE_ADDRESS_MIDDLE);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setTrxAddressMiddle(String address) {
-//        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_MIDDLE_PREFERENCE_NAME, address);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
     public String getTrxAddressRight() {
-        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_RIGHT_PREFERENCE_NAME, BLE_ADDRESS_RIGHT);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_right_pref_name), BLE_ADDRESS_RIGHT);
     }
 
     public String getTrxAddressTrunk() {
-        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_TRUNK_PREFERENCE_NAME, BLE_ADDRESS_TRUNK);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_trunk_pref_name), BLE_ADDRESS_TRUNK);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setTrxAddressRight(String address) {
-//        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_RIGHT_PREFERENCE_NAME, address);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public String getTrxAddressBack() {
-        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_BACK_PREFERENCE_NAME, BLE_ADDRESS_BACK);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_back_pref_name), BLE_ADDRESS_BACK);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setTrxAddressBack(String address) {
-//        saveString(SAVED_CC_GENERIC_OPTION, ADDRESS_BACK_PREFERENCE_NAME, address);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
     public String getTrxAddressFrontLeft() {
-        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_FRONT_LEFT_PREFERENCE_NAME, BLE_ADDRESS_FRONT_LEFT);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_front_left_pref_name), BLE_ADDRESS_FRONT_LEFT);
     }
 
     public String getTrxAddressRearLeft() {
-        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_REAR_LEFT_PREFERENCE_NAME, BLE_ADDRESS_REAR_LEFT);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_rear_left_pref_name), BLE_ADDRESS_REAR_LEFT);
     }
 
     public String getTrxAddressFrontRight() {
-        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_FRONT_RIGHT_PREFERENCE_NAME, BLE_ADDRESS_FRONT_RIGHT);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_front_right_pref_name), BLE_ADDRESS_FRONT_RIGHT);
     }
 
     public String getTrxAddressRearRight() {
-        return readString(SAVED_CC_GENERIC_OPTION, ADDRESS_REAR_RIGHT_PREFERENCE_NAME, BLE_ADDRESS_REAR_RIGHT);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_rear_right_pref_name), BLE_ADDRESS_REAR_RIGHT);
     }
 
     public int getLinAccSize() {
-        return readInt(SAVED_CC_GENERIC_OPTION, LIN_ACC_SIZE_PREFERENCES_NAME, LIN_ACC_SIZE);
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.lin_acc_size_pref_name), LIN_ACC_SIZE);
     }
 
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setLinAccSize(int linAccSize) {
-//        saveInt(SAVED_CC_GENERIC_OPTION, LIN_ACC_SIZE_PREFERENCES_NAME, linAccSize);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
     public float getCorrectionLinAcc() {
-        return readFloat(SAVED_CC_GENERIC_OPTION, CORRECTION_LIN_ACC_PREFERENCES_NAME, CORRECTION_LIN_ACC);
+        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.correction_lin_acc_pref_name), CORRECTION_LIN_ACC);
     }
 
     public float getFrozenThreshold() {
-        return readFloat(SAVED_CC_GENERIC_OPTION, FROZEN_THRESHOLD_PREFERENCES_NAME, FROZEN_THRESHOLD);
+        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.frozen_threshold_pref_name), FROZEN_THRESHOLD);
     }
 
     public Boolean getUserSpeedEnabled() {
-        return readBoolean(SAVED_CC_GENERIC_OPTION, USER_SPEED_ENABLED_PREFERENCES_NAME, false);
+        return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.user_speed_enabled_pref_name), false);
     }
 
     public float getWantedSpeed() {
-        return readFloat(SAVED_CC_GENERIC_OPTION, WANTED_SPEED_PREFERENCES_NAME, WANTED_SPEED);
+        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.wanted_speed_pref_name), WANTED_SPEED);
     }
 
     public float getOneStepSize() {
-        return readFloat(SAVED_CC_GENERIC_OPTION, ONE_STEP_SIZE_PREFERENCES_NAME, ONE_STEP_SIZE);
+        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.one_step_size_pref_name), ONE_STEP_SIZE);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public void setCorrectionLinAcc(float correctionLinAcc) {
-//        saveFloat(SAVED_CC_GENERIC_OPTION, CORRECTION_LIN_ACC_PREFERENCES_NAME, correctionLinAcc);
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public String getUserMail() {
-//        return readString(SAVED_LOGIN_INFO, USER_MAIL_PREFERENCES_NAME, "");
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public void setUserMail(String userMail) {
         saveString(SAVED_LOGIN_INFO, USER_MAIL_PREFERENCES_NAME, userMail);
     }
-
-// --Commented out by Inspection START (30/09/2016 11:26):
-//    public String getPassword() {
-//        return readString(SAVED_LOGIN_INFO, PASSWORD_PREFERENCES_NAME, "");
-//    }
-// --Commented out by Inspection STOP (30/09/2016 11:26)
 
     public void setPassword(String password) {
         saveString(SAVED_LOGIN_INFO, PASSWORD_PREFERENCES_NAME, password);

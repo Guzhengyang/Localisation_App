@@ -17,6 +17,23 @@ import java.util.Locale;
 public class TrxUtils {
     private static final File logFile = new File(SdkPreferencesHelper.getInstance().getLogFileName());
 
+    private static int selectedThreshold(int thresholdIndoor, int thresholdOutside, boolean isIndoor,
+                                         boolean smartphoneIsInPocket, boolean smartphoneComIsActivated,
+                                         int offsetEar, int offsetPocket) {
+        int result;
+        if (isIndoor) {
+            result = thresholdIndoor;
+        } else {
+            result = thresholdOutside;
+        }
+        if (smartphoneComIsActivated && smartphoneIsInPocket) {
+            result += offsetEar;
+        } else if (smartphoneIsInPocket) {
+            result += offsetPocket;
+        }
+        return result;
+    }
+
     /**
      * Calculate the threshold to use for lock
      *
@@ -25,60 +42,61 @@ public class TrxUtils {
      * @param smartphoneComIsActivated  true if the smartphone is near ears, false otherwise
      * @return the threshold with an offset if the smartphone is in a pocket
      */
-    public static int getCurrentThreshold(int mode, boolean smartphoneIsInPocket, boolean smartphoneComIsActivated) {
+    public static int getCurrentThreshold(int mode, boolean isIndoor, boolean smartphoneIsInPocket,
+                                          boolean smartphoneComIsActivated) {
         int threshold;
         String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
         switch (mode) {
             case Antenna.AVERAGE_START:
-                threshold = SdkPreferencesHelper.getInstance().getStartThreshold(connectedCarType);
-                if (smartphoneComIsActivated && smartphoneIsInPocket) {
-                    threshold += SdkPreferencesHelper.getInstance().getOffsetEarForStart(connectedCarType);
-                } else if (smartphoneIsInPocket) {
-                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForStart(connectedCarType);
-                }
+                threshold = selectedThreshold(
+                        SdkPreferencesHelper.getInstance().getIndoorStartThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOutsideStartThreshold(connectedCarType),
+                        isIndoor, smartphoneIsInPocket, smartphoneComIsActivated,
+                        SdkPreferencesHelper.getInstance().getOffsetEarForStart(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOffsetPocketForStart(connectedCarType));
                 break;
             case Antenna.AVERAGE_LOCK:
-                threshold = SdkPreferencesHelper.getInstance().getLockThreshold(connectedCarType);
-                if (smartphoneComIsActivated && smartphoneIsInPocket) {
-                    threshold += SdkPreferencesHelper.getInstance().getOffsetEarForLock(connectedCarType);
-                } else if (smartphoneIsInPocket) {
-                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType);
-                }
+                threshold = selectedThreshold(
+                        SdkPreferencesHelper.getInstance().getIndoorLockThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOutsideLockThreshold(connectedCarType),
+                        isIndoor, smartphoneIsInPocket, smartphoneComIsActivated,
+                        SdkPreferencesHelper.getInstance().getOffsetEarForLock(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType));
                 break;
             case Antenna.AVERAGE_UNLOCK:
-                threshold = SdkPreferencesHelper.getInstance().getUnlockThreshold(connectedCarType);
-                if (smartphoneComIsActivated && smartphoneIsInPocket) {
-                    threshold += SdkPreferencesHelper.getInstance().getOffsetEarForUnlock(connectedCarType);
-                } else if (smartphoneIsInPocket) {
-                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(connectedCarType);
-                }
+                threshold = selectedThreshold(
+                        SdkPreferencesHelper.getInstance().getIndoorUnlockThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOutsideUnlockThreshold(connectedCarType),
+                        isIndoor, smartphoneIsInPocket, smartphoneComIsActivated,
+                        SdkPreferencesHelper.getInstance().getOffsetEarForUnlock(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(connectedCarType));
                 break;
             case Antenna.AVERAGE_WELCOME:
-                threshold = SdkPreferencesHelper.getInstance().getWelcomeThreshold(connectedCarType);
-                if (smartphoneComIsActivated && smartphoneIsInPocket) {
-                    threshold += SdkPreferencesHelper.getInstance().getOffsetEarForLock(connectedCarType);
-                } else if (smartphoneIsInPocket) {
-                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType);
-                }
+                threshold = selectedThreshold(
+                        SdkPreferencesHelper.getInstance().getIndoorWelcomeThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOutsideWelcomeThreshold(connectedCarType),
+                        isIndoor, smartphoneIsInPocket, smartphoneComIsActivated,
+                        SdkPreferencesHelper.getInstance().getOffsetEarForLock(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType));
                 break;
             case Antenna.AVERAGE_DELTA_LOCK:
-                threshold = SdkPreferencesHelper.getInstance().getAverageDeltaLockThreshold(connectedCarType);
-                if (smartphoneComIsActivated && smartphoneIsInPocket) {
-                    threshold += SdkPreferencesHelper.getInstance().getOffsetEarForLock(connectedCarType);
-                } else if (smartphoneIsInPocket) {
-                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType);
-                }
+                threshold = selectedThreshold(
+                        SdkPreferencesHelper.getInstance().getIndoorAverageDeltaLockThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOutsideAverageDeltaLockThreshold(connectedCarType),
+                        isIndoor, smartphoneIsInPocket, smartphoneComIsActivated,
+                        SdkPreferencesHelper.getInstance().getOffsetEarForLock(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType));
                 break;
             case Antenna.AVERAGE_DELTA_UNLOCK:
-                threshold = SdkPreferencesHelper.getInstance().getAverageDeltaUnlockThreshold(connectedCarType);
-                if (smartphoneComIsActivated && smartphoneIsInPocket) {
-                    threshold += SdkPreferencesHelper.getInstance().getOffsetEarForUnlock(connectedCarType);
-                } else if (smartphoneIsInPocket) {
-                    threshold += SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(connectedCarType);
-                }
+                threshold = selectedThreshold(
+                        SdkPreferencesHelper.getInstance().getIndoorAverageDeltaUnlockThreshold(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOutsideAverageDeltaUnlockThreshold(connectedCarType),
+                        isIndoor, smartphoneIsInPocket, smartphoneComIsActivated,
+                        SdkPreferencesHelper.getInstance().getOffsetEarForUnlock(connectedCarType),
+                        SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(connectedCarType));
                 break;
             default:
-                threshold = SdkPreferencesHelper.getInstance().getLockThreshold(connectedCarType);
+                threshold = SdkPreferencesHelper.getInstance().getOutsideLockThreshold(connectedCarType);
                 break;
         }
         return threshold;
@@ -232,10 +250,15 @@ public class TrxUtils {
                                          String addressLeft, String addressMiddle, String addressRight, String addressTrunk, String addressRearLeft, String addressBack, String addressRearRight,
                                          int logNumber, int rollAvElement, int startNumElement, int lockNumelement, int unlockNumElement, int welcomeNumElement, int LongNumElement, int shortNumElement,
                                          float thatchamTimeout, int sizeAcc, float correctionAcc, float frozenThr,
-                                         int ratioMaxMinThr, int ratioCloseToCar, int offsetEarStart, int offsetEarLock, int offsetEarUnlock, int offsetPocketStart, int offsetPocketLock, int offsetPocketUnlock,
-                                         int startThr, int unlockThr, int lockThr, int welcomeThr, int nearDoorRatioThr, int backDoorRatioMinThr, int backDoorRatioMaxThr,
-                                         int nearDoorRatioMB, int nearDoorRatioMLMRMaxThr, int nearDoorRatioMLMRMinThr, int nearDoorRatioTLTRMaxThr, int nearDoorRatioTLTRMinThr,
-                                         int averageDeltaLockThr, int averageDeltaUnlockThr, int unlockValidNumber,
+                                         int indoorRatioMaxMinThr, int indoorRatioCloseToCar, int outsideRatioMaxMinThr, int outsideRatioCloseToCar,
+                                         int offsetEarStart, int offsetEarLock, int offsetEarUnlock, int offsetPocketStart, int offsetPocketLock, int offsetPocketUnlock,
+                                         int indoorStartThr, int indoorUnlockThr, int indoorLockThr, int indoorWelcomeThr, int indoorNearDoorRatioThr, int indoorBackDoorRatioMinThr, int indoorBackDoorRatioMaxThr,
+                                         int indoorNearDoorRatioMB, int indoorNearDoorRatioMLMRMaxThr, int indoorNearDoorRatioMLMRMinThr, int indoorNearDoorRatioTLTRMaxThr, int indoorNearDoorRatioTLTRMinThr,
+                                         int indoorAverageDeltaLockThr, int indoorAverageDeltaUnlockThr,
+                                         int outsideStartThr, int outsideUnlockThr, int outsideLockThr, int outsideWelcomeThr, int outsideNearDoorRatioThr, int outsideBackDoorRatioMinThr, int outsideBackDoorRatioMaxThr,
+                                         int outsideNearDoorRatioMB, int outsideNearDoorRatioMLMRMaxThr, int outsideNearDoorRatioMLMRMinThr, int outsideNearDoorRatioTLTRMaxThr, int outsideNearDoorRatioTLTRMinThr,
+                                         int outsideAverageDeltaLockThr, int outsideAverageDeltaUnlockThr,
+                                         int unlockValidNumber,
                                          int unlockMode, int lockMode, int startMode, float ecretage100, float ecretage70, float ecretage50, float ecretage30,
                                          int equaLeft, int equaMiddle, int equaRight, int equaTrunk, int equaBack, int equaFrontLeft, int equaRearLeft, int equaFrontRight, int equaRearRight) {
         final String comma = ";";
@@ -249,20 +272,31 @@ public class TrxUtils {
                 + String.valueOf(LongNumElement) + comma + String.valueOf(shortNumElement) + comma
                 + String.valueOf(thatchamTimeout) + comma + String.valueOf(sizeAcc) + comma
                 + String.valueOf(correctionAcc) + comma + String.valueOf(frozenThr) + comma
-                + String.valueOf(ratioMaxMinThr) + comma + String.valueOf(ratioCloseToCar) + comma
+                + String.valueOf(indoorRatioMaxMinThr) + comma + String.valueOf(indoorRatioCloseToCar) + comma
+                + String.valueOf(outsideRatioMaxMinThr) + comma + String.valueOf(outsideRatioCloseToCar) + comma
                 + String.valueOf(offsetEarStart) + comma + String.valueOf(offsetEarLock) + comma
                 + String.valueOf(offsetEarUnlock) + comma + String.valueOf(offsetPocketStart) + comma
                 + String.valueOf(offsetPocketLock) + comma + String.valueOf(offsetPocketUnlock) + comma
-                + String.valueOf(startThr) + comma + String.valueOf(unlockThr) + comma
-                + String.valueOf(lockThr) + comma + String.valueOf(welcomeThr) + comma
-                + String.valueOf(nearDoorRatioThr) + comma + String.valueOf(backDoorRatioMinThr) + comma
-                + String.valueOf(backDoorRatioMaxThr) + comma + String.valueOf(nearDoorRatioMB) + comma
-                + String.valueOf(nearDoorRatioMLMRMaxThr) + comma
-                + String.valueOf(nearDoorRatioMLMRMinThr) + comma
-                + String.valueOf(nearDoorRatioTLTRMaxThr) + comma
-                + String.valueOf(nearDoorRatioTLTRMinThr) + comma
-                + String.valueOf(averageDeltaLockThr) + comma
-                + String.valueOf(averageDeltaUnlockThr) + comma
+                + String.valueOf(indoorStartThr) + comma + String.valueOf(indoorUnlockThr) + comma
+                + String.valueOf(indoorLockThr) + comma + String.valueOf(indoorWelcomeThr) + comma
+                + String.valueOf(indoorNearDoorRatioThr) + comma + String.valueOf(indoorBackDoorRatioMinThr) + comma
+                + String.valueOf(indoorBackDoorRatioMaxThr) + comma + String.valueOf(indoorNearDoorRatioMB) + comma
+                + String.valueOf(indoorNearDoorRatioMLMRMaxThr) + comma
+                + String.valueOf(indoorNearDoorRatioMLMRMinThr) + comma
+                + String.valueOf(indoorNearDoorRatioTLTRMaxThr) + comma
+                + String.valueOf(indoorNearDoorRatioTLTRMinThr) + comma
+                + String.valueOf(indoorAverageDeltaLockThr) + comma
+                + String.valueOf(indoorAverageDeltaUnlockThr) + comma
+                + String.valueOf(outsideStartThr) + comma + String.valueOf(outsideUnlockThr) + comma
+                + String.valueOf(outsideLockThr) + comma + String.valueOf(outsideWelcomeThr) + comma
+                + String.valueOf(outsideNearDoorRatioThr) + comma + String.valueOf(outsideBackDoorRatioMinThr) + comma
+                + String.valueOf(outsideBackDoorRatioMaxThr) + comma + String.valueOf(outsideNearDoorRatioMB) + comma
+                + String.valueOf(outsideNearDoorRatioMLMRMaxThr) + comma
+                + String.valueOf(outsideNearDoorRatioMLMRMinThr) + comma
+                + String.valueOf(outsideNearDoorRatioTLTRMaxThr) + comma
+                + String.valueOf(outsideNearDoorRatioTLTRMinThr) + comma
+                + String.valueOf(outsideAverageDeltaLockThr) + comma
+                + String.valueOf(outsideAverageDeltaUnlockThr) + comma
                 + String.valueOf(unlockValidNumber) + comma + String.valueOf(unlockMode) + comma
                 + String.valueOf(lockMode) + comma + String.valueOf(startMode) + comma
                 + String.valueOf(ecretage100) + comma + String.valueOf(ecretage70) + comma
@@ -324,10 +358,14 @@ public class TrxUtils {
                 + "addressLeft;addressMiddle;addressRight;addressTrunk;addressRearLeft;addressBack;addressRearRight;"
                 + "logNumber;rollAvElement;startNumElement;lockNumelement;unlockNumElement;welcomeNumElement;LongNumElement;shortNumElement;"
                 + "thatchamTimeout;sizeAcc;correctionAcc;frozenThr;"
-                + "ratioMaxMinThr;ratioCloseToCar;offsetEarStart;offsetEarLock;offsetEarUnlock;offsetPocketStart;offsetPocketLock;offsetPocketUnlock;"
-                + "startThr;unlockThr;lockThr;welcomeThr;nearDoorRatioThr;backDoorRatioMinThr;backDoorRatioMaxThr;"
-                + "nearDoorRatioMB;nearDoorRatioMLMRMaxThr;nearDoorRatioMLMRMinThr;nearDoorRatioTLTRMaxThr;nearDoorRatioTLTRMinThr;"
-                + "averageDeltaLockThr;averageDeltaUnlockThr;unlockValidNumber;"
+                + "indoorRatioMaxMinThr;indoorRatioCloseToCar;outsideRatioMaxMinThr;outsideRatioCloseToCar;offsetEarStart;offsetEarLock;offsetEarUnlock;offsetPocketStart;offsetPocketLock;offsetPocketUnlock;"
+                + "indoorStartThr;indoorUnlockThr;indoorLockThr;indoorWelcomeThr;indoorNearDoorRatioThr;indoorBackDoorRatioMinThr;indoorBackDoorRatioMaxThr;"
+                + "indoorNearDoorRatioMB;indoorNearDoorRatioMLMRMaxThr;indoorNearDoorRatioMLMRMinThr;indoorNearDoorRatioTLTRMaxThr;indoorNearDoorRatioTLTRMinThr;"
+                + "indoorAverageDeltaLockThr;indoorAverageDeltaUnlockThr;"
+                + "outsideStartThr;outsideUnlockThr;outsideLockThr;outsideWelcomeThr;outsideNearDoorRatioThr;outsideBackDoorRatioMinThr;outsideBackDoorRatioMaxThr;"
+                + "outsideNearDoorRatioMB;outsideNearDoorRatioMLMRMaxThr;outsideNearDoorRatioMLMRMinThr;outsideNearDoorRatioTLTRMaxThr;outsideNearDoorRatioTLTRMinThr;"
+                + "outsideAverageDeltaLockThr;outsideAverageDeltaUnlockThr;"
+                + "unlockValidNumber;"
                 + "unlockMode;lockMode;startMode;ecretage100;ecretage70;ecretage50;ecretage30;"
                 + "equaLeft;equaMiddle;equaRight;equaTrunk;equaBack;equaFrontLeft;equaRearLeft;equaFrontRight;equaRearRight;";
         try {

@@ -14,8 +14,8 @@ public class CCFiveLMRTB extends ConnectedCar {
     private static final String SPACE_ONE = "  ";
     private static final String SPACE_TWO = "      ";
 
-    public CCFiveLMRTB(Context mContext) {
-        super(mContext, ConnectionNumber.FIVE_CONNECTION);
+    public CCFiveLMRTB(Context mContext, boolean isIndoor) {
+        super(mContext, ConnectionNumber.FIVE_CONNECTION, isIndoor);
         trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
         trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
         trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);

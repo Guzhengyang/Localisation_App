@@ -23,17 +23,17 @@ public class ConnectedCarFactory {
      * @param carName the car name
      * @return a connected car with the specified number of connection
      */
-    public static ConnectedCar getConnectedCar(Context mContext, String carName) {
+    public static ConnectedCar getConnectedCar(Context mContext, String carName, boolean isIndoor) {
         if (carName.equalsIgnoreCase(TYPE_4_A)) {
-            return new CCFourLMRB(mContext);
+            return new CCFourLMRB(mContext, isIndoor);
         } else if (carName.equalsIgnoreCase(TYPE_5_A)) {
-            return new CCFiveLMRTB(mContext);
+            return new CCFiveLMRTB(mContext, isIndoor);
         } else if (carName.equalsIgnoreCase(TYPE_7_A)) {
-            return new CCSevenFlFrLMRRlRr(mContext);
+            return new CCSevenFlFrLMRRlRr(mContext, isIndoor);
         } else if (carName.equalsIgnoreCase(TYPE_8_A)) {
-            return new CCEightFlFrLMRTRlRr(mContext);
+            return new CCEightFlFrLMRTRlRr(mContext, isIndoor);
         } else {
-            return new CCFourLMRB(mContext);
+            return new CCFourLMRB(mContext, isIndoor);
         }
     }
 }

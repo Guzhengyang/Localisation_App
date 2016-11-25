@@ -84,8 +84,8 @@ public class IconPickerPreference extends ListPreference {
     @Override
     protected void onBindView(View view) {
         super.onBindView(view);
-        String selectedIconId = sharedPreferences.getString(
-                SdkPreferencesHelper.CONNECTED_CAR_TYPE_PREFERENCES_NAME, ConnectedCarFactory.TYPE_4_A);
+        String selectedIconId = sharedPreferences.getString(context.
+                getString(R.string.connected_car_type_pref_name), ConnectedCarFactory.TYPE_4_A);
         selectedIconFile = getIconFileFromId(selectedIconId, defaultIconFile);
         icon = (ImageView) view.findViewById(R.id.iconSelected);
         updateIcon();
@@ -102,7 +102,7 @@ public class IconPickerPreference extends ListPreference {
                 if (item.isChecked) {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString(
-                            SdkPreferencesHelper.CONNECTED_CAR_TYPE_PREFERENCES_NAME,
+                            context.getString(R.string.connected_car_type_pref_name),
                             item.id);
                     editor.apply();
                     editor.commit();
@@ -129,7 +129,7 @@ public class IconPickerPreference extends ListPreference {
                             + "and an entryValues array which are both the same length");
         }
         String selectedIcon = sharedPreferences.getString(
-                SdkPreferencesHelper.CONNECTED_CAR_TYPE_PREFERENCES_NAME,
+                context.getString(R.string.connected_car_type_pref_name),
                 resources.getString(R.string.icon_default));
         icons = new ArrayList<>();
         for (int i = 0; i < iconName.length; i++) {

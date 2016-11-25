@@ -6,7 +6,7 @@
             android:dialogTitle="@string/dialog_title_list_preference"
             android:entries="@array/iconName"
             android:entryValues="@array/iconFile"
-            android:key="com.inblue.PREFERENCE_CONNECTED_CAR_TYPE"
+            android:key="@string/connected_car_type_pref_name"
             android:layout="@layout/icon_item_preference"
             android:title="@string/pref_car_type_title"
             custom:iconFile="@string/icon_default" />
@@ -14,23 +14,23 @@
             android:dialogTitle="@string/base_title_list_preference"
             android:entries="@array/base_list_preference"
             android:entryValues="@array/base_entryvalues_list_preference"
-            android:key="com.inblue.PREFERENCE_CONNECTED_CAR_BASE"
+            android:key="@string/connected_car_base_pref_name"
             android:title="@string/pref_car_base_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_user_speed">
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="com.inblue.PREFERENCE_USER_SPEED_ENABLED"
+            android:key="@string/user_speed_enabled_pref_name"
             android:title="@string/pref_user_speed_enabled" />
         <EditTextPreference
-            android:dependency="com.inblue.PREFERENCE_USER_SPEED_ENABLED"
+            android:dependency="@string/user_speed_enabled_pref_name"
             android:inputType="number|numberDecimal"
-            android:key="com.inblue.PREFERENCE_WANTED_SPEED"
+            android:key="@string/wanted_speed_pref_name"
             android:title="@string/pref_wanted_speed" />
         <EditTextPreference
-            android:dependency="com.inblue.PREFERENCE_USER_SPEED_ENABLED"
+            android:dependency="@string/user_speed_enabled_pref_name"
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_ONE_STEP_SIZE"
+            android:key="@string/one_step_size_pref_name"
             android:title="@string/pref_one_step_size" />
     </PreferenceCategory>
 </PreferenceScreen>

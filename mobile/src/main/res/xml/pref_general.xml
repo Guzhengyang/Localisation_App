@@ -6,7 +6,7 @@
             android:dialogTitle="@string/dialog_title_list_preference"
             android:entries="@array/iconName"
             android:entryValues="@array/iconFile"
-            android:key="com.inblue.PREFERENCE_CONNECTED_CAR_TYPE"
+            android:key="@string/connected_car_type_pref_name"
             android:layout="@layout/icon_item_preference"
             android:title="@string/pref_car_type_title"
             custom:iconFile="@string/icon_default" />
@@ -14,153 +14,153 @@
             android:dialogTitle="@string/base_title_list_preference"
             android:entries="@array/base_list_preference"
             android:entryValues="@array/base_entryvalues_list_preference"
-            android:key="com.inblue.PREFERENCE_CONNECTED_CAR_BASE"
+            android:key="@string/connected_car_base_pref_name"
             android:title="@string/pref_car_base_title" />
         <ListPreference
             android:dialogTitle="@string/algo_title_list_preference"
             android:entries="@array/algo_list_preference"
             android:entryValues="@array/algo_entryvalues_list_preference"
-            android:key="com.inblue.PREFERENCE_SELECTED_ALGO"
+            android:key="@string/selected_algo_pref_name"
             android:title="@string/pref_algo_title" />
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="com.inblue.PREFERENCE_CONNECTED_CAR_TRAME_ENABLED"
+            android:key="@string/connected_car_trame_enabled_pref_name"
             android:title="@string/pref_car_forced_trame_enabled" />
         <EditTextPreference
-            android:dependency="com.inblue.PREFERENCE_CONNECTED_CAR_TRAME_ENABLED"
-            android:key="com.inblue.PREFERENCE_CONNECTED_CAR_TRAME"
+            android:dependency="@string/connected_car_trame_enabled_pref_name"
+            android:key="@string/connected_car_trame_pref_name"
             android:title="@string/pref_car_forced_trame" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_ble_address">
         <EditTextPreference
             android:inputType="textCapCharacters"
-            android:key="com.inblue.PREFERENCE_ADDRESS_CONNECTABLE"
+            android:key="@string/address_connectable_pref_name"
             android:title="@string/pref_ble_address_connectable" />
         <EditTextPreference
             android:inputType="textCapCharacters"
-            android:key="com.inblue.PREFERENCE_ADDRESS_CONNECTABLE_PC"
+            android:key="@string/address_connectable_pc_pref_name"
             android:title="@string/pref_ble_address_connectable_pc" />
         <EditTextPreference
             android:inputType="textCapCharacters"
-            android:key="com.inblue.PREFERENCE_ADDRESS_CONNECTABLE_REMOTE_CONTROL"
+            android:key="@string/address_connectable_remote_control_pref_name"
             android:title="@string/pref_ble_address_connectable_remote_control" />
         <EditTextPreference
             android:inputType="textCapCharacters"
-            android:key="com.inblue.PREFERENCE_ADDRESS_FRONT_LEFT"
+            android:key="@string/address_front_left_pref_name"
             android:title="@string/pref_ble_address_front_left" />
         <EditTextPreference
             android:inputType="textCapCharacters"
-            android:key="com.inblue.PREFERENCE_ADDRESS_FRONT_RIGHT"
+            android:key="@string/address_front_right_pref_name"
             android:title="@string/pref_ble_address_front_right" />
         <EditTextPreference
             android:inputType="textCapCharacters"
-            android:key="com.inblue.PREFERENCE_ADDRESS_LEFT"
+            android:key="@string/address_left_pref_name"
             android:title="@string/pref_ble_address_left" />
         <EditTextPreference
             android:inputType="textCapCharacters"
-            android:key="com.inblue.PREFERENCE_ADDRESS_MIDDLE"
+            android:key="@string/address_middle_pref_name"
             android:title="@string/pref_ble_address_middle" />
         <EditTextPreference
             android:inputType="textCapCharacters"
-            android:key="com.inblue.PREFERENCE_ADDRESS_RIGHT"
+            android:key="@string/address_right_pref_name"
             android:title="@string/pref_ble_address_right" />
         <EditTextPreference
             android:inputType="textCapCharacters"
-            android:key="com.inblue.PREFERENCE_ADDRESS_TRUNK"
+            android:key="@string/address_trunk_pref_name"
             android:title="@string/pref_ble_address_trunk" />
         <EditTextPreference
             android:inputType="textCapCharacters"
-            android:key="com.inblue.PREFERENCE_ADDRESS_REAR_LEFT"
+            android:key="@string/address_rear_left_pref_name"
             android:title="@string/pref_ble_address_rear_left" />
         <EditTextPreference
             android:inputType="textCapCharacters"
-            android:key="com.inblue.PREFERENCE_ADDRESS_BACK"
+            android:key="@string/address_back_pref_name"
             android:title="@string/pref_ble_address_back" />
         <EditTextPreference
             android:inputType="textCapCharacters"
-            android:key="com.inblue.PREFERENCE_ADDRESS_REAR_RIGHT"
+            android:key="@string/address_rear_right_pref_name"
             android:title="@string/pref_ble_address_rear_right" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_nb_element">
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_RSSI_LOG_NUMBER"
+            android:key="@string/rssi_log_number_pref_name"
             android:title="@string/pref_nb_element_rssi_log_number" />
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_ROLLING_AV_ELEMENT"
+            android:key="@string/rolling_av_element_pref_name"
             android:title="@string/pref_nb_element_rolling_average" />
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_START_NB_ELEMENT"
+            android:key="@string/start_nb_element_pref_name"
             android:title="@string/pref_nb_element_start" />
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_LOCK_NB_ELEMENT"
+            android:key="@string/lock_nb_element_pref_name"
             android:title="@string/pref_nb_element_lock" />
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_UNLOCK_NB_ELEMENT"
+            android:key="@string/unlock_nb_element_pref_name"
             android:title="@string/pref_nb_element_unlock" />
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_WELCOME_NB_ELEMENT"
+            android:key="@string/welcome_nb_element_pref_name"
             android:title="@string/pref_nb_element_welcome" />
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_LONG_NB_ELEMENT"
+            android:key="@string/long_nb_element_pref_name"
             android:title="@string/pref_nb_element_long" />
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_SHORT_NB_ELEMENT"
+            android:key="@string/short_nb_element_pref_name"
             android:title="@string/pref_nb_element_short" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_timeout">
         <EditTextPreference
             android:inputType="number|numberDecimal"
-            android:key="com.inblue.PREFERENCE_BACK_TIMEOUT"
+            android:key="@string/back_timeout_pref_name"
             android:title="@string/pref_back_timeout" />
         <EditTextPreference
             android:inputType="number|numberDecimal"
-            android:key="com.inblue.PREFERENCE_THATCHAM_TIMEOUT"
+            android:key="@string/thatcham_timeout_pref_name"
             android:title="@string/pref_thatcham_timeout" />
         <EditTextPreference
             android:inputType="number|numberDecimal"
-            android:key="com.inblue.PREFERENCE_CRYPTO_PRE_AUTH_TIMEOUT"
+            android:key="@string/crypto_pre_auth_timeout_pref_name"
             android:title="@string/pref_crypto_pre_auth_timeout" />
         <EditTextPreference
             android:inputType="number|numberDecimal"
-            android:key="com.inblue.PREFERENCE_CRYPTO_ACTION_TIMEOUT"
+            android:key="@string/crypto_action_timeout_pref_name"
             android:title="@string/pref_crypto_action_timeout" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_acc">
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_LIN_ACC_SIZE"
+            android:key="@string/lin_acc_size_pref_name"
             android:title="@string/pref_acc_size" />
         <EditTextPreference
             android:inputType="number|numberDecimal"
-            android:key="com.inblue.PREFERENCE_CORRECTION_LIN_ACC"
+            android:key="@string/correction_lin_acc_pref_name"
             android:title="@string/pref_acc_correction" />
         <EditTextPreference
             android:inputType="number|numberDecimal"
-            android:key="com.inblue.PREFERENCE_FROZEN_THRESHOLD"
+            android:key="@string/frozen_threshold_pref_name"
             android:title="@string/pref_frozen_threshold" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_user_speed">
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="com.inblue.PREFERENCE_USER_SPEED_ENABLED"
+            android:key="@string/user_speed_enabled_pref_name"
             android:title="@string/pref_user_speed_enabled" />
         <EditTextPreference
-            android:dependency="com.inblue.PREFERENCE_USER_SPEED_ENABLED"
+            android:dependency="@string/user_speed_enabled_pref_name"
             android:inputType="number|numberDecimal"
-            android:key="com.inblue.PREFERENCE_WANTED_SPEED"
+            android:key="@string/wanted_speed_pref_name"
             android:title="@string/pref_wanted_speed" />
         <EditTextPreference
-            android:dependency="com.inblue.PREFERENCE_USER_SPEED_ENABLED"
+            android:dependency="@string/user_speed_enabled_pref_name"
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_ONE_STEP_SIZE"
+            android:key="@string/one_step_size_pref_name"
             android:title="@string/pref_one_step_size" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -3,217 +3,281 @@
     <PreferenceCategory android:title="@string/pref_near_door">
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_RATIO_MAX_MIN_THR"
-            android:title="@string/pref_ratio_max_min_thr" />
+            android:key="@string/indoor_ratio_max_min_thr_pref_name"
+            android:title="@string/pref_indoor_ratio_max_min_thr" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_CLOSE_TO_CAR_THR"
-            android:title="@string/pref_ratio_close_to_car_thr" />
-        <!--<EditTextPreference-->
-        <!--android:inputType="numberSigned"-->
-        <!--android:key="com.inblue.PREFERENCE_NEAR_DOOR_THR"-->
-        <!--android:title="@string/pref_near_door_thr" />-->
-        <!--<EditTextPreference-->
-        <!--android:inputType="numberSigned"-->
-        <!--android:key="com.inblue.PREFERENCE_EQUALLY_NEAR_DOOR_THR"-->
-        <!--android:title="@string/pref_equally_near_door_thr" />-->
-        <!--<EditTextPreference-->
-        <!--android:inputType="numberSigned"-->
-        <!--android:key="com.inblue.PREFERENCE_NEARER_DOOR_THR"-->
-        <!--android:title="@string/pref_nearer_door_thr" />-->
+            android:key="@string/indoor_ratio_close_to_car_thr_pref_name"
+            android:title="@string/pref_indoor_ratio_close_to_car_thr" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/outside_ratio_max_min_thr_pref_name"
+            android:title="@string/pref_outside_ratio_max_min_thr" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/outside_ratio_close_to_car_thr_pref_name"
+            android:title="@string/pref_outside_ratio_close_to_car_thr" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_offset">
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_OFFSET_EAR_FOR_START"
+            android:key="@string/offset_ear_for_start_pref_name"
             android:title="@string/pref_offset_ear_start" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_OFFSET_EAR_FOR_LOCK"
+            android:key="@string/offset_ear_for_lock_pref_name"
             android:title="@string/pref_offset_ear_lock" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_OFFSET_EAR_FOR_UNLOCK"
+            android:key="@string/offset_ear_for_unlock_pref_name"
             android:title="@string/pref_offset_ear_unlock" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_OFFSET_POCKET_FOR_START"
+            android:key="@string/offset_pocket_for_start_pref_name"
             android:title="@string/pref_offset_pocket_start" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_OFFSET_POCKET_FOR_LOCK"
+            android:key="@string/offset_pocket_for_lock_pref_name"
             android:title="@string/pref_offset_pocket_lock" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_OFFSET_POCKET_FOR_UNLOCK"
+            android:key="@string/offset_pocket_for_unlock_pref_name"
             android:title="@string/pref_offset_pocket_unlock" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_threshold">
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_START_THR"
-            android:title="@string/pref_threshold_start" />
+            android:key="@string/indoor_start_thr_pref_name"
+            android:title="@string/pref_indoor_threshold_start" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_UNLOCK_THR"
-            android:title="@string/pref_threshold_unlock" />
+            android:key="@string/outside_start_thr_pref_name"
+            android:title="@string/pref_outside_threshold_start" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_LOCK_THR"
-            android:title="@string/pref_threshold_lock" />
+            android:key="@string/indoor_unlock_thr_pref_name"
+            android:title="@string/pref_indoor_threshold_unlock" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_WELCOME_THR"
-            android:title="@string/pref_threshold_welcome" />
+            android:key="@string/outside_unlock_thr_pref_name"
+            android:title="@string/pref_outside_threshold_unlock" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_CLOSE_TO_BEACON_THR"
-            android:title="@string/pref_threshold_close_to_beacon" />
+            android:key="@string/indoor_lock_thr_pref_name"
+            android:title="@string/pref_indoor_threshold_lock" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR"
-            android:title="@string/pref_threshold_near_door_ratio" />
+            android:key="@string/outside_lock_thr_pref_name"
+            android:title="@string/pref_outside_threshold_lock" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_NEAR_BACKDOOR_RATIO_THR_MIN"
-            android:title="@string/pref_threshold_back_door_ratio_min" />
+            android:key="@string/indoor_welcome_thr_pref_name"
+            android:title="@string/pref_indoor_threshold_welcome" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_NEAR_BACKDOOR_RATIO_THR_MAX"
-            android:title="@string/pref_threshold_back_door_ratio_max" />
+            android:key="@string/outside_welcome_thr_pref_name"
+            android:title="@string/pref_outside_threshold_welcome" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_MB"
-            android:title="@string/pref_threshold_near_door_ratio_mb" />
+            android:key="@string/indoor_close_to_beacon_pref_name"
+            android:title="@string/pref_indoor_threshold_close_to_beacon" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_ML_MR_MAX"
-            android:title="@string/pref_threshold_near_door_ratio_ml_mr_max" />
+            android:key="@string/outside_close_to_beacon_pref_name"
+            android:title="@string/pref_outside_threshold_close_to_beacon" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_ML_MR_MIN"
-            android:title="@string/pref_threshold_near_door_ratio_ml_mr_min" />
+            android:key="@string/indoor_near_door_ratio_thr_pref_name"
+            android:title="@string/pref_indoor_threshold_near_door_ratio" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_TL_TR_MAX"
-            android:title="@string/pref_threshold_near_door_ratio_tl_tr_max" />
+            android:key="@string/outside_near_door_ratio_thr_pref_name"
+            android:title="@string/pref_outside_threshold_near_door_ratio" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_TL_TR_MIN"
-            android:title="@string/pref_threshold_near_door_ratio_tl_tr_min" />
+            android:key="@string/indoor_near_backdoor_ratio_thr_min_pref_name"
+            android:title="@string/pref_indoor_threshold_back_door_ratio_min" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_MRL_MRR"
-            android:title="@string/pref_threshold_near_door_ratio_mrl_mrr" />
+            android:key="@string/outside_near_backdoor_ratio_thr_min_pref_name"
+            android:title="@string/pref_outside_threshold_back_door_ratio_min" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_NEAR_DOOR_RATIO_THR_TRL_TRR"
-            android:title="@string/pref_threshold_near_door_ratio_trl_trr" />
+            android:key="@string/indoor_near_backdoor_ratio_thr_max_pref_name"
+            android:title="@string/pref_indoor_threshold_back_door_ratio_max" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_AVERAGE_DELTA_LOCK_THRESHOLD"
-            android:title="@string/pref_threshold_average_delta_lock" />
+            android:key="@string/outside_near_backdoor_ratio_thr_max_pref_name"
+            android:title="@string/pref_outside_threshold_back_door_ratio_max" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_AVERAGE_DELTA_UNLOCK_THRESHOLD"
-            android:title="@string/pref_threshold_average_delta_unlock" />
+            android:key="@string/indoor_near_door_ratio_thr_mb_pref_name"
+            android:title="@string/pref_indoor_threshold_near_door_ratio_mb" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/outside_near_door_ratio_thr_mb_pref_name"
+            android:title="@string/pref_outside_threshold_near_door_ratio_mb" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/indoor_near_door_ratio_thr_ml_mr_max_pref_name"
+            android:title="@string/pref_indoor_threshold_near_door_ratio_ml_mr_max" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/outside_near_door_ratio_thr_ml_mr_max_pref_name"
+            android:title="@string/pref_outside_threshold_near_door_ratio_ml_mr_max" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/indoor_near_door_ratio_thr_ml_mr_min_pref_name"
+            android:title="@string/pref_indoor_threshold_near_door_ratio_ml_mr_min" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/outside_near_door_ratio_thr_ml_mr_min_pref_name"
+            android:title="@string/pref_outside_threshold_near_door_ratio_ml_mr_min" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/indoor_near_door_ratio_thr_tl_tr_max_pref_name"
+            android:title="@string/pref_indoor_threshold_near_door_ratio_tl_tr_max" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/outside_near_door_ratio_thr_tl_tr_max_pref_name"
+            android:title="@string/pref_outside_threshold_near_door_ratio_tl_tr_max" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/indoor_near_door_ratio_thr_tl_tr_min_pref_name"
+            android:title="@string/pref_indoor_threshold_near_door_ratio_tl_tr_min" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/outside_near_door_ratio_thr_tl_tr_min_pref_name"
+            android:title="@string/pref_outside_threshold_near_door_ratio_tl_tr_min" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/indoor_near_door_ratio_thr_mrl_mrr_pref_name"
+            android:title="@string/pref_indoor_threshold_near_door_ratio_mrl_mrr" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/outside_near_door_ratio_thr_mrl_mrr_pref_name"
+            android:title="@string/pref_outside_threshold_near_door_ratio_mrl_mrr" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/indoor_near_door_ratio_thr_trl_trr_pref_name"
+            android:title="@string/pref_indoor_threshold_near_door_ratio_trl_trr" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/outside_near_door_ratio_thr_trl_trr_pref_name"
+            android:title="@string/pref_outside_threshold_near_door_ratio_trl_trr" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/indoor_average_delta_lock_threshold_pref_name"
+            android:title="@string/pref_indoor_threshold_average_delta_lock" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/outside_average_delta_lock_threshold_pref_name"
+            android:title="@string/pref_outside_threshold_average_delta_lock" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/indoor_average_delta_unlock_threshold_pref_name"
+            android:title="@string/pref_indoor_threshold_average_delta_unlock" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/outside_average_delta_unlock_threshold_pref_name"
+            android:title="@string/pref_outside_threshold_average_delta_unlock" />
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_UNLOCK_VALID_NB_ELEMENT"
+            android:key="@string/unlock_valid_nb_pref_name"
             android:title="@string/pref_unlock_valid_nb" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_mode">
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_UNLOCK_MODE"
+            android:key="@string/unlock_mode_pref_name"
             android:title="@string/pref_mode_unlock" />
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_LOCK_MODE"
+            android:key="@string/lock_mode_pref_name"
             android:title="@string/pref_mode_lock" />
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_START_MODE"
+            android:key="@string/start_mode_pref_name"
             android:title="@string/pref_mode_start" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_ecretage">
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_ECRETAGE_REFERENCE_70_100"
+            android:key="@string/ecretage_reference_70_100_pref_name"
             android:title="@string/pref_ecretage_reference_100" />
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_ECRETAGE_REFERENCE_50_70"
+            android:key="@string/ecretage_reference_50_70_pref_name"
             android:title="@string/pref_ecretage_reference_70" />
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_ECRETAGE_REFERENCE_30_50"
+            android:key="@string/ecretage_reference_30_50_pref_name"
             android:title="@string/pref_ecretage_reference_50" />
         <EditTextPreference
             android:inputType="number"
-            android:key="com.inblue.PREFERENCE_ECRETAGE_REFERENCE_30_30"
+            android:key="@string/ecretage_reference_30_30_pref_name"
             android:title="@string/pref_ecretage_reference_30" />
         <EditTextPreference
             android:inputType="number|numberDecimal"
-            android:key="com.inblue.PREFERENCE_ECRETAGE_70_100"
+            android:key="@string/ecretage_70_100_pref_name"
             android:title="@string/pref_ecretage_100" />
         <EditTextPreference
             android:inputType="number|numberDecimal"
-            android:key="com.inblue.PREFERENCE_ECRETAGE_50_70"
+            android:key="@string/ecretage_50_70_pref_name"
             android:title="@string/pref_ecretage_70" />
         <EditTextPreference
             android:inputType="number|numberDecimal"
-            android:key="com.inblue.PREFERENCE_ECRETAGE_30_50"
+            android:key="@string/ecretage_30_50_pref_name"
             android:title="@string/pref_ecretage_50" />
         <EditTextPreference
             android:inputType="number|numberDecimal"
-            android:key="com.inblue.PREFERENCE_ECRETAGE_30_30"
+            android:key="@string/ecretage_30_30_pref_name"
             android:title="@string/pref_ecretage_30" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_equalizer">
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_EQUALIZER_LEFT"
+            android:key="@string/equalizer_left_pref_name"
             android:title="@string/pref_equalizer_left" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_EQUALIZER_MIDDLE"
+            android:key="@string/equalizer_middle_pref_name"
             android:title="@string/pref_equalizer_middle" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_EQUALIZER_RIGHT"
+            android:key="@string/equalizer_right_pref_name"
             android:title="@string/pref_equalizer_right" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_EQUALIZER_TRUNK"
+            android:key="@string/equalizer_trunk_pref_name"
             android:title="@string/pref_equalizer_trunk" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_EQUALIZER_BACK"
+            android:key="@string/equalizer_back_pref_name"
             android:title="@string/pref_equalizer_back" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_EQUALIZER_FRONT_LEFT"
+            android:key="@string/equalizer_front_left_pref_name"
             android:title="@string/pref_equalizer_front_left" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_EQUALIZER_REAR_LEFT"
+            android:key="@string/equalizer_rear_left_pref_name"
             android:title="@string/pref_equalizer_rear_left" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_EQUALIZER_FRONT_RIGHT"
+            android:key="@string/equalizer_front_right_pref_name"
             android:title="@string/pref_equalizer_front_right" />
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="com.inblue.PREFERENCE_EQUALIZER_REAR_RIGHT"
+            android:key="@string/equalizer_rear_right_pref_name"
             android:title="@string/pref_equalizer_rear_right" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_import_export">
         <Preference
-            android:key="com.inblue.PREFERENCE_EXPORT"
+            android:key="@string/export_pref_name"
             android:title="@string/pref_export" />
         <Preference
-            android:key="com.inblue.PREFERENCE_IMPORT"
+            android:key="@string/import_pref_name"
             android:title="@string/pref_import" />
     </PreferenceCategory>
 </PreferenceScreen>

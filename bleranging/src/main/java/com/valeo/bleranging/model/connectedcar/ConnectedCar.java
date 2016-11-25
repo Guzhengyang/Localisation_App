@@ -77,6 +77,7 @@ public abstract class ConnectedCar {
     int nearDoorThresholdMRLorMRR;
     int nearDoorThresholdTRLorTRR;
     int nearDoorThresholdMB;
+    int thresholdCloseToCar;
     Trx trxFrontLeft;
     Trx trxFrontRight;
     Trx trxLeft;
@@ -90,45 +91,67 @@ public abstract class ConnectedCar {
     private Context mContext;
     private float linAccThreshold;
 
-    ConnectedCar(Context mContext, ConnectionNumber connectionNumber) {
+    ConnectedCar(Context mContext, ConnectionNumber connectionNumber, boolean isIndoor) {
         this.mContext = mContext;
         this.connectionNumber = connectionNumber;
         this.trxLinkedHMap = new LinkedHashMap<>();
-        resetSettings();
+        resetSettings(isIndoor);
     }
 
-    public void resetSettings() {
+    public void resetSettings(boolean isIndoor) {
         this.connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
         this.linAccThreshold = SdkPreferencesHelper.getInstance().getCorrectionLinAcc();
-        this.welcomeThreshold = SdkPreferencesHelper.getInstance().getWelcomeThreshold(connectedCarType);
-        this.lockThreshold = SdkPreferencesHelper.getInstance().getLockThreshold(connectedCarType);
-        this.unlockThreshold = SdkPreferencesHelper.getInstance().getUnlockThreshold(connectedCarType);
-        this.startThreshold = SdkPreferencesHelper.getInstance().getStartThreshold(connectedCarType);
-        this.averageDeltaLockThreshold = SdkPreferencesHelper.getInstance().getAverageDeltaLockThreshold(connectedCarType);
-        this.averageDeltaUnlockThreshold = SdkPreferencesHelper.getInstance().getAverageDeltaUnlockThreshold(connectedCarType);
+        if (isIndoor) {
+            this.welcomeThreshold = SdkPreferencesHelper.getInstance().getIndoorWelcomeThreshold(connectedCarType);
+            this.lockThreshold = SdkPreferencesHelper.getInstance().getIndoorLockThreshold(connectedCarType);
+            this.unlockThreshold = SdkPreferencesHelper.getInstance().getIndoorUnlockThreshold(connectedCarType);
+            this.startThreshold = SdkPreferencesHelper.getInstance().getIndoorStartThreshold(connectedCarType);
+            this.averageDeltaLockThreshold = SdkPreferencesHelper.getInstance().getIndoorAverageDeltaLockThreshold(connectedCarType);
+            this.averageDeltaUnlockThreshold = SdkPreferencesHelper.getInstance().getIndoorAverageDeltaUnlockThreshold(connectedCarType);
+            this.closeToBeaconThreshold = SdkPreferencesHelper.getInstance().getIndoorCloseToBeaconThreshold(connectedCarType);
+            this.nearDoorRatioThreshold = SdkPreferencesHelper.getInstance().getIndoorNearDoorRatioThreshold(connectedCarType);
+            this.nearBackDoorRatioThresholdMin = SdkPreferencesHelper.getInstance().getIndoorNearBackDoorRatioThresholdMin(connectedCarType);
+            this.nearBackDoorRatioThresholdMax = SdkPreferencesHelper.getInstance().getIndoorNearBackDoorRatioThresholdMax(connectedCarType);
+            this.nearDoorThresholdMLorMRMin = SdkPreferencesHelper.getInstance().getIndoorNearDoorThresholdMLorMRMin(connectedCarType);
+            this.nearDoorThresholdMLorMRMax = SdkPreferencesHelper.getInstance().getIndoorNearDoorThresholdMLorMRMax(connectedCarType);
+            this.nearDoorThresholdTLorTRMin = SdkPreferencesHelper.getInstance().getIndoorNearDoorThresholdTLorTRMin(connectedCarType);
+            this.nearDoorThresholdTLorTRMax = SdkPreferencesHelper.getInstance().getIndoorNearDoorThresholdTLorTRMax(connectedCarType);
+            this.nearDoorThresholdMRLorMRR = SdkPreferencesHelper.getInstance().getIndoorNearDoorThresholdMRLorMRR(connectedCarType);
+            this.nearDoorThresholdTRLorTRR = SdkPreferencesHelper.getInstance().getIndoorNearDoorThresholdTRLorTRR(connectedCarType);
+            this.nearDoorThresholdMB = SdkPreferencesHelper.getInstance().getIndoorNearDoorThresholdMB(connectedCarType);
+            this.thresholdCloseToCar = SdkPreferencesHelper.getInstance().getIndoorRatioCloseToCarThreshold(connectedCarType);
+        } else {
+            this.welcomeThreshold = SdkPreferencesHelper.getInstance().getOutsideWelcomeThreshold(connectedCarType);
+            this.lockThreshold = SdkPreferencesHelper.getInstance().getOutsideLockThreshold(connectedCarType);
+            this.unlockThreshold = SdkPreferencesHelper.getInstance().getOutsideUnlockThreshold(connectedCarType);
+            this.startThreshold = SdkPreferencesHelper.getInstance().getOutsideStartThreshold(connectedCarType);
+            this.averageDeltaLockThreshold = SdkPreferencesHelper.getInstance().getOutsideAverageDeltaLockThreshold(connectedCarType);
+            this.averageDeltaUnlockThreshold = SdkPreferencesHelper.getInstance().getOutsideAverageDeltaUnlockThreshold(connectedCarType);
+            this.closeToBeaconThreshold = SdkPreferencesHelper.getInstance().getOutsideCloseToBeaconThreshold(connectedCarType);
+            this.nearDoorRatioThreshold = SdkPreferencesHelper.getInstance().getOutsideNearDoorRatioThreshold(connectedCarType);
+            this.nearBackDoorRatioThresholdMin = SdkPreferencesHelper.getInstance().getOutsideNearBackDoorRatioThresholdMin(connectedCarType);
+            this.nearBackDoorRatioThresholdMax = SdkPreferencesHelper.getInstance().getOutsideNearBackDoorRatioThresholdMax(connectedCarType);
+            this.nearDoorThresholdMLorMRMin = SdkPreferencesHelper.getInstance().getOutsideNearDoorThresholdMLorMRMin(connectedCarType);
+            this.nearDoorThresholdMLorMRMax = SdkPreferencesHelper.getInstance().getOutsideNearDoorThresholdMLorMRMax(connectedCarType);
+            this.nearDoorThresholdTLorTRMin = SdkPreferencesHelper.getInstance().getOutsideNearDoorThresholdTLorTRMin(connectedCarType);
+            this.nearDoorThresholdTLorTRMax = SdkPreferencesHelper.getInstance().getOutsideNearDoorThresholdTLorTRMax(connectedCarType);
+            this.nearDoorThresholdMRLorMRR = SdkPreferencesHelper.getInstance().getOutsideNearDoorThresholdMRLorMRR(connectedCarType);
+            this.nearDoorThresholdTRLorTRR = SdkPreferencesHelper.getInstance().getOutsideNearDoorThresholdTRLorTRR(connectedCarType);
+            this.nearDoorThresholdMB = SdkPreferencesHelper.getInstance().getOutsideNearDoorThresholdMB(connectedCarType);
+            this.thresholdCloseToCar = SdkPreferencesHelper.getInstance().getOutsideRatioCloseToCarThreshold(connectedCarType);
+        }
         this.lockMode = SdkPreferencesHelper.getInstance().getLockMode(connectedCarType);
         this.unlockMode = SdkPreferencesHelper.getInstance().getUnlockMode(connectedCarType);
         this.startMode = SdkPreferencesHelper.getInstance().getStartMode(connectedCarType);
-        this.closeToBeaconThreshold = SdkPreferencesHelper.getInstance().getCloseToBeaconThreshold(connectedCarType);
-        this.nearDoorRatioThreshold = SdkPreferencesHelper.getInstance().getNearDoorRatioThreshold(connectedCarType);
-        this.nearBackDoorRatioThresholdMin = SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMin(connectedCarType);
-        this.nearBackDoorRatioThresholdMax = SdkPreferencesHelper.getInstance().getNearBackDoorRatioThresholdMax(connectedCarType);
-        this.nearDoorThresholdMLorMRMin = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMin(connectedCarType);
-        this.nearDoorThresholdMLorMRMax = SdkPreferencesHelper.getInstance().getNearDoorThresholdMLorMRMax(connectedCarType);
-        this.nearDoorThresholdTLorTRMin = SdkPreferencesHelper.getInstance().getNearDoorThresholdTLorTRMin(connectedCarType);
-        this.nearDoorThresholdTLorTRMax = SdkPreferencesHelper.getInstance().getNearDoorThresholdTLorTRMax(connectedCarType);
-        this.nearDoorThresholdMRLorMRR = SdkPreferencesHelper.getInstance().getNearDoorThresholdMRLorMRR(connectedCarType);
-        this.nearDoorThresholdTRLorTRR = SdkPreferencesHelper.getInstance().getNearDoorThresholdTRLorTRR(connectedCarType);
-        this.nearDoorThresholdMB = SdkPreferencesHelper.getInstance().getNearDoorThresholdMB(connectedCarType);
     }
 
-    public void updateThresholdValues(boolean smartphoneIsInPocket, boolean smartphoneComIsActivated) {
-        this.welcomeThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_WELCOME, smartphoneIsInPocket, smartphoneComIsActivated);
-        this.lockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_LOCK, smartphoneIsInPocket, smartphoneComIsActivated);
-        this.unlockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_UNLOCK, smartphoneIsInPocket, smartphoneComIsActivated);
-        this.startThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_START, smartphoneIsInPocket, smartphoneComIsActivated);
-        this.averageDeltaLockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_DELTA_LOCK, smartphoneIsInPocket, smartphoneComIsActivated);
-        this.averageDeltaUnlockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_DELTA_UNLOCK, smartphoneIsInPocket, smartphoneComIsActivated);
+    public void updateThresholdValues(boolean isIndoor, boolean smartphoneIsInPocket, boolean smartphoneComIsActivated) {
+        this.welcomeThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_WELCOME, isIndoor, smartphoneIsInPocket, smartphoneComIsActivated);
+        this.lockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_LOCK, isIndoor, smartphoneIsInPocket, smartphoneComIsActivated);
+        this.unlockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_UNLOCK, isIndoor, smartphoneIsInPocket, smartphoneComIsActivated);
+        this.startThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_START, isIndoor, smartphoneIsInPocket, smartphoneComIsActivated);
+        this.averageDeltaLockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_DELTA_LOCK, isIndoor, smartphoneIsInPocket, smartphoneComIsActivated);
+        this.averageDeltaUnlockThreshold = TrxUtils.getCurrentThreshold(Antenna.AVERAGE_DELTA_UNLOCK, isIndoor, smartphoneIsInPocket, smartphoneComIsActivated);
     }
 
     /**

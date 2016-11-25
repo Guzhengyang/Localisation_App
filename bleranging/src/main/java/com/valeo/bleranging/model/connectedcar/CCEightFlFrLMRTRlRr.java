@@ -7,7 +7,6 @@ import android.text.SpannableStringBuilder;
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
-import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.TextUtils;
 import com.valeo.bleranging.utils.TrxUtils;
@@ -31,8 +30,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     private int thresholdMaxMinRatio = 0;
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public CCEightFlFrLMRTRlRr(Context mContext) {
-        super(mContext, ConnectionNumber.EIGHT_CONNECTION);
+    public CCEightFlFrLMRTRlRr(Context mContext, boolean isIndoor) {
+        super(mContext, ConnectionNumber.EIGHT_CONNECTION, isIndoor);
         trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME);
         trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, TRX_FRONT_RIGHT_NAME);
         trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
@@ -126,7 +125,6 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         closeToCarRL = getRatioCloseToCar(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
         PSALogs.d("closeR", "4 => " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
         closeToCarRR = getRatioCloseToCar(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
-        int thresholdCloseToCar = SdkPreferencesHelper.getInstance().getRatioCloseToCarThreshold(connectedCarType);
         PSALogs.d("closeR", "5 => " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
         thresholdMaxMinRatio = getThreeCornerLowerMaxMinRatio() + thresholdCloseToCar;
         lock.writeLock().unlock();
