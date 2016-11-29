@@ -24,6 +24,10 @@
             android:title="@string/pref_algo_title" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:key="@string/is_indoor_enabled_pref_name"
+            android:title="@string/pref_is_indoor_enabled" />
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="@string/connected_car_trame_enabled_pref_name"
             android:title="@string/pref_car_forced_trame_enabled" />
         <EditTextPreference

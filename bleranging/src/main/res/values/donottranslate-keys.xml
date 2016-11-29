@@ -15,6 +15,7 @@
     <string name="connected_car_type_pref_name">"com.inblue.PREFERENCE_CONNECTED_CAR_TYPE"</string>
     <string name="connected_car_base_pref_name">"com.inblue.PREFERENCE_CONNECTED_CAR_BASE"</string>
     <string name="selected_algo_pref_name">"com.inblue.PREFERENCE_SELECTED_ALGO"</string>
+    <string name="is_indoor_enabled_pref_name">"com.inblue.PREFERENCE_IS_INDOOR_ENABLED"</string>
     <string name="connected_car_trame_enabled_pref_name">"com.inblue.PREFERENCE_CONNECTED_CAR_TRAME_ENABLED"</string>
     <string name="connected_car_trame_pref_name">"com.inblue.PREFERENCE_CONNECTED_CAR_TRAME"</string>
     <string name="offset_ear_for_start_pref_name">"com.inblue.PREFERENCE_OFFSET_EAR_FOR_START"</string>

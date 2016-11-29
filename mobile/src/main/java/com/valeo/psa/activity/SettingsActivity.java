@@ -784,6 +784,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private ListPreference connected_car_type;
         private ListPreference connected_car_base;
         private ListPreference selected_algo;
+        private CheckBoxPreference is_indoor_enabled;
         private CheckBoxPreference connected_car_trame_enabled;
         private EditTextPreference connected_car_trame;
         private EditTextPreference back_timeout;
@@ -839,6 +840,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             connected_car_type = ((ListPreference) findPreference(getString(R.string.connected_car_type_pref_name)));
             connected_car_base = ((ListPreference) findPreference(getString(R.string.connected_car_base_pref_name)));
             selected_algo = ((ListPreference) findPreference(getString(R.string.selected_algo_pref_name)));
+            is_indoor_enabled = ((CheckBoxPreference) findPreference(getString(R.string.is_indoor_enabled_pref_name)));
             connected_car_trame_enabled = ((CheckBoxPreference) findPreference(getString(R.string.connected_car_trame_enabled_pref_name)));
             connected_car_trame = ((EditTextPreference) findPreference(getString(R.string.connected_car_trame_pref_name)));
             back_timeout = ((EditTextPreference) findPreference(getString(R.string.back_timeout_pref_name)));
@@ -875,6 +877,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         private void setDefaultValues() {
             back_timeout.setText(back_timeout.getSummary().toString());
+            is_indoor_enabled.setChecked(SdkPreferencesHelper.getInstance().getIsIndoor());
+            connected_car_trame_enabled.setChecked(SdkPreferencesHelper.getInstance().getConnectedCarTrameEnabled());
+            user_speed_enabled.setChecked(SdkPreferencesHelper.getInstance().getUserSpeedEnabled());
             thatcham_timeout.setText(thatcham_timeout.getSummary().toString());
             crypto_pre_auth_timeout.setText(crypto_pre_auth_timeout.getSummary().toString());
             crypto_action_timeout.setText(crypto_action_timeout.getSummary().toString());
@@ -913,6 +918,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_A);
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
             bindPreferenceSummaryToValue(selected_algo, ConnectedCarFactory.ALGO_STANDARD);
+            is_indoor_enabled.setSummary(R.string.pref_is_indoor_enabled_summary);
             connected_car_trame_enabled.setSummary(R.string.pref_car_forced_trame_enabled_summary);
             bindPreferenceSummaryToValue(connected_car_trame, "");
             bindPreferenceSummaryToValue(back_timeout, String.valueOf(SdkPreferencesHelper.BACK_TIMEOUT));

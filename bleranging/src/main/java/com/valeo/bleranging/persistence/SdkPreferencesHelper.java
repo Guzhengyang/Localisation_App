@@ -428,6 +428,10 @@ public final class SdkPreferencesHelper {
         return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.selected_algo_pref_name), ConnectedCarFactory.ALGO_STANDARD);
     }
 
+    public Boolean getIsIndoor() {
+        return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.is_indoor_enabled_pref_name), false);
+    }
+
     public Boolean getConnectedCarTrameEnabled() {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_trame_enabled_pref_name), false);
     }
