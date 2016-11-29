@@ -136,10 +136,9 @@ public class Antenna {
      * Correct the rssi received within BORNE_INF and BORNE_SUP
      *
      * @param rssi       the rssi to correct
-     * @param bleChannel the ble channel from which the rssi come
      * @return the corrected rssi
      */
-    private synchronized int getCorrectedRssi(int rssi, BLEChannel bleChannel) {
+    private synchronized int getCorrectedRssi(int rssi) {
         int referenceRssi = getEcretageReferenceValue(getEcretageReferenceIndex(lastRssi));
         float ecretage = getEcretageValue(referenceRssi);
         float borneInf = referenceRssi - ecretage;
@@ -319,11 +318,11 @@ public class Antenna {
             rssiPente.remove(0);
         }
         rssi += getTrxRssiEqualizer(numberTrx); // add trx rssi antenna power Equalizer
-        rssi += dynamicOffsetCompensation(rssi, bleChannel); // rssi channel offset dynamic compensation
+        rssi = dynamicOffsetCompensation(rssi, bleChannel); // rssi channel offset dynamic compensation
         currentOriginalRssi = rssi;
         rssiPente.add(currentOriginalRssi - lastOriginalRssi);
         lastOriginalRssi = currentOriginalRssi;
-        rssi = getCorrectedRssi(rssi, bleChannel); // Correct the rssi value with an ecretage on the last N-2 rssi seen
+        rssi = getCorrectedRssi(rssi); // Correct the rssi value with an ecretage on the last N-2 rssi seen
         if (rssiHistoric.size() == SdkPreferencesHelper.getInstance().getRollingAvElement()) {
             rssiHistoric.remove(0);
         }
