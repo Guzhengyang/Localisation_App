@@ -146,30 +146,6 @@ public class Antenna {
         float borneSup = referenceRssi + ecretage;
 //        float borneInf = lastRssi - getEcretageValue(lastRssi);
 //        float borneSup = lastRssi + getEcretageValue(lastRssi);
-        switch (bleChannel) {
-            case BLE_CHANNEL_37:
-                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
-                    offsetBleChannel38 = 0;
-                    offsetBleChannel39 = 0;
-                }
-                break;
-            case BLE_CHANNEL_38:
-                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
-                    offsetBleChannel38 = calculateOffsetChannel(rssi);
-                }
-                rssi += offsetBleChannel38;
-                break;
-            case BLE_CHANNEL_39:
-                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
-                    offsetBleChannel39 = calculateOffsetChannel(rssi);
-                }
-                rssi += offsetBleChannel39;
-                break;
-            case UNKNOWN:
-                break;
-            default:
-                break;
-        }
         if (rssi > borneSup) {
 //            PSALogs.d("ecretage " + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi
 //                    + " borneInf:" + borneInf + " borneSup:" + borneSup + " savedRssi:" + (int) Math.ceil(borneSup));
@@ -343,6 +319,7 @@ public class Antenna {
             rssiPente.remove(0);
         }
         rssi += getTrxRssiEqualizer(numberTrx); // add trx rssi antenna power Equalizer
+        rssi += dynamicOffsetCompensation(rssi, bleChannel); // rssi channel offset dynamic compensation
         currentOriginalRssi = rssi;
         rssiPente.add(currentOriginalRssi - lastOriginalRssi);
         lastOriginalRssi = currentOriginalRssi;
@@ -359,6 +336,41 @@ public class Antenna {
         }
         rollingAverageRssi(isSmartphoneMovingSlowly);
         hasReceivedRssi.set(isRssiReceived);
+    }
+
+    /**
+     * Compensation dynamic d'offset
+     *
+     * @param rssi       the origin rssi
+     * @param bleChannel the current ble channel
+     * @return the compensated rssi
+     */
+    private int dynamicOffsetCompensation(int rssi, BLEChannel bleChannel) {
+        switch (bleChannel) {
+            case BLE_CHANNEL_37:
+                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
+                    offsetBleChannel38 = 0;
+                    offsetBleChannel39 = 0;
+                }
+                break;
+            case BLE_CHANNEL_38:
+                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
+                    offsetBleChannel38 = calculateOffsetChannel(rssi);
+                }
+                rssi += offsetBleChannel38;
+                break;
+            case BLE_CHANNEL_39:
+                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
+                    offsetBleChannel39 = calculateOffsetChannel(rssi);
+                }
+                rssi += offsetBleChannel39;
+                break;
+            case UNKNOWN:
+                break;
+            default:
+                break;
+        }
+        return rssi;
     }
 
     /**
