@@ -8,6 +8,7 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 
 import com.valeo.bleranging.utils.PSALogs;
 
@@ -28,7 +29,7 @@ class PostLollipopScanTask implements ScanTask {
     /**
      * Start/ stop scan messages handler;
      */
-    private final Handler mScanHandler = new Handler();
+    private final Handler mScanHandler = new Handler(Looper.getMainLooper());
 
     /**
      * Bluetooth adapter.

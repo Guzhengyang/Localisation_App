@@ -74,6 +74,7 @@ public class AlgoManager implements SensorEventListener {
             backIsChanging.set(false);
         }
     };
+    private final AtomicBoolean isRKEAvailable = new AtomicBoolean(true);
     private final AtomicBoolean areLockActionsAvailable = new AtomicBoolean(true);
     /**
      * Create a handler to detect if the vehicle can do a unlock
@@ -120,9 +121,8 @@ public class AlgoManager implements SensorEventListener {
     private final Runnable abortCommandRunner = new Runnable() {
         @Override
         public void run() {
-            PSALogs.d("NIH rearm", "abortCommand Runnable");
-            PSALogs.d("NIH rearm", "trx: " + mProtocolManager.isLockedFromTrx() + " me: " + mProtocolManager.isLockedToSend());
-            if (mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) {
+            PSALogs.d("performLock", "abortCommandRunner trx: " + mProtocolManager.isLockedFromTrx() + " me: " + mProtocolManager.isLockedToSend());
+            if (mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) { // if command from trx and app are different, make the app send what the trx sent
                 mProtocolManager.setIsLockedToSend(mProtocolManager.isLockedFromTrx());
                 bleRangingListener.updateCarDoorStatus(mProtocolManager.isLockedFromTrx());
                 rearmLock.set(false);
@@ -173,10 +173,10 @@ public class AlgoManager implements SensorEventListener {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             if (BluetoothLeService.ACTION_DATA_AVAILABLE2.equals(action)) {
-//                PSALogs.d("autoRelock", "lastCommandFromTrx =" + lastCommandFromTrx +
-//                        ", isLockedFromTrx=" + mProtocolManager.isLockedFromTrx());
                 // if car lock status changed
                 if (lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
+                    PSALogs.d("performLock a_data_a_2", "lastCommandFromTrx =" + lastCommandFromTrx +
+                            ", isLockedFromTrx=" + mProtocolManager.isLockedFromTrx());
                     lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
                     mProtocolManager.setIsLockedToSend(lastCommandFromTrx);
                     //Initialize timeout flag which is cleared in the runnable launched in the next instruction
@@ -231,7 +231,6 @@ public class AlgoManager implements SensorEventListener {
         this.mIsFrozenTimeOutHandler = new Handler();
         this.mLockStatusChangedHandler = new Handler();
         this.predictionHistoric = new LinkedList<>();
-        mContext.registerReceiver(this.mDataReceiver, new IntentFilter(BluetoothLeService.ACTION_DATA_AVAILABLE2));
         SensorManager senSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         Sensor senProximity = senSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         Sensor senLinAcceleration = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -241,6 +240,7 @@ public class AlgoManager implements SensorEventListener {
         senSensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
         mContext.registerReceiver(callReceiver, new IntentFilter());
         mContext.registerReceiver(bleStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+        mContext.registerReceiver(mDataReceiver, new IntentFilter(BluetoothLeService.ACTION_DATA_AVAILABLE2));
     }
 
     public SpannableStringBuilder createDebugData(SpannableStringBuilder spannableStringBuilder) {
@@ -298,11 +298,12 @@ public class AlgoManager implements SensorEventListener {
                 SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
                 bleRangingListener.doWelcome();
             }
-            if (areLockActionsAvailable.get() && rearmLock.get() && isInLockArea) {
+            PSALogs.d("performLock", "isRKEAvailable=" + isRKEAvailable.get());
+            if (isRKEAvailable.get() && areLockActionsAvailable.get() && rearmLock.get() && isInLockArea) {
                 performLockWithCryptoTimeout(false, true);
             } else if (isInStartArea) { //smartphone in start area and moving
                 isStartAllowed = true;
-            } else if (areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
+            } else if (isRKEAvailable.get() && areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
                 performLockWithCryptoTimeout(false, false);
             }
             if (mProtocolManager.isWelcomeRequested() != isWelcomeAllowed) {
@@ -317,6 +318,7 @@ public class AlgoManager implements SensorEventListener {
         mHandlerCryptoTimeOut.postDelayed(new Runnable() {
             @Override
             public void run() {
+                PSALogs.d("performLock", "isRKEAction=" + isRKEAction + ", lockCar=" + lockCar);
                 isRKE.set(isRKEAction);
                 performLockVehicleRequest(lockCar);
             }
@@ -330,16 +332,26 @@ public class AlgoManager implements SensorEventListener {
      */
     private void performLockVehicleRequest(final boolean lockVehicle) {
         boolean lastLockCommand = mProtocolManager.isLockedToSend();
-        mProtocolManager.setIsLockedToSend(lockVehicle);
-        if (lastLockCommand != mProtocolManager.isLockedToSend()) {
-            if (mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) {
-                if (isAbortRunning) {
+        PSALogs.d("performLock", "lastCommand=" + lastLockCommand
+                + ", lockVehicle=" + lockVehicle);
+        if (lastLockCommand != lockVehicle) { // if previous command is different that current one !!!!
+            mProtocolManager.setIsLockedToSend(lockVehicle);
+            PSALogs.d("performLock", "lockToSend=" + mProtocolManager.isLockedToSend()
+                    + ", isLockedFromTrx=" + mProtocolManager.isLockedFromTrx());
+            // Only if previous and current command are different, or it will always be called
+            if (mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) { // if command sent and command received are different
+                if (isAbortRunning) { // stop already running Runnable and start a new one
                     mHandlerLockTimeOut.removeCallbacks(abortCommandRunner);
                     mHandlerLockTimeOut.removeCallbacksAndMessages(null);
                     isAbortRunning = false;
-                } else {
-                    mHandlerLockTimeOut.postDelayed(abortCommandRunner, 5000);
+                    PSALogs.d("performLock", "abortCommandRunner removeCallBacks");
+                    mHandlerLockTimeOut.postDelayed(abortCommandRunner, 5000); // Relaunch Abort runnable
                     isAbortRunning = true;
+                    PSALogs.d("performLock", "abortCommandRunner relaunched");
+                } else {
+                    mHandlerLockTimeOut.postDelayed(abortCommandRunner, 5000); // Launch Abort runnable only if lockVehicle has changed
+                    isAbortRunning = true;
+                    PSALogs.d("performLock", "abortCommandRunner launched");
                 }
             }
         }
@@ -761,6 +773,14 @@ public class AlgoManager implements SensorEventListener {
 
     public boolean areLockActionsAvailable() {
         return areLockActionsAvailable.get();
+    }
+
+    public boolean isRKEAvailable() {
+        return isRKEAvailable.get();
+    }
+
+    public void setIsRKEAvailable(boolean enableRKE) {
+        isRKEAvailable.set(enableRKE);
     }
 
     public boolean getIsRKE() {

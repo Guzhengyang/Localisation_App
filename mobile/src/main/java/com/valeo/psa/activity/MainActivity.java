@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int NOTIFICATION_ID_1 = 1;
     private final static int RKE_USE_TIMEOUT = 5000;
     private final Handler mHandler = new Handler();
-    private boolean isRKEAvailable = true;
     private Toolbar toolbar;
     private FrameLayout main_frame;
     private NestedScrollView content_main;
@@ -122,13 +121,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private RecyclerView car_model_recyclerView;
     private TextView selected_car_model_pinned;
     private TextView rke_loading_progress_bar;
-    private final Runnable toggleOnIsRKEAvailable = new Runnable() {
-        @Override
-        public void run() {
-            isRKEAvailable = true;
-            rke_loading_progress_bar.setVisibility(View.GONE);
-        }
-    };
     private ImageButton vehicle_locked;
     private ImageButton driver_s_door_unlocked;
     private ImageButton vehicle_unlocked;
@@ -168,6 +160,15 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private CarListAdapter mCarListAdapter = null;
     private CarDoorStatus carDoorStatus;
     private BleRangingHelper mBleRangingHelper;
+    private final Runnable toggleOnIsRKEAvailable = new Runnable() {
+        @Override
+        public void run() {
+            PSALogs.d("performLock", "before isRKEAvailable =" + mBleRangingHelper.isRKEAvailable());
+            mBleRangingHelper.setIsRKEAvailable(true);
+            PSALogs.d("performLock", "after isRKEAvailable =" + mBleRangingHelper.isRKEAvailable());
+            rke_loading_progress_bar.setVisibility(View.GONE);
+        }
+    };
     private boolean showMenu = true;
     private KeyguardManager mKeyguardManager;
     private Car selectedCar = null;
@@ -390,12 +391,12 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         vehicle_locked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PSALogs.d("rke", "isRKEAvailable =" + isRKEAvailable +
+                PSALogs.d("performLock", "isRKEAvailable =" + mBleRangingHelper.isRKEAvailable() +
                         ", Fco =" + mBleRangingHelper.isFullyConnected() +
                         ", lockActionAvailable =" + mBleRangingHelper.areLockActionsAvailable());
-                if (isRKEAvailable && mBleRangingHelper.isFullyConnected()
+                if (mBleRangingHelper.isRKEAvailable() && mBleRangingHelper.isFullyConnected()
                         && mBleRangingHelper.areLockActionsAvailable()) {
-                    isRKEAvailable = false;
+                    mBleRangingHelper.setIsRKEAvailable(false);
                     rke_loading_progress_bar.setVisibility(View.VISIBLE);
                     mHandler.postDelayed(toggleOnIsRKEAvailable, RKE_USE_TIMEOUT);
                     carDoorStatus = CarDoorStatus.LOCKED;
@@ -403,6 +404,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     driver_s_door_unlocked.setBackgroundResource(0);
                     vehicle_unlocked.setBackgroundResource(0);
                     startButtonAnimation(false);
+                    PSALogs.d("performLock", "RKE LOCK");
                     mBleRangingHelper.performLockWithCryptoTimeout(true, true); //lockVehicle
                 }
             }
@@ -410,12 +412,12 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         driver_s_door_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PSALogs.d("rke", "isRKEAvailable =" + isRKEAvailable +
+                PSALogs.d("performLock", "isRKEAvailable =" + mBleRangingHelper.isRKEAvailable() +
                         ", Fco =" + mBleRangingHelper.isFullyConnected() +
                         ", lockActionAvailable =" + mBleRangingHelper.areLockActionsAvailable());
-                if (isRKEAvailable && mBleRangingHelper.isFullyConnected()
+                if (mBleRangingHelper.isRKEAvailable() && mBleRangingHelper.isFullyConnected()
                         && mBleRangingHelper.areLockActionsAvailable()) {
-                    isRKEAvailable = false;
+                    mBleRangingHelper.setIsRKEAvailable(false);
                     rke_loading_progress_bar.setVisibility(View.VISIBLE);
                     mHandler.postDelayed(toggleOnIsRKEAvailable, RKE_USE_TIMEOUT);
                     carDoorStatus = CarDoorStatus.DRIVER_DOOR_OPEN;
@@ -424,6 +426,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     vehicle_unlocked.setBackgroundResource(0);
                     start_button.setBackgroundResource(0);
                     startButtonAnimation(false);
+                    PSALogs.d("performLock", "RKE UNLOCK 1");
                     mBleRangingHelper.performLockWithCryptoTimeout(true, false); //unlockVehicle
                 }
             }
@@ -431,12 +434,12 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         vehicle_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PSALogs.d("rke", "isRKEAvailable =" + isRKEAvailable +
+                PSALogs.d("performLock", "isRKEAvailable =" + mBleRangingHelper.isRKEAvailable() +
                         ", Fco =" + mBleRangingHelper.isFullyConnected() +
                         ", lockActionAvailable =" + mBleRangingHelper.areLockActionsAvailable());
-                if (isRKEAvailable && mBleRangingHelper.isFullyConnected()
+                if (mBleRangingHelper.isRKEAvailable() && mBleRangingHelper.isFullyConnected()
                         && mBleRangingHelper.areLockActionsAvailable()) {
-                    isRKEAvailable = false;
+                    mBleRangingHelper.setIsRKEAvailable(false);
                     rke_loading_progress_bar.setVisibility(View.VISIBLE);
                     mHandler.postDelayed(toggleOnIsRKEAvailable, RKE_USE_TIMEOUT);
                     carDoorStatus = CarDoorStatus.UNLOCKED;
@@ -444,6 +447,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     driver_s_door_unlocked.setBackgroundResource(0);
                     vehicle_locked.setBackgroundResource(0);
                     startButtonAnimation(true);
+                    PSALogs.d("performLock", "RKE UNLOCK 2");
                     mBleRangingHelper.performLockWithCryptoTimeout(true, false); //unlockVehicle
                     createNotification(NOTIFICATION_ID_1, getString(R.string.notif_unlock_it),
                             R.mipmap.car_all_doors_button, getString(R.string.vehicle_unlocked));

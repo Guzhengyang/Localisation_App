@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 
 import com.valeo.bleranging.utils.PSALogs;
 
@@ -20,7 +21,7 @@ class PreLollipopScanTask implements ScanTask {
     private static final String TAG = PreLollipopScanTask.class.getName();
 
     /** Start/ stop scan messages handler; */
-    private final Handler mScanHandler = new Handler();
+    private final Handler mScanHandler = new Handler(Looper.getMainLooper());
 
     /** Bluetooth adapter. */
     private final BluetoothAdapter mBluetoothAdapter;
