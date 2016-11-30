@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int NOTIFICATION_ID_1 = 1;
     private final static int RKE_USE_TIMEOUT = 5000;
     private final Handler mHandler = new Handler();
-    private final Handler mHandlerCryptoTimeOut = new Handler();
     private boolean isRKEAvailable = true;
     private Toolbar toolbar;
     private FrameLayout main_frame;
@@ -391,6 +390,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         vehicle_locked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                PSALogs.d("rke", "isRKEAvailable =" + isRKEAvailable +
+                        ", Fco =" + mBleRangingHelper.isFullyConnected() +
+                        ", lockActionAvailable =" + mBleRangingHelper.areLockActionsAvailable());
                 if (isRKEAvailable && mBleRangingHelper.isFullyConnected()
                         && mBleRangingHelper.areLockActionsAvailable()) {
                     isRKEAvailable = false;
@@ -401,19 +403,16 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     driver_s_door_unlocked.setBackgroundResource(0);
                     vehicle_unlocked.setBackgroundResource(0);
                     startButtonAnimation(false);
-                    mHandlerCryptoTimeOut.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mBleRangingHelper.setIsRKE(true);
-                            mBleRangingHelper.performLockVehicleRequest(true);
-                        }
-                    }, (long) (SdkPreferencesHelper.getInstance().getCryptoActionTimeout() * 1000)); //lockVehicle
+                    mBleRangingHelper.performLockWithCryptoTimeout(true, true); //lockVehicle
                 }
             }
         });
         driver_s_door_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                PSALogs.d("rke", "isRKEAvailable =" + isRKEAvailable +
+                        ", Fco =" + mBleRangingHelper.isFullyConnected() +
+                        ", lockActionAvailable =" + mBleRangingHelper.areLockActionsAvailable());
                 if (isRKEAvailable && mBleRangingHelper.isFullyConnected()
                         && mBleRangingHelper.areLockActionsAvailable()) {
                     isRKEAvailable = false;
@@ -425,19 +424,16 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     vehicle_unlocked.setBackgroundResource(0);
                     start_button.setBackgroundResource(0);
                     startButtonAnimation(false);
-                    mHandlerCryptoTimeOut.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mBleRangingHelper.setIsRKE(true);
-                            mBleRangingHelper.performLockVehicleRequest(false);
-                        }
-                    }, (long) (SdkPreferencesHelper.getInstance().getCryptoActionTimeout() * 1000)); //unlockVehicle
+                    mBleRangingHelper.performLockWithCryptoTimeout(true, false); //unlockVehicle
                 }
             }
         });
         vehicle_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                PSALogs.d("rke", "isRKEAvailable =" + isRKEAvailable +
+                        ", Fco =" + mBleRangingHelper.isFullyConnected() +
+                        ", lockActionAvailable =" + mBleRangingHelper.areLockActionsAvailable());
                 if (isRKEAvailable && mBleRangingHelper.isFullyConnected()
                         && mBleRangingHelper.areLockActionsAvailable()) {
                     isRKEAvailable = false;
@@ -448,13 +444,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     driver_s_door_unlocked.setBackgroundResource(0);
                     vehicle_locked.setBackgroundResource(0);
                     startButtonAnimation(true);
-                    mHandlerCryptoTimeOut.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mBleRangingHelper.setIsRKE(true);
-                            mBleRangingHelper.performLockVehicleRequest(false);
-                        }
-                    }, (long) (SdkPreferencesHelper.getInstance().getCryptoActionTimeout() * 1000)); //unlockVehicle
+                    mBleRangingHelper.performLockWithCryptoTimeout(true, false); //unlockVehicle
                     createNotification(NOTIFICATION_ID_1, getString(R.string.notif_unlock_it),
                             R.mipmap.car_all_doors_button, getString(R.string.vehicle_unlocked));
                 }

@@ -40,6 +40,7 @@ public class BluetoothLeService extends Service {
     public final static String ACTION_GATT_DISCONNECTED = "com.inblue.ACTION_GATT_DISCONNECTED";
     public final static String ACTION_GATT_SERVICES_DISCOVERED = "com.inblue.ACTION_GATT_SERVICES_DISCOVERED";
     public final static String ACTION_DATA_AVAILABLE = "com.inblue.ACTION_DATA_AVAILABLE";
+    public final static String ACTION_DATA_AVAILABLE2 = "com.inblue.ACTION_DATA_AVAILABLE2";
     public final static String ACTION_GATT_SERVICES_FAILED = "com.inblue.ACTION_GATT_SERVICES_FAILED";
     public final static String ACTION_GATT_CONNECTION_LOSS = "com.inblue.ACTION_GATT_CONNECTION_LOSS";
     public final static String ACTION_GATT_CHARACTERISTIC_SUBSCRIBED = "com.inblue.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED";
@@ -253,6 +254,7 @@ public class BluetoothLeService extends Service {
             mReceiveQueue.add(characteristic.getValue());
             isFullyConnected = true;
             broadcastUpdate(ACTION_DATA_AVAILABLE);
+            broadcastUpdate(ACTION_DATA_AVAILABLE2);
         }
 
         @Override

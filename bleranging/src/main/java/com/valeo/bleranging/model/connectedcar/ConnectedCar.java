@@ -6,11 +6,10 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
+import com.valeo.bleranging.bluetooth.AlgoManager;
 import com.valeo.bleranging.model.Antenna;
-import com.valeo.bleranging.model.Ranging;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.TextUtils;
 import com.valeo.bleranging.utils.TrxUtils;
 
@@ -56,7 +55,6 @@ public abstract class ConnectedCar {
     private final static String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
     final LinkedHashMap<Integer, Trx> trxLinkedHMap;
     private final ConnectionNumber connectionNumber;
-    String connectedCarType;
     int welcomeThreshold;
     int lockThreshold;
     int unlockThreshold;
@@ -87,7 +85,6 @@ public abstract class ConnectedCar {
     Trx trxRearLeft;
     Trx trxBack;
     Trx trxRearRight;
-    private Ranging ranging;
     private Context mContext;
     private float linAccThreshold;
 
@@ -99,7 +96,7 @@ public abstract class ConnectedCar {
     }
 
     public void resetSettings(boolean isIndoor) {
-        this.connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
+        String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
         this.linAccThreshold = SdkPreferencesHelper.getInstance().getCorrectionLinAcc();
         if (isIndoor) {
             this.welcomeThreshold = SdkPreferencesHelper.getInstance().getIndoorWelcomeThreshold(connectedCarType);
@@ -272,7 +269,7 @@ public abstract class ConnectedCar {
         }
     }
 
-    public int getRssiAverage(int trxNumber, int antennaId, int averageMode) {
+    private int getRssiAverage(int trxNumber, int antennaId, int averageMode) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getAntennaRssiAverage(antennaId, averageMode);
         } else {
@@ -298,8 +295,8 @@ public abstract class ConnectedCar {
 
     /**
      * Check all trx antenna to see if they are active
-     * @param bleChannel
-     * @param smartphoneIsMovingSlowly
+     * @param bleChannel the ble channel
+     * @param smartphoneIsMovingSlowly true is smartphone is moving slowly, false otherwise
      */
     public void compareCheckerAndSetAntennaActive(Antenna.BLEChannel bleChannel,
                                                   boolean smartphoneIsMovingSlowly) {
@@ -389,9 +386,9 @@ public abstract class ConnectedCar {
         if (trxLinkedHMap != null) {
             int average = trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode1);
             int minimum = getMinAverageRssi(mode2);
-            PSALogs.d("close", "getTrxRssiAverage = " + average);
-            PSALogs.d("close", "getMinAverageRssi = " + minimum);
-            PSALogs.d("close", "getRatioCloseToCar = " + (average - minimum));
+//            PSALogs.d("close", "getTrxRssiAverage = " + average);
+//            PSALogs.d("close", "getMinAverageRssi = " + minimum);
+//            PSALogs.d("close", "getRatioCloseToCar = " + (average - minimum));
             return (average - minimum);
         }
         return 0;
@@ -655,16 +652,12 @@ public abstract class ConnectedCar {
      * Get the string from the second footer
      *
      * @param spannableStringBuilder   the string builder to fill
-     * @param smartphoneIsInPocket     a boolean that determine if the smartphone is in the user pocket or not.
-     * @param smartphoneIsMovingSlowly a boolean that determine if the smartphone is moving
      * @param totalAverage             the total average of all trx
-     * @param rearmLock                a boolean corresponding to the rearm for lock purpose
-     * @param rearmUnlock              a boolean corresponding to the rear for unlock purpose
+     * @param mAlgoManager             the algorithm manager
      * @return the spannable string builder filled with the second footer
      */
-    public abstract SpannableStringBuilder createSecondFooterDebugData(SpannableStringBuilder spannableStringBuilder,
-                                                                       boolean smartphoneIsInPocket, boolean smartphoneIsMovingSlowly,
-                                                                       int totalAverage, boolean rearmLock, boolean rearmUnlock);
+    public abstract SpannableStringBuilder createSecondFooterDebugData(
+            SpannableStringBuilder spannableStringBuilder, int totalAverage, AlgoManager mAlgoManager);
 
     SpannableStringBuilder createSecondFooterDebugData(SpannableStringBuilder spannableStringBuilder, String space2) {
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
@@ -692,18 +685,16 @@ public abstract class ConnectedCar {
      *
      * @param spannableStringBuilder   the string builder to fill
      * @param bleChannel the ble channel used
-     * @param deltaLinAcc              the delta of linear acceleration
-     * @param smartphoneIsMovingSlowly the boolean that determine if the smartphone is moving or not
+     * @param mAlgoManager the algorithm manager
      * @return the string builder filled with the third footer data
      */
     public SpannableStringBuilder createThirdFooterDebugData(SpannableStringBuilder spannableStringBuilder,
-                                                             Antenna.BLEChannel bleChannel, double deltaLinAcc,
-                                                             boolean smartphoneIsMovingSlowly) {
+                                                             Antenna.BLEChannel bleChannel, AlgoManager mAlgoManager) {
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
         spannableStringBuilder.append("Scanning on channel: ").append(bleChannel.toString()).append("\n");
         String lAccStringBuilder = "Linear Acceleration < (" + linAccThreshold + "): "
-                + String.format(Locale.FRANCE, "%1$.4f", deltaLinAcc) + "\n";
-        spannableStringBuilder.append(TextUtils.colorText(smartphoneIsMovingSlowly,
+                + String.format(Locale.FRANCE, "%1$.4f", mAlgoManager.getDeltaLinAcc()) + "\n";
+        spannableStringBuilder.append(TextUtils.colorText(mAlgoManager.isSmartphoneMovingSlowly(),
                 lAccStringBuilder, Color.WHITE, Color.DKGRAY));
         return spannableStringBuilder;
     }
@@ -759,28 +750,6 @@ public abstract class ConnectedCar {
         } else {
             return -1;
         }
-    }
-
-    public void createRangingObject(double rssiLeft, double rssiMiddle, double rssiRight, double rssiBack) {
-        this.ranging = new Ranging(mContext, rssiLeft, rssiMiddle, rssiRight, rssiBack);
-    }
-
-    public boolean prepareRanging() {
-        if (ranging != null) {
-            ranging.set(0, getCurrentOriginalRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1));
-            ranging.set(1, getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1));
-            ranging.set(2, getCurrentOriginalRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_1));
-            ranging.set(3, getCurrentOriginalRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_1));
-            return true;
-        }
-        return false;
-    }
-
-    public int predict2int() {
-        if (ranging != null) {
-            return ranging.predict2int();
-        }
-        return 0;
     }
 
     protected enum ConnectionNumber {

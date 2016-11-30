@@ -77,19 +77,19 @@ public class InblueProtocolManager {
     /**
      * Construct the packet One to send
      *
-     * @param isRKE                 the rke status
-     * @param isUnlockStrategyValid the list of unlock position valid
-     * @param isInUnlockArea  true if in unlock area, false otherwise
-     * @param isInStartArea  true if in start area, false otherwise
-     * @param isInLockArea   true if in lock area, false otherwise
+     * @param mAlgoManager the algoManager
      * @return the packet one payload containing six bytes
      */
-    public byte[] getPacketOnePayload(boolean isRKE, List<Integer> isUnlockStrategyValid,
-                                      boolean isInUnlockArea, List<Integer> isStartStrategyValid,
-                                      boolean isInStartArea, boolean isInLockArea) {
+    public byte[] getPacketOnePayload(final AlgoManager mAlgoManager) {
+        List<Integer> isUnlockStrategyValid = mAlgoManager.getIsUnlockStrategyValid();
+        boolean isInUnlockArea = mAlgoManager.isInUnlockArea();
+        List<Integer> isStartStrategyValid = mAlgoManager.getIsStartStrategyValid();
+        boolean isInStartArea = mAlgoManager.isInStartArea();
+        boolean isInLockArea = mAlgoManager.isInLockArea();
+        boolean isRKE = mAlgoManager.getIsRKE();
         byte[] payload = new byte[MAX_BLE_TRAME_BYTE];
-        payload[0] = (byte) ((packetOneCounter>>8)&0xFF);
-        payload[1] = (byte) ((packetOneCounter)&0xFF);
+        payload[0] = (byte) ((packetOneCounter >> 8) & 0xFF);
+        payload[1] = (byte) (packetOneCounter & 0xFF);
         payload[2] = (0x01);
         payload[3] = getPayloadThirdByte();
         payload[4] = getPayloadFourthByte(isRKE, isUnlockStrategyValid, isInUnlockArea,

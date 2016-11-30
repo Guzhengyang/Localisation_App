@@ -3,6 +3,7 @@ package com.valeo.bleranging.model.connectedcar;
 import android.content.Context;
 import android.text.SpannableStringBuilder;
 
+import com.valeo.bleranging.bluetooth.AlgoManager;
 import com.valeo.bleranging.model.Trx;
 
 import java.util.List;
@@ -86,7 +87,8 @@ public class CCFiveLMRTB extends ConnectedCar {
     }
 
     @Override
-    public SpannableStringBuilder createSecondFooterDebugData(SpannableStringBuilder spannableStringBuilder, boolean smartphoneIsInPocket, boolean smartphoneIsMovingSlowly, int totalAverage, boolean rearmLock, boolean rearmUnlock) {
+    public SpannableStringBuilder createSecondFooterDebugData(
+            SpannableStringBuilder spannableStringBuilder, int totalAverage, AlgoManager mAlgoManager) {
         return createSecondFooterDebugData(spannableStringBuilder, SPACE_TWO);
     }
 }

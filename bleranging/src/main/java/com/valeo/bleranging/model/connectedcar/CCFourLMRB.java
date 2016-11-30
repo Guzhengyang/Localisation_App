@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.text.SpannableStringBuilder;
 
 import com.valeo.bleranging.BleRangingHelper;
+import com.valeo.bleranging.bluetooth.AlgoManager;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.utils.TextUtils;
@@ -154,8 +155,7 @@ public class CCFourLMRB extends ConnectedCar {
 
     @Override
     public SpannableStringBuilder createSecondFooterDebugData(
-            SpannableStringBuilder spannableStringBuilder, boolean smartphoneIsInPocket,
-            boolean smartphoneIsMovingSlowly, int totalAverage, boolean rearmLock, boolean rearmUnlock) {
+            SpannableStringBuilder spannableStringBuilder, int totalAverage, AlgoManager mAlgoManager) {
         // WELCOME
         spannableStringBuilder.append("welcome ");
         StringBuilder footerSB = new StringBuilder();
@@ -165,7 +165,7 @@ public class CCFourLMRB extends ConnectedCar {
         spannableStringBuilder.append(TextUtils.colorText(
                 totalAverage > welcomeThreshold,
                 footerSB.toString(), Color.WHITE, Color.DKGRAY));
-        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_WELCOME, smartphoneIsMovingSlowly))).append("\n");
+        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_WELCOME, mAlgoManager.isSmartphoneMovingSlowly()))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_WELCOME, Color.WHITE,
                 welcomeThreshold, ">", SPACE_TWO));
         // LOCK
@@ -181,10 +181,10 @@ public class CCFourLMRB extends ConnectedCar {
                 isInLockArea(lockThreshold),
                 footerSB.toString(), Color.RED, Color.DKGRAY));
         footerSB.setLength(0);
-        footerSB.append("rearm Lock: ").append(rearmLock);
+        footerSB.append("rearm Lock: ").append(mAlgoManager.getRearmLock());
         spannableStringBuilder.append(TextUtils.colorText(
-                rearmLock, footerSB.toString(), Color.RED, Color.DKGRAY));
-        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_LOCK, smartphoneIsMovingSlowly))).append("\n");
+                mAlgoManager.getRearmLock(), footerSB.toString(), Color.RED, Color.DKGRAY));
+        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_LOCK, mAlgoManager.isSmartphoneMovingSlowly()))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_LOCK, Color.RED,
                 lockThreshold, "<", SPACE_TWO));
         // UNLOCK
@@ -200,10 +200,10 @@ public class CCFourLMRB extends ConnectedCar {
                 isInUnlockArea(unlockThreshold),
                 footerSB.toString(), Color.GREEN, Color.DKGRAY));
         footerSB.setLength(0);
-        footerSB.append("rearm Unlock: ").append(rearmUnlock);
+        footerSB.append("rearm Unlock: ").append(mAlgoManager.getRearmUnlock());
         spannableStringBuilder.append(TextUtils.colorText(
-                rearmUnlock, footerSB.toString(), Color.GREEN, Color.DKGRAY));
-        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_UNLOCK, smartphoneIsMovingSlowly))).append("\n");
+                mAlgoManager.getRearmUnlock(), footerSB.toString(), Color.GREEN, Color.DKGRAY));
+        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_UNLOCK, mAlgoManager.isSmartphoneMovingSlowly()))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_UNLOCK, Color.GREEN,
                 unlockThreshold, ">", SPACE_TWO));
         footerSB.setLength(0);
@@ -239,7 +239,7 @@ public class CCFourLMRB extends ConnectedCar {
         spannableStringBuilder.append(TextUtils.colorText(
                 isInStartArea(startThreshold),
                 footerSB.toString(), Color.CYAN, Color.DKGRAY));
-        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_START, smartphoneIsMovingSlowly))).append("\n");
+        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_START, mAlgoManager.isSmartphoneMovingSlowly()))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_START, Color.CYAN,
                 startThreshold, ">", SPACE_TWO));
         footerSB.setLength(0);
