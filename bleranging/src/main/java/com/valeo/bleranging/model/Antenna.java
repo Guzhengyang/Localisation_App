@@ -25,6 +25,7 @@ public class Antenna {
     private final ArrayList<Integer> rssiHistoric;
     private final int numberTrx;
     private final int antennaId;
+    private BLEChannel bleChannel;
     private int lastOriginalRssi;
     private int lastRssi;
     private int currentOriginalRssi;
@@ -54,6 +55,7 @@ public class Antenna {
     Antenna(int numberTrx, int antennaId) {
         this.numberTrx = numberTrx;
         this.antennaId = antennaId;
+        this.bleChannel = BLEChannel.UNKNOWN;
         this.isAntennaActive = new AtomicBoolean(true);
         this.hasReceivedRssi = new AtomicBoolean(false);
         this.rssiHistoric = new ArrayList<>(SdkPreferencesHelper.getInstance().getRollingAvElement());
@@ -87,6 +89,14 @@ public class Antenna {
         for (int i = 0; i < SdkPreferencesHelper.getInstance().getRollingAvElement(); i++) {
             rssiHistoric.set(i, defaultValue);
         }
+    }
+
+    public void saveBleChannel(BLEChannel bleChannel) {
+        this.bleChannel = bleChannel;
+    }
+
+    public BLEChannel getCurrentBLEChannel() {
+        return bleChannel;
     }
 
     private int getEcretageReferenceIndex(int lastN2Rssi) {
@@ -302,10 +312,8 @@ public class Antenna {
     /**
      * Save the received rssi in the antenna historic
      * @param rssi the rssi of the packet received
-     * @param bleChannel the ble channel of the packet received
      */
-    public synchronized void saveRssi(int rssi, BLEChannel bleChannel,
-                                      boolean isSmartphoneMovingSlowly, boolean isRssiReceived) {
+    public synchronized void saveRssi(int rssi, boolean isSmartphoneMovingSlowly, boolean isRssiReceived) {
         if (!hasBeenInitialized) {
             this.currentOriginalRssi = rssi;
             this.lastOriginalRssi = rssi;

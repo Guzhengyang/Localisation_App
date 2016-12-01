@@ -105,6 +105,19 @@ public class Trx {
         }
     }
 
+    public Antenna.BLEChannel getCurrentBLEChannel(int antennaId) {
+        switch (antennaId) {
+            case ANTENNA_ID_0:
+                return antenna1.getCurrentBLEChannel();
+            case ANTENNA_ID_1:
+                return antenna1.getCurrentBLEChannel();
+            case ANTENNA_ID_2:
+                return antenna2.getCurrentBLEChannel();
+            default:
+                return antenna1.getCurrentBLEChannel();
+        }
+    }
+
     public boolean isEnabled() {
         return isEnabled;
     }
@@ -167,31 +180,30 @@ public class Trx {
      *
      * @param antennaId                the antenna id that sent the rssi
      * @param rssi                     the rssi value
-     * @param bleChannel               the ble channel use to send signal
      * @param smartphoneIsMovingSlowly the boolean which determines if the smartphone is moving or not
      */
-    public void saveRssi(int antennaId, int rssi, Antenna.BLEChannel bleChannel,
-                         boolean smartphoneIsMovingSlowly, boolean hasReceivedRssi) {
+    public void saveRssi(int antennaId, int rssi, boolean smartphoneIsMovingSlowly,
+                         boolean hasReceivedRssi) {
         switch (antennaId) {
             case ANTENNA_ID_0:
-                antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, hasReceivedRssi);
-                antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, hasReceivedRssi);
+                antenna1.saveRssi(rssi, smartphoneIsMovingSlowly, hasReceivedRssi);
+                antenna2.saveRssi(rssi, smartphoneIsMovingSlowly, hasReceivedRssi);
                 break;
             case ANTENNA_ID_1:
-                antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, hasReceivedRssi);
+                antenna1.saveRssi(rssi, smartphoneIsMovingSlowly, hasReceivedRssi);
                 if (!antenna2.isAntennaActive()) {
-                    antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, false);
+                    antenna2.saveRssi(rssi, smartphoneIsMovingSlowly, false);
                 }
                 break;
             case ANTENNA_ID_2:
-                antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, hasReceivedRssi);
+                antenna2.saveRssi(rssi, smartphoneIsMovingSlowly, hasReceivedRssi);
                 if (!antenna1.isAntennaActive()) {
-                    antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, false);
+                    antenna1.saveRssi(rssi, smartphoneIsMovingSlowly, false);
                 }
                 break;
             default:
-                antenna1.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, hasReceivedRssi);
-                antenna2.saveRssi(rssi, bleChannel, smartphoneIsMovingSlowly, hasReceivedRssi);
+                antenna1.saveRssi(rssi, smartphoneIsMovingSlowly, hasReceivedRssi);
+                antenna2.saveRssi(rssi, smartphoneIsMovingSlowly, hasReceivedRssi);
                 break;
         }
     }
@@ -243,5 +255,13 @@ public class Trx {
 
     public int getMax() {
         return antenna1.getMax();
+    }
+
+    public void saveBleChannel(int antennaId, Antenna.BLEChannel bleChannel) {
+        if (antennaId == ANTENNA_ID_1) {
+            antenna1.saveBleChannel(bleChannel);
+        } else if (antennaId == ANTENNA_ID_2) {
+            antenna2.saveBleChannel(bleChannel);
+        }
     }
 }

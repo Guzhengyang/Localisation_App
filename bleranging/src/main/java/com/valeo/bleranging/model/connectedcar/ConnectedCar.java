@@ -254,18 +254,27 @@ public abstract class ConnectedCar {
     }
 
     /**
+     * Save the current ble channel
+     * @param trxNumber                the trx that sent the signal
+     * @param antennaId                the trx antenna id that sent the signal
+     * @param bleChannel               the ble channel used to sent
+     */
+    public void saveBleChannel(int trxNumber, int antennaId, Antenna.BLEChannel bleChannel) {
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            trxLinkedHMap.get(trxNumber).saveBleChannel(antennaId, bleChannel);
+        }
+    }
+
+    /**
      * Save an incoming rssi
      * @param trxNumber                the trx that sent the signal
      * @param antennaId                the trx antenna id that sent the signal
      * @param rssi                     the rssi value to save
-     * @param bleChannel               the ble channel used to sent
      * @param smartphoneIsMovingSlowly the boolean that determines if the smartphone is moving or not
      */
-    public void saveRssi(int trxNumber, int antennaId, int rssi, Antenna.BLEChannel bleChannel,
-                         boolean smartphoneIsMovingSlowly) {
+    public void saveRssi(int trxNumber, int antennaId, int rssi, boolean smartphoneIsMovingSlowly) {
         if (trxLinkedHMap.get(trxNumber) != null) {
-            trxLinkedHMap.get(trxNumber).saveRssi(antennaId, rssi,
-                    bleChannel, smartphoneIsMovingSlowly, true);
+            trxLinkedHMap.get(trxNumber).saveRssi(antennaId, rssi, smartphoneIsMovingSlowly, true);
         }
     }
 
@@ -274,6 +283,14 @@ public abstract class ConnectedCar {
             return trxLinkedHMap.get(trxNumber).getAntennaRssiAverage(antennaId, averageMode);
         } else {
             return 0;
+        }
+    }
+
+    public Antenna.BLEChannel getCurrentBLEChannel(int trxNumber, int antennaId) {
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            return trxLinkedHMap.get(trxNumber).getCurrentBLEChannel(antennaId);
+        } else {
+            return Antenna.BLEChannel.UNKNOWN;
         }
     }
 
@@ -295,17 +312,15 @@ public abstract class ConnectedCar {
 
     /**
      * Check all trx antenna to see if they are active
-     * @param bleChannel the ble channel
      * @param smartphoneIsMovingSlowly true is smartphone is moving slowly, false otherwise
      */
-    public void compareCheckerAndSetAntennaActive(Antenna.BLEChannel bleChannel,
-                                                  boolean smartphoneIsMovingSlowly) {
+    public void compareCheckerAndSetAntennaActive(boolean smartphoneIsMovingSlowly) {
         for (Trx trx : trxLinkedHMap.values()) {
             trx.compareCheckerAndSetAntennaActive();
             if (trx.isEnabled() && !trx.isActive()) {
                 trx.saveRssi(Trx.ANTENNA_ID_0,
                         trxLinkedHMap.get(NUMBER_TRX_MIDDLE).getCurrentModifiedRssi(Trx.ANTENNA_ID_1),
-                        bleChannel, smartphoneIsMovingSlowly, false);
+                        smartphoneIsMovingSlowly, false);
             }
         }
     }
@@ -684,14 +699,13 @@ public abstract class ConnectedCar {
      * Get the string from the third footer
      *
      * @param spannableStringBuilder   the string builder to fill
-     * @param bleChannel the ble channel used
      * @param mAlgoManager the algorithm manager
      * @return the string builder filled with the third footer data
      */
-    public SpannableStringBuilder createThirdFooterDebugData(SpannableStringBuilder spannableStringBuilder,
-                                                             Antenna.BLEChannel bleChannel, AlgoManager mAlgoManager) {
+    public SpannableStringBuilder createThirdFooterDebugData(
+            SpannableStringBuilder spannableStringBuilder, AlgoManager mAlgoManager) {
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
-        spannableStringBuilder.append("Scanning on channel: ").append(bleChannel.toString()).append("\n");
+        spannableStringBuilder.append("Scanning on channel: ").append(getCurrentBLEChannel(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1).toString()).append("\n");
         String lAccStringBuilder = "Linear Acceleration < (" + linAccThreshold + "): "
                 + String.format(Locale.FRANCE, "%1$.4f", mAlgoManager.getDeltaLinAcc()) + "\n";
         spannableStringBuilder.append(TextUtils.colorText(mAlgoManager.isSmartphoneMovingSlowly(),
