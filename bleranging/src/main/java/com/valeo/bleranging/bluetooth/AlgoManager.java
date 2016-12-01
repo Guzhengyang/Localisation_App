@@ -16,7 +16,6 @@ import android.text.SpannableStringBuilder;
 
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
 import com.valeo.bleranging.model.Ranging;
-import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
@@ -269,7 +268,7 @@ public class AlgoManager implements SensorEventListener {
      */
     public void tryStandardStrategies(boolean newLockStatus, boolean isFullyConnected,
                                       boolean isIndoor, ConnectedCar connectedCar, int totalAverage) {
-        rearmWelcome(connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1)); // rearm rearmWelcome Boolean
+        rearmWelcome(connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE)); // rearm rearmWelcome Boolean
         if (isFullyConnected) {
             boolean isStartAllowed = false;
             boolean isWelcomeAllowed = false;
@@ -508,10 +507,10 @@ public class AlgoManager implements SensorEventListener {
 
     private boolean prepareRanging(ConnectedCar connectedCar) {
         if (ranging != null) {
-            ranging.set(0, connectedCar.getCurrentOriginalRssi(NUMBER_TRX_LEFT, Trx.ANTENNA_ID_1));
-            ranging.set(1, connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1));
-            ranging.set(2, connectedCar.getCurrentOriginalRssi(NUMBER_TRX_RIGHT, Trx.ANTENNA_ID_1));
-            ranging.set(3, connectedCar.getCurrentOriginalRssi(NUMBER_TRX_BACK, Trx.ANTENNA_ID_1));
+            ranging.set(0, connectedCar.getCurrentOriginalRssi(NUMBER_TRX_LEFT));
+            ranging.set(1, connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE));
+            ranging.set(2, connectedCar.getCurrentOriginalRssi(NUMBER_TRX_RIGHT));
+            ranging.set(3, connectedCar.getCurrentOriginalRssi(NUMBER_TRX_BACK));
             return true;
         }
         return false;

@@ -72,7 +72,7 @@ public class CCFourLMRB extends ConnectedCar {
 
     @Override
     public boolean isInStartArea(int threshold) {
-        boolean trxM = compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold, true);
+        boolean trxM = compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Antenna.AVERAGE_START, threshold, true);
         LinkedHashMap<Integer, Boolean> result = new LinkedHashMap<>();
         result.put(NUMBER_TRX_MIDDLE, trxM);
         return numberOfTrxValid(startMode, result);
@@ -109,9 +109,9 @@ public class CCFourLMRB extends ConnectedCar {
 
     @Override
     public boolean isInUnlockArea(int threshold) {
-        boolean trxL = compareTrxWithThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold, true);
-        boolean trxR = compareTrxWithThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold, true);
-        boolean trxB = compareTrxWithThreshold(NUMBER_TRX_BACK, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold, true);
+        boolean trxL = compareTrxWithThreshold(NUMBER_TRX_LEFT, Antenna.AVERAGE_UNLOCK, threshold, true);
+        boolean trxR = compareTrxWithThreshold(NUMBER_TRX_RIGHT, Antenna.AVERAGE_UNLOCK, threshold, true);
+        boolean trxB = compareTrxWithThreshold(NUMBER_TRX_BACK, Antenna.AVERAGE_UNLOCK, threshold, true);
         LinkedHashMap<Integer, Boolean> result = new LinkedHashMap<>();
         result.put(NUMBER_TRX_LEFT, trxL);
         result.put(NUMBER_TRX_RIGHT, trxR);
@@ -128,10 +128,10 @@ public class CCFourLMRB extends ConnectedCar {
 
     @Override
     public boolean isInLockArea(int threshold) {
-        boolean trxL = compareTrxWithThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold, false);
-        boolean trxM = compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold, false);
-        boolean trxR = compareTrxWithThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold, false);
-        boolean trxB = compareTrxWithThreshold(NUMBER_TRX_BACK, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold, false);
+        boolean trxL = compareTrxWithThreshold(NUMBER_TRX_LEFT, Antenna.AVERAGE_LOCK, threshold, false);
+        boolean trxM = compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Antenna.AVERAGE_LOCK, threshold, false);
+        boolean trxR = compareTrxWithThreshold(NUMBER_TRX_RIGHT, Antenna.AVERAGE_LOCK, threshold, false);
+        boolean trxB = compareTrxWithThreshold(NUMBER_TRX_BACK, Antenna.AVERAGE_LOCK, threshold, false);
         LinkedHashMap<Integer, Boolean> result = new LinkedHashMap<>();
         result.put(NUMBER_TRX_LEFT, trxL);
         result.put(NUMBER_TRX_MIDDLE, trxM);

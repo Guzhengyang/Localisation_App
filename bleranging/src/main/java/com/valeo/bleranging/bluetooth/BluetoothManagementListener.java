@@ -2,6 +2,9 @@ package com.valeo.bleranging.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 
+import com.valeo.bleranging.bluetooth.scanresponse.BeaconScanResponse;
+import com.valeo.bleranging.bluetooth.scanresponse.CentralScanResponse;
+
 import java.util.EventListener;
 
 /**
@@ -9,5 +12,7 @@ import java.util.EventListener;
  * @version 1.5
  */
 public interface BluetoothManagementListener extends EventListener {
-    void onPassiveEntryTry(BluetoothDevice device, int rssi, ScanResponse scanResponse, byte[] advertisedData);
+    void onCentralScanResponseCatch(BluetoothDevice device, CentralScanResponse centralScanResponse);
+
+    void onBeaconScanResponseCatch(BluetoothDevice device, int rssi, BeaconScanResponse beaconScanResponse, byte[] advertisedData);
 }

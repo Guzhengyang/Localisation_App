@@ -24,7 +24,6 @@ public class Antenna {
     private final ArrayList<Integer> rssiPente;
     private final ArrayList<Integer> rssiHistoric;
     private final int numberTrx;
-    private final int antennaId;
     private BLEChannel bleChannel;
     private int lastOriginalRssi;
     private int lastRssi;
@@ -52,9 +51,8 @@ public class Antenna {
     private int offsetBleChannel39 = 0;
     private boolean hasBeenInitialized = false;
 
-    Antenna(int numberTrx, int antennaId) {
+    Antenna(int numberTrx) {
         this.numberTrx = numberTrx;
-        this.antennaId = antennaId;
         this.bleChannel = BLEChannel.UNKNOWN;
         this.isAntennaActive = new AtomicBoolean(true);
         this.hasReceivedRssi = new AtomicBoolean(false);

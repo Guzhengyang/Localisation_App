@@ -105,8 +105,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     @Override
     public boolean isInStartArea(int threshold) {
-        boolean trxM = compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold, true);
-        boolean trxT = compareTrxWithThreshold(NUMBER_TRX_TRUNK, Trx.ANTENNA_AND, Antenna.AVERAGE_START, threshold, true);
+        boolean trxM = compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Antenna.AVERAGE_START, threshold, true);
+        boolean trxT = compareTrxWithThreshold(NUMBER_TRX_TRUNK, Antenna.AVERAGE_START, threshold, true);
         LinkedHashMap<Integer, Boolean> result = new LinkedHashMap<>();
         result.put(NUMBER_TRX_MIDDLE, trxM);
         result.put(NUMBER_TRX_TRUNK, trxT);
@@ -137,12 +137,12 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             boolean closeToCarRearRight = TrxUtils.compareWithThreshold(closeToCarRR, thresholdMaxMinRatio, true);
             boolean closeToCarFrontRight = TrxUtils.compareWithThreshold(closeToCarFR, thresholdMaxMinRatio, true);
             lock.readLock().unlock();
-            boolean closeToBeaconFL = compareTrxWithThreshold(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
-            boolean closeToBeaconFR = compareTrxWithThreshold(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
-            boolean closeToBeaconL = compareTrxWithThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
-            boolean closeToBeaconR = compareTrxWithThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
-            boolean closeToBeaconRL = compareTrxWithThreshold(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
-            boolean closeToBeaconRR = compareTrxWithThreshold(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
+            boolean closeToBeaconFL = compareTrxWithThreshold(NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
+            boolean closeToBeaconFR = compareTrxWithThreshold(NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
+            boolean closeToBeaconL = compareTrxWithThreshold(NUMBER_TRX_LEFT, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
+            boolean closeToBeaconR = compareTrxWithThreshold(NUMBER_TRX_RIGHT, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
+            boolean closeToBeaconRL = compareTrxWithThreshold(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
+            boolean closeToBeaconRR = compareTrxWithThreshold(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
 
             List<Integer> result = new ArrayList<>();
             if (closeToCarFrontLeft || closeToBeaconFL) { //maxMinFrontLeft ||
@@ -176,12 +176,12 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     @Override
     public boolean isInUnlockArea(int threshold) {
-        boolean trxFL = compareTrxWithThreshold(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold, true);
-        boolean trxFR = compareTrxWithThreshold(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold, true);
-        boolean trxL = compareTrxWithThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold, true);
-        boolean trxR = compareTrxWithThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold, true);
-        boolean trxRL = compareTrxWithThreshold(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold, true);
-        boolean trxRR = compareTrxWithThreshold(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_UNLOCK, threshold, true);
+        boolean trxFL = compareTrxWithThreshold(NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_UNLOCK, threshold, true);
+        boolean trxFR = compareTrxWithThreshold(NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_UNLOCK, threshold, true);
+        boolean trxL = compareTrxWithThreshold(NUMBER_TRX_LEFT, Antenna.AVERAGE_UNLOCK, threshold, true);
+        boolean trxR = compareTrxWithThreshold(NUMBER_TRX_RIGHT, Antenna.AVERAGE_UNLOCK, threshold, true);
+        boolean trxRL = compareTrxWithThreshold(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK, threshold, true);
+        boolean trxRR = compareTrxWithThreshold(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK, threshold, true);
         LinkedHashMap<Integer, Boolean> result = new LinkedHashMap<>();
         result.put(NUMBER_TRX_FRONT_LEFT, trxFL);
         result.put(NUMBER_TRX_FRONT_RIGHT, trxFR);
@@ -197,20 +197,20 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         boolean isInLockArea = isInLockArea(lockThreshold);
 //        boolean isLeaving = TrxUtils.compareWithThreshold(getAverageLSDelta(), averageDeltaLockThreshold, true);
         return (isInLockArea
-                && compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, -60, false)
-                && compareTrxWithThreshold(NUMBER_TRX_TRUNK, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, -60, false)
+                && compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Antenna.AVERAGE_LOCK, -60, false)
+                && compareTrxWithThreshold(NUMBER_TRX_TRUNK, Antenna.AVERAGE_LOCK, -60, false)
         ); //&& isLeaving);
     }
 
     @Override
     public boolean isInLockArea(int threshold) {
-        boolean trxFL = compareTrxWithThreshold(NUMBER_TRX_FRONT_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold, false);
-        boolean trxFR = compareTrxWithThreshold(NUMBER_TRX_FRONT_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold, false);
-        boolean trxL = compareTrxWithThreshold(NUMBER_TRX_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold, false);
-        boolean trxM = compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold, false);
-        boolean trxR = compareTrxWithThreshold(NUMBER_TRX_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold, false);
-        boolean trxRL = compareTrxWithThreshold(NUMBER_TRX_REAR_LEFT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold, false);
-        boolean trxRR = compareTrxWithThreshold(NUMBER_TRX_REAR_RIGHT, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, threshold, false);
+        boolean trxFL = compareTrxWithThreshold(NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_LOCK, threshold, false);
+        boolean trxFR = compareTrxWithThreshold(NUMBER_TRX_FRONT_RIGHT, Antenna.AVERAGE_LOCK, threshold, false);
+        boolean trxL = compareTrxWithThreshold(NUMBER_TRX_LEFT, Antenna.AVERAGE_LOCK, threshold, false);
+        boolean trxM = compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Antenna.AVERAGE_LOCK, threshold, false);
+        boolean trxR = compareTrxWithThreshold(NUMBER_TRX_RIGHT, Antenna.AVERAGE_LOCK, threshold, false);
+        boolean trxRL = compareTrxWithThreshold(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_LOCK, threshold, false);
+        boolean trxRR = compareTrxWithThreshold(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_LOCK, threshold, false);
         LinkedHashMap<Integer, Boolean> result = new LinkedHashMap<>();
         result.put(NUMBER_TRX_FRONT_LEFT, trxFL);
         result.put(NUMBER_TRX_FRONT_RIGHT, trxFR);
@@ -280,12 +280,12 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         footerSB.setLength(0);
         footerSB.append("rssiMid < (").append(-60).append(") ");
         spannableStringBuilder.append(TextUtils.colorText(
-                compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, -60, false),
+                compareTrxWithThreshold(NUMBER_TRX_MIDDLE, Antenna.AVERAGE_LOCK, -60, false),
                 footerSB.toString(), Color.RED, Color.DKGRAY));
         footerSB.setLength(0);
         footerSB.append("rssiTrunk < (").append(-60).append(") ");
         spannableStringBuilder.append(TextUtils.colorText(
-                compareTrxWithThreshold(NUMBER_TRX_TRUNK, Trx.ANTENNA_AND, Antenna.AVERAGE_LOCK, -60, false),
+                compareTrxWithThreshold(NUMBER_TRX_TRUNK, Antenna.AVERAGE_LOCK, -60, false),
                 footerSB.toString(), Color.RED, Color.DKGRAY));
         footerSB.setLength(0);
         footerSB.append("rearm Lock: ").append(mAlgoManager.getRearmLock());

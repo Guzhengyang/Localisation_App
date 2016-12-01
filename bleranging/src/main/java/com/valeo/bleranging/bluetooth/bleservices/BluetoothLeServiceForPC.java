@@ -74,7 +74,7 @@ public class BluetoothLeServiceForPC extends Service {
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             PSALogs.i("NIH_PC", "onCharacteristicWrite(" + VALEO_IN_CHARACTERISTIC + "): "
-                    + TextUtils.getHexString(characteristic.getValue()));
+                    + TextUtils.printBleBytes(characteristic.getValue()));
             if (mDevice != null && mBluetoothGatt != null) {
                 //Disconnect after write
                 mPacketToWriteCount--;

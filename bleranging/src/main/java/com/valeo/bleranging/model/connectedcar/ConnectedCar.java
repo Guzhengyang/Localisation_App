@@ -256,55 +256,53 @@ public abstract class ConnectedCar {
     /**
      * Save the current ble channel
      * @param trxNumber                the trx that sent the signal
-     * @param antennaId                the trx antenna id that sent the signal
      * @param bleChannel               the ble channel used to sent
      */
-    public void saveBleChannel(int trxNumber, int antennaId, Antenna.BLEChannel bleChannel) {
+    public void saveBleChannel(int trxNumber, Antenna.BLEChannel bleChannel) {
         if (trxLinkedHMap.get(trxNumber) != null) {
-            trxLinkedHMap.get(trxNumber).saveBleChannel(antennaId, bleChannel);
+            trxLinkedHMap.get(trxNumber).saveBleChannel(bleChannel);
         }
     }
 
     /**
      * Save an incoming rssi
      * @param trxNumber                the trx that sent the signal
-     * @param antennaId                the trx antenna id that sent the signal
      * @param rssi                     the rssi value to save
      * @param smartphoneIsMovingSlowly the boolean that determines if the smartphone is moving or not
      */
-    public void saveRssi(int trxNumber, int antennaId, int rssi, boolean smartphoneIsMovingSlowly) {
+    public void saveRssi(int trxNumber, int rssi, boolean smartphoneIsMovingSlowly) {
         if (trxLinkedHMap.get(trxNumber) != null) {
-            trxLinkedHMap.get(trxNumber).saveRssi(antennaId, rssi, smartphoneIsMovingSlowly, true);
+            trxLinkedHMap.get(trxNumber).saveRssi(rssi, smartphoneIsMovingSlowly, true);
         }
     }
 
-    private int getRssiAverage(int trxNumber, int antennaId, int averageMode) {
+    private int getRssiAverage(int trxNumber, int averageMode) {
         if (trxLinkedHMap.get(trxNumber) != null) {
-            return trxLinkedHMap.get(trxNumber).getAntennaRssiAverage(antennaId, averageMode);
+            return trxLinkedHMap.get(trxNumber).getAntennaRssiAverage(averageMode);
         } else {
             return 0;
         }
     }
 
-    public Antenna.BLEChannel getCurrentBLEChannel(int trxNumber, int antennaId) {
+    public Antenna.BLEChannel getCurrentBLEChannel(int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
-            return trxLinkedHMap.get(trxNumber).getCurrentBLEChannel(antennaId);
+            return trxLinkedHMap.get(trxNumber).getCurrentBLEChannel();
         } else {
             return Antenna.BLEChannel.UNKNOWN;
         }
     }
 
-    public int getCurrentOriginalRssi(int trxNumber, int antennaId) {
+    public int getCurrentOriginalRssi(int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
-            return trxLinkedHMap.get(trxNumber).getCurrentOriginalRssi(antennaId);
+            return trxLinkedHMap.get(trxNumber).getCurrentOriginalRssi();
         } else {
             return 0;
         }
     }
 
-    public int getCurrentModifiedRssi(int trxNumber, int antennaId) {
+    public int getCurrentModifiedRssi(int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
-            return trxLinkedHMap.get(trxNumber).getCurrentModifiedRssi(antennaId);
+            return trxLinkedHMap.get(trxNumber).getCurrentModifiedRssi();
         } else {
             return 0;
         }
@@ -318,8 +316,7 @@ public abstract class ConnectedCar {
         for (Trx trx : trxLinkedHMap.values()) {
             trx.compareCheckerAndSetAntennaActive();
             if (trx.isEnabled() && !trx.isActive()) {
-                trx.saveRssi(Trx.ANTENNA_ID_0,
-                        trxLinkedHMap.get(NUMBER_TRX_MIDDLE).getCurrentModifiedRssi(Trx.ANTENNA_ID_1),
+                trx.saveRssi(trxLinkedHMap.get(NUMBER_TRX_MIDDLE).getCurrentModifiedRssi(),
                         smartphoneIsMovingSlowly, false);
             }
         }
@@ -337,7 +334,7 @@ public abstract class ConnectedCar {
         int numberOfAntenna = 0;
         for (Trx trx : trxLinkedHMap.values()) {
             if (trx.isEnabled()) {
-                totalAverage += (trx.getTrxRssiAverage(averageMode));
+                totalAverage += (trx.getAntennaRssiAverage(averageMode));
                 numberOfAntenna++;
             }
         }
@@ -371,8 +368,8 @@ public abstract class ConnectedCar {
             Trx trxTwo = trxLinkedHMap.get(trx2);
             if (trxOne != null && trxTwo != null) {
                 if (trxOne.isEnabled() && trxTwo.isEnabled()) {
-                    int trxAverageRssi1 = trxOne.getTrxRssiAverage(mode);
-                    int trxAverageRssi2 = trxTwo.getTrxRssiAverage(mode);
+                    int trxAverageRssi1 = trxOne.getAntennaRssiAverage(mode);
+                    int trxAverageRssi2 = trxTwo.getAntennaRssiAverage(mode);
                     return trxAverageRssi1 - trxAverageRssi2;
                 }
                 return 0;
@@ -386,12 +383,12 @@ public abstract class ConnectedCar {
 //    protected int getRatioMaxMin(int trxNumber1, int trxNumber2, int trxNumber3,
 //                                 int trxNumber4, int trxNumber5, int trxNumber6, int mode) {
 //        if (trxLinkedHMap != null) {
-//            int max = Math.max(Math.max(trxLinkedHMap.get(trxNumber1).getTrxRssiAverage(mode),
-//                    trxLinkedHMap.get(trxNumber2).getTrxRssiAverage(mode)),
-//                    trxLinkedHMap.get(trxNumber3).getTrxRssiAverage(mode));
-//            int min = Math.min(Math.min(trxLinkedHMap.get(trxNumber4).getTrxRssiAverage(mode),
-//                    trxLinkedHMap.get(trxNumber5).getTrxRssiAverage(mode)),
-//                    trxLinkedHMap.get(trxNumber6).getTrxRssiAverage(mode));
+//            int max = Math.max(Math.max(trxLinkedHMap.get(trxNumber1).getAntennaRssiAverage(mode),
+//                    trxLinkedHMap.get(trxNumber2).getAntennaRssiAverage(mode)),
+//                    trxLinkedHMap.get(trxNumber3).getAntennaRssiAverage(mode));
+//            int min = Math.min(Math.min(trxLinkedHMap.get(trxNumber4).getAntennaRssiAverage(mode),
+//                    trxLinkedHMap.get(trxNumber5).getAntennaRssiAverage(mode)),
+//                    trxLinkedHMap.get(trxNumber6).getAntennaRssiAverage(mode));
 //            return max - min;
 //        }
 //        return 0;
@@ -399,9 +396,9 @@ public abstract class ConnectedCar {
 
     int getRatioCloseToCar(int trxNumber, int mode1, int mode2) {
         if (trxLinkedHMap != null) {
-            int average = trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode1);
+            int average = trxLinkedHMap.get(trxNumber).getAntennaRssiAverage(mode1);
             int minimum = getMinAverageRssi(mode2);
-//            PSALogs.d("close", "getTrxRssiAverage = " + average);
+//            PSALogs.d("close", "getAntennaRssiAverage = " + average);
 //            PSALogs.d("close", "getMinAverageRssi = " + minimum);
 //            PSALogs.d("close", "getRatioCloseToCar = " + (average - minimum));
             return (average - minimum);
@@ -419,8 +416,9 @@ public abstract class ConnectedCar {
         int min = 0;
         if (trxLinkedHMap != null) {
             for (Integer trxNumber : trxLinkedHMap.keySet()) {
-                if (trxNumber != NUMBER_TRX_LEFT && trxNumber != NUMBER_TRX_RIGHT && trxNumber != NUMBER_TRX_MIDDLE) {
-                    min = Math.min(min, trxLinkedHMap.get(trxNumber).getTrxRssiAverage(mode));
+                if (trxNumber != NUMBER_TRX_LEFT
+                        && trxNumber != NUMBER_TRX_RIGHT && trxNumber != NUMBER_TRX_MIDDLE) {
+                    min = Math.min(min, trxLinkedHMap.get(trxNumber).getAntennaRssiAverage(mode));
                 }
             }
         }
@@ -504,25 +502,26 @@ public abstract class ConnectedCar {
      * @param isGreater   true if compare sign is >, false if it is <
      * @return true if the rssi of each antenna is greater than the threshold, false otherwise
      */
-    boolean compareTrxWithThreshold(int trxNumber, int antennaMode, int averageMode, int threshold, boolean isGreater) {
-        return trxLinkedHMap.get(trxNumber) != null && trxLinkedHMap.get(trxNumber).compareTrxWithThreshold(antennaMode, averageMode, threshold, isGreater);
+    boolean compareTrxWithThreshold(int trxNumber, int averageMode, int threshold, boolean isGreater) {
+        return trxLinkedHMap.get(trxNumber) != null
+                && trxLinkedHMap.get(trxNumber).compareTrxWithThreshold(averageMode, threshold, isGreater);
     }
 
     private boolean isActive(int trxNumber) {
         return trxLinkedHMap.get(trxNumber) != null && trxLinkedHMap.get(trxNumber).isActive();
     }
 
-    private int getOffsetBleChannel38(int trxNumber, int antennaId) {
+    private int getOffsetBleChannel38(int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
-            return trxLinkedHMap.get(trxNumber).getOffset38(antennaId);
+            return trxLinkedHMap.get(trxNumber).getOffset38();
         } else {
             return 0;
         }
     }
 
-    private int getOffsetBleChannel39(int trxNumber, int antennaId) {
+    private int getOffsetBleChannel39(int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
-            return trxLinkedHMap.get(trxNumber).getOffset39(antennaId);
+            return trxLinkedHMap.get(trxNumber).getOffset39();
         } else {
             return 0;
         }
@@ -643,7 +642,7 @@ public abstract class ConnectedCar {
             spannableStringBuilder
                     .append(space2)
                     .append(String.format(Locale.FRANCE, "%1$03d",
-                            getCurrentOriginalRssi(trx.getTrxNumber(), Trx.ANTENNA_ID_1)))
+                            getCurrentOriginalRssi(trx.getTrxNumber())))
                     .append(space2);
         }
         spannableStringBuilder.append('\n');
@@ -651,7 +650,7 @@ public abstract class ConnectedCar {
             spannableStringBuilder
                     .append(space2)
                     .append(String.format(Locale.FRANCE, "%1$03d",
-                            getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_0, Antenna.AVERAGE_DEFAULT)))
+                            getRssiAverage(trx.getTrxNumber(), Antenna.AVERAGE_DEFAULT)))
                     .append(space2);
         }
         spannableStringBuilder.append('\n');
@@ -680,7 +679,7 @@ public abstract class ConnectedCar {
         for (Trx trx : trxLinkedHMap.values()) {
             spannableStringBuilder
                     .append(space2)
-                    .append(String.format(Locale.FRANCE, "%1$03d", getOffsetBleChannel38(trx.getTrxNumber(), Trx.ANTENNA_ID_1)))
+                    .append(String.format(Locale.FRANCE, "%1$03d", getOffsetBleChannel38(trx.getTrxNumber())))
                     .append(space2);
         }
         spannableStringBuilder.append('\n');
@@ -688,7 +687,7 @@ public abstract class ConnectedCar {
         for (Trx trx : trxLinkedHMap.values()) {
             spannableStringBuilder
                     .append(space2)
-                    .append(String.format(Locale.FRANCE, "%1$03d", getOffsetBleChannel39(trx.getTrxNumber(), Trx.ANTENNA_ID_1)))
+                    .append(String.format(Locale.FRANCE, "%1$03d", getOffsetBleChannel39(trx.getTrxNumber())))
                     .append(space2);
         }
         spannableStringBuilder.append('\n');
@@ -705,7 +704,7 @@ public abstract class ConnectedCar {
     public SpannableStringBuilder createThirdFooterDebugData(
             SpannableStringBuilder spannableStringBuilder, AlgoManager mAlgoManager) {
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
-        spannableStringBuilder.append("Scanning on channel: ").append(getCurrentBLEChannel(NUMBER_TRX_MIDDLE, Trx.ANTENNA_ID_1).toString()).append("\n");
+        spannableStringBuilder.append("Scanning on channel: ").append(getCurrentBLEChannel(NUMBER_TRX_RIGHT).toString()).append("\n");
         String lAccStringBuilder = "Linear Acceleration < (" + linAccThreshold + "): "
                 + String.format(Locale.FRANCE, "%1$.4f", mAlgoManager.getDeltaLinAcc()) + "\n";
         spannableStringBuilder.append(TextUtils.colorText(mAlgoManager.isSmartphoneMovingSlowly(),
@@ -735,7 +734,7 @@ public abstract class ConnectedCar {
                                              String comparaisonSign, String space) {
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         for (Trx trx : trxLinkedHMap.values()) {
-            ssb.append(TextUtils.colorAntennaAverage(getRssiAverage(trx.getTrxNumber(), Trx.ANTENNA_ID_0, mode),
+            ssb.append(TextUtils.colorAntennaAverage(getRssiAverage(trx.getTrxNumber(), mode),
                     color, threshold, comparaisonSign, space));
         }
         ssb.append("\n");
