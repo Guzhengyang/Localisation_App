@@ -181,7 +181,7 @@ public class TrxUtils {
                                       byte leftAreaByte, byte rightAreaByte, byte backAreaByte,
                                       byte walkAwayByte, byte approachByte,
                                       byte leftTurnByte, byte fullTurnByte, byte rightTurnByte, byte recordByte, int rangingPredictionInt,
-                                      boolean lockFromTrx, boolean lockToSend, boolean startAllowed, boolean isThatcham) {
+                                      boolean lockFromTrx, boolean lockToSend, boolean startAllowed, boolean isThatcham, String middleBleChannel) {
         final String comma = ";";
         String log = rssiLeft + comma + rssiMiddle1 + comma + rssiMiddle2 + comma + rssiRight + comma + rssiTrunk + comma +
                 rssiFrontLeft + comma + rssiFrontRight + comma + rssiRearLeft + comma + rssiRearRight + comma + rssiBack + comma +
@@ -242,36 +242,52 @@ public class TrxUtils {
         log += leftTurnByte + comma + fullTurnByte + comma + rightTurnByte + comma +
                 recordByte + comma + rangingPredictionInt + comma +
                 booleanToString(lockFromTrx) + comma + booleanToString(lockToSend) + comma
-                + booleanToString(startAllowed) + comma + booleanToString(isThatcham) + comma;
+                + booleanToString(startAllowed) + comma + booleanToString(isThatcham) + comma
+                + middleBleChannel + comma;
         appendRssiLog(log);
     }
 
-    public static void appendSettingLogs(String carType, String carBase, String addressConnectable, String addressConnectable2, String addressFrontLeft, String addressFrontRight,
-                                         String addressLeft, String addressMiddle, String addressRight, String addressTrunk, String addressRearLeft, String addressBack, String addressRearRight,
-                                         int logNumber, int rollAvElement, int startNumElement, int lockNumelement, int unlockNumElement, int welcomeNumElement, int LongNumElement, int shortNumElement,
-                                         float thatchamTimeout, int sizeAcc, float correctionAcc, float frozenThr,
+    public static void appendSettingLogs(String carType, String carBase, String algoType, boolean isIndoor,
+                                         String addressConnectable, String addressConnectableRemote, String addressConnectablePC,
+                                         String addressFrontLeft, String addressFrontRight,
+                                         String addressLeft, String addressMiddle, String addressRight, String addressTrunk,
+                                         String addressRearLeft, String addressBack, String addressRearRight,
+                                         int logNumber, int rollAvElement, int startNumElement, int lockNumElement,
+                                         int unlockNumElement, int welcomeNumElement, int LongNumElement, int shortNumElement,
+                                         float thatchamTimeout, float preAuthTimeout, float actionTimeout, int sizeAcc,
+                                         float correctionAcc, float frozenThr, float wantedSpeed, int stepSize,
                                          int indoorRatioMaxMinThr, int indoorRatioCloseToCar, int outsideRatioMaxMinThr, int outsideRatioCloseToCar,
-                                         int offsetEarStart, int offsetEarLock, int offsetEarUnlock, int offsetPocketStart, int offsetPocketLock, int offsetPocketUnlock,
-                                         int indoorStartThr, int indoorUnlockThr, int indoorLockThr, int indoorWelcomeThr, int indoorNearDoorRatioThr, int indoorBackDoorRatioMinThr, int indoorBackDoorRatioMaxThr,
-                                         int indoorNearDoorRatioMB, int indoorNearDoorRatioMLMRMaxThr, int indoorNearDoorRatioMLMRMinThr, int indoorNearDoorRatioTLTRMaxThr, int indoorNearDoorRatioTLTRMinThr,
+                                         int offsetEarStart, int offsetEarLock, int offsetEarUnlock,
+                                         int offsetPocketStart, int offsetPocketLock, int offsetPocketUnlock,
+                                         int indoorStartThr, int indoorUnlockThr, int indoorLockThr,
+                                         int indoorWelcomeThr, int indoorNearDoorRatioThr, int indoorBackDoorRatioMinThr, int indoorBackDoorRatioMaxThr,
+                                         int indoorNearDoorRatioMB, int indoorNearDoorRatioMLMRMaxThr,
+                                         int indoorNearDoorRatioMLMRMinThr, int indoorNearDoorRatioTLTRMaxThr, int indoorNearDoorRatioTLTRMinThr,
                                          int indoorAverageDeltaLockThr, int indoorAverageDeltaUnlockThr,
-                                         int outsideStartThr, int outsideUnlockThr, int outsideLockThr, int outsideWelcomeThr, int outsideNearDoorRatioThr, int outsideBackDoorRatioMinThr, int outsideBackDoorRatioMaxThr,
-                                         int outsideNearDoorRatioMB, int outsideNearDoorRatioMLMRMaxThr, int outsideNearDoorRatioMLMRMinThr, int outsideNearDoorRatioTLTRMaxThr, int outsideNearDoorRatioTLTRMinThr,
+                                         int outsideStartThr, int outsideUnlockThr, int outsideLockThr,
+                                         int outsideWelcomeThr, int outsideNearDoorRatioThr, int outsideBackDoorRatioMinThr, int outsideBackDoorRatioMaxThr,
+                                         int outsideNearDoorRatioMB, int outsideNearDoorRatioMLMRMaxThr,
+                                         int outsideNearDoorRatioMLMRMinThr, int outsideNearDoorRatioTLTRMaxThr, int outsideNearDoorRatioTLTRMinThr,
                                          int outsideAverageDeltaLockThr, int outsideAverageDeltaUnlockThr,
                                          int unlockValidNumber,
-                                         int unlockMode, int lockMode, int startMode, float ecretage100, float ecretage70, float ecretage50, float ecretage30,
-                                         int equaLeft, int equaMiddle, int equaRight, int equaTrunk, int equaBack, int equaFrontLeft, int equaRearLeft, int equaFrontRight, int equaRearRight) {
+                                         int unlockMode, int lockMode, int startMode, float ecretage100,
+                                         float ecretage70, float ecretage50, float ecretage30,
+                                         int equaLeft, int equaMiddle, int equaRight, int equaTrunk,
+                                         int equaBack, int equaFrontLeft, int equaRearLeft, int equaFrontRight, int equaRearRight) {
         final String comma = ";";
-        String log = carType + comma + carBase + comma + addressConnectable + comma
-                + addressConnectable2 + comma + addressFrontLeft + comma + addressFrontRight + comma
+        String log = carType + comma + carBase + comma + algoType + comma + String.valueOf(isIndoor) + comma
+                + addressConnectable + comma + addressConnectableRemote + comma
+                + addressConnectablePC + comma + addressFrontLeft + comma + addressFrontRight + comma
                 + addressLeft + comma + addressMiddle + comma + addressRight + comma + addressTrunk + comma
                 + addressRearLeft + comma + addressBack + comma + addressRearRight + comma
                 + String.valueOf(logNumber) + comma + String.valueOf(rollAvElement) + comma
-                + String.valueOf(startNumElement) + comma + String.valueOf(lockNumelement) + comma
+                + String.valueOf(startNumElement) + comma + String.valueOf(lockNumElement) + comma
                 + String.valueOf(unlockNumElement) + comma + String.valueOf(welcomeNumElement) + comma
                 + String.valueOf(LongNumElement) + comma + String.valueOf(shortNumElement) + comma
-                + String.valueOf(thatchamTimeout) + comma + String.valueOf(sizeAcc) + comma
+                + String.valueOf(thatchamTimeout) + comma + String.valueOf(preAuthTimeout) + comma
+                + String.valueOf(actionTimeout) + comma + String.valueOf(sizeAcc) + comma
                 + String.valueOf(correctionAcc) + comma + String.valueOf(frozenThr) + comma
+                + String.valueOf(wantedSpeed) + comma + String.valueOf(stepSize) + comma
                 + String.valueOf(indoorRatioMaxMinThr) + comma + String.valueOf(indoorRatioCloseToCar) + comma
                 + String.valueOf(outsideRatioMaxMinThr) + comma + String.valueOf(outsideRatioCloseToCar) + comma
                 + String.valueOf(offsetEarStart) + comma + String.valueOf(offsetEarLock) + comma
@@ -390,7 +406,7 @@ public class TrxUtils {
                 + "IS UNLOCK BLOCKED;IS UNLOCK FORCED;IS FROZEN;IS LOCK;REARM LOCK;REARM UNLOCK;"
                 + "REARM WELCOME;WELCOME FLAG;LOCK FLAG;START FLAG;LEFT AREA FLAG;RIGHT AREA FLAG;"
                 + "BACK AREA FLAG;WALK AWAY FLAG;APPROACH FLAG;LEFT TURN FLAG;FULL TURN FLAG;"
-                + "RIGHT TURN FLAG;RECORD FLAG;PREDICTION;LOCK FROM TRX;LOCK TO SEND;START ALLOWED;IS THATCHAM;";
+                + "RIGHT TURN FLAG;RECORD FLAG;PREDICTION;LOCK FROM TRX;LOCK TO SEND;START ALLOWED;IS THATCHAM;MIDDLE BLE CHANNEL;";
         try {
             BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
             buf.append(ColNames);
