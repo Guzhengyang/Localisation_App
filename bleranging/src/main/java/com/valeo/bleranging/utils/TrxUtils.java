@@ -129,14 +129,21 @@ public class TrxUtils {
     /**
      * Create the string to write in the log file and add it
      * @param rssiLeft the left trx rssi
-     * @param rssiMiddle1 the middle trx antenna 1 rssi
-     * @param rssiMiddle2 the middle trx antenna 2 rssi
+     * @param rssiMiddle the middle trx antenna 1 rssi
      * @param rssiRight the right trx rssi
      * @param rssiBack the back trx rssi
      * @param rssiFrontLeft the front left trx rssi
      * @param rssiFrontRight the front right trx rssi
      * @param rssiRearLeft the rear left trx rssi
      * @param rssiRearRight the rear right trx rssi
+     * @param rssiLeftOriginal the original left trx rssi
+     * @param rssiMiddleOriginal the original middle trx rssi
+     * @param rssiRightOriginal the original right trx rssi
+     * @param rssiBackOriginal the original back trx rssi
+     * @param rssiFrontLeftOriginal the original front left trx rssi
+     * @param rssiFrontRightOriginal the original front right trx rssi
+     * @param rssiRearLeftOriginal the original rear left trx rssi
+     * @param rssiRearRightOriginal the original rear right trx rssi
      * @param z the device z position azimuth
      * @param x the device x position pitch
      * @param y the device y position roll
@@ -166,11 +173,23 @@ public class TrxUtils {
      * @param lockFromTrx lock status from trx
      * @param lockToSend lock status to send
      * @param startAllowed true if start is allowed, false otherwise
+     * @param isThatcham true if thatcham, false otherwise
+     * @param channelLeft left trx ble channel
+     * @param channelMiddle middle trx ble channel
+     * @param channelRight right trx ble channel
+     * @param channelTrunk trunk trx ble channel
+     * @param channelFrontLeft front left trx ble channel
+     * @param channelFrontRight front right trx ble channel
+     * @param channelRearLeft rear left trx ble channel
+     * @param channelRearRight rear right trx ble channel
+     * @param channelBack back trx ble channel
      */
-    public static void appendRssiLogs(int rssiLeft, int rssiMiddle1, int rssiMiddle2, int rssiRight, int rssiTrunk,
-                                      int rssiFrontLeft, int rssiFrontRight, int rssiRearLeft, int rssiRearRight, int rssiBack,
-                                      int rssiLeftOriginal, int rssiMiddle1Original, int rssiMiddle2Original, int rssiRightOriginal, int rssiTrunkOriginal,
-                                      int rssiFrontLeftOriginal, int rssiFrontRightOriginal, int rssiRearLeftOriginal, int rssiRearRightOriginal, int rssiBackOriginal,
+    public static void appendRssiLogs(int rssiLeft, int rssiMiddle, int rssiRight, int rssiTrunk,
+                                      int rssiFrontLeft, int rssiFrontRight,
+                                      int rssiRearLeft, int rssiRearRight, int rssiBack,
+                                      int rssiLeftOriginal, int rssiMiddleOriginal, int rssiRightOriginal, int rssiTrunkOriginal,
+                                      int rssiFrontLeftOriginal, int rssiFrontRightOriginal,
+                                      int rssiRearLeftOriginal, int rssiRearRightOriginal, int rssiBackOriginal,
                                       float z, float x, float y,
                                       boolean isSmartphoneInPocket, boolean smartphoneIsMovingSlowly, boolean isLockStatusChangedTimerExpired,
                                       boolean blockStart, boolean forcedStart,
@@ -181,11 +200,15 @@ public class TrxUtils {
                                       byte leftAreaByte, byte rightAreaByte, byte backAreaByte,
                                       byte walkAwayByte, byte approachByte,
                                       byte leftTurnByte, byte fullTurnByte, byte rightTurnByte, byte recordByte, int rangingPredictionInt,
-                                      boolean lockFromTrx, boolean lockToSend, boolean startAllowed, boolean isThatcham, String middleBleChannel) {
+                                      boolean lockFromTrx, boolean lockToSend, boolean startAllowed, boolean isThatcham,
+                                      String channelLeft, String channelMiddle, String channelRight, String channelTrunk,
+                                      String channelFrontLeft, String channelFrontRight,
+                                      String channelRearLeft, String channelRearRight,
+                                      String channelBack, int beepInt) {
         final String comma = ";";
-        String log = rssiLeft + comma + rssiMiddle1 + comma + rssiMiddle2 + comma + rssiRight + comma + rssiTrunk + comma +
+        String log = rssiLeft + comma + rssiMiddle + comma + rssiRight + comma + rssiTrunk + comma +
                 rssiFrontLeft + comma + rssiFrontRight + comma + rssiRearLeft + comma + rssiRearRight + comma + rssiBack + comma +
-                rssiLeftOriginal + comma + rssiMiddle1Original + comma + rssiMiddle2Original + comma + rssiRightOriginal + comma + rssiTrunkOriginal + comma +
+                rssiLeftOriginal + comma + rssiMiddleOriginal + comma + rssiRightOriginal + comma + rssiTrunkOriginal + comma +
                 rssiFrontLeftOriginal + comma + rssiFrontRightOriginal + comma + rssiRearLeftOriginal + comma + rssiRearRightOriginal + comma + rssiBackOriginal + comma +
                 z + comma + x + comma + y + comma +
                 booleanToString(isSmartphoneInPocket) + comma + booleanToString(smartphoneIsMovingSlowly) + comma + booleanToString(isLockStatusChangedTimerExpired) + comma +
@@ -243,7 +266,10 @@ public class TrxUtils {
                 recordByte + comma + rangingPredictionInt + comma +
                 booleanToString(lockFromTrx) + comma + booleanToString(lockToSend) + comma
                 + booleanToString(startAllowed) + comma + booleanToString(isThatcham) + comma
-                + middleBleChannel + comma;
+                + channelLeft + comma + channelMiddle + comma + channelRight + comma
+                + channelTrunk + comma + channelFrontLeft + comma + channelFrontRight + comma
+                + channelRearLeft + comma + channelRearRight + comma
+                + channelBack + comma + beepInt + comma;
         appendRssiLog(log);
     }
 

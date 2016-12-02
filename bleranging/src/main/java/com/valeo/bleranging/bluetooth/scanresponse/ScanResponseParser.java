@@ -112,6 +112,7 @@ public class ScanResponseParser {
         batteryMeasurement = advertisedData[offset + 9];
         System.arraycopy(advertisedData, offset + 10, rollingCounter, 0, 3);
         beaconPosition = advertisedData[offset + 13];
-        return new BeaconScanResponse(pcbaPnIndicator, softwareVersion, advertisingChannel, dataType, data, batteryMeasurement, rollingCounter, beaconPosition);
+        return new BeaconScanResponse(pcbaPnIndicator, softwareVersion, advertisingChannel,
+                dataType, data, batteryMeasurement, rollingCounter, beaconPosition);
     }
 }
