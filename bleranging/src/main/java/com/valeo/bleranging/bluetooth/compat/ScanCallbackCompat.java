@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.ParcelUuid;
 import android.support.annotation.Nullable;
 
+import com.valeo.bleranging.bluetooth.SampleGattAttributes;
 import com.valeo.bleranging.utils.PSALogs;
 
 /**
@@ -94,9 +95,8 @@ public abstract class ScanCallbackCompat {
 
                         if (scanRecord != null) {
                             scanRecordAsBytes = scanRecord.getBytes();
-                            advertisedData = scanRecord.getServiceData(ParcelUuid.fromString("0000ff12-0000-1000-8000-00805f9b34fb"));
+                            advertisedData = scanRecord.getServiceData(ParcelUuid.fromString(SampleGattAttributes.VALEO_REMOTE_CONTROL_ADV_SERVICE_UUID));
                         }
-
                         ScanCallbackCompat.this.onScanResult(device, scanResult.getRssi(), scanRecordAsBytes, advertisedData);
                     }
                 }

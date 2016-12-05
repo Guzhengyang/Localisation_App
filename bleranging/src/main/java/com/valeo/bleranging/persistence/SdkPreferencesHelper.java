@@ -96,15 +96,15 @@ public final class SdkPreferencesHelper {
     public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:2A:B8";
     public final static String BLE_ADDRESS_CONNECTABLE_PC = "B0:B4:48:BD:56:85";
     public final static String BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL = "5C:E0:C5:34:4D:32";
-    public final static String BLE_ADDRESS_FRONT_LEFT = "D4:F5:13:56:5C:F0";
-    public final static String BLE_ADDRESS_FRONT_RIGHT = "D4:F5:13:56:7C:C2";
-    public final static String BLE_ADDRESS_LEFT = "D4:F5:13:56:39:A5";
-    public final static String BLE_ADDRESS_MIDDLE = "D4:F5:13:56:6B:65";
-    public final static String BLE_ADDRESS_RIGHT = "D4:F5:13:56:65:16";
-    public final static String BLE_ADDRESS_TRUNK = "D4:F5:13:56:5C:B4";
-    public final static String BLE_ADDRESS_REAR_LEFT = "D4:F5:13:56:7A:55";
+    public final static String BLE_ADDRESS_FRONT_LEFT = "24:71:89:1D:4E:4D";
+    public final static String BLE_ADDRESS_FRONT_RIGHT = "24:71:89:1D:4E:66";
+    public final static String BLE_ADDRESS_LEFT = "24:71:89:1D:4E:79";
+    public final static String BLE_ADDRESS_MIDDLE = "24:71:89:1D:4E:1A";
+    public final static String BLE_ADDRESS_RIGHT = "24:71:89:1D:4E:3D";
+    public final static String BLE_ADDRESS_TRUNK = "24:71:89:1D:4C:FC";
+    public final static String BLE_ADDRESS_REAR_LEFT = "24:71:89:1D:4E:6D";
     public final static String BLE_ADDRESS_BACK = "78:A5:04:81:5A:21";
-    public final static String BLE_ADDRESS_REAR_RIGHT = "D4:F5:13:56:71:4B";
+    public final static String BLE_ADDRESS_REAR_RIGHT = "24:71:89:1D:4E:61";
     public static final String SAVED_CC_GENERIC_OPTION = "savedConnectedCarGenericOption";
     private final static String LOG_FILE_NAME = "sdcard/InBlueRssi/allRssi_0_0000.csv";
     /**

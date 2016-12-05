@@ -166,8 +166,9 @@ public class TrxUtils {
      * @param walkAwayByte equals 1 if walk away is activated, 0 otherwise
      * @param approachByte equals 1 if approach is activated, 0 otherwise
      * @param leftTurnByte equals 1 if left turn is activated, 0 otherwise
-     * @param fullTurnByte equals 1 if full turn is activated, 0 otherwise
      * @param rightTurnByte equals 1 if right turn is activated, 0 otherwise
+     * @param approachSideByte equals 1 if right side, 0 if left side
+     * @param approachRoadByte equals [1-6] for the road taken during test
      * @param recordByte equals 1 if record is activated, 0 otherwise
      * @param rangingPredictionInt prediction from random forest algorithm
      * @param lockFromTrx lock status from trx
@@ -198,8 +199,9 @@ public class TrxUtils {
                                       boolean rearmLock, boolean rearmUnlock, boolean rearmWelcome, boolean lockStatus,
                                       byte welcomeByte, byte lockByte, byte startByte,
                                       byte leftAreaByte, byte rightAreaByte, byte backAreaByte,
-                                      byte walkAwayByte, byte approachByte,
-                                      byte leftTurnByte, byte fullTurnByte, byte rightTurnByte, byte recordByte, int rangingPredictionInt,
+                                      byte walkAwayByte, byte approachByte, byte leftTurnByte,
+                                      byte rightTurnByte, byte approachSideByte, byte approachRoadByte,
+                                      byte recordByte, int rangingPredictionInt,
                                       boolean lockFromTrx, boolean lockToSend, boolean startAllowed, boolean isThatcham,
                                       String channelLeft, String channelMiddle, String channelRight, String channelTrunk,
                                       String channelFrontLeft, String channelFrontRight,
@@ -262,9 +264,10 @@ public class TrxUtils {
         } else {
             log += "14" + comma;
         }
-        log += leftTurnByte + comma + fullTurnByte + comma + rightTurnByte + comma +
-                recordByte + comma + rangingPredictionInt + comma +
-                booleanToString(lockFromTrx) + comma + booleanToString(lockToSend) + comma
+        log += leftTurnByte + comma + rightTurnByte + comma
+                + approachSideByte + comma + approachRoadByte + comma
+                + recordByte + comma + rangingPredictionInt + comma
+                + booleanToString(lockFromTrx) + comma + booleanToString(lockToSend) + comma
                 + booleanToString(startAllowed) + comma + booleanToString(isThatcham) + comma
                 + channelLeft + comma + channelMiddle + comma + channelRight + comma
                 + channelTrunk + comma + channelFrontLeft + comma + channelFrontRight + comma
@@ -396,10 +399,10 @@ public class TrxUtils {
     public static void writeFirstColumnSettings() {
         //Write 1st row with column names
         //BufferedWriter for performance, true to set append to file flag
-        String ColNames = "TIMESTAMP;carType;carBase;addressConnectable;addressConnectable2;addressFrontLeft;addressFrontRight;"
+        String ColNames = "TIMESTAMP;carType;carBase;algoSelected;isIndoor;addressConnectable;addressConnectableRemote;addressConnectablePC;addressFrontLeft;addressFrontRight;"
                 + "addressLeft;addressMiddle;addressRight;addressTrunk;addressRearLeft;addressBack;addressRearRight;"
                 + "logNumber;rollAvElement;startNumElement;lockNumelement;unlockNumElement;welcomeNumElement;LongNumElement;shortNumElement;"
-                + "thatchamTimeout;sizeAcc;correctionAcc;frozenThr;"
+                + "thatchamTimeout;preAuthTimeout;actionTimeout;sizeAcc;correctionAcc;frozenThr;wantedSpeed;stepSize;"
                 + "indoorRatioMaxMinThr;indoorRatioCloseToCar;outsideRatioMaxMinThr;outsideRatioCloseToCar;offsetEarStart;offsetEarLock;offsetEarUnlock;offsetPocketStart;offsetPocketLock;offsetPocketUnlock;"
                 + "indoorStartThr;indoorUnlockThr;indoorLockThr;indoorWelcomeThr;indoorNearDoorRatioThr;indoorBackDoorRatioMinThr;indoorBackDoorRatioMaxThr;"
                 + "indoorNearDoorRatioMB;indoorNearDoorRatioMLMRMaxThr;indoorNearDoorRatioMLMRMinThr;indoorNearDoorRatioTLTRMaxThr;indoorNearDoorRatioTLTRMinThr;"
@@ -423,16 +426,21 @@ public class TrxUtils {
     public static void writeFirstColumnLogs() {
         //Write 1st row with column names
         //BufferedWriter for performance, true to set append to file flag
-        String ColNames = "TIMESTAMP;RSSI LEFT;RSSI MIDDLE1;RSSI MIDDLE2;RSSI RIGHT;"
+        String ColNames = "TIMESTAMP;RSSI LEFT;RSSI MIDDLE;RSSI RIGHT;"
                 + "RSSI TRUNK;RSSI FRONTLEFT;RSSI FRONTRIGHT;RSSI REARLEFT;RSSI REARRIGHT;RSSI BACK;"
-                + "RSSI LEFT_ORIGIN;RSSI MIDDLE1_ORIGIN;RSSI MIDDLE2_ORIGIN;RSSI RIGHT_ORIGIN;"
-                + "RSSI TRUNK_ORIGIN;RSSI FRONTLEFT_ORIGIN;RSSI FRONTRIGHT_ORIGIN;RSSI REARLEFT_ORIGIN;RSSI REARRIGHT_ORIGIN;RSSI BACK_ORIGIN;"
+                + "RSSI LEFT_ORIGIN;RSSI MIDDLE;RSSI RIGHT_ORIGIN;"
+                + "RSSI TRUNK_ORIGIN;RSSI FRONTLEFT_ORIGIN;RSSI FRONTRIGHT_ORIGIN;"
+                + "RSSI REARLEFT_ORIGIN;RSSI REARRIGHT_ORIGIN;RSSI BACK_ORIGIN;"
                 + "Z AZIMUTH;X PITCH;Y ROLL;IN POCKET;IS LAID;ARE LOCK ACTIONS AVAILABLE;"
                 + "IS START BLOCKED;IS START FORCED;IS LOCK BLOCKED;IS LOCK FORCED;"
                 + "IS UNLOCK BLOCKED;IS UNLOCK FORCED;IS FROZEN;IS LOCK;REARM LOCK;REARM UNLOCK;"
                 + "REARM WELCOME;WELCOME FLAG;LOCK FLAG;START FLAG;LEFT AREA FLAG;RIGHT AREA FLAG;"
-                + "BACK AREA FLAG;WALK AWAY FLAG;APPROACH FLAG;LEFT TURN FLAG;FULL TURN FLAG;"
-                + "RIGHT TURN FLAG;RECORD FLAG;PREDICTION;LOCK FROM TRX;LOCK TO SEND;START ALLOWED;IS THATCHAM;MIDDLE BLE CHANNEL;";
+                + "BACK AREA FLAG;WALK AWAY FLAG;APPROACH FLAG;LEFT TURN FLAG;"
+                + "RIGHT TURN FLAG;APPROACHSIDE FLAG;APPROACHROAD FLAG;RECORD FLAG;"
+                + "PREDICTION;LOCK FROM TRX;LOCK TO SEND;START ALLOWED;IS THATCHAM;"
+                + "BLE CHANNEL LEFT;BLE CHANNEL MIDDLE;BLE CHANNEL RIGHT;BLE CHANNEL TRUNK;"
+                + "BLE CHANNEL FRONTLEFT;BLE CHANNEL FRONTRIGHT;"
+                + "BLE CHANNEL REARLEFT;BLE CHANNEL REARRIGHT;BLE CHANNEL BACK;BEEPINT;";
         try {
             BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
             buf.append(ColNames);
