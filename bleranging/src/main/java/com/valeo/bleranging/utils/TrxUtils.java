@@ -191,6 +191,12 @@ public class TrxUtils {
                                       int rssiLeftOriginal, int rssiMiddleOriginal, int rssiRightOriginal, int rssiTrunkOriginal,
                                       int rssiFrontLeftOriginal, int rssiFrontRightOriginal,
                                       int rssiRearLeftOriginal, int rssiRearRightOriginal, int rssiBackOriginal,
+                                      int offset38Left, int offset38Middle, int offset38Right, int offset38Trunk,
+                                      int offset38FrontLeft, int offset38FrontRight,
+                                      int offset38RearLeft, int offset38RearRight, int offset38Back,
+                                      int offset39Left, int offset39Middle, int offset39Right, int offset39Trunk,
+                                      int offset39FrontLeft, int offset39FrontRight,
+                                      int offset39RearLeft, int offset39RearRight, int offset39Back,
                                       float z, float x, float y,
                                       boolean isSmartphoneInPocket, boolean smartphoneIsMovingSlowly, boolean isLockStatusChangedTimerExpired,
                                       boolean blockStart, boolean forcedStart,
@@ -212,6 +218,12 @@ public class TrxUtils {
                 rssiFrontLeft + comma + rssiFrontRight + comma + rssiRearLeft + comma + rssiRearRight + comma + rssiBack + comma +
                 rssiLeftOriginal + comma + rssiMiddleOriginal + comma + rssiRightOriginal + comma + rssiTrunkOriginal + comma +
                 rssiFrontLeftOriginal + comma + rssiFrontRightOriginal + comma + rssiRearLeftOriginal + comma + rssiRearRightOriginal + comma + rssiBackOriginal + comma +
+                offset38Left + comma + offset38Middle + comma + offset38Right + comma + offset38Trunk + comma +
+                offset38FrontLeft + comma + offset38FrontRight + comma +
+                offset38RearLeft + comma + offset38RearRight + comma + offset38Back + comma +
+                offset39Left + comma + offset39Middle + comma + offset39Right + comma + offset39Trunk + comma +
+                offset39FrontLeft + comma + offset39FrontRight + comma +
+                offset39RearLeft + comma + offset39RearRight + comma + offset39Back + comma +
                 z + comma + x + comma + y + comma +
                 booleanToString(isSmartphoneInPocket) + comma + booleanToString(smartphoneIsMovingSlowly) + comma + booleanToString(isLockStatusChangedTimerExpired) + comma +
                 booleanToString(blockStart) + comma + booleanToString(forcedStart) + comma +
@@ -428,9 +440,15 @@ public class TrxUtils {
         //BufferedWriter for performance, true to set append to file flag
         String ColNames = "TIMESTAMP;RSSI LEFT;RSSI MIDDLE;RSSI RIGHT;"
                 + "RSSI TRUNK;RSSI FRONTLEFT;RSSI FRONTRIGHT;RSSI REARLEFT;RSSI REARRIGHT;RSSI BACK;"
-                + "RSSI LEFT_ORIGIN;RSSI MIDDLE;RSSI RIGHT_ORIGIN;"
+                + "RSSI LEFT_ORIGIN;RSSI MIDDLE_ORIGIN;RSSI RIGHT_ORIGIN;"
                 + "RSSI TRUNK_ORIGIN;RSSI FRONTLEFT_ORIGIN;RSSI FRONTRIGHT_ORIGIN;"
                 + "RSSI REARLEFT_ORIGIN;RSSI REARRIGHT_ORIGIN;RSSI BACK_ORIGIN;"
+                + "LEFT_OFFSET38;MIDDLE_OFFSET38;RIGHT_OFFSET38;"
+                + "TRUNK_OFFSET38;FRONTLEFT_OFFSET38;FRONTRIGHT_OFFSET38;"
+                + "REARLEFT_OFFSET38;REARRIGHT_OFFSET38;BACK_OFFSET38;"
+                + "LEFT_OFFSET39;MIDDLE_OFFSET_39;RIGHT_OFFSET39;"
+                + "TRUNK_OFFSET39;FRONTLEFT_OFFSET39;FRONTRIGHT_OFFSET39;"
+                + "REARLEFT_OFFSET39;REARRIGHT_OFFSET39;BACK_OFFSET39;"
                 + "Z AZIMUTH;X PITCH;Y ROLL;IN POCKET;IS LAID;ARE LOCK ACTIONS AVAILABLE;"
                 + "IS START BLOCKED;IS START FORCED;IS LOCK BLOCKED;IS LOCK FORCED;"
                 + "IS UNLOCK BLOCKED;IS UNLOCK FORCED;IS FROZEN;IS LOCK;REARM LOCK;REARM UNLOCK;"

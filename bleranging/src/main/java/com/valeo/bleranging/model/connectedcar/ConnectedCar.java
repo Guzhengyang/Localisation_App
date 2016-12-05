@@ -316,10 +316,17 @@ public abstract class ConnectedCar {
         for (Trx trx : trxLinkedHMap.values()) {
             trx.compareCheckerAndSetAntennaActive();
             if (trx.isEnabled() && !trx.isActive()) {
-                trx.saveRssi(trxLinkedHMap.get(NUMBER_TRX_MIDDLE).getCurrentModifiedRssi(),
-                        smartphoneIsMovingSlowly, false);
+                trx.saveRssi(getCurrentDisconnectedRssi(trx.getTrxNumber()), smartphoneIsMovingSlowly, false);
             }
         }
+    }
+
+    private int getCurrentDisconnectedRssi(int trxNumber) {
+        if (trxLinkedHMap.get(NUMBER_TRX_MIDDLE) != null) {
+            return trxLinkedHMap.get(NUMBER_TRX_MIDDLE).getCurrentModifiedRssi() +
+                    (trxLinkedHMap.get(NUMBER_TRX_MIDDLE).getCurrentModifiedRssi() - trxLinkedHMap.get(trxNumber).getCurrentModifiedRssi());
+        }
+        return trxLinkedHMap.get(NUMBER_TRX_MIDDLE).getCurrentModifiedRssi();
     }
 
     // GET AVERAGES AND RATIOS
@@ -511,7 +518,7 @@ public abstract class ConnectedCar {
         return trxLinkedHMap.get(trxNumber) != null && trxLinkedHMap.get(trxNumber).isActive();
     }
 
-    private int getOffsetBleChannel38(int trxNumber) {
+    public int getCurrentOffset38(int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getOffset38();
         } else {
@@ -519,7 +526,7 @@ public abstract class ConnectedCar {
         }
     }
 
-    private int getOffsetBleChannel39(int trxNumber) {
+    public int getCurrentOffset39(int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getOffset39();
         } else {
@@ -679,7 +686,7 @@ public abstract class ConnectedCar {
         for (Trx trx : trxLinkedHMap.values()) {
             spannableStringBuilder
                     .append(space2)
-                    .append(String.format(Locale.FRANCE, "%1$03d", getOffsetBleChannel38(trx.getTrxNumber())))
+                    .append(String.format(Locale.FRANCE, "%1$03d", getCurrentOffset38(trx.getTrxNumber())))
                     .append(space2);
         }
         spannableStringBuilder.append('\n');
@@ -687,7 +694,7 @@ public abstract class ConnectedCar {
         for (Trx trx : trxLinkedHMap.values()) {
             spannableStringBuilder
                     .append(space2)
-                    .append(String.format(Locale.FRANCE, "%1$03d", getOffsetBleChannel39(trx.getTrxNumber())))
+                    .append(String.format(Locale.FRANCE, "%1$03d", getCurrentOffset39(trx.getTrxNumber())))
                     .append(space2);
         }
         spannableStringBuilder.append('\n');

@@ -174,7 +174,7 @@ public class Antenna {
      * @return the offset of the new channel
      */
     private int calculateOffsetChannel(int rssi) {
-        int offsetBleChannel = antennaRssiAverageWelcome - rssi;
+        int offsetBleChannel = lastOriginalRssi - rssi;
         if (offsetBleChannel > 10) {
             offsetBleChannel = 10;
         } else if (offsetBleChannel < -10) {
@@ -318,14 +318,14 @@ public class Antenna {
             this.lastRssi = rssi;
             this.lastBleChannel = bleChannel;
             this.lastIsSmartphoneMovingSlowly = isSmartphoneMovingSlowly;
-            hasBeenInitialized = true;
+            this.hasBeenInitialized = true;
         }
         if (rssiPente.size() == 10) {
             rssiPente.remove(0);
         }
+        currentOriginalRssi = rssi;
         rssi += getTrxRssiEqualizer(numberTrx); // add trx rssi antenna power Equalizer
         rssi = dynamicOffsetCompensation(rssi, bleChannel); // rssi channel offset dynamic compensation
-        currentOriginalRssi = rssi;
         rssiPente.add(currentOriginalRssi - lastOriginalRssi);
         lastOriginalRssi = currentOriginalRssi;
         rssi = getCorrectedRssi(rssi); // Correct the rssi value with an ecretage on the last N-2 rssi seen
@@ -366,7 +366,7 @@ public class Antenna {
                 break;
             case BLE_CHANNEL_39:
                 if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
-                    offsetBleChannel39 = calculateOffsetChannel(rssi);
+                    offsetBleChannel39 = offsetBleChannel38 + calculateOffsetChannel(rssi);
                 }
                 rssi += offsetBleChannel39;
                 break;
