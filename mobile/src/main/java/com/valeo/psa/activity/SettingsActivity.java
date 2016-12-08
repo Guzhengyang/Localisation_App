@@ -297,8 +297,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private static final String FILE_NAME = "filename";
         private static final int PICK_IMPORT_FILE_RESULT_CODE = 92163;
 
-        private EditTextPreference indoor_ratio_max_min_thr;
-        private EditTextPreference outside_ratio_max_min_thr;
         private EditTextPreference indoor_ratio_close_to_car_thr;
         private EditTextPreference outside_ratio_close_to_car_thr;
         private EditTextPreference offset_ear_start;
@@ -546,9 +544,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         private void setViews() {
-            indoor_ratio_max_min_thr = ((EditTextPreference) findPreference(getString(R.string.indoor_ratio_max_min_thr_pref_name)));
             indoor_ratio_close_to_car_thr = ((EditTextPreference) findPreference(getString(R.string.indoor_ratio_close_to_car_thr_pref_name)));
-            outside_ratio_max_min_thr = ((EditTextPreference) findPreference(getString(R.string.outside_ratio_max_min_thr_pref_name)));
             outside_ratio_close_to_car_thr = ((EditTextPreference) findPreference(getString(R.string.outside_ratio_close_to_car_thr_pref_name)));
 //            near_door_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.NEAR_DOOR_THR_PREFERENCES_NAME));
 //            equally_near_door_thr = ((EditTextPreference) findPreference(SdkPreferencesHelper.EQUALLY_NEAR_DOOR_THR_PREFERENCES_NAME));
@@ -619,9 +615,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         private void setDefaultValues() {
-            indoor_ratio_max_min_thr.setText(indoor_ratio_max_min_thr.getSummary().toString());
             indoor_ratio_close_to_car_thr.setText(indoor_ratio_close_to_car_thr.getSummary().toString());
-            outside_ratio_max_min_thr.setText(outside_ratio_max_min_thr.getSummary().toString());
             outside_ratio_close_to_car_thr.setText(outside_ratio_close_to_car_thr.getSummary().toString());
 //            near_door_thr.setText(near_door_thr.getSummary().toString());
 //            equally_near_door_thr.setText(equally_near_door_thr.getSummary().toString());
@@ -694,9 +688,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // updated to reflect the new value, per the Android Design
         // guidelines.
         private void bindSummaries() {
-            bindPreferenceSummaryToValue(indoor_ratio_max_min_thr, String.valueOf(SdkPreferencesHelper.INDOOR_RATIO_MAX_MIN_THR));
             bindPreferenceSummaryToValue(indoor_ratio_close_to_car_thr, String.valueOf(SdkPreferencesHelper.INDOOR_RATIO_CLOSE_TO_CAR_THR));
-            bindPreferenceSummaryToValue(outside_ratio_max_min_thr, String.valueOf(SdkPreferencesHelper.OUTSIDE_RATIO_MAX_MIN_THR));
             bindPreferenceSummaryToValue(outside_ratio_close_to_car_thr, String.valueOf(SdkPreferencesHelper.OUTSIDE_RATIO_CLOSE_TO_CAR_THR));
 //            bindPreferenceSummaryToValue(near_door_thr, String.valueOf(SdkPreferencesHelper.NEAR_DOOR_THR));
 //            bindPreferenceSummaryToValue(equally_near_door_thr, String.valueOf(SdkPreferencesHelper.EQUALLY_NEAR_DOOR_THR));

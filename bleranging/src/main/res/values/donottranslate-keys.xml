@@ -99,8 +99,6 @@
     <string name="equalizer_rear_right_pref_name">"com.inblue.PREFERENCE_EQUALIZER_REAR_RIGHT"</string>
     <string name="export_pref_name">"com.inblue.PREFERENCE_EXPORT"</string>
     <string name="import_pref_name">"com.inblue.PREFERENCE_IMPORT"</string>
-    <string name="indoor_ratio_max_min_thr_pref_name">"com.inblue.PREFERENCE_INDOOR_RATIO_MAX_MIN_THR"</string>
-    <string name="outside_ratio_max_min_thr_pref_name">"com.inblue.PREFERENCE_OUTSIDE_RATIO_MAX_MIN_THR"</string>
     <string name="indoor_ratio_close_to_car_thr_pref_name">"com.inblue.PREFERENCE_INDOOR_CLOSE_TO_CAR_THR"</string>
     <string name="outside_ratio_close_to_car_thr_pref_name">"com.inblue.PREFERENCE_OUTSIDE_CLOSE_TO_CAR_THR"</string>
 </resources>

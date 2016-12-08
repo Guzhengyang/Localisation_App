@@ -351,7 +351,7 @@ public class Antenna {
      * @param bleChannel the current ble channel
      * @return the compensated rssi
      */
-    private int dynamicOffsetCompensation(int rssi, BLEChannel bleChannel) {
+    private synchronized int dynamicOffsetCompensation(int rssi, BLEChannel bleChannel) {
         switch (bleChannel) {
             case BLE_CHANNEL_37:
                 if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
@@ -384,7 +384,7 @@ public class Antenna {
      * @param numberTrx the trx id
      * @return the value to equalize the trx
      */
-    private int getTrxRssiEqualizer(int numberTrx) {
+    private synchronized int getTrxRssiEqualizer(int numberTrx) {
         switch (numberTrx) {
             case ConnectedCar.NUMBER_TRX_FRONT_LEFT:
                 return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontLeft(SdkPreferencesHelper.getInstance().getConnectedCarType());

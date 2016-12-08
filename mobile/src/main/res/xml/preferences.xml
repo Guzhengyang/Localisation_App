@@ -3,16 +3,8 @@
     <PreferenceCategory android:title="@string/pref_near_door">
         <EditTextPreference
             android:inputType="numberSigned"
-            android:key="@string/indoor_ratio_max_min_thr_pref_name"
-            android:title="@string/pref_indoor_ratio_max_min_thr" />
-        <EditTextPreference
-            android:inputType="numberSigned"
             android:key="@string/indoor_ratio_close_to_car_thr_pref_name"
             android:title="@string/pref_indoor_ratio_close_to_car_thr" />
-        <EditTextPreference
-            android:inputType="numberSigned"
-            android:key="@string/outside_ratio_max_min_thr_pref_name"
-            android:title="@string/pref_outside_ratio_max_min_thr" />
         <EditTextPreference
             android:inputType="numberSigned"
             android:key="@string/outside_ratio_close_to_car_thr_pref_name"

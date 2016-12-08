@@ -73,9 +73,7 @@
     <string name="base_title_list_preference">Available base type</string>
     <string name="algo_title_list_preference">Available Algorithm</string>
     <string name="pref_near_door">NEAR DOOR THR</string>
-    <string name="pref_indoor_ratio_max_min_thr">Indoor ratio Max Min Thr</string>
     <string name="pref_indoor_ratio_close_to_car_thr">Indoor ratio Close to car Thr</string>
-    <string name="pref_outside_ratio_max_min_thr">Outside ratio Max Min Thr</string>
     <string name="pref_outside_ratio_close_to_car_thr">Outside ratio Close to car Thr</string>
     <string name="pref_offset">OFFSET</string>
     <string name="pref_offset_ear_start">Start Offset Ear</string>

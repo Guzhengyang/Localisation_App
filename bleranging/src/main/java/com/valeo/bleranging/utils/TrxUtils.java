@@ -297,7 +297,7 @@ public class TrxUtils {
                                          int unlockNumElement, int welcomeNumElement, int LongNumElement, int shortNumElement,
                                          float thatchamTimeout, float preAuthTimeout, float actionTimeout, int sizeAcc,
                                          float correctionAcc, float frozenThr, float wantedSpeed, int stepSize,
-                                         int indoorRatioMaxMinThr, int indoorRatioCloseToCar, int outsideRatioMaxMinThr, int outsideRatioCloseToCar,
+                                         int indoorRatioCloseToCar, int outsideRatioCloseToCar,
                                          int offsetEarStart, int offsetEarLock, int offsetEarUnlock,
                                          int offsetPocketStart, int offsetPocketLock, int offsetPocketUnlock,
                                          int indoorStartThr, int indoorUnlockThr, int indoorLockThr,
@@ -329,8 +329,7 @@ public class TrxUtils {
                 + String.valueOf(actionTimeout) + comma + String.valueOf(sizeAcc) + comma
                 + String.valueOf(correctionAcc) + comma + String.valueOf(frozenThr) + comma
                 + String.valueOf(wantedSpeed) + comma + String.valueOf(stepSize) + comma
-                + String.valueOf(indoorRatioMaxMinThr) + comma + String.valueOf(indoorRatioCloseToCar) + comma
-                + String.valueOf(outsideRatioMaxMinThr) + comma + String.valueOf(outsideRatioCloseToCar) + comma
+                + String.valueOf(indoorRatioCloseToCar) + comma + String.valueOf(outsideRatioCloseToCar) + comma
                 + String.valueOf(offsetEarStart) + comma + String.valueOf(offsetEarLock) + comma
                 + String.valueOf(offsetEarUnlock) + comma + String.valueOf(offsetPocketStart) + comma
                 + String.valueOf(offsetPocketLock) + comma + String.valueOf(offsetPocketUnlock) + comma
@@ -415,7 +414,7 @@ public class TrxUtils {
                 + "addressLeft;addressMiddle;addressRight;addressTrunk;addressRearLeft;addressBack;addressRearRight;"
                 + "logNumber;rollAvElement;startNumElement;lockNumelement;unlockNumElement;welcomeNumElement;LongNumElement;shortNumElement;"
                 + "thatchamTimeout;preAuthTimeout;actionTimeout;sizeAcc;correctionAcc;frozenThr;wantedSpeed;stepSize;"
-                + "indoorRatioMaxMinThr;indoorRatioCloseToCar;outsideRatioMaxMinThr;outsideRatioCloseToCar;offsetEarStart;offsetEarLock;offsetEarUnlock;offsetPocketStart;offsetPocketLock;offsetPocketUnlock;"
+                + "indoorRatioCloseToCar;outsideRatioCloseToCar;offsetEarStart;offsetEarLock;offsetEarUnlock;offsetPocketStart;offsetPocketLock;offsetPocketUnlock;"
                 + "indoorStartThr;indoorUnlockThr;indoorLockThr;indoorWelcomeThr;indoorNearDoorRatioThr;indoorBackDoorRatioMinThr;indoorBackDoorRatioMaxThr;"
                 + "indoorNearDoorRatioMB;indoorNearDoorRatioMLMRMaxThr;indoorNearDoorRatioMLMRMinThr;indoorNearDoorRatioTLTRMaxThr;indoorNearDoorRatioTLTRMinThr;"
                 + "indoorAverageDeltaLockThr;indoorAverageDeltaUnlockThr;"

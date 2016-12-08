@@ -89,8 +89,6 @@ public final class SdkPreferencesHelper {
     public final static int EQUALIZER_FRONT_RIGHT = -5;
     public final static int EQUALIZER_REAR_LEFT = -5;
     public final static int EQUALIZER_REAR_RIGHT = -5;
-    public static final int INDOOR_RATIO_MAX_MIN_THR = 20;
-    public static final int OUTSIDE_RATIO_MAX_MIN_THR = 20;
     public static final int INDOOR_RATIO_CLOSE_TO_CAR_THR = 0;
     public static final int OUTSIDE_RATIO_CLOSE_TO_CAR_THR = 0;
     public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:2A:B8";
@@ -150,14 +148,6 @@ public final class SdkPreferencesHelper {
      */
     public static SdkPreferencesHelper getInstance() {
         return sSingleInstance;
-    }
-
-    public int getIndoorRatioMaxMinThreshold(final String fileName) {
-        return readInt(fileName, mApplicationContext.getString(R.string.indoor_ratio_max_min_thr_pref_name), INDOOR_RATIO_MAX_MIN_THR);
-    }
-
-    public int getOutsideRatioMaxMinThreshold(final String fileName) {
-        return readInt(fileName, mApplicationContext.getString(R.string.outside_ratio_max_min_thr_pref_name), OUTSIDE_RATIO_MAX_MIN_THR);
     }
 
     public int getIndoorRatioCloseToCarThreshold(final String fileName) {
