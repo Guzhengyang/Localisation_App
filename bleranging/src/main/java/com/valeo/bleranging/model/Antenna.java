@@ -21,7 +21,7 @@ public class Antenna {
     public static final int AVERAGE_DELTA_UNLOCK = 8; // use for threshold calculation
     private final AtomicBoolean isAntennaActive;
     private final AtomicBoolean hasReceivedRssi;
-    private final ArrayList<Integer> rssiPente;
+    //    private final ArrayList<Integer> rssiPente;
     private final ArrayList<Integer> rssiHistoric;
     private final int numberTrx;
     private BLEChannel bleChannel;
@@ -57,7 +57,7 @@ public class Antenna {
         this.isAntennaActive = new AtomicBoolean(true);
         this.hasReceivedRssi = new AtomicBoolean(false);
         this.rssiHistoric = new ArrayList<>(SdkPreferencesHelper.getInstance().getRollingAvElement());
-        this.rssiPente = new ArrayList<>(10);
+//        this.rssiPente = new ArrayList<>(10);
     }
 
     public void init(int historicDefaultValue) {
@@ -121,7 +121,8 @@ public class Antenna {
             if (ecretageRefIndex >= rssiHistoric.size()) {
                 return rssiHistoric.get(0);
             } else {
-                return rssiHistoric.get(rssiHistoric.size() - ecretageRefIndex);
+                // -1 to prevent OutOfBoundException if ecretageRefIndex == 0
+                return rssiHistoric.get((rssiHistoric.size() - 1) - ecretageRefIndex);
             }
         }
         return -90;
@@ -320,13 +321,13 @@ public class Antenna {
             this.lastIsSmartphoneMovingSlowly = isSmartphoneMovingSlowly;
             this.hasBeenInitialized = true;
         }
-        if (rssiPente.size() == 10) {
-            rssiPente.remove(0);
-        }
+//        if (rssiPente.size() == 10) {
+//            rssiPente.remove(0);
+//        }
         currentOriginalRssi = rssi;
         rssi += getTrxRssiEqualizer(numberTrx); // add trx rssi antenna power Equalizer
         rssi = dynamicOffsetCompensation(rssi, bleChannel); // rssi channel offset dynamic compensation
-        rssiPente.add(currentOriginalRssi - lastOriginalRssi);
+//        rssiPente.add(currentOriginalRssi - lastOriginalRssi);
         lastOriginalRssi = currentOriginalRssi;
         rssi = getCorrectedRssi(rssi); // Correct the rssi value with an ecretage on the last N-2 rssi seen
         if (rssiHistoric.size() == SdkPreferencesHelper.getInstance().getRollingAvElement()) {
