@@ -418,15 +418,13 @@ public class AlgoManager implements SensorEventListener {
                     PSALogs.d("prediction", "NOOO rangingPredictionInt !");
                     break;
             }
-            if (rearmWelcome.get()) {
-                boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus);
-                isInWelcomeArea = rearmWelcome.get() && isWelcomeStrategyValid;
-                if (isInWelcomeArea) {
-                    isWelcomeAllowed = true;
-                    rearmWelcome.set(false);
-                    SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
-                    bleRangingListener.doWelcome();
-                }
+            boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus);
+            isInWelcomeArea = rearmWelcome.get() && isWelcomeStrategyValid;
+            if (isInWelcomeArea) {
+                isWelcomeAllowed = true;
+                rearmWelcome.set(false);
+                SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
+                bleRangingListener.doWelcome();
             }
             if (mProtocolManager.isWelcomeRequested() != isWelcomeAllowed) {
                 mProtocolManager.setIsWelcomeRequested(isWelcomeAllowed);

@@ -97,7 +97,7 @@ public class Antenna {
         return bleChannel;
     }
 
-    private int getEcretageReferenceIndex(int lastN2Rssi) {
+    private synchronized int getEcretageReferenceIndex(int lastN2Rssi) {
         if (lastN2Rssi >= -170 && lastN2Rssi < -70) {
             return SdkPreferencesHelper.getInstance().getEcretageReference_70_100(SdkPreferencesHelper.getInstance().getConnectedCarType());
         } else if (lastN2Rssi >= -70 && lastN2Rssi < -50) {
@@ -116,7 +116,7 @@ public class Antenna {
      * @param ecretageRefIndex the X-th previous values
      * @return the n-ecretageRefIndex rssi value
      */
-    private int getEcretageReferenceValue(int ecretageRefIndex) {
+    private synchronized int getEcretageReferenceValue(int ecretageRefIndex) {
         if (rssiHistoric != null && !rssiHistoric.isEmpty()) {
             if (ecretageRefIndex >= rssiHistoric.size()) {
                 return rssiHistoric.get(0);
@@ -324,6 +324,11 @@ public class Antenna {
 //        if (rssiPente.size() == 10) {
 //            rssiPente.remove(0);
 //        }
+        if (rssi < -120) {
+            rssi = -121;
+        } else if (rssi > -20) {
+            rssi = -19;
+        }
         currentOriginalRssi = rssi;
         rssi += getTrxRssiEqualizer(numberTrx); // add trx rssi antenna power Equalizer
         rssi = dynamicOffsetCompensation(rssi, bleChannel); // rssi channel offset dynamic compensation
@@ -372,6 +377,10 @@ public class Antenna {
                 rssi += offsetBleChannel39;
                 break;
             case UNKNOWN:
+                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
+                    offsetBleChannel38 = 0;
+                    offsetBleChannel39 = 0;
+                }
                 break;
             default:
                 break;
