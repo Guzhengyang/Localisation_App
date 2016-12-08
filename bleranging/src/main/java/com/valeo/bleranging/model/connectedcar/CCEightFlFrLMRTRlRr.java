@@ -22,11 +22,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     private static final String SPACE_ONE = " ";
     private static final String SPACE_TWO = "   ";
-    private int ratio;
     private int closeToCarFL;
     private int closeToCarFR;
     private int closeToCarRL;
     private int closeToCarRR;
+    private boolean isLeftSide = true;
+    private boolean isInFrontLeft = true;
+    private boolean isInFrontRight = false;
     private int thresholdMaxMinRatio = 0;
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -147,26 +149,41 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             boolean closeToBeaconRR = compareTrxWithThreshold(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
 
             List<Integer> result = new ArrayList<>();
-            if (closeToCarFrontLeft || closeToBeaconFL) { //maxMinFrontLeft ||
-                result.add(NUMBER_TRX_FRONT_LEFT);
-            }
-            if (isNearDoorLRMax || closeToBeaconL) { //maxMinLeft ||
-                result.add(NUMBER_TRX_LEFT);
-            }
-            if (closeToCarRearLeft || closeToBeaconRL) { //maxMinRearLeft ||
-                result.add(NUMBER_TRX_REAR_LEFT);
-            }
-            if (closeToCarFrontRight || closeToBeaconFR) { //maxMinFrontRight ||
-                result.add(NUMBER_TRX_FRONT_RIGHT);
-            }
-            if (isNearDoorLRMin || closeToBeaconR) { //maxMinRight ||
-                result.add(NUMBER_TRX_RIGHT);
-            }
-            if (closeToCarRearRight || closeToBeaconRR) { //maxMinRearRight ||
-                result.add(NUMBER_TRX_REAR_RIGHT);
-            }
-            if (((closeToCarRL + closeToCarRR) > (2 * thresholdMaxMinRatio)) || closeToBeaconRL || closeToBeaconRR) {
-                result.add(NUMBER_TRX_BACK);
+            isLeftSide = isLeftSide();// if(average 3lefttrx - average 3righttrx) >0 isLeftSide is true, <0 isLeftSide is false
+            if (isLeftSide) {
+                isInFrontLeft = isFrontLeft(); // if(average fl& L - rearL&rearR) > 0 isInFrontLeft is true, <0 isInFrontLeft is false
+                if (isInFrontLeft) {
+                    if (closeToCarFrontLeft || closeToBeaconFL) { //maxMinFrontLeft ||
+                        result.add(NUMBER_TRX_FRONT_LEFT);
+                    }
+                    if (isNearDoorLRMax || closeToBeaconL) { //maxMinLeft ||
+                        result.add(NUMBER_TRX_LEFT);
+                    }
+                } else {
+                    if (closeToCarRearLeft || closeToBeaconRL) { //maxMinRearLeft ||
+                        result.add(NUMBER_TRX_REAR_LEFT);
+                    }
+                    if (((closeToCarRL + closeToCarRR) > (2 * thresholdMaxMinRatio)) || closeToBeaconRL || closeToBeaconRR) {
+                        result.add(NUMBER_TRX_BACK);
+                    }
+                }
+            } else {
+                isInFrontRight = isFrontRight(); // if(average fR& R - rearR&rearL) > 0 isInFrontRight is true, <0 isInFrontRight is false
+                if (isInFrontRight) {
+                    if (closeToCarFrontRight || closeToBeaconFR) { //maxMinFrontRight ||
+                        result.add(NUMBER_TRX_FRONT_RIGHT);
+                    }
+                    if (isNearDoorLRMin || closeToBeaconR) { //maxMinRight ||
+                        result.add(NUMBER_TRX_RIGHT);
+                    }
+                } else {
+                    if (closeToCarRearRight || closeToBeaconRR) { //maxMinRearRight ||
+                        result.add(NUMBER_TRX_REAR_RIGHT);
+                    }
+                    if (((closeToCarRL + closeToCarRR) > (2 * thresholdMaxMinRatio)) || closeToBeaconRL || closeToBeaconRR) {
+                        result.add(NUMBER_TRX_BACK);
+                    }
+                }
             }
             if (result.isEmpty()) {
                 return null;
@@ -174,6 +191,21 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             return result;
         }
         return null;
+    }
+
+    private boolean isLeftSide() {
+        return (((getCurrentModifiedRssi(NUMBER_TRX_FRONT_LEFT) + getCurrentModifiedRssi(NUMBER_TRX_LEFT) + getCurrentModifiedRssi(NUMBER_TRX_REAR_LEFT)) / 3)
+                - ((getCurrentModifiedRssi(NUMBER_TRX_FRONT_RIGHT) + getCurrentModifiedRssi(NUMBER_TRX_RIGHT) + getCurrentModifiedRssi(NUMBER_TRX_REAR_RIGHT)) / 3)) > 0;
+    }
+
+    private boolean isFrontLeft() {
+        return (((getCurrentModifiedRssi(NUMBER_TRX_FRONT_LEFT) + getCurrentModifiedRssi(NUMBER_TRX_LEFT)) / 2)
+                - ((getCurrentModifiedRssi(NUMBER_TRX_REAR_LEFT) + getCurrentModifiedRssi(NUMBER_TRX_REAR_RIGHT)) / 2)) > 0;
+    }
+
+    private boolean isFrontRight() {
+        return (((getCurrentModifiedRssi(NUMBER_TRX_FRONT_RIGHT) + getCurrentModifiedRssi(NUMBER_TRX_RIGHT)) / 2)
+                - ((getCurrentModifiedRssi(NUMBER_TRX_REAR_LEFT) + getCurrentModifiedRssi(NUMBER_TRX_REAR_RIGHT)) / 2)) > 0;
     }
 
     @Override
@@ -245,16 +277,14 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public SpannableStringBuilder createSecondFooterDebugData(
             SpannableStringBuilder spannableStringBuilder, int totalAverage, AlgoManager mAlgoManager) {
-        // WELCOME
-//        spannableStringBuilder.append(String.valueOf(ratio)).append("\n");
         lock.readLock().lock();
         spannableStringBuilder //TODO Remove after test
                 .append(String.valueOf(getThreeCornerLowerMaxMinRatio())).append(" ")
                 .append(String.valueOf(thresholdMaxMinRatio)).append("\n")
-                .append("FL:   ").append(String.valueOf(closeToCarFL)).append("   ")
-                .append("FR:   ").append(String.valueOf(closeToCarFR)).append("   ")
-                .append("RL:   ").append(String.valueOf(closeToCarRL)).append("   ")
-                .append("RR:   ").append(String.valueOf(closeToCarRR)).append("\n");
+                .append(TextUtils.colorText(isLeftSide && isInFrontLeft, "FL:   ", Color.GREEN, Color.DKGRAY)).append(String.valueOf(closeToCarFL)).append("   ")
+                .append(TextUtils.colorText(!isLeftSide && isInFrontRight, "FR:   ", Color.GREEN, Color.DKGRAY)).append(String.valueOf(closeToCarFR)).append("   ")
+                .append(TextUtils.colorText(isLeftSide && !isInFrontLeft, "RL:   ", Color.GREEN, Color.DKGRAY)).append(String.valueOf(closeToCarRL)).append("   ")
+                .append(TextUtils.colorText(!isLeftSide && !isInFrontRight, "RR:   ", Color.GREEN, Color.DKGRAY)).append(String.valueOf(closeToCarRR)).append("\n");
         lock.readLock().unlock();
         spannableStringBuilder.append("welcome ");
         StringBuilder footerSB = new StringBuilder();
