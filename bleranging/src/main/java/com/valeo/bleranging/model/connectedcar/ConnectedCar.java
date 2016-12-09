@@ -514,7 +514,7 @@ public abstract class ConnectedCar {
                 && trxLinkedHMap.get(trxNumber).compareTrxWithThreshold(averageMode, threshold, isGreater);
     }
 
-    private boolean isActive(int trxNumber) {
+    public boolean isActive(int trxNumber) {
         return trxLinkedHMap.get(trxNumber) != null && trxLinkedHMap.get(trxNumber).isActive();
     }
 

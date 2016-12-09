@@ -197,6 +197,9 @@ public class TrxUtils {
                                       int offset39Left, int offset39Middle, int offset39Right, int offset39Trunk,
                                       int offset39FrontLeft, int offset39FrontRight,
                                       int offset39RearLeft, int offset39RearRight, int offset39Back,
+                                      boolean isActiveLeft, boolean isActiveMiddle, boolean isActiveRight, boolean isActiveTrunk,
+                                      boolean isActiveFrontLeft, boolean isActiveFrontRight,
+                                      boolean isActiveRearLeft, boolean isActiveRearRight, boolean isActiveBack,
                                       float z, float x, float y,
                                       boolean isSmartphoneInPocket, boolean smartphoneIsMovingSlowly, boolean isLockStatusChangedTimerExpired,
                                       boolean blockStart, boolean forcedStart,
@@ -224,6 +227,9 @@ public class TrxUtils {
                 offset39Left + comma + offset39Middle + comma + offset39Right + comma + offset39Trunk + comma +
                 offset39FrontLeft + comma + offset39FrontRight + comma +
                 offset39RearLeft + comma + offset39RearRight + comma + offset39Back + comma +
+                booleanToString(isActiveLeft) + comma + booleanToString(isActiveMiddle) + comma + booleanToString(isActiveRight) + comma + booleanToString(isActiveTrunk) + comma +
+                booleanToString(isActiveFrontLeft) + comma + booleanToString(isActiveFrontRight) + comma +
+                booleanToString(isActiveRearLeft) + comma + booleanToString(isActiveRearRight) + comma + booleanToString(isActiveBack) + comma +
                 z + comma + x + comma + y + comma +
                 booleanToString(isSmartphoneInPocket) + comma + booleanToString(smartphoneIsMovingSlowly) + comma + booleanToString(isLockStatusChangedTimerExpired) + comma +
                 booleanToString(blockStart) + comma + booleanToString(forcedStart) + comma +
@@ -445,9 +451,12 @@ public class TrxUtils {
                 + "LEFT_OFFSET38;MIDDLE_OFFSET38;RIGHT_OFFSET38;"
                 + "TRUNK_OFFSET38;FRONTLEFT_OFFSET38;FRONTRIGHT_OFFSET38;"
                 + "REARLEFT_OFFSET38;REARRIGHT_OFFSET38;BACK_OFFSET38;"
-                + "LEFT_OFFSET39;MIDDLE_OFFSET_39;RIGHT_OFFSET39;"
+                + "LEFT_OFFSET39;MIDDLE_OFFSET39;RIGHT_OFFSET39;"
                 + "TRUNK_OFFSET39;FRONTLEFT_OFFSET39;FRONTRIGHT_OFFSET39;"
                 + "REARLEFT_OFFSET39;REARRIGHT_OFFSET39;BACK_OFFSET39;"
+                + "LEFT_IS_ACTIVE;MIDDLE_IS_ACTIVE;RIGHT_IS_ACTIVE;"
+                + "TRUNK_IS_ACTIVE;FRONTLEFT_IS_ACTIVE;FRONTRIGHT_IS_ACTIVE;"
+                + "REARLEFT_IS_ACTIVE;REARRIGHT_IS_ACTIVE;BACK_IS_ACTIVE;"
                 + "Z AZIMUTH;X PITCH;Y ROLL;IN POCKET;IS LAID;ARE LOCK ACTIONS AVAILABLE;"
                 + "IS START BLOCKED;IS START FORCED;IS LOCK BLOCKED;IS LOCK FORCED;"
                 + "IS UNLOCK BLOCKED;IS UNLOCK FORCED;IS FROZEN;IS LOCK;REARM LOCK;REARM UNLOCK;"
