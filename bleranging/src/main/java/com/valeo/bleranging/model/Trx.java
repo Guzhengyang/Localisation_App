@@ -149,6 +149,22 @@ public class Trx {
         return antenna.getMax();
     }
 
+    public int getRssiIncrease() {
+        return antenna.getRssiIncrease();
+    }
+
+    public void resetRssiIncrease() {
+        antenna.resetRssiIncrease();
+    }
+
+    public void resetRssiDecrease() {
+        antenna.resetRssiDecrease();
+    }
+
+    public int getRssiDecrease() {
+        return antenna.getRssiDecrease();
+    }
+
     public void saveBleChannel(Antenna.BLEChannel bleChannel) {
         antenna.saveBleChannel(bleChannel);
     }

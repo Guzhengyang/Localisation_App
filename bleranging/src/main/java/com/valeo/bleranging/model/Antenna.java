@@ -21,12 +21,15 @@ public class Antenna {
     public static final int AVERAGE_DELTA_UNLOCK = 8; // use for threshold calculation
     private final AtomicBoolean isAntennaActive;
     private final AtomicBoolean hasReceivedRssi;
-    //    private final ArrayList<Integer> rssiPente;
     private final ArrayList<Integer> rssiHistoric;
     private final int numberTrx;
+    //    private final ArrayList<Integer> rssiPente;
+    private int rssiIncrease = 0;
+    private int rssiDecrease = 0;
     private BLEChannel bleChannel;
     private int lastOriginalRssi;
     private int lastRssi;
+    private int currentRssi;
     private int currentOriginalRssi;
     private BLEChannel lastBleChannel;
     private boolean lastIsSmartphoneMovingSlowly;
@@ -314,9 +317,10 @@ public class Antenna {
      */
     public synchronized void saveRssi(int rssi, boolean isSmartphoneMovingSlowly, boolean isRssiReceived) {
         if (!hasBeenInitialized) {
-            this.currentOriginalRssi = rssi;
             this.lastOriginalRssi = rssi;
             this.lastRssi = rssi;
+            this.currentRssi = rssi;
+            this.currentOriginalRssi = rssi;
             this.lastBleChannel = bleChannel;
             this.lastIsSmartphoneMovingSlowly = isSmartphoneMovingSlowly;
             this.hasBeenInitialized = true;
@@ -329,17 +333,17 @@ public class Antenna {
         } else if (rssi > -20) {
             rssi = -19;
         }
+        lastRssi = currentRssi;
+        lastOriginalRssi = currentOriginalRssi;
         currentOriginalRssi = rssi;
         rssi += getTrxRssiEqualizer(numberTrx); // add trx rssi antenna power Equalizer
         rssi = dynamicOffsetCompensation(rssi, bleChannel); // rssi channel offset dynamic compensation
 //        rssiPente.add(currentOriginalRssi - lastOriginalRssi);
-        lastOriginalRssi = currentOriginalRssi;
-        rssi = getCorrectedRssi(rssi); // Correct the rssi value with an ecretage on the last N-2 rssi seen
+        currentRssi = getCorrectedRssi(rssi); // Correct the rssi value with an ecretage on the last N-2 rssi seen
         if (rssiHistoric.size() == SdkPreferencesHelper.getInstance().getRollingAvElement()) {
             rssiHistoric.remove(0);
         }
-        this.rssiHistoric.add(rssi);
-        lastRssi = rssi;
+        this.rssiHistoric.add(currentRssi);
         this.lastBleChannel = bleChannel;
         if (lastIsSmartphoneMovingSlowly != isSmartphoneMovingSlowly) {
 //            resetWithHysteresis(antennaRssiAverageWelcome); //TODO concurrentModification
@@ -448,6 +452,42 @@ public class Antenna {
 
     }
 
+    public void resetRssiIncrease() {
+        rssiIncrease = 0;
+    }
+
+    public void resetRssiDecrease() {
+        rssiDecrease = 0;
+    }
+
+    public int getRssiIncrease() {
+        if (currentRssi > lastRssi) {
+            rssiIncrease++;
+            rssiDecrease = 0;
+        } else if (currentRssi < lastRssi) {
+            rssiDecrease++;
+            rssiIncrease = 0;
+        } else {
+            rssiDecrease = 0;
+            rssiIncrease = 0;
+        }
+        return rssiIncrease;
+    }
+
+    public int getRssiDecrease() {
+        if (currentRssi > lastRssi) {
+            rssiIncrease++;
+            rssiDecrease = 0;
+        } else if (currentRssi < lastRssi) {
+            rssiDecrease++;
+            rssiIncrease = 0;
+        } else {
+            rssiDecrease = 0;
+            rssiIncrease = 0;
+        }
+        return rssiDecrease;
+    }
+
     /**
      * Compare a new check with the last one, if they are equals the antenna is inactive
      * @return true if the antenna is active (checker are different), false otherwise (checker are equals)
@@ -516,7 +556,7 @@ public class Antenna {
     }
 
     public int getCurrentModifiedRssi() {
-        return lastRssi;
+        return currentRssi;
     }
 
     public enum BLEChannel {

@@ -362,35 +362,11 @@ public class AlgoManager implements SensorEventListener {
         isInStartArea = false;
         isInUnlockArea = false;
         isInLockArea = false;
-        rangingPredictionInt = ranging.vote2int();
+        rangingPredictionInt = ranging.getPrediction();
         if (rangingPredictionInt != -1) {
             PSALogs.d("prediction", "rangingPredictionInt = " + rangingPredictionInt);
             switch (rangingPredictionInt) {
                 case 0:
-                    isInLockArea = true;
-                    if (areLockActionsAvailable.get() && rearmLock.get() && isInLockArea) {
-                        performLockWithCryptoTimeout(false, true);
-                    }
-                    break;
-                case 1:
-                    List<Integer> result1 = new ArrayList<>(1);
-                    result1.add(NUMBER_TRX_LEFT);
-                    isUnlockStrategyValid = result1;
-                    isInUnlockArea = true;
-                    if (areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
-                        performLockWithCryptoTimeout(false, false);
-                    }
-                    break;
-                case 2:
-                    List<Integer> result2 = new ArrayList<>(1);
-                    result2.add(NUMBER_TRX_RIGHT);
-                    isUnlockStrategyValid = result2;
-                    isInUnlockArea = true;
-                    if (areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
-                        performLockWithCryptoTimeout(false, false);
-                    }
-                    break;
-                case 3:
                     List<Integer> result0 = new ArrayList<>(2);
                     result0.add(START_PASSENGER_AREA);
 //                    result0.add(START_TRUNK_AREA);
@@ -400,10 +376,34 @@ public class AlgoManager implements SensorEventListener {
                         mProtocolManager.setIsStartRequested(isInStartArea);
                     }
                     break;
-                case 4:
+                case 1:
+                    isInLockArea = true;
+                    if (areLockActionsAvailable.get() && rearmLock.get() && isInLockArea) {
+                        performLockWithCryptoTimeout(false, true);
+                    }
+                    break;
+                case 2:
                     List<Integer> result3 = new ArrayList<>(1);
                     result3.add(NUMBER_TRX_BACK);
                     isUnlockStrategyValid = result3;
+                    isInUnlockArea = true;
+                    if (areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
+                        performLockWithCryptoTimeout(false, false);
+                    }
+                    break;
+                case 3:
+                    List<Integer> result2 = new ArrayList<>(1);
+                    result2.add(NUMBER_TRX_RIGHT);
+                    isUnlockStrategyValid = result2;
+                    isInUnlockArea = true;
+                    if (areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
+                        performLockWithCryptoTimeout(false, false);
+                    }
+                    break;
+                case 4:
+                    List<Integer> result1 = new ArrayList<>(1);
+                    result1.add(NUMBER_TRX_LEFT);
+                    isUnlockStrategyValid = result1;
                     isInUnlockArea = true;
                     if (areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
                         performLockWithCryptoTimeout(false, false);

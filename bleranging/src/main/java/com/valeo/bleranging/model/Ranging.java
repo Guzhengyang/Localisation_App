@@ -27,7 +27,7 @@ public class Ranging {
     public double[] proba_sum;
     public double[] distribution = new double[5];
     public double[] dist = new double[8];
-    public double threshold_prob = 0.6;
+    public double threshold_prob = 0.8;
     public int prediction_old = -1;
     private Instance sample;
     private RandomForest rf;
@@ -35,8 +35,8 @@ public class Ranging {
     private double f = 2.45 * Math.pow(10, 9);
     private double c = 3 * Math.pow(10, 8);
     private double P = -30;
-    private double threshold_dist = 0.15;
-    private int n_vote = 7;
+    private double threshold_dist = 0.25;
+    private int n_vote = 3;
     private String model = "rf";
     private List<Double> probas_left = new ArrayList<>();
     private List<Double> probas_right = new ArrayList<>();
@@ -75,7 +75,12 @@ public class Ranging {
     public void set_rssi(double[] rssi) {
         double dist_new;
         for (int i = 0; i < rssi.length; i++) {
-            dist_new = rssi2dist(rssi[i]);
+            if (prediction_old != -1) {
+                if (this.classes[prediction_old].equals("lock")) {
+                    rssi[i] -= 2;
+                }
+            }
+            dist_new = rssi2dist(rssi[i] - 2);
             dist[i] = correct_unilateral(i, dist_new);
             sample.setValue(i, dist[i]);
         }
@@ -183,6 +188,23 @@ public class Ranging {
         if (result != -1)
             return result;
         return -1;
+
+    }
+
+    public int getPrediction() {
+        int prediction;
+        if (prediction_old == -1) {
+            prediction = vote2int();
+            prediction_old = prediction;
+        } else {
+            if (distribution[vote2int()] > threshold_prob) {
+                prediction = vote2int();
+                prediction_old = prediction;
+            } else {
+                prediction = prediction_old;
+            }
+        }
+        return prediction;
     }
 
     public String vote2str() {
