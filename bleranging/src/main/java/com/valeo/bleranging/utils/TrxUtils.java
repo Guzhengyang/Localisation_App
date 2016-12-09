@@ -170,7 +170,7 @@ public class TrxUtils {
      * @param approachSideByte equals 1 if right side, 0 if left side
      * @param approachRoadByte equals [1-6] for the road taken during test
      * @param recordByte equals 1 if record is activated, 0 otherwise
-     * @param rangingPredictionInt prediction from random forest algorithm
+     * @param rangingPrediction prediction from random forest algorithm
      * @param lockFromTrx lock status from trx
      * @param lockToSend lock status to send
      * @param startAllowed true if start is allowed, false otherwise
@@ -207,7 +207,7 @@ public class TrxUtils {
                                       byte leftAreaByte, byte rightAreaByte, byte backAreaByte,
                                       byte walkAwayByte, byte approachByte, byte leftTurnByte,
                                       byte rightTurnByte, byte approachSideByte, byte approachRoadByte,
-                                      byte recordByte, int rangingPredictionInt,
+                                      byte recordByte, String rangingPrediction,
                                       boolean lockFromTrx, boolean lockToSend, boolean startAllowed, boolean isThatcham,
                                       String channelLeft, String channelMiddle, String channelRight, String channelTrunk,
                                       String channelFrontLeft, String channelFrontRight,
@@ -278,7 +278,7 @@ public class TrxUtils {
         }
         log += leftTurnByte + comma + rightTurnByte + comma
                 + approachSideByte + comma + approachRoadByte + comma
-                + recordByte + comma + rangingPredictionInt + comma
+                + recordByte + comma + rangingPrediction + comma
                 + booleanToString(lockFromTrx) + comma + booleanToString(lockToSend) + comma
                 + booleanToString(startAllowed) + comma + booleanToString(isThatcham) + comma
                 + channelLeft + comma + channelMiddle + comma + channelRight + comma

@@ -25,15 +25,11 @@ import com.valeo.bleranging.utils.SoundUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.valeo.bleranging.BleRangingHelper.START_PASSENGER_AREA;
-import static com.valeo.bleranging.BleRangingHelper.START_TRUNK_AREA;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_BACK;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_LEFT;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_MIDDLE;
@@ -45,11 +41,9 @@ import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
  */
 
 public class AlgoManager implements SensorEventListener {
-    private final static int PREDICTION_MAX = 7;
     private final static int LOCK_STATUS_CHANGED_TIMEOUT = 5000;
     private final InblueProtocolManager mProtocolManager;
     private final BleRangingListener bleRangingListener;
-    private final PredictionRunnable predictionRunnable = new PredictionRunnable(null);
     private final Context mContext;
     private final Handler mMainHandler;
     private final Handler mHandlerLockTimeOut;
@@ -90,7 +84,6 @@ public class AlgoManager implements SensorEventListener {
     private final AtomicBoolean rearmUnlock = new AtomicBoolean(true);
     private final AtomicBoolean isRKE = new AtomicBoolean(false);
     private final ArrayList<Double> lAccHistoric = new ArrayList<>(SdkPreferencesHelper.getInstance().getLinAccSize());
-    private final LinkedList<Integer> predictionHistoric;
     private final float R[] = new float[9];
     private final float I[] = new float[9];
     private final float orientation[] = new float[3];
@@ -229,7 +222,6 @@ public class AlgoManager implements SensorEventListener {
         this.mIsLaidTimeOutHandler = new Handler();
         this.mIsFrozenTimeOutHandler = new Handler();
         this.mLockStatusChangedHandler = new Handler();
-        this.predictionHistoric = new LinkedList<>();
         SensorManager senSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         Sensor senProximity = senSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         Sensor senLinAcceleration = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -243,8 +235,11 @@ public class AlgoManager implements SensorEventListener {
     }
 
     public SpannableStringBuilder createDebugData(SpannableStringBuilder spannableStringBuilder) {
-        if (rangingPredictionInt != null) {
-            spannableStringBuilder.append("rangingPrediction: ").append(String.valueOf(rangingPredictionInt)).append("\n");
+        if (ranging != null) {
+            spannableStringBuilder.append(ranging.printDist());
+            if (rangingPredictionInt != -1) {
+                spannableStringBuilder.append("rangingPrediction: ").append(ranging.classes[rangingPredictionInt]).append("\n");
+            }
         }
         spannableStringBuilder
                 .append("blockStart: ").append(String.valueOf(blockStart)).append(" ")
@@ -367,18 +362,14 @@ public class AlgoManager implements SensorEventListener {
         isInStartArea = false;
         isInUnlockArea = false;
         isInLockArea = false;
-        rangingPredictionInt = mostCommon(predictionHistoric);
+        rangingPredictionInt = ranging.vote2int();
         if (rangingPredictionInt != -1) {
             PSALogs.d("prediction", "rangingPredictionInt = " + rangingPredictionInt);
             switch (rangingPredictionInt) {
                 case 0:
-                    List<Integer> result0 = new ArrayList<>(2);
-                    result0.add(START_PASSENGER_AREA);
-                    result0.add(START_TRUNK_AREA);
-                    isStartStrategyValid = result0;
-                    isInStartArea = true;
-                    if (mProtocolManager.isStartRequested() != isInStartArea) {
-                        mProtocolManager.setIsStartRequested(isInStartArea);
+                    isInLockArea = true;
+                    if (areLockActionsAvailable.get() && rearmLock.get() && isInLockArea) {
+                        performLockWithCryptoTimeout(false, true);
                     }
                     break;
                 case 1:
@@ -400,18 +391,22 @@ public class AlgoManager implements SensorEventListener {
                     }
                     break;
                 case 3:
+                    List<Integer> result0 = new ArrayList<>(2);
+                    result0.add(START_PASSENGER_AREA);
+//                    result0.add(START_TRUNK_AREA);
+                    isStartStrategyValid = result0;
+                    isInStartArea = true;
+                    if (mProtocolManager.isStartRequested() != isInStartArea) {
+                        mProtocolManager.setIsStartRequested(isInStartArea);
+                    }
+                    break;
+                case 4:
                     List<Integer> result3 = new ArrayList<>(1);
                     result3.add(NUMBER_TRX_BACK);
                     isUnlockStrategyValid = result3;
                     isInUnlockArea = true;
                     if (areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
                         performLockWithCryptoTimeout(false, false);
-                    }
-                    break;
-                case 4:
-                    isInLockArea = true;
-                    if (areLockActionsAvailable.get() && rearmLock.get() && isInLockArea) {
-                        performLockWithCryptoTimeout(false, true);
                     }
                     break;
                 default:
@@ -481,44 +476,8 @@ public class AlgoManager implements SensorEventListener {
         }
     }
 
-    private synchronized Integer mostCommon(final List<Integer> list) {
-        if (list.size() == 0) {
-            return -1;
-        }
-        Map<Integer, Integer> map = new HashMap<>();
-        for (Integer t : list) {
-            Integer val = map.get(t);
-            map.put(t, val == null ? 1 : val + 1);
-        }
-        Map.Entry<Integer, Integer> max = null;
-        for (Map.Entry<Integer, Integer> e : map.entrySet()) {
-            if (max == null || e.getValue() >= max.getValue()) {
-                max = e;
-            }
-        }
-        return max == null ? -1 : max.getKey();
-    }
-
-    public void createRangingObject(double rssiLeft, double rssiMiddle, double rssiRight, double rssiBack) {
-        this.ranging = new Ranging(mContext, rssiLeft, rssiMiddle, rssiRight, rssiBack);
-    }
-
-    private boolean prepareRanging(ConnectedCar connectedCar) {
-        if (ranging != null) {
-            ranging.set(0, connectedCar.getCurrentOriginalRssi(NUMBER_TRX_LEFT));
-            ranging.set(1, connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE));
-            ranging.set(2, connectedCar.getCurrentOriginalRssi(NUMBER_TRX_RIGHT));
-            ranging.set(3, connectedCar.getCurrentOriginalRssi(NUMBER_TRX_BACK));
-            return true;
-        }
-        return false;
-    }
-
-    private int predict2int() {
-        if (ranging != null) {
-            return ranging.predict2int();
-        }
-        return 0;
+    public void createRangingObject(double[] rssi) {
+        this.ranging = new Ranging(mContext, rssi);
     }
 
     /**
@@ -712,10 +671,6 @@ public class AlgoManager implements SensorEventListener {
         return blockUnlock;
     }
 
-    public Integer getRangingPredictionInt() {
-        return rangingPredictionInt;
-    }
-
     public List<Integer> getIsStartStrategyValid() {
         return isStartStrategyValid;
     }
@@ -780,6 +735,17 @@ public class AlgoManager implements SensorEventListener {
         isRKEAvailable.set(enableRKE);
     }
 
+    public Ranging getRanging() {
+        return ranging;
+    }
+
+    public String getRangingPredictionString() {
+        if (rangingPredictionInt == -1) {
+            return "UNKNOWN";
+        }
+        return ranging.classes[rangingPredictionInt];
+    }
+
     public boolean getIsRKE() {
         return isRKE.get();
     }
@@ -800,37 +766,4 @@ public class AlgoManager implements SensorEventListener {
         return deltaLinAcc;
     }
 
-    public Runnable getFillPredictionArrayRunnable(ConnectedCar connectedCar) {
-        predictionRunnable.setConnectedCar(connectedCar);
-        return predictionRunnable;
-    }
-
-    private final class PredictionRunnable implements Runnable {
-        private ConnectedCar connectedCar;
-
-        PredictionRunnable(ConnectedCar connectedCar) {
-            this.connectedCar = connectedCar;
-        }
-
-        void setConnectedCar(ConnectedCar connectedCar) {
-            this.connectedCar = connectedCar;
-        }
-
-        @Override
-        public void run() {
-            if (prepareRanging(connectedCar)) {
-                if (predictionHistoric.size() == PREDICTION_MAX) {
-                    if (predictionHistoric.get(0) != null) {
-                        predictionHistoric.remove(0);
-                    }
-                }
-                int prediction = predict2int();
-                predictionHistoric.add(prediction);
-                PSALogs.d("prediction", "Add prediction: " + prediction);
-                mMainHandler.postDelayed(this, 100);
-            } else {
-                mMainHandler.removeCallbacks(this);
-            }
-        }
-    }
 }

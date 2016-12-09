@@ -772,6 +772,19 @@ public abstract class ConnectedCar {
         }
     }
 
+    public double[] getRssiForRangingPrediction() {
+        double[] rssi = new double[8];
+        rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
+        rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
+        rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
+        rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
+        rssi[4] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT);
+        rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
+        rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
+        rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
+        return rssi;
+    }
+
     protected enum ConnectionNumber {
         THREE_CONNECTION, FOUR_CONNECTION, FIVE_CONNECTION,
         SIX_CONNECTION, SEVEN_CONNECTION, EIGHT_CONNECTION

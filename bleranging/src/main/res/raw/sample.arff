@@ -1,11 +1,14 @@
-@relation newdataset
+@relation data
 
-@attribute L numeric
-@attribute M numeric
-@attribute R numeric
-@attribute B numeric
-@attribute class {back,left,lock,start,right}
+@attribute 'RSSI LEFT_ORIGIN' numeric
+@attribute 'RSSI MIDDLE_ORIGIN' numeric
+@attribute 'RSSI RIGHT_ORIGIN' numeric
+@attribute 'RSSI TRUNK_ORIGIN' numeric
+@attribute 'RSSI FRONTLEFT_ORIGIN' numeric
+@attribute 'RSSI FRONTRIGHT_ORIGIN' numeric
+@attribute 'RSSI REARLEFT_ORIGIN' numeric
+@attribute 'RSSI REARRIGHT_ORIGIN' numeric
+@attribute class {lock,left,right,start,back}
 
 @data
-4.179228,0.435257,3.194348,0.974418,back
-
+4.952565,9.452565,16.943485,7.807366,1.882787,8.640077,7.247627,10.546283,lock
