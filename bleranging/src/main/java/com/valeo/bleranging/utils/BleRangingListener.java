@@ -9,16 +9,15 @@ public interface BleRangingListener {
     void lightUpArea(int area);
     void darkenArea(int area);
 
+    void updateCarDrawable();
     void applyNewDrawable();
     void printDebugInfo(SpannableStringBuilder spannableStringBuilder);
+
+    void showSnackBar(String message);
 
     void updateBLEStatus();
     void updateCarDoorStatus(boolean lockStatus);
 
-    void updateCarDrawable();
-
     void askBleOn();
     void doWelcome();
-
-    void showSnackBar(String message);
 }

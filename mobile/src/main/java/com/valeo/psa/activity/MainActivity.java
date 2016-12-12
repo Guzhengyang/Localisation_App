@@ -81,6 +81,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import static com.valeo.bleranging.BleRangingHelper.RKE_USE_TIMEOUT;
+
 public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter.OnStartDragListener,
         MyRecyclerAdapter.OnIconLongPressedListener, View.OnTouchListener, BleRangingListener {
     private static final String TAG = MainActivity.class.getName();
@@ -99,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int REQUEST_ENABLE_BT = 25117;
     private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
     private static final int NOTIFICATION_ID_1 = 1;
-    private final static int RKE_USE_TIMEOUT = 5000;
     private final Handler mHandler = new Handler();
     private Toolbar toolbar;
     private FrameLayout main_frame;
@@ -160,15 +161,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private CarListAdapter mCarListAdapter = null;
     private CarDoorStatus carDoorStatus;
     private BleRangingHelper mBleRangingHelper;
-    private final Runnable toggleOnIsRKEAvailable = new Runnable() {
-        @Override
-        public void run() {
-            PSALogs.d("performLock", "before isRKEAvailable =" + mBleRangingHelper.isRKEAvailable());
-            mBleRangingHelper.setIsRKEAvailable(true);
-            PSALogs.d("performLock", "after isRKEAvailable =" + mBleRangingHelper.isRKEAvailable());
-            rke_loading_progress_bar.setVisibility(View.GONE);
-        }
-    };
+
     private boolean showMenu = true;
     private KeyguardManager mKeyguardManager;
     private Car selectedCar = null;
@@ -391,67 +384,61 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         vehicle_locked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PSALogs.d("performLock", "isRKEAvailable =" + mBleRangingHelper.isRKEAvailable() +
-                        ", Fco =" + mBleRangingHelper.isFullyConnected() +
-                        ", lockActionAvailable =" + mBleRangingHelper.areLockActionsAvailable());
-                if (mBleRangingHelper.isRKEAvailable() && mBleRangingHelper.isFullyConnected()
-                        && mBleRangingHelper.areLockActionsAvailable()) {
-                    mBleRangingHelper.setIsRKEAvailable(false);
-                    rke_loading_progress_bar.setVisibility(View.VISIBLE);
-                    mHandler.postDelayed(toggleOnIsRKEAvailable, RKE_USE_TIMEOUT);
-                    carDoorStatus = CarDoorStatus.LOCKED;
-                    vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
-                    driver_s_door_unlocked.setBackgroundResource(0);
-                    vehicle_unlocked.setBackgroundResource(0);
-                    startButtonAnimation(false);
-                    PSALogs.d("performLock", "RKE LOCK");
-                    mBleRangingHelper.performLockWithCryptoTimeout(true, true); //lockVehicle
-                }
+                rke_loading_progress_bar.setVisibility(View.VISIBLE);
+                carDoorStatus = CarDoorStatus.LOCKED;
+                vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
+                driver_s_door_unlocked.setBackgroundResource(0);
+                vehicle_unlocked.setBackgroundResource(0);
+                startButtonAnimation(false);
+                PSALogs.d("performLock", "RKE LOCK");
+                mBleRangingHelper.performRKELockAction(true); //lockVehicle
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        rke_loading_progress_bar.setVisibility(View.GONE);
+                    }
+                }, RKE_USE_TIMEOUT);
             }
         });
         driver_s_door_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PSALogs.d("performLock", "isRKEAvailable =" + mBleRangingHelper.isRKEAvailable() +
-                        ", Fco =" + mBleRangingHelper.isFullyConnected() +
-                        ", lockActionAvailable =" + mBleRangingHelper.areLockActionsAvailable());
-                if (mBleRangingHelper.isRKEAvailable() && mBleRangingHelper.isFullyConnected()
-                        && mBleRangingHelper.areLockActionsAvailable()) {
-                    mBleRangingHelper.setIsRKEAvailable(false);
-                    rke_loading_progress_bar.setVisibility(View.VISIBLE);
-                    mHandler.postDelayed(toggleOnIsRKEAvailable, RKE_USE_TIMEOUT);
-                    carDoorStatus = CarDoorStatus.DRIVER_DOOR_OPEN;
-                    driver_s_door_unlocked.setBackgroundResource(R.mipmap.slider_button);
-                    vehicle_locked.setBackgroundResource(0);
-                    vehicle_unlocked.setBackgroundResource(0);
-                    start_button.setBackgroundResource(0);
-                    startButtonAnimation(false);
-                    PSALogs.d("performLock", "RKE UNLOCK 1");
-                    mBleRangingHelper.performLockWithCryptoTimeout(true, false); //unlockVehicle
-                }
+                rke_loading_progress_bar.setVisibility(View.VISIBLE);
+                carDoorStatus = CarDoorStatus.DRIVER_DOOR_OPEN;
+                driver_s_door_unlocked.setBackgroundResource(R.mipmap.slider_button);
+                vehicle_locked.setBackgroundResource(0);
+                vehicle_unlocked.setBackgroundResource(0);
+                start_button.setBackgroundResource(0);
+                startButtonAnimation(false);
+                PSALogs.d("performLock", "RKE UNLOCK 1");
+                mBleRangingHelper.performRKELockAction(false); //unlockVehicle
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        rke_loading_progress_bar.setVisibility(View.GONE);
+                    }
+                }, RKE_USE_TIMEOUT);
             }
         });
         vehicle_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PSALogs.d("performLock", "isRKEAvailable =" + mBleRangingHelper.isRKEAvailable() +
-                        ", Fco =" + mBleRangingHelper.isFullyConnected() +
-                        ", lockActionAvailable =" + mBleRangingHelper.areLockActionsAvailable());
-                if (mBleRangingHelper.isRKEAvailable() && mBleRangingHelper.isFullyConnected()
-                        && mBleRangingHelper.areLockActionsAvailable()) {
-                    mBleRangingHelper.setIsRKEAvailable(false);
-                    rke_loading_progress_bar.setVisibility(View.VISIBLE);
-                    mHandler.postDelayed(toggleOnIsRKEAvailable, RKE_USE_TIMEOUT);
-                    carDoorStatus = CarDoorStatus.UNLOCKED;
-                    vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
-                    driver_s_door_unlocked.setBackgroundResource(0);
-                    vehicle_locked.setBackgroundResource(0);
-                    startButtonAnimation(true);
-                    PSALogs.d("performLock", "RKE UNLOCK 2");
-                    mBleRangingHelper.performLockWithCryptoTimeout(true, false); //unlockVehicle
-                    createNotification(NOTIFICATION_ID_1, getString(R.string.notif_unlock_it),
-                            R.mipmap.car_all_doors_button, getString(R.string.vehicle_unlocked));
-                }
+                rke_loading_progress_bar.setVisibility(View.VISIBLE);
+                carDoorStatus = CarDoorStatus.UNLOCKED;
+                vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
+                driver_s_door_unlocked.setBackgroundResource(0);
+                vehicle_locked.setBackgroundResource(0);
+                startButtonAnimation(true);
+                PSALogs.d("performLock", "RKE UNLOCK 2");
+                mBleRangingHelper.performRKELockAction(false); //unlockVehicle
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        rke_loading_progress_bar.setVisibility(View.GONE);
+                    }
+                }, RKE_USE_TIMEOUT);
+                createNotification(NOTIFICATION_ID_1, getString(R.string.notif_unlock_it),
+                        R.mipmap.car_all_doors_button, getString(R.string.vehicle_unlocked));
             }
         });
     }
