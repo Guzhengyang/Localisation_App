@@ -17,6 +17,19 @@ import java.util.Locale;
 public class TrxUtils {
     private static final File logFile = new File(SdkPreferencesHelper.getInstance().getLogFileName());
 
+    /**
+     * Selected the correct value for a given threshold
+     * taking into account the smartphone and car positions
+     *
+     * @param thresholdIndoor          the threshold indoor value
+     * @param thresholdOutside         the threshold outside value
+     * @param isIndoor                 true if the car is indoor, false otherwise
+     * @param smartphoneIsInPocket     true if the smartphone is in the pocket, false otherwise
+     * @param smartphoneComIsActivated true if a communication link is activated, false otherwise
+     * @param offsetEar                an offset to add the threshold if the smartphone is near the user's ear
+     * @param offsetPocket             an offset to add to the threshold if the smartphone is in the pocket
+     * @return the correct value of the threshold
+     */
     private static int selectedThreshold(int thresholdIndoor, int thresholdOutside, boolean isIndoor,
                                          boolean smartphoneIsInPocket, boolean smartphoneComIsActivated,
                                          int offsetEar, int offsetPocket) {
@@ -118,6 +131,11 @@ public class TrxUtils {
         }
     }
 
+    /**
+     * Convert a boolean to a string value
+     * @param toConvert the boolean to convert
+     * @return 1 if toCovert is true, 0 if toCovert is false
+     */
     private static String booleanToString(boolean toConvert) {
         if (toConvert) {
             return "1";
@@ -294,6 +312,94 @@ public class TrxUtils {
         appendRssiLog(log);
     }
 
+    /**
+     * Create the string to write in the settings log file and add it
+     * @param carType the car type
+     * @param carBase the car base
+     * @param algoType the algorithm selected
+     * @param isIndoor true if the car is indoor, false if it is outside
+     * @param addressConnectable the car connectable trx address
+     * @param addressConnectableRemote the remote control address
+     * @param addressConnectablePC the computer address
+     * @param addressFrontLeft the front left trx address
+     * @param addressFrontRight the front right trx address
+     * @param addressLeft the left trx address
+     * @param addressMiddle the middle trx address
+     * @param addressRight the right trx address
+     * @param addressTrunk the trunk trx address
+     * @param addressRearLeft the rear left trx address
+     * @param addressBack the back trx address
+     * @param addressRearRight the rear right trx address
+     * @param logNumber the next log file number
+     * @param rollAvElement the default rolling average size
+     * @param startNumElement the start rolling average size
+     * @param lockNumElement the lock rolling average size
+     * @param unlockNumElement the unlock rolling average size
+     * @param welcomeNumElement the welcome rolling average size
+     * @param LongNumElement the long rolling average size
+     * @param shortNumElement the short rolling average size
+     * @param thatchamTimeout the thatcham timeout duration
+     * @param preAuthTimeout the preAuth timeout duration
+     * @param actionTimeout the action timeout duration
+     * @param sizeAcc the size of acceleration array
+     * @param correctionAcc the correction of acceleration
+     * @param frozenThr the threshold that determines if the smartphone is moving or not
+     * @param wantedSpeed the wanted speed for the test procedure
+     * @param stepSize the step size for the test procedure
+     * @param indoorRatioCloseToCar the indoor ratio above which we can assume we are close to the car
+     * @param outsideRatioCloseToCar the outside ratio above which we can assume we are close to the car
+     * @param offsetEarStart an offset when the smartphone is doing start command and is near the user's ear
+     * @param offsetEarLock an offset when the smartphone is doing lock command and is near the user's ear
+     * @param offsetEarUnlock an offset when the smartphone is doing unlock command and is near the user's ear
+     * @param offsetPocketStart an offset when the smartphone is doing start command and is in the user's pocket
+     * @param offsetPocketLock an offset when the smartphone is doing lock command and is in the user's pocket
+     * @param offsetPocketUnlock an offset when the smartphone is doing unlock command and is in the user's pocket
+     * @param indoorStartThr the indoor start threshold
+     * @param indoorUnlockThr the indoor unlock threshold
+     * @param indoorLockThr the indoor lock threshold
+     * @param indoorWelcomeThr the indoor welcome threshold
+     * @param indoorNearDoorRatioThr the indoor near door ratio threshold
+     * @param indoorBackDoorRatioMinThr the indoor back door ratio min threshold
+     * @param indoorBackDoorRatioMaxThr the indoor back door ratio max threshold
+     * @param indoorNearDoorRatioMB the indoor middle back ratio
+     * @param indoorNearDoorRatioMLMRMaxThr the indoor near door ratio middle l/r max threshold
+     * @param indoorNearDoorRatioMLMRMinThr the indoor near door ratio middle l/r min threshold
+     * @param indoorNearDoorRatioTLTRMaxThr the indoor near door ratio trunk l/r max threshold
+     * @param indoorNearDoorRatioTLTRMinThr the indoor near door ratio trunk l/r min threshold
+     * @param indoorAverageDeltaLockThr the indoor lock average delta threshold
+     * @param indoorAverageDeltaUnlockThr the indoor unlock average delta threshold
+     * @param outsideStartThr the outside start threshold
+     * @param outsideUnlockThr the outside unlock threshold
+     * @param outsideLockThr the outside lock threshold
+     * @param outsideWelcomeThr the outside welcome threshold
+     * @param outsideNearDoorRatioThr the outside near door ratio threshold
+     * @param outsideBackDoorRatioMinThr the outside back door ratio min threshold
+     * @param outsideBackDoorRatioMaxThr the outside back door ratio max threshold
+     * @param outsideNearDoorRatioMB the outside middle back ratio
+     * @param outsideNearDoorRatioMLMRMaxThr the outside near door ratio middle l/r max threshold
+     * @param outsideNearDoorRatioMLMRMinThr the outside near door ratio middle l/r min threshold
+     * @param outsideNearDoorRatioTLTRMaxThr the outside near door ratio trunk l/r max threshold
+     * @param outsideNearDoorRatioTLTRMinThr the outside near door ratio trunk l/r min threshold
+     * @param outsideAverageDeltaLockThr the outside lock average delta threshold
+     * @param outsideAverageDeltaUnlockThr the outside unlock average delta threshold
+     * @param unlockValidNumber the number of valid trx to success an unlock command
+     * @param unlockMode the number of valid trx to check for an unlock command
+     * @param lockMode the number of valid trx to check for a lock command
+     * @param startMode the number of valid trx to check for a start command
+     * @param ecretage100 the ecretage value for rssi between -100 and -70
+     * @param ecretage70 the ecretage value for rssi between -70 and -50
+     * @param ecretage50 the ecretage value for rssi between -50 and -30
+     * @param ecretage30 the ecretage value for rssi between -30 and +30
+     * @param equaLeft the left trx offset value to add to received rssi to equalize with others
+     * @param equaMiddle the middle trx offset value to add to received rssi to equalize with others
+     * @param equaRight the right trx offset value to add to received rssi to equalize with others
+     * @param equaTrunk the trunk trx offset value to add to received rssi to equalize with others
+     * @param equaBack the back trx offset value to add to received rssi to equalize with others
+     * @param equaFrontLeft the front left trx offset value to add to received rssi to equalize with others
+     * @param equaRearLeft the rear left trx offset value to add to received rssi to equalize with others
+     * @param equaFrontRight the front right trx offset value to add to received rssi to equalize with others
+     * @param equaRearRight the rear right trx offset value to add to received rssi to equalize with others
+     */
     public static void appendSettingLogs(String carType, String carBase, String algoType, boolean isIndoor,
                                          String addressConnectable, String addressConnectableRemote, String addressConnectablePC,
                                          String addressFrontLeft, String addressFrontRight,
@@ -388,6 +494,10 @@ public class TrxUtils {
         }
     }
 
+    /**
+     * Create a log file to register the settings and all rssi values
+     * @return true if the file exist or is succesfully created, false otherwise
+     */
     public static boolean createLogFile() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_kk", Locale.FRANCE);
         String timestampLog = sdf.format(new Date());
@@ -413,6 +523,9 @@ public class TrxUtils {
         }
     }
 
+    /**
+     * Write in the log file a line with the settings column names
+     */
     public static void writeFirstColumnSettings() {
         //Write 1st row with column names
         //BufferedWriter for performance, true to set append to file flag
@@ -440,6 +553,9 @@ public class TrxUtils {
         }
     }
 
+    /**
+     * Write in the log file a line with the rssi affiliated parameters column names
+     */
     public static void writeFirstColumnLogs() {
         //Write 1st row with column names
         //BufferedWriter for performance, true to set append to file flag

@@ -20,7 +20,6 @@ package com.valeo.bleranging.bluetooth;
  * Lists all the services and characteristics used during the application lifecycle 
  */
 public class SampleGattAttributes {
-    //RKE
     public final static String VALEO_GENERIC_SERVICE = "f000ff10-0451-4000-b000-000000000000";
     public final static String VALEO_IN_CHARACTERISTIC = "f000ff11-0451-4000-b000-000000000000";
     public final static String VALEO_OUT_CHARACTERISTIC = "f000ff12-0451-4000-b000-000000000000";

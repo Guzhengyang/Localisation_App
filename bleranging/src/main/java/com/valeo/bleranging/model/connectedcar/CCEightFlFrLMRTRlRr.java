@@ -166,9 +166,9 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             rssiDecreaseR = trxRight.getRssiDecrease();
 
             xRssiDeltaRearLeft = (rssiIncreaseRL > 5) && (rssiDecreaseL > 5);
-            xRssiDeltaFrontLeft = (rssiIncreaseFL > 5) && (rssiDecreaseL < 5);
-            xRssiDeltaRearRight = (rssiIncreaseRR > 5) && (rssiDecreaseR < 5);
-            xRssiDeltaFrontRight = (rssiIncreaseFR > 5) && (rssiDecreaseR < 5);
+            xRssiDeltaFrontLeft = (rssiIncreaseFL > 5) && (rssiDecreaseL > 5);
+            xRssiDeltaRearRight = (rssiIncreaseRR > 5) && (rssiDecreaseR > 5);
+            xRssiDeltaFrontRight = (rssiIncreaseFR > 5) && (rssiDecreaseR > 5);
 
             if (xRssiDeltaRearLeft) {
                 trxRearLeft.resetRssiIncrease();

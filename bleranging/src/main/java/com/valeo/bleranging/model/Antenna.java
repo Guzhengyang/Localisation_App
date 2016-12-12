@@ -463,27 +463,17 @@ public class Antenna {
     public int getRssiIncrease() {
         if (currentRssi > lastRssi) {
             rssiIncrease++;
-            rssiDecrease = 0;
-        } else if (currentRssi < lastRssi) {
-            rssiDecrease++;
-            rssiIncrease = 0;
         } else {
-            rssiDecrease = 0;
             rssiIncrease = 0;
         }
         return rssiIncrease;
     }
 
     public int getRssiDecrease() {
-        if (currentRssi > lastRssi) {
-            rssiIncrease++;
-            rssiDecrease = 0;
-        } else if (currentRssi < lastRssi) {
+        if (currentRssi < lastRssi) {
             rssiDecrease++;
-            rssiIncrease = 0;
         } else {
             rssiDecrease = 0;
-            rssiIncrease = 0;
         }
         return rssiDecrease;
     }

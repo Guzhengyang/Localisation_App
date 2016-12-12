@@ -39,7 +39,6 @@ import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
 /**
  * Created by l-avaratha on 25/11/2016
  */
-
 public class AlgoManager implements SensorEventListener {
     private final static int LOCK_STATUS_CHANGED_TIMEOUT = 5000;
     private final InblueProtocolManager mProtocolManager;
