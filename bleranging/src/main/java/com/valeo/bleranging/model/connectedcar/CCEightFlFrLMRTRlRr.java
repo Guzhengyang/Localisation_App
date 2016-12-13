@@ -192,7 +192,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                     if (closeToCarFrontLeft || closeToBeaconFL) { //maxMinFrontLeft ||
                         result.add(NUMBER_TRX_FRONT_LEFT);
                     }
-                    if (isNearDoorLRMax || closeToBeaconL || xRssiDeltaRearLeft || xRssiDeltaFrontLeft) { //maxMinLeft ||
+                    if (isNearDoorLRMax || closeToBeaconL) { // || xRssiDeltaRearLeft || xRssiDeltaFrontLeftmaxMinLeft ||
                         result.add(NUMBER_TRX_LEFT);
                     }
                 } else {
@@ -209,7 +209,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                     if (closeToCarFrontRight || closeToBeaconFR) { //maxMinFrontRight ||
                         result.add(NUMBER_TRX_FRONT_RIGHT);
                     }
-                    if (isNearDoorLRMin || closeToBeaconR || xRssiDeltaRearRight || xRssiDeltaFrontRight) { //maxMinRight ||
+                    if (isNearDoorLRMin || closeToBeaconR) { //  || xRssiDeltaRearRight || xRssiDeltaFrontRight maxMinRight ||
                         result.add(NUMBER_TRX_RIGHT);
                     }
                 } else {
