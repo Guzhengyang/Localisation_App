@@ -2,18 +2,21 @@
 <resources>
     <string-array name="iconName">
         <item>4 beacons</item>
+        <item>4 beacons ML</item>
         <item>5 beacons (4+trunk)</item>
         <item>7 beacons</item>
         <item>8 beacons (7+trunk)</item>
     </string-array>
     <string-array name="entry_values_list_preference">
         <item>"fourLMRB"        </item>
+        <item>"fourLMRT"        </item>
         <item>"fiveLMRTB"     </item>
         <item>"sevenFlFrLMRRlRr"</item>
         <item>"eightFlFrLMRTRlRr"</item>
     </string-array>
     <string-array name="iconFile">
-        <item>car_4</item>
+        <item>car_4_a</item>
+        <item>car_4_b</item>
         <item>car_5</item>
         <item>car_7</item>
         <item>car_8</item>
@@ -37,6 +40,14 @@
     <string-array name="algo_entryvalues_list_preference">
         <item>ALGO_STANDARD</item>
         <item>MACHINE_LEARNING</item>
+    </string-array>
+    <string-array name="model_list_preference">
+        <item>Random Forest</item>
+        <item>Logistic</item>
+    </string-array>
+    <string-array name="model_entryvalues_list_preference">
+        <item>RANDOM_FOREST</item>
+        <item>LOGISTIC</item>
     </string-array>
     <string-array name="default_big_button_text">
         <item>0</item>

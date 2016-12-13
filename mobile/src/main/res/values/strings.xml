@@ -64,6 +64,7 @@
     <string name="pref_car_type_title">Car Type</string>
     <string name="pref_car_base_title">Car Base</string>
     <string name="pref_algo_title">Algorithm</string>
+    <string name="pref_machine_learning_model">Machine Learning Model</string>
     <string name="pref_is_indoor_enabled">Is Indoor parameter enabled</string>
     <string name="pref_is_indoor_enabled_summary">Enable is Indoor parameter</string>
     <string name="pref_car_forced_trame_enabled">Car forced trame enabled</string>
@@ -72,6 +73,7 @@
     <string name="dialog_title_list_preference">Number of active beacon</string>
     <string name="base_title_list_preference">Available base type</string>
     <string name="algo_title_list_preference">Available Algorithm</string>
+    <string name="model_title_list_preference">Available Model</string>
     <string name="pref_near_door">NEAR DOOR THR</string>
     <string name="pref_indoor_ratio_close_to_car_thr">Indoor ratio Close to car Thr</string>
     <string name="pref_outside_ratio_close_to_car_thr">Outside ratio Close to car Thr</string>

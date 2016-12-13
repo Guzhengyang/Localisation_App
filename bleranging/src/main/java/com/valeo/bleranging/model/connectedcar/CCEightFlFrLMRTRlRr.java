@@ -26,12 +26,12 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     private int closeToCarFR;
     private int closeToCarRL;
     private int closeToCarRR;
-    private int rssiIncreaseFL;
-    private int rssiIncreaseFR;
-    private int rssiIncreaseRL;
-    private int rssiIncreaseRR;
-    private int rssiDecreaseL;
-    private int rssiDecreaseR;
+    private int rssiDecreaseFL;
+    private int rssiDecreaseFR;
+    private int rssiDecreaseRL;
+    private int rssiDecreaseRR;
+    private int rssiIncreaseL;
+    private int rssiIncreaseR;
     private boolean xRssiDeltaRearLeft;
     private boolean xRssiDeltaFrontLeft;
     private boolean xRssiDeltaRearRight;
@@ -130,6 +130,32 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public List<Integer> unlockStrategy() {
         boolean isInUnlockArea = isInUnlockArea(unlockThreshold);
+        rssiDecreaseRL = trxRearLeft.getRssiDecrease();
+        rssiDecreaseFL = trxFrontLeft.getRssiDecrease();
+        rssiDecreaseRR = trxRearRight.getRssiDecrease();
+        rssiDecreaseFR = trxFrontRight.getRssiDecrease();
+        rssiIncreaseL = trxLeft.getRssiIncrease();
+        rssiIncreaseR = trxRight.getRssiIncrease();
+        xRssiDeltaRearLeft = (rssiDecreaseRL >= 5) && (rssiIncreaseL >= 5);
+        xRssiDeltaFrontLeft = (rssiDecreaseFL >= 5) && (rssiIncreaseL >= 5);
+        xRssiDeltaRearRight = (rssiDecreaseRR >= 5) && (rssiIncreaseR >= 5);
+        xRssiDeltaFrontRight = (rssiDecreaseFR >= 5) && (rssiIncreaseR >= 5);
+        if (xRssiDeltaRearLeft) {
+            trxRearLeft.resetRssiDecrease();
+            trxLeft.resetRssiIncrease();
+        }
+        if (xRssiDeltaFrontLeft) {
+            trxFrontLeft.resetRssiDecrease();
+            trxLeft.resetRssiIncrease();
+        }
+        if (xRssiDeltaRearRight) {
+            trxRearRight.resetRssiDecrease();
+            trxRight.resetRssiIncrease();
+        }
+        if (xRssiDeltaFrontRight) {
+            trxFrontRight.resetRssiDecrease();
+            trxRight.resetRssiIncrease();
+        }
         lock.writeLock().lock();
 //        PSALogs.d("closeR", "1 => " + closeToCarFL + " " + closeToCarFR + " " + closeToCarRL + " " + closeToCarRR);
         closeToCarFL = getRatioCloseToCar(NUMBER_TRX_FRONT_LEFT, Antenna.AVERAGE_UNLOCK, Antenna.AVERAGE_DEFAULT);
@@ -157,35 +183,6 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             boolean closeToBeaconR = compareTrxWithThreshold(NUMBER_TRX_RIGHT, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
             boolean closeToBeaconRL = compareTrxWithThreshold(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
             boolean closeToBeaconRR = compareTrxWithThreshold(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
-
-            rssiIncreaseRL = trxRearLeft.getRssiIncrease();
-            rssiIncreaseFL = trxFrontLeft.getRssiIncrease();
-            rssiIncreaseRR = trxRearRight.getRssiIncrease();
-            rssiIncreaseFR = trxFrontRight.getRssiIncrease();
-            rssiDecreaseL = trxLeft.getRssiDecrease();
-            rssiDecreaseR = trxRight.getRssiDecrease();
-
-            xRssiDeltaRearLeft = (rssiIncreaseRL > 5) && (rssiDecreaseL > 5);
-            xRssiDeltaFrontLeft = (rssiIncreaseFL > 5) && (rssiDecreaseL > 5);
-            xRssiDeltaRearRight = (rssiIncreaseRR > 5) && (rssiDecreaseR > 5);
-            xRssiDeltaFrontRight = (rssiIncreaseFR > 5) && (rssiDecreaseR > 5);
-
-            if (xRssiDeltaRearLeft) {
-                trxRearLeft.resetRssiIncrease();
-                trxLeft.resetRssiDecrease();
-            }
-            if (xRssiDeltaFrontLeft) {
-                trxFrontLeft.resetRssiIncrease();
-                trxLeft.resetRssiDecrease();
-            }
-            if (xRssiDeltaRearRight) {
-                trxRearRight.resetRssiIncrease();
-                trxRight.resetRssiDecrease();
-            }
-            if (xRssiDeltaFrontRight) {
-                trxFrontRight.resetRssiIncrease();
-                trxRight.resetRssiDecrease();
-            }
 
             List<Integer> result = new ArrayList<>();
             isLeftSide = isLeftSide();// if(average 3lefttrx - average 3righttrx) >0 isLeftSide is true, <0 isLeftSide is false
@@ -330,13 +327,13 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 .append(String.valueOf(xRssiDeltaRearLeft)).append("   ")
                 .append(String.valueOf(xRssiDeltaRearRight)).append("\n");
         spannableStringBuilder
-                .append(String.valueOf(rssiIncreaseFL)).append("   ")
-                .append(String.valueOf(rssiIncreaseFR)).append("   ")
-                .append(String.valueOf(rssiIncreaseRL)).append("   ")
-                .append(String.valueOf(rssiIncreaseRR)).append("\n");
+                .append(String.valueOf(rssiDecreaseFL)).append("   ")
+                .append(String.valueOf(rssiDecreaseFR)).append("   ")
+                .append(String.valueOf(rssiDecreaseRL)).append("   ")
+                .append(String.valueOf(rssiDecreaseRR)).append("\n");
         spannableStringBuilder
-                .append(String.valueOf(rssiDecreaseL)).append("   ")
-                .append(String.valueOf(rssiDecreaseR)).append("\n");
+                .append(String.valueOf(rssiIncreaseL)).append("   ")
+                .append(String.valueOf(rssiIncreaseR)).append("\n");
         lock.readLock().unlock();
         spannableStringBuilder.append("welcome ");
         StringBuilder footerSB = new StringBuilder();

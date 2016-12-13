@@ -30,6 +30,11 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.valeo.bleranging.BleRangingHelper.START_PASSENGER_AREA;
+import static com.valeo.bleranging.model.Ranging.PREDICTION_BACK;
+import static com.valeo.bleranging.model.Ranging.PREDICTION_LEFT;
+import static com.valeo.bleranging.model.Ranging.PREDICTION_LOCK;
+import static com.valeo.bleranging.model.Ranging.PREDICTION_RIGHT;
+import static com.valeo.bleranging.model.Ranging.PREDICTION_START;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_BACK;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_LEFT;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_MIDDLE;
@@ -364,8 +369,8 @@ public class AlgoManager implements SensorEventListener {
         rangingPredictionInt = ranging.getPrediction();
         if (rangingPredictionInt != -1) {
             PSALogs.d("prediction", "rangingPredictionInt = " + rangingPredictionInt);
-            switch (rangingPredictionInt) {
-                case 0:
+            switch (ranging.classes[rangingPredictionInt]) {
+                case PREDICTION_START:
                     List<Integer> result0 = new ArrayList<>(2);
                     result0.add(START_PASSENGER_AREA);
 //                    result0.add(START_TRUNK_AREA);
@@ -375,13 +380,13 @@ public class AlgoManager implements SensorEventListener {
                         mProtocolManager.setIsStartRequested(isInStartArea);
                     }
                     break;
-                case 1:
+                case PREDICTION_LOCK:
                     isInLockArea = true;
                     if (areLockActionsAvailable.get() && rearmLock.get() && isInLockArea) {
                         performLockWithCryptoTimeout(false, true);
                     }
                     break;
-                case 2:
+                case PREDICTION_BACK:
                     List<Integer> result3 = new ArrayList<>(1);
                     result3.add(NUMBER_TRX_BACK);
                     isUnlockStrategyValid = result3;
@@ -390,7 +395,7 @@ public class AlgoManager implements SensorEventListener {
                         performLockWithCryptoTimeout(false, false);
                     }
                     break;
-                case 3:
+                case PREDICTION_RIGHT:
                     List<Integer> result2 = new ArrayList<>(1);
                     result2.add(NUMBER_TRX_RIGHT);
                     isUnlockStrategyValid = result2;
@@ -399,7 +404,7 @@ public class AlgoManager implements SensorEventListener {
                         performLockWithCryptoTimeout(false, false);
                     }
                     break;
-                case 4:
+                case PREDICTION_LEFT:
                     List<Integer> result1 = new ArrayList<>(1);
                     result1.add(NUMBER_TRX_LEFT);
                     isUnlockStrategyValid = result1;

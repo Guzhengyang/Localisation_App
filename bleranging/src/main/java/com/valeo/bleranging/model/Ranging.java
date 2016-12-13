@@ -3,6 +3,8 @@ package com.valeo.bleranging.model;
 import android.content.Context;
 
 import com.valeo.bleranging.R;
+import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
+import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,27 +19,34 @@ import weka.core.Instances;
 import weka.core.SerializationHelper;
 import weka.core.converters.ConverterUtils;
 
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.MODEL_LOGISTIC;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.MODEL_RF;
+
 /**
  * Created by zgu4 on 02/12/2016.
  */
 public class Ranging {
-
+    public static final String PREDICTION_START = "start";
+    public static final String PREDICTION_LOCK = "lock";
+    public static final String PREDICTION_LEFT = "left";
+    public static final String PREDICTION_RIGHT = "right";
+    public static final String PREDICTION_BACK = "back";
+    private static final double POWER_0 = -30;
+    private static final double THRESHOLD_PROB = 0.8;
+    private static final int N_VOTE = 3;
+    private static final double FREQUENCY = 2.45 * Math.pow(10, 9);
+    private static final double LIGHT_SPEED = 3 * Math.pow(10, 8);
+    private static final double THRESHOLD_DIST = 0.25;
     public String[] classes;
-    public List<Integer> predictions = new ArrayList<>();
-    public double[] proba_sum;
-    public double[] distribution = new double[5];
-    public double[] dist = new double[8];
-    public double threshold_prob = 0.8;
-    public int prediction_old = -1;
+    private List<Integer> predictions = new ArrayList<>();
+    private double[] proba_sum;
+    private double[] distribution = new double[5];
+    private double[] dist;
+    private int prediction_old = -1;
     private Instance sample;
     private RandomForest rf;
     private Logistic logistic;
-    private double f = 2.45 * Math.pow(10, 9);
-    private double c = 3 * Math.pow(10, 8);
-    private double P = -30;
-    private double threshold_dist = 0.25;
-    private int n_vote = 3;
-    private String model = "rf";
+
     private List<Double> probas_left = new ArrayList<>();
     private List<Double> probas_right = new ArrayList<>();
     private List<Double> probas_back = new ArrayList<>();
@@ -47,16 +56,31 @@ public class Ranging {
 
     public Ranging(Context context, double[] rssi) {
         try {
-            logistic = (Logistic) SerializationHelper.read(context.getResources().openRawResource(R.raw.logistic));
-            classes = (String[]) SerializationHelper.read(context.getResources().openRawResource(R.raw.classes));
-            rf = (RandomForest) SerializationHelper.read(context.getResources().openRawResource(R.raw.rf));
-            Instances instances = ConverterUtils.DataSource.read(context.getResources().openRawResource(R.raw.sample));
+            int rawLogistic;
+            int rawClasses;
+            int rawRf;
+            int rawSample;
+            if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_4_B)) {
+                rawLogistic = R.raw.four_lmrt_logistic;
+                rawClasses = R.raw.four_lmrt_classes;
+                rawRf = R.raw.four_lmrt_rf;
+                rawSample = R.raw.four_lmrt_sample;
+            } else {
+                rawLogistic = R.raw.eight_flfrlmrtrlrr_logistic;
+                rawClasses = R.raw.eight_flfrlmrtrlrr_classes;
+                rawRf = R.raw.eight_flfrlmrtrlrr_rf;
+                rawSample = R.raw.eight_flfrlmrtrlrr_sample;
+            }
+            logistic = (Logistic) SerializationHelper.read(context.getResources().openRawResource(rawLogistic));
+            classes = (String[]) SerializationHelper.read(context.getResources().openRawResource(rawClasses));
+            rf = (RandomForest) SerializationHelper.read(context.getResources().openRawResource(rawRf));
+            Instances instances = ConverterUtils.DataSource.read(context.getResources().openRawResource(rawSample));
             instances.setClassIndex(instances.numAttributes() - 1);
             sample = instances.instance(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        dist = new double[rssi.length];
         for (int i = 0; i < rssi.length; i++) {
             dist[i] = rssi2dist(rssi[i]);
             sample.setValue(i, dist[i]);
@@ -68,8 +92,8 @@ public class Ranging {
 
     }
 
-    public double rssi2dist(double rssi) {
-        return c / f / 4 / Math.PI * Math.pow(10, -(rssi - P) / 20);
+    private double rssi2dist(double rssi) {
+        return LIGHT_SPEED / FREQUENCY / 4 / Math.PI * Math.pow(10, -(rssi - POWER_0) / 20);
     }
 
     public void set_rssi(double[] rssi) {
@@ -84,7 +108,7 @@ public class Ranging {
             dist[i] = correct_unilateral(i, dist_new);
             sample.setValue(i, dist[i]);
         }
-        if (predictions.size() == n_vote) {
+        if (predictions.size() == N_VOTE) {
             predictions.remove(0);
             probas_left.remove(0);
             probas_right.remove(0);
@@ -96,34 +120,35 @@ public class Ranging {
         add_probs();
     }
 
-    public double correct_unilateral(int index, double dist_new) {
+    private double correct_unilateral(int index, double dist_new) {
         double dist_correted;
         if (dist_new < dist[index])
             dist_correted = dist_new;
         else
-            dist_correted = Math.min(dist_new - dist[index], threshold_dist) + dist[index];
+            dist_correted = Math.min(dist_new - dist[index], THRESHOLD_DIST) + dist[index];
         return dist_correted;
     }
 
     public double correct_bilateral(int index, double dist_new) {
         double dist_corrected;
-        if (dist_new - dist[index] > threshold_dist)
-            dist_corrected = dist[index] + threshold_dist;
-        else if (dist_new - dist[index] < -threshold_dist)
-            dist_corrected = dist[index] - threshold_dist;
-        else
+        if (dist_new - dist[index] > THRESHOLD_DIST) {
+            dist_corrected = dist[index] + THRESHOLD_DIST;
+        } else if (dist_new - dist[index] < -THRESHOLD_DIST) {
+            dist_corrected = dist[index] - THRESHOLD_DIST;
+        } else {
             dist_corrected = dist_new;
+        }
         return dist_corrected;
     }
 
-    public int predict2int() {
+    private int predict2int() {
         int result = -1;
         try {
-            switch (model) {
-                case "rf":
+            switch (SdkPreferencesHelper.getInstance().getMachineLearningModel()) {
+                case MODEL_RF:
                     result = (int) rf.classifyInstance(sample);
                     break;
-                case "logistic":
+                case MODEL_LOGISTIC:
                     result = (int) logistic.classifyInstance(sample);
                     break;
                 default:
@@ -136,13 +161,13 @@ public class Ranging {
         return result;
     }
 
-    public void add_probs() {
+    private void add_probs() {
         try {
-            switch (model) {
-                case "rf":
+            switch (SdkPreferencesHelper.getInstance().getMachineLearningModel()) {
+                case MODEL_RF:
                     distribution = rf.distributionForInstance(sample);
                     break;
-                case "logistic":
+                case MODEL_LOGISTIC:
                     distribution = logistic.distributionForInstance(sample);
                     break;
                 default:
@@ -153,27 +178,25 @@ public class Ranging {
         }
         for (int i = 0; i < classes.length; i++) {
             switch (classes[i]) {
-                case "start":
+                case PREDICTION_START:
                     probas_start.add(distribution[i]);
                     break;
-                case "left":
+                case PREDICTION_LEFT:
                     probas_left.add(distribution[i]);
                     break;
-                case "right":
+                case PREDICTION_RIGHT:
                     probas_right.add(distribution[i]);
                     break;
-                case "back":
+                case PREDICTION_BACK:
                     probas_back.add(distribution[i]);
                     break;
-                case "lock":
+                case PREDICTION_LOCK:
                     probas_lock.add(distribution[i]);
                     break;
                 default:
                     break;
             }
         }
-
-
     }
 
     public String predict2str() {
@@ -183,7 +206,7 @@ public class Ranging {
         return null;
     }
 
-    public int vote2int() {
+    private int vote2int() {
         int result = most(predictions);
         if (result != -1)
             return result;
@@ -197,7 +220,7 @@ public class Ranging {
             prediction = vote2int();
             prediction_old = prediction;
         } else {
-            if (distribution[vote2int()] > threshold_prob) {
+            if (distribution[vote2int()] > THRESHOLD_PROB) {
                 prediction = vote2int();
                 prediction_old = prediction;
             } else {
@@ -214,7 +237,7 @@ public class Ranging {
         return null;
     }
 
-    public double sum(List<Double> list) {
+    private double sum(List<Double> list) {
         double result = 0;
         for (int i = 0; i < list.size(); i++) {
             result += list.get(i);
@@ -222,22 +245,22 @@ public class Ranging {
         return result;
     }
 
-    public int vote2int_proba() {
+    private int vote2int_proba() {
         for (int i = 0; i < classes.length; i++) {
             switch (classes[i]) {
-                case "start":
+                case PREDICTION_START:
                     proba_sum[i] = sum(probas_start);
                     break;
-                case "left":
+                case PREDICTION_LEFT:
                     proba_sum[i] = sum(probas_left);
                     break;
-                case "right":
+                case PREDICTION_RIGHT:
                     proba_sum[i] = sum(probas_right);
                     break;
-                case "back":
+                case PREDICTION_BACK:
                     proba_sum[i] = sum(probas_back);
                     break;
-                case "lock":
+                case PREDICTION_LOCK:
                     proba_sum[i] = sum(probas_lock);
                     break;
                 default:
@@ -254,7 +277,7 @@ public class Ranging {
         return null;
     }
 
-    public synchronized Integer most(final List<Integer> list) {
+    private synchronized Integer most(final List<Integer> list) {
         if (list.size() == 0) {
             return -1;
         }
@@ -272,7 +295,7 @@ public class Ranging {
         return max == null ? -1 : max.getKey();
     }
 
-    public int max(double[] list) {
+    private int max(double[] list) {
         int index = 0;
         double max = list[index];
         for (int i = 1; i < list.length; i++) {

@@ -1039,11 +1039,24 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     public void updateCarDrawable() {
         switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
             case ConnectedCarFactory.TYPE_4_A:
-                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_four);
+                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_four_a);
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_close));
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_a_close));
                 } else {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_open));
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_a_open));
+                }
+                trunk_area = null;
+                unlock_area_front_left = null;
+                unlock_area_rear_left = null;
+                unlock_area_front_right = null;
+                unlock_area_rear_right = null;
+                break;
+            case ConnectedCarFactory.TYPE_4_B:
+                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_four_b);
+                if (carDoorStatus == CarDoorStatus.LOCKED) {
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_b_close));
+                } else {
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_b_open));
                 }
                 trunk_area = null;
                 unlock_area_front_left = null;

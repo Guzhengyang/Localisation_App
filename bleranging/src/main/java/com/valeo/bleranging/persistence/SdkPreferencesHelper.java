@@ -418,6 +418,10 @@ public final class SdkPreferencesHelper {
         return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.selected_algo_pref_name), ConnectedCarFactory.ALGO_STANDARD);
     }
 
+    public String getMachineLearningModel() {
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.machine_learning_model_pref_name), ConnectedCarFactory.MODEL_RF);
+    }
+
     public Boolean getIsIndoor() {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.is_indoor_enabled_pref_name), false);
     }
