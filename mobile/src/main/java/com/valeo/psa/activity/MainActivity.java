@@ -384,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         vehicle_locked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBleRangingHelper.isFullyConnected()) {
+                if (mBleRangingHelper.isRKEButtonClickable()) {
                     rke_loading_progress_bar.setVisibility(View.VISIBLE);
                     carDoorStatus = CarDoorStatus.LOCKED;
                     vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
@@ -405,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         driver_s_door_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBleRangingHelper.isFullyConnected()) {
+                if (mBleRangingHelper.isRKEButtonClickable()) {
                     rke_loading_progress_bar.setVisibility(View.VISIBLE);
                     carDoorStatus = CarDoorStatus.DRIVER_DOOR_OPEN;
                     driver_s_door_unlocked.setBackgroundResource(R.mipmap.slider_button);
@@ -427,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         vehicle_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBleRangingHelper.isFullyConnected()) {
+                if (mBleRangingHelper.isRKEButtonClickable()) {
                     rke_loading_progress_bar.setVisibility(View.VISIBLE);
                     carDoorStatus = CarDoorStatus.UNLOCKED;
                     vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
@@ -442,9 +442,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                             rke_loading_progress_bar.setVisibility(View.GONE);
                         }
                     }, RKE_USE_TIMEOUT);
+                    createNotification(NOTIFICATION_ID_1, getString(R.string.notif_unlock_it),
+                            R.mipmap.car_all_doors_button, getString(R.string.vehicle_unlocked));
                 }
-                createNotification(NOTIFICATION_ID_1, getString(R.string.notif_unlock_it),
-                        R.mipmap.car_all_doors_button, getString(R.string.vehicle_unlocked));
             }
         });
     }
@@ -1013,6 +1013,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     ble_status.setText(R.string.connected_over_ble);
                 } else {
                     ble_status.setText(R.string.not_connected_over_ble);
+                    vehicle_locked.setBackgroundResource(0);
+                    driver_s_door_unlocked.setBackgroundResource(0);
+                    vehicle_unlocked.setBackgroundResource(0);
+                    startButtonAnimation(false);
                 }
             }
         });

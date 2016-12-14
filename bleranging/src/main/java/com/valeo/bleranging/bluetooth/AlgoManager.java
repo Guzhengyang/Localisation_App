@@ -71,7 +71,9 @@ public class AlgoManager implements SensorEventListener {
             backIsChanging.set(false);
         }
     };
+    /* Avoid multiple click on rke buttons */
     private final AtomicBoolean isRKEAvailable = new AtomicBoolean(true);
+    /* Avoid concurrent lock action from rke and strategy loop */
     private final AtomicBoolean areLockActionsAvailable = new AtomicBoolean(true);
     /**
      * Create a handler to detect if the vehicle can do a unlock
