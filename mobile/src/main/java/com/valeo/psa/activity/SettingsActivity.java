@@ -502,8 +502,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     } else if (v instanceof String) {
                         prefEdit.putString(key, ((String) v));
                         PSALogs.d("map load", key + " " + v.toString() + " string");
-                        PSALogs.d("map change", findPreference(key).getSummary() + " to " + v.toString());
-                        findPreference(key).setSummary(v.toString());
+                        if (findPreference(key) != null) {
+                            PSALogs.d("map change", findPreference(key).getSummary() + " to " + v.toString());
+                            findPreference(key).setSummary(v.toString());
+                        }
                     }
                 }
                 prefEdit.apply();
