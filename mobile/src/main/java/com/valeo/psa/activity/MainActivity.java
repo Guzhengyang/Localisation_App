@@ -1203,7 +1203,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     @Override
     protected void onResume() {
         super.onResume();
-        if(mBleRangingHelper != null) {
+        if (mBleRangingHelper != null && !mBleRangingHelper.isCloseAppCalled()) {
             if (TrxUtils.createLogFile()) {
                 TrxUtils.writeFirstColumnSettings();
                 String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();

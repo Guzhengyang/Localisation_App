@@ -15,7 +15,7 @@ import java.util.Locale;
  * Created by l-avaratha on 08/06/2016
  */
 public class TrxUtils {
-    private static final File logFile = new File(SdkPreferencesHelper.getInstance().getLogFileName());
+    private static File logFile = new File("");
 
     /**
      * Selected the correct value for a given threshold
@@ -495,32 +495,43 @@ public class TrxUtils {
     }
 
     /**
+     * Create two directories to register the settings and all rssi values
+     */
+    public static boolean createDirectories() {
+        return createLogsDir() && createConfigDir();
+    }
+
+    /**
      * Create a log file to register the settings and all rssi values
      * @return true if the file exist or is succesfully created, false otherwise
      */
     public static boolean createLogFile() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_kk", Locale.FRANCE);
-        String timestampLog = sdf.format(new Date());
-        SdkPreferencesHelper.getInstance().setLogFileName("sdcard/InBlueRssi/allRssi_" + SdkPreferencesHelper.getInstance().getRssiLogNumber() + "_" + timestampLog + ".csv");
-        PSALogs.d("LogFileName", SdkPreferencesHelper.getInstance().getLogFileName());
-        File logFile = new File("sdcard/InBlueRssi/allRssi_" + SdkPreferencesHelper.getInstance().getRssiLogNumber() + "_" + timestampLog + ".csv");
-        if (!logFile.exists()) {
-            try {
-                //Create file
-                if (logFile.createNewFile()) {
-                    PSALogs.d("make", "file Success");
-                    return true;
-                } else {
-                    PSALogs.d("make", "file Failed");
+        if (createDirectories()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_kk", Locale.FRANCE);
+            String timestampLog = sdf.format(new Date());
+            SdkPreferencesHelper.getInstance().setLogFileName("sdcard/InBlueRssi/allRssi_"
+                    + SdkPreferencesHelper.getInstance().getRssiLogNumber() + "_" + timestampLog + ".csv");
+            logFile = new File(SdkPreferencesHelper.getInstance().getLogFileName());
+            PSALogs.d("LogFileName", SdkPreferencesHelper.getInstance().getLogFileName());
+            if (!logFile.exists()) {
+                try {
+                    //Create file
+                    if (logFile.createNewFile()) {
+                        PSALogs.d("make", "file Success");
+                        return true;
+                    } else {
+                        PSALogs.d("make", "file Failed");
+                        return false;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                     return false;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
+            } else {
+                return true;
             }
-        } else {
-            return true;
         }
+        return false;
     }
 
     /**
@@ -591,5 +602,35 @@ public class TrxUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static boolean createLogsDir() {
+        File dir = new File("sdcard/InBlueRssi/");
+        //if the folder doesn't exist
+        if (!dir.exists()) {
+            if (dir.mkdir()) {
+                PSALogs.d("make", "dir Success");
+                return true;
+            } else {
+                PSALogs.d("make", "dir Failed");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean createConfigDir() {
+        File dir = new File("sdcard/InBlueConfig/");
+        //if the folder doesn't exist
+        if (!dir.exists()) {
+            if (dir.mkdir()) {
+                PSALogs.d("make", "dir Success");
+                return true;
+            } else {
+                PSALogs.d("make", "dir Failed");
+                return false;
+            }
+        }
+        return true;
     }
 }
