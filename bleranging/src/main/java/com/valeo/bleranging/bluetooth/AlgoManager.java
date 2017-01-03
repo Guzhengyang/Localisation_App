@@ -365,9 +365,12 @@ public class AlgoManager implements SensorEventListener {
         boolean isWelcomeAllowed = false;
         isStartStrategyValid = null;
         isUnlockStrategyValid = null;
+        // Cancel previous requested actions
         isInStartArea = false;
         isInUnlockArea = false;
         isInLockArea = false;
+        mProtocolManager.setIsStartRequested(false);
+        mProtocolManager.setIsWelcomeRequested(false);
         rangingPredictionInt = ranging.getPrediction();
         if (rangingPredictionInt != -1) {
             PSALogs.d("prediction", "rangingPredictionInt = " + rangingPredictionInt);

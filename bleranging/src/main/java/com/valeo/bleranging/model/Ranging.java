@@ -100,7 +100,7 @@ public class Ranging {
         double dist_new;
         for (int i = 0; i < rssi.length; i++) {
             if (prediction_old != -1) {
-                if (this.classes[prediction_old].equals("lock")) {
+                if (this.classes[prediction_old].equals(PREDICTION_LOCK)) {
                     rssi[i] -= 2;
                 }
             }
