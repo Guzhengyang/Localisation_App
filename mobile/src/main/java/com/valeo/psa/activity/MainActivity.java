@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private GradientDrawable unlock_area_right;
     private GradientDrawable unlock_area_rear_right;
     private GradientDrawable unlock_area_back;
+    private GradientDrawable unlock_area_front;
     private GradientDrawable thatcham_area;
     private DottedProgressBar little_round_progressBar;
     private TextView debug_info;
@@ -939,6 +940,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             case BleRangingHelper.THATCHAM_AREA:
                 thatcham_area.setColor(Color.YELLOW);
                 break;
+            case BleRangingHelper.UNLOCK_FRONT_AREA:
+                unlock_area_front.setColor(Color.GREEN);
+                break;
         }
     }
 
@@ -990,6 +994,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 break;
             case BleRangingHelper.THATCHAM_AREA:
                 thatcham_area.setColor(Color.BLACK);
+                break;
+            case BleRangingHelper.UNLOCK_FRONT_AREA:
+                unlock_area_front.setColor(Color.BLACK);
                 break;
         }
     }
@@ -1133,6 +1140,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         unlock_area_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_left);
         unlock_area_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_right);
         unlock_area_back = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_back);
+        unlock_area_front = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front);
         thatcham_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.thatcham_area);
     }
 

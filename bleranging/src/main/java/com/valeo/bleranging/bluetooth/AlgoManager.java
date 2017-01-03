@@ -31,14 +31,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.valeo.bleranging.BleRangingHelper.START_PASSENGER_AREA;
 import static com.valeo.bleranging.model.Ranging.PREDICTION_BACK;
+import static com.valeo.bleranging.model.Ranging.PREDICTION_FAR;
+import static com.valeo.bleranging.model.Ranging.PREDICTION_FRONT;
 import static com.valeo.bleranging.model.Ranging.PREDICTION_LEFT;
 import static com.valeo.bleranging.model.Ranging.PREDICTION_LOCK;
+import static com.valeo.bleranging.model.Ranging.PREDICTION_NEAR;
 import static com.valeo.bleranging.model.Ranging.PREDICTION_RIGHT;
 import static com.valeo.bleranging.model.Ranging.PREDICTION_START;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_BACK;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_FRONT_LEFT;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_FRONT_RIGHT;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_LEFT;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_MIDDLE;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_RIGHT;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.MACHINE_LEARNING;
 import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
 
 /**
@@ -254,11 +260,17 @@ public class AlgoManager implements SensorEventListener {
                 .append("forcedLock: ").append(String.valueOf(forcedLock)).append("\n")
                 .append("blockUnlock: ").append(String.valueOf(blockUnlock)).append(" ")
                 .append("forcedUnlock: ").append(String.valueOf(forcedUnlock)).append("\n")
-                .append("frozen: ").append(String.valueOf(smartphoneIsFrozen)).append(" ");
+                .append("frozen: ").append(String.valueOf(smartphoneIsFrozen)).append("\n");
         spannableStringBuilder //TODO Remove after test
-                .append(String.format(Locale.FRANCE, "%1$.03f", orientation[0])).append("\n")
-                .append(String.format(Locale.FRANCE, "%1$.03f", orientation[1])).append("\n")
-                .append(String.format(Locale.FRANCE, "%1$.03f", orientation[2])).append("\n");
+                .append(String.format(Locale.FRANCE, "%1$.03f %2$.03f %3$.03f \n",
+                        orientation[0], orientation[1], orientation[2]));
+        if (SdkPreferencesHelper.getInstance().getSelectedAlgo().equalsIgnoreCase(MACHINE_LEARNING) && ranging != null) {
+            if (ranging.predict2str().equalsIgnoreCase(PREDICTION_NEAR)) {
+                spannableStringBuilder.append("dist < 4m").append("\n");
+            } else if (ranging.predict2str().equalsIgnoreCase(PREDICTION_FAR)) {
+                spannableStringBuilder.append("dist > 6m").append("\n");
+            }
+        }
         return spannableStringBuilder;
     }
 
@@ -413,6 +425,16 @@ public class AlgoManager implements SensorEventListener {
                     List<Integer> result1 = new ArrayList<>(1);
                     result1.add(NUMBER_TRX_LEFT);
                     isUnlockStrategyValid = result1;
+                    isInUnlockArea = true;
+                    if (areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
+                        performLockWithCryptoTimeout(false, false);
+                    }
+                    break;
+                case PREDICTION_FRONT:
+                    List<Integer> result4 = new ArrayList<>(1);
+                    result4.add(NUMBER_TRX_FRONT_LEFT);
+                    result4.add(NUMBER_TRX_FRONT_RIGHT);
+                    isUnlockStrategyValid = result4;
                     isInUnlockArea = true;
                     if (areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
                         performLockWithCryptoTimeout(false, false);

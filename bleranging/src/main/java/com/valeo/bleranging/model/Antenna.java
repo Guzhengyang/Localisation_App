@@ -328,10 +328,12 @@ public class Antenna {
 //        if (rssiPente.size() == 10) {
 //            rssiPente.remove(0);
 //        }
-        if (rssi < -120) {
-            rssi = -121;
-        } else if (rssi > -20) {
-            rssi = -19;
+        if (rssi == 0) {
+            return;
+        } else if (rssi < -100) {
+            rssi = -101;
+        } else if (rssi > -30) {
+            rssi = -29;
         }
         lastRssi = currentRssi;
         lastOriginalRssi = currentOriginalRssi;
@@ -346,7 +348,6 @@ public class Antenna {
         this.rssiHistoric.add(currentRssi);
         this.lastBleChannel = bleChannel;
         if (lastIsSmartphoneMovingSlowly != isSmartphoneMovingSlowly) {
-//            resetWithHysteresis(antennaRssiAverageWelcome); //TODO concurrentModification
             lastIsSmartphoneMovingSlowly = isSmartphoneMovingSlowly;
         }
         rollingAverageRssi(isSmartphoneMovingSlowly);

@@ -31,6 +31,9 @@ public class Ranging {
     public static final String PREDICTION_LEFT = "left";
     public static final String PREDICTION_RIGHT = "right";
     public static final String PREDICTION_BACK = "back";
+    public static final String PREDICTION_FRONT = "front";
+    public static final String PREDICTION_NEAR = "near";
+    public static final String PREDICTION_FAR = "far";
     private static final double POWER_0 = -30;
     private static final double THRESHOLD_PROB = 0.8;
     private static final int N_VOTE = 3;
@@ -46,13 +49,6 @@ public class Ranging {
     private Instance sample;
     private RandomForest rf;
     private Logistic logistic;
-
-    private List<Double> probas_left = new ArrayList<>();
-    private List<Double> probas_right = new ArrayList<>();
-    private List<Double> probas_back = new ArrayList<>();
-    private List<Double> probas_lock = new ArrayList<>();
-    private List<Double> probas_start = new ArrayList<>();
-
 
     public Ranging(Context context, double[] rssi) {
         try {
@@ -88,8 +84,6 @@ public class Ranging {
 
         proba_sum = new double[classes.length];
         predictions.add(predict2int());
-        add_probs();
-
     }
 
     private double rssi2dist(double rssi) {
@@ -108,16 +102,10 @@ public class Ranging {
             dist[i] = correct_unilateral(i, dist_new);
             sample.setValue(i, dist[i]);
         }
-        if (predictions.size() == N_VOTE) {
+        if (!predictions.isEmpty() && predictions.size() == N_VOTE) {
             predictions.remove(0);
-            probas_left.remove(0);
-            probas_right.remove(0);
-            probas_back.remove(0);
-            probas_start.remove(0);
-            probas_lock.remove(0);
         }
         predictions.add(predict2int());
-        add_probs();
     }
 
     private double correct_unilateral(int index, double dist_new) {
@@ -161,44 +149,6 @@ public class Ranging {
         return result;
     }
 
-    private void add_probs() {
-        try {
-            switch (SdkPreferencesHelper.getInstance().getMachineLearningModel()) {
-                case MODEL_RF:
-                    distribution = rf.distributionForInstance(sample);
-                    break;
-                case MODEL_LOGISTIC:
-                    distribution = logistic.distributionForInstance(sample);
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        for (int i = 0; i < classes.length; i++) {
-            switch (classes[i]) {
-                case PREDICTION_START:
-                    probas_start.add(distribution[i]);
-                    break;
-                case PREDICTION_LEFT:
-                    probas_left.add(distribution[i]);
-                    break;
-                case PREDICTION_RIGHT:
-                    probas_right.add(distribution[i]);
-                    break;
-                case PREDICTION_BACK:
-                    probas_back.add(distribution[i]);
-                    break;
-                case PREDICTION_LOCK:
-                    probas_lock.add(distribution[i]);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
     public String predict2str() {
         int result = predict2int();
         if (result != -1)
@@ -237,46 +187,6 @@ public class Ranging {
         return null;
     }
 
-    private double sum(List<Double> list) {
-        double result = 0;
-        for (int i = 0; i < list.size(); i++) {
-            result += list.get(i);
-        }
-        return result;
-    }
-
-    private int vote2int_proba() {
-        for (int i = 0; i < classes.length; i++) {
-            switch (classes[i]) {
-                case PREDICTION_START:
-                    proba_sum[i] = sum(probas_start);
-                    break;
-                case PREDICTION_LEFT:
-                    proba_sum[i] = sum(probas_left);
-                    break;
-                case PREDICTION_RIGHT:
-                    proba_sum[i] = sum(probas_right);
-                    break;
-                case PREDICTION_BACK:
-                    proba_sum[i] = sum(probas_back);
-                    break;
-                case PREDICTION_LOCK:
-                    proba_sum[i] = sum(probas_lock);
-                    break;
-                default:
-                    break;
-            }
-        }
-        return max(proba_sum);
-    }
-
-    public String vote2str_proba() {
-        int result = vote2int_proba();
-        if (result != -1)
-            return classes[result];
-        return null;
-    }
-
     private synchronized Integer most(final List<Integer> list) {
         if (list.size() == 0) {
             return -1;
@@ -293,18 +203,6 @@ public class Ranging {
             }
         }
         return max == null ? -1 : max.getKey();
-    }
-
-    private int max(double[] list) {
-        int index = 0;
-        double max = list[index];
-        for (int i = 1; i < list.length; i++) {
-            if (list[i] > max) {
-                max = list[i];
-                index = i;
-            }
-        }
-        return index;
     }
 
     public String printDist() {

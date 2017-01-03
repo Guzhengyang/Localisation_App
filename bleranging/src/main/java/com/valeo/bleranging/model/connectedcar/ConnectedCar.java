@@ -40,10 +40,10 @@ public abstract class ConnectedCar {
     final static String TRX_BACK_NAME = "Back";
     final static String TRX_REAR_RIGHT_NAME = "RRight";
     private final static int RSSI_LOCK_DEFAULT_VALUE = -120;
-    private final static int RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE = -50;
-    private final static int RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE = -30;
-    private final static int RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE = -70;
-    private final static int RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE = -80;
+    private final static int RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE = -60;
+    private final static int RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE = -55;
+    private final static int RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE = -65;
+    private final static int RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE = -75;
     private final static String trxAddressFrontLeft = SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft();
     private final static String trxAddressFrontRight = SdkPreferencesHelper.getInstance().getTrxAddressFrontRight();
     private final static String trxAddressLeft = SdkPreferencesHelper.getInstance().getTrxAddressLeft();
@@ -157,99 +157,9 @@ public abstract class ConnectedCar {
      */
     public void initializeTrx(boolean newLockStatus) {
         if (newLockStatus) {
-            initializeTrx(RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE);
+            initializeTrx(RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE);
         } else {
-            initializeTrx(RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE);
-        }
-    }
-
-    /**
-     * Reset rssi historic with new value
-     * @param newLockStatus         the lock status
-     * @param isUnlockStrategyValid the unlock strategy result
-     */
-    public synchronized void resetWithHysteresis(boolean newLockStatus, List<Integer> isUnlockStrategyValid) {
-        if (!newLockStatus && isUnlockStrategyValid != null) { // just perform an unlock
-            for (Integer trxNumber : isUnlockStrategyValid) {
-                switch (trxNumber) {
-                    case ConnectedCar.NUMBER_TRX_LEFT:
-                        resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE);
-                        break;
-                    case ConnectedCar.NUMBER_TRX_RIGHT:
-                        resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE);
-                        break;
-                    case ConnectedCar.NUMBER_TRX_BACK:
-                        resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE);
-                        break;
-                    default:
-                        resetTrxWithHysteresis(RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE,
-                                RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE, RSSI_UNLOCK_PERIPH_MEDIUM_DEFAULT_VALUE);
-                        break;
-                }
-            }
-        } else { // just perform a lock
-            resetTrxWithHysteresis(RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE,
-                    RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE,
-                    RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE, RSSI_LOCK_DEFAULT_VALUE);
-        }
-    }
-
-    /**
-     * Reset Trxs with these values
-     *
-     * @param valueMiddle     the middle trx new value
-     * @param valueLeft       the left trx new value
-     * @param valueRight      the right trx new value
-     * @param valueBack       the back trx new value
-     * @param valueFrontLeft  the front left trx new value
-     * @param valueFrontRight the front right trx new value
-     * @param valueRearLeft   the rear left trx new value
-     * @param valueRearRight  the rear right trx new value
-     */
-    private synchronized void resetTrxWithHysteresis(int valueMiddle, int valueLeft, int valueRight,
-                                                     int valueBack, int valueTrunk, int valueFrontLeft, int valueFrontRight,
-                                                     int valueRearLeft, int valueRearRight) {
-        if(trxFrontLeft != null) {
-            trxFrontLeft.resetWithHysteresis(valueFrontLeft);
-        }
-        if (trxFrontRight != null) {
-            trxFrontRight.resetWithHysteresis(valueFrontRight);
-        }
-        if (trxLeft != null) {
-            trxLeft.resetWithHysteresis(valueLeft);
-        }
-        if(trxMiddle != null) {
-            trxMiddle.resetWithHysteresis(valueMiddle);
-        }
-        if(trxRight != null) {
-            trxRight.resetWithHysteresis(valueRight);
-        }
-        if (trxTrunk != null) {
-            trxTrunk.resetWithHysteresis(valueTrunk);
-        }
-        if (trxRearLeft != null) {
-            trxRearLeft.resetWithHysteresis(valueRearLeft);
-        }
-        if(trxBack != null) {
-            trxBack.resetWithHysteresis(valueBack);
-        }
-        if (trxRearRight != null) {
-            trxRearRight.resetWithHysteresis(valueRearRight);
+            initializeTrx(RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE);
         }
     }
 
