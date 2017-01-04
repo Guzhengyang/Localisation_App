@@ -30,21 +30,20 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.valeo.bleranging.BleRangingHelper.START_PASSENGER_AREA;
+import static com.valeo.bleranging.BleRangingHelper.START_TRUNK_AREA;
 import static com.valeo.bleranging.model.Ranging.PREDICTION_BACK;
-import static com.valeo.bleranging.model.Ranging.PREDICTION_FAR;
 import static com.valeo.bleranging.model.Ranging.PREDICTION_FRONT;
 import static com.valeo.bleranging.model.Ranging.PREDICTION_LEFT;
 import static com.valeo.bleranging.model.Ranging.PREDICTION_LOCK;
-import static com.valeo.bleranging.model.Ranging.PREDICTION_NEAR;
 import static com.valeo.bleranging.model.Ranging.PREDICTION_RIGHT;
 import static com.valeo.bleranging.model.Ranging.PREDICTION_START;
+import static com.valeo.bleranging.model.Ranging.PREDICTION_TRUNK;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_BACK;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_FRONT_LEFT;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_FRONT_RIGHT;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_LEFT;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_MIDDLE;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_RIGHT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.MACHINE_LEARNING;
 import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
 
 /**
@@ -248,9 +247,16 @@ public class AlgoManager implements SensorEventListener {
 
     public SpannableStringBuilder createDebugData(SpannableStringBuilder spannableStringBuilder) {
         if (ranging != null) {
+            spannableStringBuilder.append("Indoor Localisation: ").append(ranging.getPrediction_indoor()).append("\n");
+            spannableStringBuilder.append("Near-Far Localisation: ").append(ranging.getPrediction_near_far()).append("\n");
             spannableStringBuilder.append(ranging.printDist());
             if (rangingPredictionInt != -1) {
-                spannableStringBuilder.append("rangingPrediction: ").append(ranging.classes[rangingPredictionInt]).append("\n");
+                spannableStringBuilder.append("Prediction: ").append(ranging.classes[rangingPredictionInt]).append(" ")
+                        .append(ranging.distribution[rangingPredictionInt] + "")
+                        .append("\n");
+            }
+            for (int i = 0; i < ranging.distribution.length; i++) {
+                spannableStringBuilder.append(ranging.classes[i]).append(": ").append(ranging.distribution[i] + "").append("\n");
             }
         }
         spannableStringBuilder
@@ -264,13 +270,6 @@ public class AlgoManager implements SensorEventListener {
         spannableStringBuilder //TODO Remove after test
                 .append(String.format(Locale.FRANCE, "%1$.03f %2$.03f %3$.03f \n",
                         orientation[0], orientation[1], orientation[2]));
-        if (SdkPreferencesHelper.getInstance().getSelectedAlgo().equalsIgnoreCase(MACHINE_LEARNING) && ranging != null) {
-            if (ranging.predict2str().equalsIgnoreCase(PREDICTION_NEAR)) {
-                spannableStringBuilder.append("dist < 4m").append("\n");
-            } else if (ranging.predict2str().equalsIgnoreCase(PREDICTION_FAR)) {
-                spannableStringBuilder.append("dist > 6m").append("\n");
-            }
-        }
         return spannableStringBuilder;
     }
 
@@ -383,14 +382,13 @@ public class AlgoManager implements SensorEventListener {
         isInLockArea = false;
         mProtocolManager.setIsStartRequested(false);
         mProtocolManager.setIsWelcomeRequested(false);
-        rangingPredictionInt = ranging.getPrediction(SdkPreferencesHelper.getInstance().getComSimulationEnabled()); //TODO Replace by CallReceiver.smartphoneComIsActivated after demo
+        rangingPredictionInt = ranging.getPrediction(); //TODO Replace SdkPreferencesHelper.getInstance().getComSimulationEnabled() by CallReceiver.smartphoneComIsActivated after demo
         if (rangingPredictionInt != -1) {
             PSALogs.d("prediction", "rangingPredictionInt = " + rangingPredictionInt);
             switch (ranging.classes[rangingPredictionInt]) {
                 case PREDICTION_START:
-                    List<Integer> result0 = new ArrayList<>(2);
+                    List<Integer> result0 = new ArrayList<>(1);
                     result0.add(START_PASSENGER_AREA);
-//                    result0.add(START_TRUNK_AREA);
                     isStartStrategyValid = result0;
                     isInStartArea = true;
                     if (mProtocolManager.isStartRequested() != isInStartArea) {
@@ -401,6 +399,15 @@ public class AlgoManager implements SensorEventListener {
                     isInLockArea = true;
                     if (areLockActionsAvailable.get() && rearmLock.get() && isInLockArea) {
                         performLockWithCryptoTimeout(false, true);
+                    }
+                    break;
+                case PREDICTION_TRUNK:
+                    List<Integer> result5 = new ArrayList<>(1);
+                    result5.add(START_TRUNK_AREA);
+                    isStartStrategyValid = result5;
+                    isInStartArea = true;
+                    if (mProtocolManager.isStartRequested() != isInStartArea) {
+                        mProtocolManager.setIsStartRequested(isInStartArea);
                     }
                     break;
                 case PREDICTION_BACK:
