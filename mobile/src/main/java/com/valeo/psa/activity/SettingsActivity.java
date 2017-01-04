@@ -775,6 +775,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
+        private static final int PICK_IMPORT_GENERAL_FILE_RESULT_CODE = 92164;
         private ListPreference connected_car_type;
         private ListPreference connected_car_base;
         private ListPreference selected_algo;
@@ -812,17 +813,170 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference address_rear_left;
         private EditTextPreference address_back;
         private EditTextPreference address_rear_right;
+        private Preference export_preferences;
+        private Preference import_preferences;
+        private String sharedPreferencesName;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             manager = getPreferenceManager();
-            manager.setSharedPreferencesName(SdkPreferencesHelper.SAVED_CC_GENERIC_OPTION);
+            sharedPreferencesName = SdkPreferencesHelper.SAVED_CC_GENERIC_OPTION;
+            manager.setSharedPreferencesName(sharedPreferencesName);
             sharedPreferences = manager.getSharedPreferences();
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
             setViews();
             bindSummaries();
+            setOnClickListeners();
+        }
+
+        private void setOnClickListeners() {
+            export_preferences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    String filePath = "sdcard/inBlueConfig/" + SdkPreferencesHelper.SAVED_CC_GENERIC_OPTION;
+                    File exportedPrefs = new File(filePath);
+                    if (!exportedPrefs.exists()) {
+                        try {
+                            if (exportedPrefs.createNewFile()) {
+                                saveSharedPreferencesToFile(exportedPrefs);
+                                Toast.makeText(getActivity(), "Preference exported to " + filePath, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActivity(), "Cannot create file.", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        saveSharedPreferencesToFile(exportedPrefs);
+                        Toast.makeText(getActivity(), "Preference exported to " + filePath, Toast.LENGTH_SHORT).show();
+                    }
+                    return false;
+                }
+            });
+
+            import_preferences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    selectFile(PICK_IMPORT_GENERAL_FILE_RESULT_CODE);
+                    return false;
+                }
+            });
+        }
+
+        private void selectFile(int code) {
+            String manufacturer = android.os.Build.MANUFACTURER;
+            if (manufacturer.equalsIgnoreCase("SAMSUNG")) {
+                Intent intent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
+                intent.putExtra("CONTENT_TYPE", "*/*");
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                startActivityForResult(intent, code);
+            } else {
+                Intent intent;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                } else {
+                    intent = new Intent(Intent.ACTION_GET_CONTENT);
+                }
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("file/*");
+                startActivityForResult(intent, code);
+            }
+        }
+
+        private boolean saveSharedPreferencesToFile(File dst) {
+            boolean res = false;
+            ObjectOutputStream output = null;
+            try {
+                output = new ObjectOutputStream(new FileOutputStream(dst));
+                manager.setSharedPreferencesName(sharedPreferencesName);
+                sharedPreferences = manager.getSharedPreferences();
+                PSALogs.d("map save", manager.getSharedPreferencesName() + " =? " + sharedPreferencesName);
+                for (Map.Entry<String, ?> entry : sharedPreferences.getAll().entrySet()) {
+                    PSALogs.d("map save", entry.getKey() + " " + entry.getValue());
+                }
+                output.writeObject(sharedPreferences.getAll());
+                res = true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (output != null) {
+                        output.flush();
+                        output.close();
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            return res;
+        }
+
+        private boolean loadSharedPreferencesFromFile(File src) {
+            boolean res = false;
+            ObjectInputStream input = null;
+            try {
+                input = new ObjectInputStream(new FileInputStream(src));
+                manager.setSharedPreferencesName(sharedPreferencesName);
+                sharedPreferences = manager.getSharedPreferences();
+                PSALogs.d("map save", manager.getSharedPreferencesName() + " =? " + sharedPreferencesName);
+                SharedPreferences.Editor prefEdit = sharedPreferences.edit();
+                prefEdit.clear();
+                Map<String, ?> entries = (Map<String, ?>) input.readObject();
+                for (Map.Entry<String, ?> entry : entries.entrySet()) {
+                    Object v = entry.getValue();
+                    String key = entry.getKey();
+                    if (v instanceof Boolean) {
+                        prefEdit.putBoolean(key, (Boolean) v);
+                        PSALogs.d("map load", key + " " + v.toString() + " bool");
+                    } else if (v instanceof Float) {
+                        prefEdit.putFloat(key, (Float) v);
+                        PSALogs.d("map load", key + " " + v.toString() + " float");
+                    } else if (v instanceof Integer) {
+                        prefEdit.putInt(key, (Integer) v);
+                        PSALogs.d("map load", key + " " + v.toString() + " int");
+                    } else if (v instanceof Long) {
+                        prefEdit.putLong(key, (Long) v);
+                        PSALogs.d("map load", key + " " + v.toString() + " long");
+                    } else if (v instanceof String) {
+                        prefEdit.putString(key, ((String) v));
+                        PSALogs.d("map load", key + " " + v.toString() + " string");
+                        if (findPreference(key) != null) {
+                            PSALogs.d("map change", findPreference(key).getSummary() + " to " + v.toString());
+                            findPreference(key).setSummary(v.toString());
+                        }
+                    }
+                }
+                prefEdit.apply();
+                prefEdit.commit();
+                Toast.makeText(getActivity(), "Preference imported from " + src.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+                res = true;
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (input != null) {
+                        input.close();
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            return res;
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            switch (requestCode) {
+                case PICK_IMPORT_GENERAL_FILE_RESULT_CODE:
+                    if (resultCode == RESULT_OK) {
+                        String filePath = data.getData().getPath();
+                        loadSharedPreferencesFromFile(new File(filePath));
+                    }
+                    break;
+            }
+            super.onActivityResult(requestCode, resultCode, data);
         }
 
         @Override
@@ -869,6 +1023,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             address_rear_left = ((EditTextPreference) findPreference(getString(R.string.address_rear_left_pref_name)));
             address_back = ((EditTextPreference) findPreference(getString(R.string.address_back_pref_name)));
             address_rear_right = ((EditTextPreference) findPreference(getString(R.string.address_rear_right_pref_name)));
+            export_preferences = findPreference(getString(R.string.export_pref_name));
+            import_preferences = findPreference(getString(R.string.import_pref_name));
         }
 
         private void setDefaultValues() {

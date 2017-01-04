@@ -173,4 +173,12 @@
             android:key="@string/one_step_size_pref_name"
             android:title="@string/pref_one_step_size" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_import_export">
+        <Preference
+            android:key="@string/export_pref_name"
+            android:title="@string/pref_export" />
+        <Preference
+            android:key="@string/import_pref_name"
+            android:title="@string/pref_import" />
+    </PreferenceCategory>
 </PreferenceScreen>
