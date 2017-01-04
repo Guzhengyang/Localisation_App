@@ -164,7 +164,7 @@ public class Ranging {
 
     }
 
-    public int getPrediction() {
+    public int getPrediction(boolean comIsActivated) {
         int prediction;
         if (prediction_old == -1) {
             prediction = vote2int();

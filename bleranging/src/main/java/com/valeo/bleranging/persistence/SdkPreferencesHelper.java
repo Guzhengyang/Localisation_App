@@ -426,6 +426,10 @@ public final class SdkPreferencesHelper {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.is_indoor_enabled_pref_name), false);
     }
 
+    public Boolean getComSimulationEnabled() {
+        return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.com_simulation_enabled_pref_name), false);
+    }
+
     public Boolean getConnectedCarTrameEnabled() {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_trame_enabled_pref_name), false);
     }

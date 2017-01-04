@@ -383,7 +383,7 @@ public class AlgoManager implements SensorEventListener {
         isInLockArea = false;
         mProtocolManager.setIsStartRequested(false);
         mProtocolManager.setIsWelcomeRequested(false);
-        rangingPredictionInt = ranging.getPrediction();
+        rangingPredictionInt = ranging.getPrediction(SdkPreferencesHelper.getInstance().getComSimulationEnabled()); //TODO Replace by CallReceiver.smartphoneComIsActivated after demo
         if (rangingPredictionInt != -1) {
             PSALogs.d("prediction", "rangingPredictionInt = " + rangingPredictionInt);
             switch (ranging.classes[rangingPredictionInt]) {

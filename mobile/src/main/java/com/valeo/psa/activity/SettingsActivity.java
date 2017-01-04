@@ -783,6 +783,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private CheckBoxPreference is_indoor_enabled;
         private CheckBoxPreference connected_car_trame_enabled;
         private EditTextPreference connected_car_trame;
+        private CheckBoxPreference com_simulation_enabled;
         private EditTextPreference back_timeout;
         private EditTextPreference thatcham_timeout;
         private EditTextPreference crypto_pre_auth_timeout;
@@ -993,6 +994,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             is_indoor_enabled = ((CheckBoxPreference) findPreference(getString(R.string.is_indoor_enabled_pref_name)));
             connected_car_trame_enabled = ((CheckBoxPreference) findPreference(getString(R.string.connected_car_trame_enabled_pref_name)));
             connected_car_trame = ((EditTextPreference) findPreference(getString(R.string.connected_car_trame_pref_name)));
+            com_simulation_enabled = ((CheckBoxPreference) findPreference(getString(R.string.com_simulation_enabled_pref_name)));
             back_timeout = ((EditTextPreference) findPreference(getString(R.string.back_timeout_pref_name)));
             thatcham_timeout = ((EditTextPreference) findPreference(getString(R.string.thatcham_timeout_pref_name)));
             crypto_pre_auth_timeout = ((EditTextPreference) findPreference(getString(R.string.crypto_pre_auth_timeout_pref_name)));
@@ -1031,6 +1033,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             back_timeout.setText(back_timeout.getSummary().toString());
             is_indoor_enabled.setChecked(SdkPreferencesHelper.getInstance().getIsIndoor());
             connected_car_trame_enabled.setChecked(SdkPreferencesHelper.getInstance().getConnectedCarTrameEnabled());
+            com_simulation_enabled.setChecked(SdkPreferencesHelper.getInstance().getComSimulationEnabled());
             user_speed_enabled.setChecked(SdkPreferencesHelper.getInstance().getUserSpeedEnabled());
             thatcham_timeout.setText(thatcham_timeout.getSummary().toString());
             crypto_pre_auth_timeout.setText(crypto_pre_auth_timeout.getSummary().toString());
@@ -1073,6 +1076,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(selected_ml_model, ConnectedCarFactory.MODEL_RF);
             is_indoor_enabled.setSummary(R.string.pref_is_indoor_enabled_summary);
             connected_car_trame_enabled.setSummary(R.string.pref_car_forced_trame_enabled_summary);
+            com_simulation_enabled.setSummary(R.string.pref_com_simulation_enabled);
             bindPreferenceSummaryToValue(connected_car_trame, "");
             bindPreferenceSummaryToValue(back_timeout, String.valueOf(SdkPreferencesHelper.BACK_TIMEOUT));
             bindPreferenceSummaryToValue(thatcham_timeout, String.valueOf(SdkPreferencesHelper.THATCHAM_TIMEOUT));

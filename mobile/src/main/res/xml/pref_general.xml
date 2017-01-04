@@ -40,6 +40,10 @@
             android:dependency="@string/connected_car_trame_enabled_pref_name"
             android:key="@string/connected_car_trame_pref_name"
             android:title="@string/pref_car_forced_trame" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/com_simulation_enabled_pref_name"
+            android:title="@string/pref_com_simulation_enabled" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_ble_address">
         <EditTextPreference
