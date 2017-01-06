@@ -20,6 +20,7 @@ import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
 import com.valeo.bleranging.utils.CallReceiver;
+import com.valeo.bleranging.utils.FaceDetectorUtils;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.SoundUtils;
 
@@ -243,6 +244,7 @@ public class AlgoManager implements SensorEventListener {
         mContext.registerReceiver(callReceiver, new IntentFilter());
         mContext.registerReceiver(bleStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         mContext.registerReceiver(mDataReceiver, new IntentFilter(BluetoothLeService.ACTION_DATA_AVAILABLE2));
+        FaceDetectorUtils.createFaceDetector(mContext);
     }
 
     public SpannableStringBuilder createDebugData(SpannableStringBuilder spannableStringBuilder) {
@@ -251,12 +253,15 @@ public class AlgoManager implements SensorEventListener {
             spannableStringBuilder.append("Near-Far Localisation: ").append(ranging.getPrediction_near_far()).append("\n");
             spannableStringBuilder.append(ranging.printDist());
             if (rangingPredictionInt != -1) {
-                spannableStringBuilder.append("Prediction: ").append(ranging.classes[rangingPredictionInt]).append(" ")
-                        .append(ranging.distribution[rangingPredictionInt] + "")
+                spannableStringBuilder.append("Prediction: ")
+                        .append(ranging.classes[rangingPredictionInt]).append(" ")
+                        .append(String.valueOf(ranging.distribution[rangingPredictionInt]))
                         .append("\n");
             }
             for (int i = 0; i < ranging.distribution.length; i++) {
-                spannableStringBuilder.append(ranging.classes[i]).append(": ").append(ranging.distribution[i] + "").append("\n");
+                spannableStringBuilder.append(ranging.classes[i]).append(": ")
+                        .append(String.valueOf(ranging.distribution[i]))
+                        .append("\n");
             }
         }
         spannableStringBuilder
@@ -598,6 +603,7 @@ public class AlgoManager implements SensorEventListener {
         mContext.unregisterReceiver(mDataReceiver);
         mContext.unregisterReceiver(callReceiver);
         mContext.unregisterReceiver(bleStateReceiver);
+        FaceDetectorUtils.deleteFaceDetector();
         if (mLockStatusChangedHandler != null) {
             mLockStatusChangedHandler.removeCallbacks(mManageIsLockStatusChangedPeriodicTimer);
         }

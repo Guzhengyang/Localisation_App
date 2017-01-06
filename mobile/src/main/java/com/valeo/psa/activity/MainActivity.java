@@ -1,6 +1,5 @@
 package com.valeo.psa.activity;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.KeyguardManager;
 import android.app.Notification;
@@ -28,7 +27,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
@@ -91,13 +89,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private final static int SECOND_IN_MILLI = 1000;
     private final static float SCROLL_THRESHOLD = 10;
     private static final int RESULT_SETTINGS = 20;
-    private static final int REQUEST_ACCESS_COARSE_LOCATION_PERMISSION = 25110;
-    private static final int REQUEST_ACCESS_FINE_LOCATION_PERMISSION = 25111;
-    private static final int REQUEST_BLUETOOTH_PERMISSION = 25112;
-    private static final int REQUEST_BLUETOOTH_ADMIN_PERMISSION = 25113;
-    private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 25114;
-    private static final int REQUEST_READ_PHONE_STATE_PERMISSION = 25115;
-    private static final int REQUEST_PROCESS_OUTGOING_CALLS_PERMISSION = 25116;
     private static final int REQUEST_ENABLE_BT = 25117;
     private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
     private static final int NOTIFICATION_ID_1 = 1;
@@ -162,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private CarListAdapter mCarListAdapter = null;
     private CarDoorStatus carDoorStatus;
     private BleRangingHelper mBleRangingHelper;
-
     private boolean showMenu = true;
     private KeyguardManager mKeyguardManager;
     private Car selectedCar = null;
@@ -180,7 +170,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         setFonts();
         setOnClickListeners();
         main_appbar.setExpanded(false, false);
-        getPermissions();
         this.mBleRangingHelper = new BleRangingHelper(this, this);
         pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.pulse);
         pulseAnimation2 = AnimationUtils.loadAnimation(this, R.anim.pulse);
@@ -198,49 +187,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             Toast.makeText(this, getString(R.string.set_security_lock), Toast.LENGTH_LONG).show();
         }
         showAuthenticationScreen();
-    }
-
-    /**
-     * Get permission by asking user
-     */
-    private void getPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        REQUEST_ACCESS_COARSE_LOCATION_PERMISSION);
-            }
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        REQUEST_ACCESS_FINE_LOCATION_PERMISSION);
-            }
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.BLUETOOTH},
-                        REQUEST_BLUETOOTH_PERMISSION);
-            }
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.BLUETOOTH_ADMIN},
-                        REQUEST_BLUETOOTH_ADMIN_PERMISSION);
-            }
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION);
-            }
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE},
-                        REQUEST_READ_PHONE_STATE_PERMISSION);
-            }
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.PROCESS_OUTGOING_CALLS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS},
-                        REQUEST_PROCESS_OUTGOING_CALLS_PERMISSION);
-            }
-        }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -303,19 +249,23 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_ACCESS_COARSE_LOCATION_PERMISSION) {
+        if (requestCode == BleRangingHelper.REQUEST_PERMISSION_ALL) {
             // Received permission result for permission.
             PSALogs.i(TAG, "Received response for permission request.");
-            // Check if the permission has been granted
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // permission has been granted
-                PSALogs.i(TAG, "permission has now been granted.");
-                Snackbar.make(content_main, R.string.permision_available,
-                        Snackbar.LENGTH_SHORT).show();
-            } else {
-                PSALogs.i(TAG, "permission was NOT granted.");
-                Snackbar.make(content_main, R.string.permissions_not_granted,
-                        Snackbar.LENGTH_SHORT).show();
+            if (permissions.length > 0 && grantResults.length > 0) {
+                for (int i = 0; i < permissions.length && i < grantResults.length; i++) {
+                    // Check if the permission has been granted
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        // permission has been granted
+                        PSALogs.i(TAG, permissions[i] + " permission has now been granted.");
+                        Snackbar.make(content_main, R.string.permision_available,
+                                Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        PSALogs.i(TAG, permissions[i] + " permission was NOT granted.");
+                        Snackbar.make(content_main, R.string.permissions_not_granted,
+                                Snackbar.LENGTH_SHORT).show();
+                    }
+                }
             }
         }
     }
