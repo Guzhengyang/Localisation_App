@@ -55,6 +55,7 @@ public class AlgoManager implements SensorEventListener {
     private final InblueProtocolManager mProtocolManager;
     private final BleRangingListener bleRangingListener;
     private final Context mContext;
+    private final FaceDetectorUtils faceDetectorUtils;
     private final Handler mMainHandler;
     private final Handler mHandlerLockTimeOut;
     private final Handler mHandlerThatchamTimeOut;
@@ -234,6 +235,7 @@ public class AlgoManager implements SensorEventListener {
         this.mIsLaidTimeOutHandler = new Handler();
         this.mIsFrozenTimeOutHandler = new Handler();
         this.mLockStatusChangedHandler = new Handler();
+        this.faceDetectorUtils = new FaceDetectorUtils(mContext);
         SensorManager senSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         Sensor senProximity = senSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         Sensor senLinAcceleration = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -244,7 +246,7 @@ public class AlgoManager implements SensorEventListener {
         mContext.registerReceiver(callReceiver, new IntentFilter());
         mContext.registerReceiver(bleStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         mContext.registerReceiver(mDataReceiver, new IntentFilter(BluetoothLeService.ACTION_DATA_AVAILABLE2));
-        FaceDetectorUtils.createFaceDetector(mContext);
+        faceDetectorUtils.createFaceDetector();
     }
 
     public SpannableStringBuilder createDebugData(SpannableStringBuilder spannableStringBuilder) {
@@ -603,7 +605,7 @@ public class AlgoManager implements SensorEventListener {
         mContext.unregisterReceiver(mDataReceiver);
         mContext.unregisterReceiver(callReceiver);
         mContext.unregisterReceiver(bleStateReceiver);
-        FaceDetectorUtils.deleteFaceDetector();
+        faceDetectorUtils.deleteFaceDetector();
         if (mLockStatusChangedHandler != null) {
             mLockStatusChangedHandler.removeCallbacks(mManageIsLockStatusChangedPeriodicTimer);
         }
