@@ -14,7 +14,6 @@ import com.valeo.bleranging.utils.TextUtils;
 import com.valeo.bleranging.utils.TrxUtils;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -445,34 +444,16 @@ public abstract class ConnectedCar {
     }
 
     /**
-     * Condition to enable Start action
-     * @return true if the strategy is verified, false otherwise
-     */
-    public abstract List<Integer> startStrategy();
-
-    /**
      * Check if we are in start area
      * @return true if we are in start area, false otherwise
      */
     public abstract boolean isInStartArea(int threshold);
 
     /**
-     * Condition to enable unlock action
-     * @return true if the strategy is verified, false otherwise
-     */
-    public abstract List<Integer> unlockStrategy();
-
-    /**
      * Check if we are in unlock area
      * @return true if we are in unlock area, false otherwise
      */
     public abstract boolean isInUnlockArea(int threshold);
-
-    /**
-     * Condition to enable lock action
-     * @return true if the strategy is verified, false otherwise
-     */
-    public abstract boolean lockStrategy();
 
     /**
      * Check if we are in lock area

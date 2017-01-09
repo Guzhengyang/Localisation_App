@@ -1,6 +1,5 @@
 package com.valeo.bleranging.model;
 
-import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.util.ArrayList;
@@ -22,14 +21,10 @@ public class Antenna {
     private final AtomicBoolean isAntennaActive;
     private final AtomicBoolean hasReceivedRssi;
     private final ArrayList<Integer> rssiHistoric;
-    private final int numberTrx;
-    //    private final ArrayList<Integer> rssiPente;
     private int rssiIncrease = 0;
     private int rssiDecrease = 0;
     private BLEChannel bleChannel;
     private int lastOriginalRssi;
-    private int lastRssi;
-    private int currentRssi;
     private int currentOriginalRssi;
     private BLEChannel lastBleChannel;
     private boolean lastIsSmartphoneMovingSlowly;
@@ -40,27 +35,13 @@ public class Antenna {
     private int antennaRssiAverageWelcome;
     private int antennaRssiAverageLong;
     private int antennaRssiAverageShort;
-    //    private int defaultSum = 0;
-//    private int startSum = 0;
-//    private int lockSum = 0;
-//    private int unlockSum = 0;
-//    private int welcomeSum = 0;
-//    private int longSum = 0;
-//    private int shortSum = 0;
-    private int ratioMaxMin;
-    private int min = 0;
-    private int max = -100;
-    private int offsetBleChannel38 = 0;
-    private int offsetBleChannel39 = 0;
     private boolean hasBeenInitialized = false;
 
-    Antenna(int numberTrx) {
-        this.numberTrx = numberTrx;
+    Antenna() {
         this.bleChannel = BLEChannel.UNKNOWN;
         this.isAntennaActive = new AtomicBoolean(true);
         this.hasReceivedRssi = new AtomicBoolean(false);
         this.rssiHistoric = new ArrayList<>(SdkPreferencesHelper.getInstance().getRollingAvElement());
-//        this.rssiPente = new ArrayList<>(10);
     }
 
     public void init(int historicDefaultValue) {
@@ -100,217 +81,6 @@ public class Antenna {
         return bleChannel;
     }
 
-    private synchronized int getEcretageReferenceIndex(int lastN2Rssi) {
-        if (lastN2Rssi >= -170 && lastN2Rssi < -70) {
-            return SdkPreferencesHelper.getInstance().getEcretageReference_70_100(SdkPreferencesHelper.getInstance().getConnectedCarType());
-        } else if (lastN2Rssi >= -70 && lastN2Rssi < -50) {
-            return SdkPreferencesHelper.getInstance().getEcretageReference_50_70(SdkPreferencesHelper.getInstance().getConnectedCarType());
-        } else if (lastN2Rssi >= -50 && lastN2Rssi < -30) {
-            return SdkPreferencesHelper.getInstance().getEcretageReference_30_50(SdkPreferencesHelper.getInstance().getConnectedCarType());
-        } else if (lastN2Rssi >= -30 && lastN2Rssi < +30) {
-            return SdkPreferencesHelper.getInstance().getEcretageReference_30_30(SdkPreferencesHelper.getInstance().getConnectedCarType());
-        }
-        return 0;
-    }
-
-    /**
-     * Get the n-X value
-     *
-     * @param ecretageRefIndex the X-th previous values
-     * @return the n-ecretageRefIndex rssi value
-     */
-    private synchronized int getEcretageReferenceValue(int ecretageRefIndex) {
-        if (rssiHistoric != null && !rssiHistoric.isEmpty()) {
-            if (ecretageRefIndex >= rssiHistoric.size()) {
-                return rssiHistoric.get(0);
-            } else {
-                // -1 to prevent OutOfBoundException if ecretageRefIndex == 0
-                return rssiHistoric.get((rssiHistoric.size() - 1) - ecretageRefIndex);
-            }
-        }
-        return -90;
-    }
-
-    private float getEcretageValue(int referenceRssi) {
-        if (referenceRssi >= -170 && referenceRssi < -70) {
-            return SdkPreferencesHelper.getInstance().getEcretage70_100(SdkPreferencesHelper.getInstance().getConnectedCarType());
-        } else if (referenceRssi >= -70 && referenceRssi < -50) {
-            return SdkPreferencesHelper.getInstance().getEcretage50_70(SdkPreferencesHelper.getInstance().getConnectedCarType());
-        } else if (referenceRssi >= -50 && referenceRssi < -30) {
-            return SdkPreferencesHelper.getInstance().getEcretage30_50(SdkPreferencesHelper.getInstance().getConnectedCarType());
-        } else if (referenceRssi >= -30 && referenceRssi < +30) {
-            return SdkPreferencesHelper.getInstance().getEcretage30_30(SdkPreferencesHelper.getInstance().getConnectedCarType());
-        }
-        return 0;
-    }
-
-    /**
-     * Correct the rssi received within BORNE_INF and BORNE_SUP
-     *
-     * @param rssi       the rssi to correct
-     * @return the corrected rssi
-     */
-    private synchronized int getCorrectedRssi(int rssi) {
-        int referenceRssi = getEcretageReferenceValue(getEcretageReferenceIndex(lastRssi));
-        float ecretage = getEcretageValue(referenceRssi);
-        float borneInf = referenceRssi - ecretage;
-        float borneSup = referenceRssi + ecretage;
-//        float borneInf = lastRssi - getEcretageValue(lastRssi);
-//        float borneSup = lastRssi + getEcretageValue(lastRssi);
-        if (rssi > borneSup) {
-//            PSALogs.d("ecretage " + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi
-//                    + " borneInf:" + borneInf + " borneSup:" + borneSup + " savedRssi:" + (int) Math.ceil(borneSup));
-            return (int) Math.ceil(borneSup);
-        } else if (rssi < borneInf) {
-//            PSALogs.d("ecretage " + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi
-//                    + " borneInf:" + borneInf + " borneSup:" + borneSup + " savedRssi:" + (int) Math.floor(borneInf));
-            return (int) Math.floor(borneInf);
-        } else {
-//            PSALogs.d("ecretage " + antennaId, numberTrx + " newRssi:" + rssi + " lastRssi:" + lastRssi
-//                    + " borneInf:" + borneInf + " borneSup:" + borneSup + " savedRssi:" + rssi);
-            return rssi;
-        }
-    }
-
-    /**
-     * Calculate an offset for this channel
-     * @param rssi the rssi just received from the new channel
-     * @return the offset of the new channel
-     */
-    private int calculateOffsetChannel(int rssi) {
-        int offsetBleChannel = lastOriginalRssi - rssi;
-        if (offsetBleChannel > 10) {
-            offsetBleChannel = 10;
-        } else if (offsetBleChannel < -10) {
-            offsetBleChannel = -10;
-        }
-        return offsetBleChannel;
-    }
-
-    /**
-     * Calculate a rolling average of the rssi
-     */
-    private synchronized void rollingAverageRssi(boolean isSmartphoneLaid) {
-//        lastRssi = rssi; // Need last rssi for ecretage in next round
-//        int historicSize = rssiHistoric.size();
-//        int defaultSize = SdkPreferencesHelper.getInstance().getRollingAvElement();
-//        int startSize = SdkPreferencesHelper.getInstance().getStartNbElement();
-//        int lockSize = SdkPreferencesHelper.getInstance().getLockNbElement();
-//        int unlockSize = SdkPreferencesHelper.getInstance().getUnlockNbElement();
-//        int welcomeSize = SdkPreferencesHelper.getInstance().getWelcomeNbElement();
-//        int longSize = SdkPreferencesHelper.getInstance().getLongNbElement();
-//        int shortSize = SdkPreferencesHelper.getInstance().getShortNbElement();
-//        PSALogs.e("moy", "historicSize " + historicSize);
-//        if (historicSize >= defaultSize) {
-//            PSALogs.e("moy", "defaultSum " + defaultSum);
-//            defaultSum -= rssiHistoric.get(historicSize - defaultSize);
-//            PSALogs.e("moy", "defaultSum " + defaultSum);
-//        }
-//        if (historicSize >= startSize) {
-//            startSum -= rssiHistoric.get(historicSize - startSize);
-//        }
-//        if (historicSize >= lockSize) {
-//            lockSum -= rssiHistoric.get(historicSize - lockSize);
-//        }
-//        if (historicSize >= unlockSize) {
-//            unlockSum -= rssiHistoric.get(historicSize - unlockSize);
-//        }
-//        if (historicSize >= welcomeSize) {
-//            welcomeSum -= rssiHistoric.get(historicSize - welcomeSize);
-//        }
-//        if (historicSize >= longSize) {
-//            longSum -= rssiHistoric.get(historicSize - longSize);
-//        }
-//        if (historicSize >= shortSize) {
-//            shortSum -= rssiHistoric.get(historicSize - shortSize);
-//        }
-//        defaultSum += rssi;
-//        startSum += rssi;
-//        lockSum += rssi;
-//        unlockSum += rssi;
-//        welcomeSum += rssi;
-//        longSum += rssi;
-//        shortSum += rssi;
-//        antennaRssiAverage = defaultSum / defaultSize;
-//        antennaRssiAverageStart = startSum / startSize;
-//        antennaRssiAverageLock = lockSum / lockSize;
-//        antennaRssiAverageUnlock = unlockSum / unlockSize;
-//        antennaRssiAverageWelcome = welcomeSum / welcomeSize;
-//        antennaRssiAverageLong = longSum / longSize;
-//        antennaRssiAverageShort = shortSum / shortSize;
-//        // If list full, remove first and add last
-//        if (rssiHistoric.size() == defaultSize) {
-//            rssiHistoric.remove(0);
-//        }
-//        this.rssiHistoric.add(rssi);
-        antennaRssiAverage = 0;
-        antennaRssiAverageStart = 0;
-        antennaRssiAverageLock = 0;
-        antennaRssiAverageUnlock = 0;
-        antennaRssiAverageWelcome = 0;
-        antennaRssiAverageLong = 0;
-        antennaRssiAverageShort = 0;
-        int toIndex = rssiHistoric.size();
-        min = 0;
-        max = -100;
-        if (toIndex != 0) {
-            int indexDefault = getFromIndex(AVERAGE_DEFAULT, isSmartphoneLaid);
-            int indexStart = getFromIndex(AVERAGE_START, isSmartphoneLaid);
-            int indexLock = getFromIndex(AVERAGE_LOCK, isSmartphoneLaid);
-            int indexUnlock = getFromIndex(AVERAGE_UNLOCK, isSmartphoneLaid);
-            int indexWelcome = getFromIndex(AVERAGE_WELCOME, isSmartphoneLaid);
-            int indexLong = getFromIndex(AVERAGE_LONG, isSmartphoneLaid);
-            int indexShort = getFromIndex(AVERAGE_SHORT, isSmartphoneLaid);
-            int currentHistoricValue;
-            for (int i = toIndex - 1; i >= 0; i--) {
-                currentHistoricValue = rssiHistoric.get(i);
-                min = Math.min(min, currentHistoricValue);
-                max = Math.max(max, currentHistoricValue);
-                antennaRssiAverage += currentHistoricValue;
-                if (i >= indexStart) {
-                    antennaRssiAverageStart += currentHistoricValue;
-                }
-                if (i >= indexLock) {
-                    antennaRssiAverageLock += currentHistoricValue;
-                }
-                if (i >= indexUnlock) {
-                    antennaRssiAverageUnlock += currentHistoricValue;
-                }
-                if (i >= indexWelcome) {
-                    antennaRssiAverageWelcome += currentHistoricValue;
-                }
-                if (i >= indexLong) {
-                    antennaRssiAverageLong += currentHistoricValue;
-                }
-                if (i >= indexShort) {
-                    antennaRssiAverageShort += currentHistoricValue;
-                }
-            }
-            antennaRssiAverage /= getStartIndexTabPosition(toIndex, indexDefault);
-            antennaRssiAverageStart /= getStartIndexTabPosition(toIndex, indexStart);
-            antennaRssiAverageLock /= getStartIndexTabPosition(toIndex, indexLock);
-            antennaRssiAverageUnlock /= getStartIndexTabPosition(toIndex, indexUnlock);
-            antennaRssiAverageWelcome /= getStartIndexTabPosition(toIndex, indexWelcome);
-            antennaRssiAverageLong /= getStartIndexTabPosition(toIndex, indexLong);
-            antennaRssiAverageShort /= getStartIndexTabPosition(toIndex, indexShort);
-            ratioMaxMin = max - min;
-        }
-    }
-
-    /**
-     * Get a valid start index to calculate the mode dependant average
-     * @param toIndex the tab size
-     * @param fromIndex the starting index to check
-     * @return the valid index, or 1 if the index is invalid
-     */
-    private int getStartIndexTabPosition(int toIndex, int fromIndex) {
-        if ((fromIndex > 0) && (toIndex - fromIndex) > 0) {
-            return toIndex - fromIndex;
-        } else {
-            return toIndex;
-        }
-    }
-
     /**
      * Save the received rssi in the antenna historic
      * @param rssi the rssi of the packet received
@@ -318,16 +88,11 @@ public class Antenna {
     public synchronized void saveRssi(int rssi, boolean isSmartphoneMovingSlowly, boolean isRssiReceived) {
         if (!hasBeenInitialized) {
             this.lastOriginalRssi = rssi;
-            this.lastRssi = rssi;
-            this.currentRssi = rssi;
             this.currentOriginalRssi = rssi;
             this.lastBleChannel = bleChannel;
             this.lastIsSmartphoneMovingSlowly = isSmartphoneMovingSlowly;
             this.hasBeenInitialized = true;
         }
-//        if (rssiPente.size() == 10) {
-//            rssiPente.remove(0);
-//        }
         if (rssi == 0) {
             return;
         } else if (rssi < -100) {
@@ -335,122 +100,13 @@ public class Antenna {
         } else if (rssi > -30) {
             rssi = -29;
         }
-        lastRssi = currentRssi;
         lastOriginalRssi = currentOriginalRssi;
         currentOriginalRssi = rssi;
-        rssi += getTrxRssiEqualizer(numberTrx); // add trx rssi antenna power Equalizer
-        rssi = dynamicOffsetCompensation(rssi, bleChannel); // rssi channel offset dynamic compensation
-//        rssiPente.add(currentOriginalRssi - lastOriginalRssi);
-        currentRssi = getCorrectedRssi(rssi); // Correct the rssi value with an ecretage on the last N-2 rssi seen
-        if (rssiHistoric.size() == SdkPreferencesHelper.getInstance().getRollingAvElement()) {
-            rssiHistoric.remove(0);
-        }
-        this.rssiHistoric.add(currentRssi);
         this.lastBleChannel = bleChannel;
         if (lastIsSmartphoneMovingSlowly != isSmartphoneMovingSlowly) {
             lastIsSmartphoneMovingSlowly = isSmartphoneMovingSlowly;
         }
-        rollingAverageRssi(isSmartphoneMovingSlowly);
         hasReceivedRssi.set(isRssiReceived);
-    }
-
-    /**
-     * Compensation dynamic d'offset
-     *
-     * @param rssi       the origin rssi
-     * @param bleChannel the current ble channel
-     * @return the compensated rssi
-     */
-    private synchronized int dynamicOffsetCompensation(int rssi, BLEChannel bleChannel) {
-        switch (bleChannel) {
-            case BLE_CHANNEL_37:
-                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
-                    offsetBleChannel38 = 0;
-                    offsetBleChannel39 = 0;
-                }
-                break;
-            case BLE_CHANNEL_38:
-                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
-                    offsetBleChannel38 = calculateOffsetChannel(rssi);
-                }
-                rssi += offsetBleChannel38;
-                break;
-            case BLE_CHANNEL_39:
-                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
-                    offsetBleChannel39 = offsetBleChannel38 + calculateOffsetChannel(rssi);
-                }
-                rssi += offsetBleChannel39;
-                break;
-            case UNKNOWN:
-                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
-                    offsetBleChannel38 = 0;
-                    offsetBleChannel39 = 0;
-                }
-                break;
-            default:
-                break;
-        }
-        return rssi;
-    }
-
-    /**
-     * Retrieve the equalizer value for a trx
-     * @param numberTrx the trx id
-     * @return the value to equalize the trx
-     */
-    private synchronized int getTrxRssiEqualizer(int numberTrx) {
-        switch (numberTrx) {
-            case ConnectedCar.NUMBER_TRX_FRONT_LEFT:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontLeft(SdkPreferencesHelper.getInstance().getConnectedCarType());
-            case ConnectedCar.NUMBER_TRX_FRONT_RIGHT:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontRight(SdkPreferencesHelper.getInstance().getConnectedCarType());
-            case ConnectedCar.NUMBER_TRX_LEFT:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerLeft(SdkPreferencesHelper.getInstance().getConnectedCarType());
-            case ConnectedCar.NUMBER_TRX_MIDDLE:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerMiddle(SdkPreferencesHelper.getInstance().getConnectedCarType());
-            case ConnectedCar.NUMBER_TRX_RIGHT:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRight(SdkPreferencesHelper.getInstance().getConnectedCarType());
-            case ConnectedCar.NUMBER_TRX_REAR_LEFT:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearLeft(SdkPreferencesHelper.getInstance().getConnectedCarType());
-            case ConnectedCar.NUMBER_TRX_BACK:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerBack(SdkPreferencesHelper.getInstance().getConnectedCarType());
-            case ConnectedCar.NUMBER_TRX_REAR_RIGHT:
-                return SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearRight(SdkPreferencesHelper.getInstance().getConnectedCarType());
-            default:
-                return 0;
-        }
-    }
-
-    /**
-     * Get the starting index for calculating an average (nb of all element - nb of mode element)
-     * @param mode the mode of average
-     * @param isSmartphoneLaid a boolean true if the smartphone is not moving, false otherwise
-     * @return the index from where to start the average calculation
-     */
-    private int getFromIndex(int mode, boolean isSmartphoneLaid) {
-        // if smartphone doesn't move, take all the tab
-        if (isSmartphoneLaid) {
-            return 0;
-        }
-        switch (mode) {
-            case AVERAGE_DEFAULT:
-                return 0;
-            case AVERAGE_START:
-                return rssiHistoric.size() - SdkPreferencesHelper.getInstance().getStartNbElement();
-            case AVERAGE_LOCK:
-                return rssiHistoric.size() - SdkPreferencesHelper.getInstance().getLockNbElement();
-            case AVERAGE_UNLOCK:
-                return rssiHistoric.size() - SdkPreferencesHelper.getInstance().getUnlockNbElement();
-            case AVERAGE_WELCOME:
-                return rssiHistoric.size() - SdkPreferencesHelper.getInstance().getWelcomeNbElement();
-            case AVERAGE_LONG:
-                return rssiHistoric.size() - SdkPreferencesHelper.getInstance().getLongNbElement();
-            case AVERAGE_SHORT:
-                return rssiHistoric.size() - SdkPreferencesHelper.getInstance().getShortNbElement();
-            default:
-                return 0;
-        }
-
     }
 
     public void resetRssiIncrease() {
@@ -462,7 +118,7 @@ public class Antenna {
     }
 
     public int getRssiIncrease() {
-        if (currentRssi > lastRssi) {
+        if (currentOriginalRssi > lastOriginalRssi) {
             rssiIncrease++;
         } else {
             rssiIncrease = 0;
@@ -471,7 +127,7 @@ public class Antenna {
     }
 
     public int getRssiDecrease() {
-        if (currentRssi < lastRssi) {
+        if (currentOriginalRssi < lastOriginalRssi) {
             rssiDecrease++;
         } else {
             rssiDecrease = 0;
@@ -522,32 +178,8 @@ public class Antenna {
         }
     }
 
-    public int getRatioMaxMin() {
-        return ratioMaxMin;
-    }
-
-    public int getMin() {
-        return min;
-    }
-
-    public int getMax() {
-        return max;
-    }
-
-    public int getOffsetBleChannel38() {
-        return offsetBleChannel38;
-    }
-
-    public int getOffsetBleChannel39() {
-        return offsetBleChannel39;
-    }
-
     public int getCurrentOriginalRssi() {
         return currentOriginalRssi;
-    }
-
-    public int getCurrentModifiedRssi() {
-        return currentRssi;
     }
 
     public enum BLEChannel {

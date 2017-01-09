@@ -43,7 +43,6 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_BA
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_FRONT_LEFT;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_FRONT_RIGHT;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_LEFT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_MIDDLE;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_RIGHT;
 import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
 
@@ -278,58 +277,6 @@ public class AlgoManager implements SensorEventListener {
                 .append(String.format(Locale.FRANCE, "%1$.03f %2$.03f %3$.03f \n",
                         orientation[0], orientation[1], orientation[2]));
         return spannableStringBuilder;
-    }
-
-    /**
-     * Try all strategy based on rssi values
-     *
-     * @param newLockStatus the lock status of the vehicle
-     */
-    public void tryStandardStrategies(boolean newLockStatus, boolean isFullyConnected,
-                                      boolean isIndoor, ConnectedCar connectedCar, int totalAverage) {
-        rearmWelcome(connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE)); // rearm rearmWelcome Boolean
-        if (isFullyConnected) {
-            boolean isStartAllowed = false;
-            boolean isWelcomeAllowed = false;
-            String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-//            AudioManager audM = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-//            PSALogs.d("test", "smartphoneComIsActivated " + CallReceiver.smartphoneComIsActivated + " " +
-//                    audM.isBluetoothScoOn() + " " + audM.isSpeakerphoneOn() + " " + smartphoneIsInPocket);
-            connectedCar.updateThresholdValues(isIndoor, smartphoneIsInPocket, CallReceiver.smartphoneComIsActivated);
-            isStartStrategyValid = connectedCar.startStrategy();
-            isUnlockStrategyValid = connectedCar.unlockStrategy();
-            setIsBackValid(); // activate a timer when back is detected
-            boolean isLockStrategyValid = connectedCar.lockStrategy();
-            boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus);
-            isInLockArea = forcedLock || (!blockLock && isLockStrategyValid && (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)));
-            isInUnlockArea = forcedUnlock || (!blockUnlock && !isLockStrategyValid && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType));
-            isInStartArea = forcedStart || (!blockStart && isStartStrategyValid != null);
-            isInWelcomeArea = rearmWelcome.get() && isWelcomeStrategyValid;
-            setIsThatcham(isInLockArea, isInUnlockArea, isInStartArea);
-            if (lastSmartphoneIsFrozen != smartphoneIsFrozen) {
-                rearmForcedBlock(isInLockArea, isInUnlockArea, isInStartArea, smartphoneIsFrozen);
-                lastSmartphoneIsFrozen = smartphoneIsFrozen;
-            }
-            if (isInWelcomeArea) {
-                isWelcomeAllowed = true;
-                rearmWelcome.set(false);
-                SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
-                bleRangingListener.doWelcome();
-            }
-            PSALogs.d("performLock", "isRKEAvailable=" + isRKEAvailable.get());
-            if (isRKEAvailable.get() && areLockActionsAvailable.get() && rearmLock.get() && isInLockArea) {
-                performLockWithCryptoTimeout(false, true);
-            } else if (isInStartArea) { //smartphone in start area and moving
-                isStartAllowed = true;
-            } else if (isRKEAvailable.get() && areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
-                performLockWithCryptoTimeout(false, false);
-            }
-            if (mProtocolManager.isWelcomeRequested() != isWelcomeAllowed) {
-                mProtocolManager.setIsWelcomeRequested(isWelcomeAllowed);
-            } else if (mProtocolManager.isStartRequested() != isStartAllowed) {
-                mProtocolManager.setIsStartRequested(isStartAllowed);
-            }
-        }
     }
 
     public void performLockWithCryptoTimeout(final boolean isRKEAction, final boolean lockCar) {
