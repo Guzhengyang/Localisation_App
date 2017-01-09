@@ -13,7 +13,7 @@
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/car_model_type"
         android:paddingTop="@dimen/car_model_type_margin"
-        android:src="@mipmap/car_model_208" />
+        android:src="@mipmap/car_model_ds5" />
 
     <TextView
         android:id="@+id/selected_car_model"
