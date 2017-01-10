@@ -21,23 +21,14 @@ public class Antenna {
     private final AtomicBoolean isAntennaActive;
     private final AtomicBoolean hasReceivedRssi;
     private final ArrayList<Integer> rssiHistoric;
-    private int rssiIncrease = 0;
-    private int rssiDecrease = 0;
+    private final int numberTrx;
     private BLEChannel bleChannel;
     private int lastOriginalRssi;
     private int currentOriginalRssi;
-    private BLEChannel lastBleChannel;
-    private boolean lastIsSmartphoneMovingSlowly;
-    private int antennaRssiAverage;
-    private int antennaRssiAverageStart;
-    private int antennaRssiAverageLock;
-    private int antennaRssiAverageUnlock;
-    private int antennaRssiAverageWelcome;
-    private int antennaRssiAverageLong;
-    private int antennaRssiAverageShort;
     private boolean hasBeenInitialized = false;
 
-    Antenna() {
+    Antenna(int numberTrx) {
+        this.numberTrx = numberTrx;
         this.bleChannel = BLEChannel.UNKNOWN;
         this.isAntennaActive = new AtomicBoolean(true);
         this.hasReceivedRssi = new AtomicBoolean(false);
@@ -45,13 +36,6 @@ public class Antenna {
     }
 
     public void init(int historicDefaultValue) {
-        this.antennaRssiAverage = historicDefaultValue;
-        this.antennaRssiAverageStart = historicDefaultValue;
-        this.antennaRssiAverageLock = historicDefaultValue;
-        this.antennaRssiAverageUnlock = historicDefaultValue;
-        this.antennaRssiAverageWelcome = historicDefaultValue;
-        this.antennaRssiAverageLong = historicDefaultValue;
-        this.antennaRssiAverageShort = historicDefaultValue;
         initWithHysteresis(historicDefaultValue);
     }
 
@@ -61,15 +45,6 @@ public class Antenna {
     private synchronized void initWithHysteresis(int defaultValue) {
         for (int i = 0; i < SdkPreferencesHelper.getInstance().getRollingAvElement(); i++) {
             rssiHistoric.add(i, defaultValue);
-        }
-    }
-
-    /**
-     * Reset with Hysteresis over all saved rssi
-     */
-    synchronized void resetWithHysteresis(int defaultValue) {
-        for (int i = 0; i < SdkPreferencesHelper.getInstance().getRollingAvElement(); i++) {
-            rssiHistoric.set(i, defaultValue);
         }
     }
 
@@ -85,12 +60,10 @@ public class Antenna {
      * Save the received rssi in the antenna historic
      * @param rssi the rssi of the packet received
      */
-    public synchronized void saveRssi(int rssi, boolean isSmartphoneMovingSlowly, boolean isRssiReceived) {
+    public synchronized void saveRssi(int rssi, boolean isRssiReceived) {
         if (!hasBeenInitialized) {
             this.lastOriginalRssi = rssi;
             this.currentOriginalRssi = rssi;
-            this.lastBleChannel = bleChannel;
-            this.lastIsSmartphoneMovingSlowly = isSmartphoneMovingSlowly;
             this.hasBeenInitialized = true;
         }
         if (rssi == 0) {
@@ -102,37 +75,7 @@ public class Antenna {
         }
         lastOriginalRssi = currentOriginalRssi;
         currentOriginalRssi = rssi;
-        this.lastBleChannel = bleChannel;
-        if (lastIsSmartphoneMovingSlowly != isSmartphoneMovingSlowly) {
-            lastIsSmartphoneMovingSlowly = isSmartphoneMovingSlowly;
-        }
         hasReceivedRssi.set(isRssiReceived);
-    }
-
-    public void resetRssiIncrease() {
-        rssiIncrease = 0;
-    }
-
-    public void resetRssiDecrease() {
-        rssiDecrease = 0;
-    }
-
-    public int getRssiIncrease() {
-        if (currentOriginalRssi > lastOriginalRssi) {
-            rssiIncrease++;
-        } else {
-            rssiIncrease = 0;
-        }
-        return rssiIncrease;
-    }
-
-    public int getRssiDecrease() {
-        if (currentOriginalRssi < lastOriginalRssi) {
-            rssiDecrease++;
-        } else {
-            rssiDecrease = 0;
-        }
-        return rssiDecrease;
     }
 
     /**
@@ -140,42 +83,9 @@ public class Antenna {
      * @return true if the antenna is active (checker are different), false otherwise (checker are equals)
      */
     public boolean isAntennaActive() {
-        return isAntennaActive.get();
-    }
-
-    /**
-     * Compare checker then set isAntennaActive and newChecker
-     */
-    public void compareCheckerAndSetAntennaActive() {
-        // antenna active if antenna has received an rssi during the last 2,5 seconds
         isAntennaActive.set(hasReceivedRssi.get());
         hasReceivedRssi.set(false);
-    }
-
-    /**
-     * Get the antenna rssi average for a mode
-     * @param mode the mode of average
-     * @return the average rssi for a mode
-     */
-    public int getAntennaRssiAverage(int mode) {
-        switch (mode) {
-            case AVERAGE_DEFAULT:
-                return antennaRssiAverage;
-            case AVERAGE_START:
-                return antennaRssiAverageStart;
-            case AVERAGE_LOCK:
-                return antennaRssiAverageLock;
-            case AVERAGE_UNLOCK:
-                return antennaRssiAverageUnlock;
-            case AVERAGE_WELCOME:
-                return antennaRssiAverageWelcome;
-            case AVERAGE_LONG:
-                return antennaRssiAverageLong;
-            case AVERAGE_SHORT:
-                return antennaRssiAverageShort;
-            default:
-                return antennaRssiAverage;
-        }
+        return isAntennaActive.get();
     }
 
     public int getCurrentOriginalRssi() {

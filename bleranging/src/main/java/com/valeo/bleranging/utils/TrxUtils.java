@@ -1,6 +1,5 @@
 package com.valeo.bleranging.utils;
 
-import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.io.BufferedWriter;
@@ -18,120 +17,6 @@ public class TrxUtils {
     private static File logFile = new File("");
 
     /**
-     * Selected the correct value for a given threshold
-     * taking into account the smartphone and car positions
-     *
-     * @param thresholdIndoor          the threshold indoor value
-     * @param thresholdOutside         the threshold outside value
-     * @param isIndoor                 true if the car is indoor, false otherwise
-     * @param smartphoneIsInPocket     true if the smartphone is in the pocket, false otherwise
-     * @param smartphoneComIsActivated true if a communication link is activated, false otherwise
-     * @param offsetEar                an offset to add the threshold if the smartphone is near the user's ear
-     * @param offsetPocket             an offset to add to the threshold if the smartphone is in the pocket
-     * @return the correct value of the threshold
-     */
-    private static int selectedThreshold(int thresholdIndoor, int thresholdOutside, boolean isIndoor,
-                                         boolean smartphoneIsInPocket, boolean smartphoneComIsActivated,
-                                         int offsetEar, int offsetPocket) {
-        int result;
-        if (isIndoor) {
-            result = thresholdIndoor;
-        } else {
-            result = thresholdOutside;
-        }
-        if (smartphoneComIsActivated && smartphoneIsInPocket) {
-            result += offsetEar;
-        } else if (smartphoneIsInPocket) {
-            result += offsetPocket;
-        }
-        return result;
-    }
-
-    /**
-     * Calculate the threshold to use for lock
-     *
-     * @param mode                 the mode of average
-     * @param smartphoneIsInPocket true if the smartphone is in the pocket, false otherwise
-     * @param smartphoneComIsActivated  true if the smartphone is near ears, false otherwise
-     * @return the threshold with an offset if the smartphone is in a pocket
-     */
-    public static int getCurrentThreshold(int mode, boolean isIndoor, boolean smartphoneIsInPocket,
-                                          boolean smartphoneComIsActivated) {
-        int threshold;
-        String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-        switch (mode) {
-            case Antenna.AVERAGE_START:
-                threshold = selectedThreshold(
-                        SdkPreferencesHelper.getInstance().getIndoorStartThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideStartThreshold(connectedCarType),
-                        isIndoor, smartphoneIsInPocket, smartphoneComIsActivated,
-                        SdkPreferencesHelper.getInstance().getOffsetEarForStart(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOffsetPocketForStart(connectedCarType));
-                break;
-            case Antenna.AVERAGE_LOCK:
-                threshold = selectedThreshold(
-                        SdkPreferencesHelper.getInstance().getIndoorLockThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideLockThreshold(connectedCarType),
-                        isIndoor, smartphoneIsInPocket, smartphoneComIsActivated,
-                        SdkPreferencesHelper.getInstance().getOffsetEarForLock(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType));
-                break;
-            case Antenna.AVERAGE_UNLOCK:
-                threshold = selectedThreshold(
-                        SdkPreferencesHelper.getInstance().getIndoorUnlockThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideUnlockThreshold(connectedCarType),
-                        isIndoor, smartphoneIsInPocket, smartphoneComIsActivated,
-                        SdkPreferencesHelper.getInstance().getOffsetEarForUnlock(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(connectedCarType));
-                break;
-            case Antenna.AVERAGE_WELCOME:
-                threshold = selectedThreshold(
-                        SdkPreferencesHelper.getInstance().getIndoorWelcomeThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideWelcomeThreshold(connectedCarType),
-                        isIndoor, smartphoneIsInPocket, smartphoneComIsActivated,
-                        SdkPreferencesHelper.getInstance().getOffsetEarForLock(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType));
-                break;
-            case Antenna.AVERAGE_DELTA_LOCK:
-                threshold = selectedThreshold(
-                        SdkPreferencesHelper.getInstance().getIndoorAverageDeltaLockThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideAverageDeltaLockThreshold(connectedCarType),
-                        isIndoor, smartphoneIsInPocket, smartphoneComIsActivated,
-                        SdkPreferencesHelper.getInstance().getOffsetEarForLock(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType));
-                break;
-            case Antenna.AVERAGE_DELTA_UNLOCK:
-                threshold = selectedThreshold(
-                        SdkPreferencesHelper.getInstance().getIndoorAverageDeltaUnlockThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideAverageDeltaUnlockThreshold(connectedCarType),
-                        isIndoor, smartphoneIsInPocket, smartphoneComIsActivated,
-                        SdkPreferencesHelper.getInstance().getOffsetEarForUnlock(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(connectedCarType));
-                break;
-            default:
-                threshold = SdkPreferencesHelper.getInstance().getOutsideLockThreshold(connectedCarType);
-                break;
-        }
-        return threshold;
-    }
-
-    /**
-     * Compare value with threshold
-     *
-     * @param value     the value to compare
-     * @param threshold the threshold to compare to
-     * @param isGreater true if compare sign is greater than, false if it is lower than
-     * @return true if isGreater is true and value greater than threshold, false otherwise, inverse if isGreater is false
-     */
-    public static boolean compareWithThreshold(int value, int threshold, boolean isGreater) {
-        if (isGreater) {
-            return value > threshold;
-        } else {
-            return value < threshold;
-        }
-    }
-
-    /**
      * Convert a boolean to a string value
      * @param toConvert the boolean to convert
      * @return 1 if toCovert is true, 0 if toCovert is false
@@ -146,14 +31,6 @@ public class TrxUtils {
 
     /**
      * Create the string to write in the log file and add it
-     * @param rssiLeft the left trx rssi
-     * @param rssiMiddle the middle trx antenna 1 rssi
-     * @param rssiRight the right trx rssi
-     * @param rssiBack the back trx rssi
-     * @param rssiFrontLeft the front left trx rssi
-     * @param rssiFrontRight the front right trx rssi
-     * @param rssiRearLeft the rear left trx rssi
-     * @param rssiRearRight the rear right trx rssi
      * @param rssiLeftOriginal the original left trx rssi
      * @param rssiMiddleOriginal the original middle trx rssi
      * @param rssiRightOriginal the original right trx rssi
@@ -162,15 +39,8 @@ public class TrxUtils {
      * @param rssiFrontRightOriginal the original front right trx rssi
      * @param rssiRearLeftOriginal the original rear left trx rssi
      * @param rssiRearRightOriginal the original rear right trx rssi
-     * @param z the device z position azimuth
-     * @param x the device x position pitch
-     * @param y the device y position roll
      * @param isSmartphoneInPocket true if the smartphone is in pocket, false otherwise
-     * @param smartphoneIsMovingSlowly true if the smartphone is moving, false otherwise
      * @param isLockStatusChangedTimerExpired true if the lock timeout is expired, false otherwise
-     * @param blockStart true if the lock can be done, false otherwise
-     * @param forcedStart true if the lock can be done, false otherwise
-     * @param smartphoneIsFrozen true if the lock can be done, false otherwise
      * @param rearmLock true if the lock can be done, false otherwise
      * @param rearmUnlock true if the unlock can be done, false otherwise
      * @param rearmWelcome true if the welcome can be done, false otherwise
@@ -203,26 +73,13 @@ public class TrxUtils {
      * @param channelRearRight rear right trx ble channel
      * @param channelBack back trx ble channel
      */
-    public static void appendRssiLogs(int rssiLeft, int rssiMiddle, int rssiRight, int rssiTrunk,
-                                      int rssiFrontLeft, int rssiFrontRight,
-                                      int rssiRearLeft, int rssiRearRight, int rssiBack,
-                                      int rssiLeftOriginal, int rssiMiddleOriginal, int rssiRightOriginal, int rssiTrunkOriginal,
+    public static void appendRssiLogs(int rssiLeftOriginal, int rssiMiddleOriginal, int rssiRightOriginal, int rssiTrunkOriginal,
                                       int rssiFrontLeftOriginal, int rssiFrontRightOriginal,
                                       int rssiRearLeftOriginal, int rssiRearRightOriginal, int rssiBackOriginal,
-                                      int offset38Left, int offset38Middle, int offset38Right, int offset38Trunk,
-                                      int offset38FrontLeft, int offset38FrontRight,
-                                      int offset38RearLeft, int offset38RearRight, int offset38Back,
-                                      int offset39Left, int offset39Middle, int offset39Right, int offset39Trunk,
-                                      int offset39FrontLeft, int offset39FrontRight,
-                                      int offset39RearLeft, int offset39RearRight, int offset39Back,
                                       boolean isActiveLeft, boolean isActiveMiddle, boolean isActiveRight, boolean isActiveTrunk,
                                       boolean isActiveFrontLeft, boolean isActiveFrontRight,
                                       boolean isActiveRearLeft, boolean isActiveRearRight, boolean isActiveBack,
-                                      float z, float x, float y,
-                                      boolean isSmartphoneInPocket, boolean smartphoneIsMovingSlowly, boolean isLockStatusChangedTimerExpired,
-                                      boolean blockStart, boolean forcedStart,
-                                      boolean blockLock, boolean forcedLock,
-                                      boolean blockUnlock, boolean forcedUnlock, boolean smartphoneIsFrozen,
+                                      boolean isSmartphoneInPocket, boolean isLockStatusChangedTimerExpired,
                                       boolean rearmLock, boolean rearmUnlock, boolean rearmWelcome, boolean lockStatus,
                                       byte welcomeByte, byte lockByte, byte startByte,
                                       byte leftAreaByte, byte rightAreaByte, byte backAreaByte,
@@ -235,24 +92,12 @@ public class TrxUtils {
                                       String channelRearLeft, String channelRearRight,
                                       String channelBack, int beepInt) {
         final String comma = ";";
-        String log = rssiLeft + comma + rssiMiddle + comma + rssiRight + comma + rssiTrunk + comma +
-                rssiFrontLeft + comma + rssiFrontRight + comma + rssiRearLeft + comma + rssiRearRight + comma + rssiBack + comma +
-                rssiLeftOriginal + comma + rssiMiddleOriginal + comma + rssiRightOriginal + comma + rssiTrunkOriginal + comma +
+        String log = rssiLeftOriginal + comma + rssiMiddleOriginal + comma + rssiRightOriginal + comma + rssiTrunkOriginal + comma +
                 rssiFrontLeftOriginal + comma + rssiFrontRightOriginal + comma + rssiRearLeftOriginal + comma + rssiRearRightOriginal + comma + rssiBackOriginal + comma +
-                offset38Left + comma + offset38Middle + comma + offset38Right + comma + offset38Trunk + comma +
-                offset38FrontLeft + comma + offset38FrontRight + comma +
-                offset38RearLeft + comma + offset38RearRight + comma + offset38Back + comma +
-                offset39Left + comma + offset39Middle + comma + offset39Right + comma + offset39Trunk + comma +
-                offset39FrontLeft + comma + offset39FrontRight + comma +
-                offset39RearLeft + comma + offset39RearRight + comma + offset39Back + comma +
                 booleanToString(isActiveLeft) + comma + booleanToString(isActiveMiddle) + comma + booleanToString(isActiveRight) + comma + booleanToString(isActiveTrunk) + comma +
                 booleanToString(isActiveFrontLeft) + comma + booleanToString(isActiveFrontRight) + comma +
                 booleanToString(isActiveRearLeft) + comma + booleanToString(isActiveRearRight) + comma + booleanToString(isActiveBack) + comma +
-                z + comma + x + comma + y + comma +
-                booleanToString(isSmartphoneInPocket) + comma + booleanToString(smartphoneIsMovingSlowly) + comma + booleanToString(isLockStatusChangedTimerExpired) + comma +
-                booleanToString(blockStart) + comma + booleanToString(forcedStart) + comma +
-                booleanToString(blockLock) + comma + booleanToString(forcedLock) + comma +
-                booleanToString(blockUnlock) + comma + booleanToString(forcedUnlock) + comma + booleanToString(smartphoneIsFrozen) + comma;
+                booleanToString(isSmartphoneInPocket) + comma + booleanToString(isLockStatusChangedTimerExpired) + comma;
         if (lockStatus) {
             log += "5" + comma;
         } else {
@@ -316,7 +161,6 @@ public class TrxUtils {
      * Create the string to write in the settings log file and add it
      * @param carType the car type
      * @param carBase the car base
-     * @param algoType the algorithm selected
      * @param isIndoor true if the car is indoor, false if it is outside
      * @param addressConnectable the car connectable trx address
      * @param addressConnectableRemote the remote control address
@@ -332,147 +176,30 @@ public class TrxUtils {
      * @param addressRearRight the rear right trx address
      * @param logNumber the next log file number
      * @param rollAvElement the default rolling average size
-     * @param startNumElement the start rolling average size
-     * @param lockNumElement the lock rolling average size
-     * @param unlockNumElement the unlock rolling average size
-     * @param welcomeNumElement the welcome rolling average size
-     * @param LongNumElement the long rolling average size
-     * @param shortNumElement the short rolling average size
      * @param thatchamTimeout the thatcham timeout duration
      * @param preAuthTimeout the preAuth timeout duration
      * @param actionTimeout the action timeout duration
-     * @param sizeAcc the size of acceleration array
-     * @param correctionAcc the correction of acceleration
-     * @param frozenThr the threshold that determines if the smartphone is moving or not
      * @param wantedSpeed the wanted speed for the test procedure
      * @param stepSize the step size for the test procedure
-     * @param indoorRatioCloseToCar the indoor ratio above which we can assume we are close to the car
-     * @param outsideRatioCloseToCar the outside ratio above which we can assume we are close to the car
-     * @param offsetEarStart an offset when the smartphone is doing start command and is near the user's ear
-     * @param offsetEarLock an offset when the smartphone is doing lock command and is near the user's ear
-     * @param offsetEarUnlock an offset when the smartphone is doing unlock command and is near the user's ear
-     * @param offsetPocketStart an offset when the smartphone is doing start command and is in the user's pocket
-     * @param offsetPocketLock an offset when the smartphone is doing lock command and is in the user's pocket
-     * @param offsetPocketUnlock an offset when the smartphone is doing unlock command and is in the user's pocket
-     * @param indoorStartThr the indoor start threshold
-     * @param indoorUnlockThr the indoor unlock threshold
-     * @param indoorLockThr the indoor lock threshold
-     * @param indoorWelcomeThr the indoor welcome threshold
-     * @param indoorNearDoorRatioThr the indoor near door ratio threshold
-     * @param indoorBackDoorRatioMinThr the indoor back door ratio min threshold
-     * @param indoorBackDoorRatioMaxThr the indoor back door ratio max threshold
-     * @param indoorNearDoorRatioMB the indoor middle back ratio
-     * @param indoorNearDoorRatioMLMRMaxThr the indoor near door ratio middle l/r max threshold
-     * @param indoorNearDoorRatioMLMRMinThr the indoor near door ratio middle l/r min threshold
-     * @param indoorNearDoorRatioTLTRMaxThr the indoor near door ratio trunk l/r max threshold
-     * @param indoorNearDoorRatioTLTRMinThr the indoor near door ratio trunk l/r min threshold
-     * @param indoorAverageDeltaLockThr the indoor lock average delta threshold
-     * @param indoorAverageDeltaUnlockThr the indoor unlock average delta threshold
-     * @param outsideStartThr the outside start threshold
-     * @param outsideUnlockThr the outside unlock threshold
-     * @param outsideLockThr the outside lock threshold
-     * @param outsideWelcomeThr the outside welcome threshold
-     * @param outsideNearDoorRatioThr the outside near door ratio threshold
-     * @param outsideBackDoorRatioMinThr the outside back door ratio min threshold
-     * @param outsideBackDoorRatioMaxThr the outside back door ratio max threshold
-     * @param outsideNearDoorRatioMB the outside middle back ratio
-     * @param outsideNearDoorRatioMLMRMaxThr the outside near door ratio middle l/r max threshold
-     * @param outsideNearDoorRatioMLMRMinThr the outside near door ratio middle l/r min threshold
-     * @param outsideNearDoorRatioTLTRMaxThr the outside near door ratio trunk l/r max threshold
-     * @param outsideNearDoorRatioTLTRMinThr the outside near door ratio trunk l/r min threshold
-     * @param outsideAverageDeltaLockThr the outside lock average delta threshold
-     * @param outsideAverageDeltaUnlockThr the outside unlock average delta threshold
-     * @param unlockValidNumber the number of valid trx to success an unlock command
-     * @param unlockMode the number of valid trx to check for an unlock command
-     * @param lockMode the number of valid trx to check for a lock command
-     * @param startMode the number of valid trx to check for a start command
-     * @param ecretage100 the ecretage value for rssi between -100 and -70
-     * @param ecretage70 the ecretage value for rssi between -70 and -50
-     * @param ecretage50 the ecretage value for rssi between -50 and -30
-     * @param ecretage30 the ecretage value for rssi between -30 and +30
-     * @param equaLeft the left trx offset value to add to received rssi to equalize with others
-     * @param equaMiddle the middle trx offset value to add to received rssi to equalize with others
-     * @param equaRight the right trx offset value to add to received rssi to equalize with others
-     * @param equaTrunk the trunk trx offset value to add to received rssi to equalize with others
-     * @param equaBack the back trx offset value to add to received rssi to equalize with others
-     * @param equaFrontLeft the front left trx offset value to add to received rssi to equalize with others
-     * @param equaRearLeft the rear left trx offset value to add to received rssi to equalize with others
-     * @param equaFrontRight the front right trx offset value to add to received rssi to equalize with others
-     * @param equaRearRight the rear right trx offset value to add to received rssi to equalize with others
      */
-    public static void appendSettingLogs(String carType, String carBase, String algoType, boolean isIndoor,
+    public static void appendSettingLogs(String carType, String carBase, boolean isIndoor,
                                          String addressConnectable, String addressConnectableRemote, String addressConnectablePC,
                                          String addressFrontLeft, String addressFrontRight,
                                          String addressLeft, String addressMiddle, String addressRight, String addressTrunk,
                                          String addressRearLeft, String addressBack, String addressRearRight,
-                                         int logNumber, int rollAvElement, int startNumElement, int lockNumElement,
-                                         int unlockNumElement, int welcomeNumElement, int LongNumElement, int shortNumElement,
-                                         float thatchamTimeout, float preAuthTimeout, float actionTimeout, int sizeAcc,
-                                         float correctionAcc, float frozenThr, float wantedSpeed, int stepSize,
-                                         int indoorRatioCloseToCar, int outsideRatioCloseToCar,
-                                         int offsetEarStart, int offsetEarLock, int offsetEarUnlock,
-                                         int offsetPocketStart, int offsetPocketLock, int offsetPocketUnlock,
-                                         int indoorStartThr, int indoorUnlockThr, int indoorLockThr,
-                                         int indoorWelcomeThr, int indoorNearDoorRatioThr, int indoorBackDoorRatioMinThr, int indoorBackDoorRatioMaxThr,
-                                         int indoorNearDoorRatioMB, int indoorNearDoorRatioMLMRMaxThr,
-                                         int indoorNearDoorRatioMLMRMinThr, int indoorNearDoorRatioTLTRMaxThr, int indoorNearDoorRatioTLTRMinThr,
-                                         int indoorAverageDeltaLockThr, int indoorAverageDeltaUnlockThr,
-                                         int outsideStartThr, int outsideUnlockThr, int outsideLockThr,
-                                         int outsideWelcomeThr, int outsideNearDoorRatioThr, int outsideBackDoorRatioMinThr, int outsideBackDoorRatioMaxThr,
-                                         int outsideNearDoorRatioMB, int outsideNearDoorRatioMLMRMaxThr,
-                                         int outsideNearDoorRatioMLMRMinThr, int outsideNearDoorRatioTLTRMaxThr, int outsideNearDoorRatioTLTRMinThr,
-                                         int outsideAverageDeltaLockThr, int outsideAverageDeltaUnlockThr,
-                                         int unlockValidNumber,
-                                         int unlockMode, int lockMode, int startMode, float ecretage100,
-                                         float ecretage70, float ecretage50, float ecretage30,
-                                         int equaLeft, int equaMiddle, int equaRight, int equaTrunk,
-                                         int equaBack, int equaFrontLeft, int equaRearLeft, int equaFrontRight, int equaRearRight) {
+                                         int logNumber, int rollAvElement,
+                                         float thatchamTimeout, float preAuthTimeout, float actionTimeout,
+                                         float wantedSpeed, int stepSize) {
         final String comma = ";";
-        String log = carType + comma + carBase + comma + algoType + comma + String.valueOf(isIndoor) + comma
+        String log = carType + comma + carBase + comma + String.valueOf(isIndoor) + comma
                 + addressConnectable + comma + addressConnectableRemote + comma
                 + addressConnectablePC + comma + addressFrontLeft + comma + addressFrontRight + comma
                 + addressLeft + comma + addressMiddle + comma + addressRight + comma + addressTrunk + comma
                 + addressRearLeft + comma + addressBack + comma + addressRearRight + comma
                 + String.valueOf(logNumber) + comma + String.valueOf(rollAvElement) + comma
-                + String.valueOf(startNumElement) + comma + String.valueOf(lockNumElement) + comma
-                + String.valueOf(unlockNumElement) + comma + String.valueOf(welcomeNumElement) + comma
-                + String.valueOf(LongNumElement) + comma + String.valueOf(shortNumElement) + comma
                 + String.valueOf(thatchamTimeout) + comma + String.valueOf(preAuthTimeout) + comma
-                + String.valueOf(actionTimeout) + comma + String.valueOf(sizeAcc) + comma
-                + String.valueOf(correctionAcc) + comma + String.valueOf(frozenThr) + comma
-                + String.valueOf(wantedSpeed) + comma + String.valueOf(stepSize) + comma
-                + String.valueOf(indoorRatioCloseToCar) + comma + String.valueOf(outsideRatioCloseToCar) + comma
-                + String.valueOf(offsetEarStart) + comma + String.valueOf(offsetEarLock) + comma
-                + String.valueOf(offsetEarUnlock) + comma + String.valueOf(offsetPocketStart) + comma
-                + String.valueOf(offsetPocketLock) + comma + String.valueOf(offsetPocketUnlock) + comma
-                + String.valueOf(indoorStartThr) + comma + String.valueOf(indoorUnlockThr) + comma
-                + String.valueOf(indoorLockThr) + comma + String.valueOf(indoorWelcomeThr) + comma
-                + String.valueOf(indoorNearDoorRatioThr) + comma + String.valueOf(indoorBackDoorRatioMinThr) + comma
-                + String.valueOf(indoorBackDoorRatioMaxThr) + comma + String.valueOf(indoorNearDoorRatioMB) + comma
-                + String.valueOf(indoorNearDoorRatioMLMRMaxThr) + comma
-                + String.valueOf(indoorNearDoorRatioMLMRMinThr) + comma
-                + String.valueOf(indoorNearDoorRatioTLTRMaxThr) + comma
-                + String.valueOf(indoorNearDoorRatioTLTRMinThr) + comma
-                + String.valueOf(indoorAverageDeltaLockThr) + comma
-                + String.valueOf(indoorAverageDeltaUnlockThr) + comma
-                + String.valueOf(outsideStartThr) + comma + String.valueOf(outsideUnlockThr) + comma
-                + String.valueOf(outsideLockThr) + comma + String.valueOf(outsideWelcomeThr) + comma
-                + String.valueOf(outsideNearDoorRatioThr) + comma + String.valueOf(outsideBackDoorRatioMinThr) + comma
-                + String.valueOf(outsideBackDoorRatioMaxThr) + comma + String.valueOf(outsideNearDoorRatioMB) + comma
-                + String.valueOf(outsideNearDoorRatioMLMRMaxThr) + comma
-                + String.valueOf(outsideNearDoorRatioMLMRMinThr) + comma
-                + String.valueOf(outsideNearDoorRatioTLTRMaxThr) + comma
-                + String.valueOf(outsideNearDoorRatioTLTRMinThr) + comma
-                + String.valueOf(outsideAverageDeltaLockThr) + comma
-                + String.valueOf(outsideAverageDeltaUnlockThr) + comma
-                + String.valueOf(unlockValidNumber) + comma + String.valueOf(unlockMode) + comma
-                + String.valueOf(lockMode) + comma + String.valueOf(startMode) + comma
-                + String.valueOf(ecretage100) + comma + String.valueOf(ecretage70) + comma
-                + String.valueOf(ecretage50) + comma + String.valueOf(ecretage30) + comma
-                + String.valueOf(equaLeft) + comma + String.valueOf(equaMiddle) + comma
-                + String.valueOf(equaRight) + comma + String.valueOf(equaTrunk) + comma + String.valueOf(equaBack) + comma
-                + String.valueOf(equaFrontLeft) + comma + String.valueOf(equaRearLeft) + comma
-                + String.valueOf(equaFrontRight) + comma + String.valueOf(equaRearRight);
+                + String.valueOf(actionTimeout) + comma
+                + String.valueOf(wantedSpeed) + comma + String.valueOf(stepSize) + comma;
         appendRssiLog(log);
     }
 
@@ -540,20 +267,12 @@ public class TrxUtils {
     public static void writeFirstColumnSettings() {
         //Write 1st row with column names
         //BufferedWriter for performance, true to set append to file flag
-        String ColNames = "TIMESTAMP;carType;carBase;algoSelected;isIndoor;addressConnectable;addressConnectableRemote;addressConnectablePC;addressFrontLeft;addressFrontRight;"
-                + "addressLeft;addressMiddle;addressRight;addressTrunk;addressRearLeft;addressBack;addressRearRight;"
-                + "logNumber;rollAvElement;startNumElement;lockNumelement;unlockNumElement;welcomeNumElement;LongNumElement;shortNumElement;"
-                + "thatchamTimeout;preAuthTimeout;actionTimeout;sizeAcc;correctionAcc;frozenThr;wantedSpeed;stepSize;"
-                + "indoorRatioCloseToCar;outsideRatioCloseToCar;offsetEarStart;offsetEarLock;offsetEarUnlock;offsetPocketStart;offsetPocketLock;offsetPocketUnlock;"
-                + "indoorStartThr;indoorUnlockThr;indoorLockThr;indoorWelcomeThr;indoorNearDoorRatioThr;indoorBackDoorRatioMinThr;indoorBackDoorRatioMaxThr;"
-                + "indoorNearDoorRatioMB;indoorNearDoorRatioMLMRMaxThr;indoorNearDoorRatioMLMRMinThr;indoorNearDoorRatioTLTRMaxThr;indoorNearDoorRatioTLTRMinThr;"
-                + "indoorAverageDeltaLockThr;indoorAverageDeltaUnlockThr;"
-                + "outsideStartThr;outsideUnlockThr;outsideLockThr;outsideWelcomeThr;outsideNearDoorRatioThr;outsideBackDoorRatioMinThr;outsideBackDoorRatioMaxThr;"
-                + "outsideNearDoorRatioMB;outsideNearDoorRatioMLMRMaxThr;outsideNearDoorRatioMLMRMinThr;outsideNearDoorRatioTLTRMaxThr;outsideNearDoorRatioTLTRMinThr;"
-                + "outsideAverageDeltaLockThr;outsideAverageDeltaUnlockThr;"
-                + "unlockValidNumber;"
-                + "unlockMode;lockMode;startMode;ecretage100;ecretage70;ecretage50;ecretage30;"
-                + "equaLeft;equaMiddle;equaRight;equaTrunk;equaBack;equaFrontLeft;equaRearLeft;equaFrontRight;equaRearRight;";
+        String ColNames = "TIMESTAMP;carType;carBase;algoSelected;isIndoor;addressConnectable;"
+                + "addressConnectableRemote;addressConnectablePC;addressFrontLeft;addressFrontRight;"
+                + "addressLeft;addressMiddle;addressRight;addressTrunk;"
+                + "addressRearLeft;addressBack;addressRearRight;"
+                + "logNumber;rollAvElement;"
+                + "thatchamTimeout;preAuthTimeout;actionTimeout;wantedSpeed;stepSize;";
         try {
             BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
             buf.append(ColNames);
@@ -570,23 +289,15 @@ public class TrxUtils {
     public static void writeFirstColumnLogs() {
         //Write 1st row with column names
         //BufferedWriter for performance, true to set append to file flag
-        String ColNames = "TIMESTAMP;RSSI LEFT;RSSI MIDDLE;RSSI RIGHT;"
-                + "RSSI TRUNK;RSSI FRONTLEFT;RSSI FRONTRIGHT;RSSI REARLEFT;RSSI REARRIGHT;RSSI BACK;"
+        String ColNames = "TIMESTAMP;"
                 + "RSSI LEFT_ORIGIN;RSSI MIDDLE_ORIGIN;RSSI RIGHT_ORIGIN;"
                 + "RSSI TRUNK_ORIGIN;RSSI FRONTLEFT_ORIGIN;RSSI FRONTRIGHT_ORIGIN;"
                 + "RSSI REARLEFT_ORIGIN;RSSI REARRIGHT_ORIGIN;RSSI BACK_ORIGIN;"
-                + "LEFT_OFFSET38;MIDDLE_OFFSET38;RIGHT_OFFSET38;"
-                + "TRUNK_OFFSET38;FRONTLEFT_OFFSET38;FRONTRIGHT_OFFSET38;"
-                + "REARLEFT_OFFSET38;REARRIGHT_OFFSET38;BACK_OFFSET38;"
-                + "LEFT_OFFSET39;MIDDLE_OFFSET39;RIGHT_OFFSET39;"
-                + "TRUNK_OFFSET39;FRONTLEFT_OFFSET39;FRONTRIGHT_OFFSET39;"
-                + "REARLEFT_OFFSET39;REARRIGHT_OFFSET39;BACK_OFFSET39;"
                 + "LEFT_IS_ACTIVE;MIDDLE_IS_ACTIVE;RIGHT_IS_ACTIVE;"
                 + "TRUNK_IS_ACTIVE;FRONTLEFT_IS_ACTIVE;FRONTRIGHT_IS_ACTIVE;"
                 + "REARLEFT_IS_ACTIVE;REARRIGHT_IS_ACTIVE;BACK_IS_ACTIVE;"
-                + "Z AZIMUTH;X PITCH;Y ROLL;IN POCKET;IS LAID;ARE LOCK ACTIONS AVAILABLE;"
-                + "IS START BLOCKED;IS START FORCED;IS LOCK BLOCKED;IS LOCK FORCED;"
-                + "IS UNLOCK BLOCKED;IS UNLOCK FORCED;IS FROZEN;IS LOCK;REARM LOCK;REARM UNLOCK;"
+                + "IN POCKET;ARE LOCK ACTIONS AVAILABLE;"
+                + "IS LOCK;REARM LOCK;REARM UNLOCK;"
                 + "REARM WELCOME;WELCOME FLAG;LOCK FLAG;START FLAG;LEFT AREA FLAG;RIGHT AREA FLAG;"
                 + "BACK AREA FLAG;WALK AWAY FLAG;APPROACH FLAG;LEFT TURN FLAG;"
                 + "RIGHT TURN FLAG;APPROACHSIDE FLAG;APPROACHROAD FLAG;RECORD FLAG;"

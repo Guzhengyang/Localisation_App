@@ -15,10 +15,7 @@ public class ConnectedCarFactory {
     public final static String TYPE_5_A = "fiveLMRTB";
     public final static String TYPE_7_A = "sevenFlFrLMRRlRr";
     public final static String TYPE_8_A = "eightFlFrLMRTRlRr";
-    public final static String ALGO_STANDARD = "ALGO_STANDARD";
-    public final static String MACHINE_LEARNING = "MACHINE_LEARNING";
     public final static String MODEL_RF = "RANDOM_FOREST";
-    public final static String MODEL_LOGISTIC = "LOGISTIC";
 
     /**
      * Return a connected car
@@ -26,19 +23,19 @@ public class ConnectedCarFactory {
      * @param carName the car name
      * @return a connected car with the specified number of connection
      */
-    public static ConnectedCar getConnectedCar(Context mContext, String carName, boolean isIndoor) {
+    public static ConnectedCar getConnectedCar(Context mContext, String carName) {
         if (carName.equalsIgnoreCase(TYPE_4_A)) {
-            return new CCFourLMRB(mContext, isIndoor);
+            return new CCFourLMRB(mContext);
         } else if (carName.equalsIgnoreCase(TYPE_4_B)) {
-            return new CCFourLMRT(mContext, isIndoor);
+            return new CCFourLMRT(mContext);
         } else if (carName.equalsIgnoreCase(TYPE_5_A)) {
-            return new CCFiveLMRTB(mContext, isIndoor);
+            return new CCFiveLMRTB(mContext);
         } else if (carName.equalsIgnoreCase(TYPE_7_A)) {
-            return new CCSevenFlFrLMRRlRr(mContext, isIndoor);
+            return new CCSevenFlFrLMRRlRr(mContext);
         } else if (carName.equalsIgnoreCase(TYPE_8_A)) {
-            return new CCEightFlFrLMRTRlRr(mContext, isIndoor);
+            return new CCEightFlFrLMRTRlRr(mContext);
         } else {
-            return new CCFourLMRB(mContext, isIndoor);
+            return new CCFourLMRB(mContext);
         }
     }
 }

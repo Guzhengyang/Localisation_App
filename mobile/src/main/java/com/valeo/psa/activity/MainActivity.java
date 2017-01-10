@@ -1159,7 +1159,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
                 TrxUtils.appendSettingLogs(connectedCarType,
                         SdkPreferencesHelper.getInstance().getConnectedCarBase(),
-                        SdkPreferencesHelper.getInstance().getSelectedAlgo(),
                         SdkPreferencesHelper.getInstance().getIsIndoor(),
                         SdkPreferencesHelper.getInstance().getTrxAddressConnectable(),
                         SdkPreferencesHelper.getInstance().getTrxAddressConnectableRemoteControl(),
@@ -1169,80 +1168,15 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                         SdkPreferencesHelper.getInstance().getTrxAddressTrunk(), SdkPreferencesHelper.getInstance().getTrxAddressRearLeft(),
                         SdkPreferencesHelper.getInstance().getTrxAddressBack(), SdkPreferencesHelper.getInstance().getTrxAddressRearRight(),
                         SdkPreferencesHelper.getInstance().getRssiLogNumber(), SdkPreferencesHelper.getInstance().getRollingAvElement(),
-                        SdkPreferencesHelper.getInstance().getStartNbElement(), SdkPreferencesHelper.getInstance().getLockNbElement(),
-                        SdkPreferencesHelper.getInstance().getUnlockNbElement(), SdkPreferencesHelper.getInstance().getWelcomeNbElement(),
-                        SdkPreferencesHelper.getInstance().getLongNbElement(), SdkPreferencesHelper.getInstance().getShortNbElement(),
                         SdkPreferencesHelper.getInstance().getThatchamTimeout(),
                         SdkPreferencesHelper.getInstance().getCryptoPreAuthTimeout(),
                         SdkPreferencesHelper.getInstance().getCryptoActionTimeout(),
-                        SdkPreferencesHelper.getInstance().getLinAccSize(),
-                        SdkPreferencesHelper.getInstance().getCorrectionLinAcc(), SdkPreferencesHelper.getInstance().getFrozenThreshold(),
-                        SdkPreferencesHelper.getInstance().getWantedSpeed(), SdkPreferencesHelper.getInstance().getOneStepSize(),
-                        SdkPreferencesHelper.getInstance().getIndoorRatioCloseToCarThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideRatioCloseToCarThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOffsetEarForStart(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOffsetEarForLock(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOffsetEarForUnlock(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOffsetPocketForStart(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOffsetPocketForLock(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOffsetPocketForUnlock(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getIndoorStartThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getIndoorUnlockThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getIndoorLockThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getIndoorWelcomeThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getIndoorNearDoorRatioThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getIndoorNearBackDoorRatioThresholdMin(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getIndoorNearBackDoorRatioThresholdMax(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getIndoorNearDoorThresholdMB(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getIndoorNearDoorThresholdMLorMRMax(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getIndoorNearDoorThresholdMLorMRMin(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getIndoorNearDoorThresholdTLorTRMax(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getIndoorNearDoorThresholdTLorTRMin(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getIndoorAverageDeltaLockThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getIndoorAverageDeltaUnlockThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideStartThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideUnlockThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideLockThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideWelcomeThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideNearDoorRatioThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideNearBackDoorRatioThresholdMin(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideNearBackDoorRatioThresholdMax(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideNearDoorThresholdMB(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideNearDoorThresholdMLorMRMax(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideNearDoorThresholdMLorMRMin(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideNearDoorThresholdTLorTRMax(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideNearDoorThresholdTLorTRMin(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideAverageDeltaLockThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getOutsideAverageDeltaUnlockThreshold(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getUnlockMode(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getLockMode(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getStartMode(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getEcretage70_100(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getEcretage50_70(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getEcretage30_50(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getEcretage30_30(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerLeft(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerMiddle(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRight(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerTrunk(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerBack(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontLeft(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearLeft(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerFrontRight(connectedCarType),
-                        SdkPreferencesHelper.getInstance().getTrxRssiEqualizerRearRight(connectedCarType));
+                        SdkPreferencesHelper.getInstance().getWantedSpeed(), SdkPreferencesHelper.getInstance().getOneStepSize());
                 TrxUtils.writeFirstColumnLogs();
             }
             mBleRangingHelper.initializeConnectedCar();
         }
         setActivityTitle();
-        if (SdkPreferencesHelper.getInstance().getSelectedAlgo().equalsIgnoreCase(ConnectedCarFactory.ALGO_STANDARD)) {
-            selected_algo.setText(R.string.algo_standard);
-        } else if (SdkPreferencesHelper.getInstance().getSelectedAlgo().equalsIgnoreCase(ConnectedCarFactory.MACHINE_LEARNING)) {
-            selected_algo.setText(R.string.algo_machine_learning);
-        } else {
-            selected_algo.setText(R.string.algo_unknown);
-        }
     }
 
     private enum CarDoorStatus {

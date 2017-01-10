@@ -25,9 +25,7 @@ import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.SoundUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.valeo.bleranging.BleRangingHelper.START_PASSENGER_AREA;
@@ -58,23 +56,13 @@ public class AlgoManager implements SensorEventListener {
     private final Handler mMainHandler;
     private final Handler mHandlerLockTimeOut;
     private final Handler mHandlerThatchamTimeOut;
-    private final Handler mHandlerBackTimeOut;
     private final Handler mHandlerCryptoTimeOut;
     private final Handler mLockStatusChangedHandler;
-    private final Handler mIsLaidTimeOutHandler;
-    private final Handler mIsFrozenTimeOutHandler;
     private final AtomicBoolean thatchamIsChanging = new AtomicBoolean(false);
     private final Runnable mHasThatchamChanged = new Runnable() {
         @Override
         public void run() {
             thatchamIsChanging.set(false);
-        }
-    };
-    private final AtomicBoolean backIsChanging = new AtomicBoolean(false);
-    private final Runnable mHasBackChanged = new Runnable() {
-        @Override
-        public void run() {
-            backIsChanging.set(false);
         }
     };
     /* Avoid multiple click on rke buttons */
@@ -95,10 +83,6 @@ public class AlgoManager implements SensorEventListener {
     private final AtomicBoolean rearmLock = new AtomicBoolean(true);
     private final AtomicBoolean rearmUnlock = new AtomicBoolean(true);
     private final AtomicBoolean isRKE = new AtomicBoolean(false);
-    private final ArrayList<Double> lAccHistoric = new ArrayList<>(SdkPreferencesHelper.getInstance().getLinAccSize());
-    private final float R[] = new float[9];
-    private final float I[] = new float[9];
-    private final float orientation[] = new float[3];
     private final CallReceiver callReceiver = new CallReceiver();
     private final BroadcastReceiver bleStateReceiver = new BroadcastReceiver() {
         @Override
@@ -134,13 +118,6 @@ public class AlgoManager implements SensorEventListener {
             isAbortRunning = false;
         }
     };
-    private boolean lastSmartphoneIsFrozen = false;
-    private boolean forcedStart = false;
-    private boolean blockStart = false;
-    private boolean forcedLock = false;
-    private boolean blockLock = false;
-    private boolean forcedUnlock = false;
-    private boolean blockUnlock = false;
     private Integer rangingPredictionInt = -1;
     private List<Integer> isStartStrategyValid;
     private List<Integer> isUnlockStrategyValid;
@@ -148,28 +125,7 @@ public class AlgoManager implements SensorEventListener {
     private boolean isInUnlockArea = false;
     private boolean isInStartArea = false;
     private boolean isInWelcomeArea = false;
-    private double deltaLinAcc = 0;
     private boolean smartphoneIsInPocket = false;
-    private boolean smartphoneIsFrozen = false;
-    private final Runnable isFrozenRunnable = new Runnable() {
-        @Override
-        public void run() {
-            smartphoneIsFrozen = true; // smartphone is staying still
-            mIsFrozenTimeOutHandler.removeCallbacks(this);
-        }
-    };
-    private boolean isLaidRunnableAlreadyLaunched = false;
-    private boolean isFrozenRunnableAlreadyLaunched = false;
-    private float[] mGravity;
-    private float[] mGeomagnetic;
-    private boolean smartphoneIsMovingSlowly = false;
-    private final Runnable isLaidRunnable = new Runnable() {
-        @Override
-        public void run() {
-            smartphoneIsMovingSlowly = true; // smartphone is staying still
-            mIsLaidTimeOutHandler.removeCallbacks(this);
-        }
-    };
     private boolean lastCommandFromTrx;
     private boolean lastThatchamChanged = false;
     private final BroadcastReceiver mDataReceiver = new BroadcastReceiver() {
@@ -229,18 +185,13 @@ public class AlgoManager implements SensorEventListener {
         this.mMainHandler = mMainHandler;
         this.mHandlerLockTimeOut = new Handler();
         this.mHandlerThatchamTimeOut = new Handler();
-        this.mHandlerBackTimeOut = new Handler();
         this.mHandlerCryptoTimeOut = new Handler();
-        this.mIsLaidTimeOutHandler = new Handler();
-        this.mIsFrozenTimeOutHandler = new Handler();
         this.mLockStatusChangedHandler = new Handler();
         this.faceDetectorUtils = new FaceDetectorUtils(mContext);
         SensorManager senSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         Sensor senProximity = senSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        Sensor senLinAcceleration = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Sensor magnetometer = senSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         senSensorManager.registerListener(this, senProximity, SensorManager.SENSOR_DELAY_NORMAL);
-        senSensorManager.registerListener(this, senLinAcceleration, SensorManager.SENSOR_DELAY_UI);
         senSensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
         mContext.registerReceiver(callReceiver, new IntentFilter());
         mContext.registerReceiver(bleStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
@@ -265,17 +216,6 @@ public class AlgoManager implements SensorEventListener {
                         .append("\n");
             }
         }
-        spannableStringBuilder
-                .append("blockStart: ").append(String.valueOf(blockStart)).append(" ")
-                .append("forcedStart: ").append(String.valueOf(forcedStart)).append("\n")
-                .append("blockLock: ").append(String.valueOf(blockLock)).append(" ")
-                .append("forcedLock: ").append(String.valueOf(forcedLock)).append("\n")
-                .append("blockUnlock: ").append(String.valueOf(blockUnlock)).append(" ")
-                .append("forcedUnlock: ").append(String.valueOf(forcedUnlock)).append("\n")
-                .append("frozen: ").append(String.valueOf(smartphoneIsFrozen)).append("\n");
-        spannableStringBuilder //TODO Remove after test
-                .append(String.format(Locale.FRANCE, "%1$.03f %2$.03f %3$.03f \n",
-                        orientation[0], orientation[1], orientation[2]));
         return spannableStringBuilder;
     }
 
@@ -325,8 +265,7 @@ public class AlgoManager implements SensorEventListener {
     /**
      * Try all strategy based on machine learning
      */
-    public void tryMachineLearningStrategies(boolean newLockStatus, ConnectedCar connectedCar,
-                                             int totalAverage) {
+    public void tryMachineLearningStrategies(boolean newLockStatus, ConnectedCar connectedCar) {
         boolean isWelcomeAllowed = false;
         isStartStrategyValid = null;
         isUnlockStrategyValid = null;
@@ -405,7 +344,7 @@ public class AlgoManager implements SensorEventListener {
                     PSALogs.d("prediction", "NOOO rangingPredictionInt !");
                     break;
             }
-            boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus);
+            boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(connectedCar.getAllTrxAverage(), newLockStatus);
             isInWelcomeArea = rearmWelcome.get() && isWelcomeStrategyValid;
             if (isInWelcomeArea) {
                 isWelcomeAllowed = true;
@@ -432,32 +371,6 @@ public class AlgoManager implements SensorEventListener {
                 (long) (SdkPreferencesHelper.getInstance().getThatchamTimeout() * 1000));
     }
 
-    private void launchBackValidityTimeOut() {
-        if (backIsChanging.get()) {
-            mHandlerBackTimeOut.removeCallbacks(mHasBackChanged);
-            mHandlerBackTimeOut.removeCallbacks(null);
-        } else {
-            backIsChanging.set(true);
-        }
-        mHandlerBackTimeOut.postDelayed(mHasBackChanged,
-                (long) (SdkPreferencesHelper.getInstance().getBackTimeout() * 1000));
-    }
-
-    private void setIsBackValid() {
-        if (isUnlockStrategyValid != null) {
-            if (isUnlockStrategyValid.contains(NUMBER_TRX_BACK)) {
-                launchBackValidityTimeOut();
-            } else if (backIsChanging.get()) {
-                isUnlockStrategyValid.add(NUMBER_TRX_BACK);
-            }
-        } else {
-            if (backIsChanging.get()) {
-                isUnlockStrategyValid = new ArrayList<>();
-                isUnlockStrategyValid.add(NUMBER_TRX_BACK);
-            }
-        }
-    }
-
     private void setIsThatcham(boolean isInLockArea, boolean isInUnlockArea, boolean isInStartArea) {
         if (isInLockArea || isInStartArea || !isInUnlockArea) {
             if (!thatchamIsChanging.get()) { // if thatcham is not changing
@@ -470,19 +383,6 @@ public class AlgoManager implements SensorEventListener {
 
     public void createRangingObject(double[] rssi) {
         this.ranging = new Ranging(mContext, rssi);
-    }
-
-    /**
-     * Rearm rearm bool if rssi is very low
-     *
-     * @param rssi the rssi value to compare with threshold
-     */
-    private void rearmWelcome(int rssi) {
-        if (smartphoneIsInPocket && rssi <= -135) {
-            rearmWelcome.set(true);
-        } else if (!smartphoneIsInPocket && rssi <= -120) {
-            rearmWelcome.set(true);
-        }
     }
 
     private void manageRearms(final boolean newVehicleLockStatus) {
@@ -505,49 +405,6 @@ public class AlgoManager implements SensorEventListener {
         }
     }
 
-    private void rearmForcedBlock(boolean isInLockArea, boolean isInUnlockArea,
-                                  boolean isInStartArea, boolean smartphoneIsFrozen) {
-        if (smartphoneIsFrozen) {
-            if (isInLockArea) { // smartphone in lock area and frozen, then force lock
-                forcedLock = true;
-                blockLock = false;
-                forcedUnlock = false;
-                blockUnlock = true;
-                forcedStart = false;
-                blockStart = true;
-            } else { // smartphone not in lock area and frozen, then block lock
-                forcedLock = false;
-                blockLock = true;
-                if (isInStartArea) { // smartphone in start area and frozen, then force start
-                    forcedStart = true;
-                    blockStart = false;
-                    forcedUnlock = false;
-                    blockUnlock = true;
-                } else { // smartphone not in start area and frozen, then block start
-                    forcedStart = false;
-                    blockStart = true;
-                    if (isInUnlockArea) { // smartphone in unlock area and frozen, then force unlock
-                        forcedUnlock = true;
-                        blockUnlock = false;
-                    } else { // smartphone not in unlock area and frozen, then block unlock
-                        forcedUnlock = false;
-                        blockUnlock = true;
-                    }
-                    if (blockUnlock && blockStart && blockLock) {
-                        PSALogs.d("block", "all");
-                    }
-                }
-            }
-        } else { // smartphone not frozen, then deactivate force start and block start
-            forcedStart = false;
-            blockStart = false;
-            forcedLock = false;
-            blockLock = false;
-            forcedUnlock = false;
-            blockUnlock = false;
-        }
-    }
-
     public void closeApp() {
         mContext.unregisterReceiver(mDataReceiver);
         mContext.unregisterReceiver(callReceiver);
@@ -558,110 +415,16 @@ public class AlgoManager implements SensorEventListener {
         }
     }
 
-    /**
-     * Calculate acceleration rolling average
-     *
-     * @param lAccHistoric all acceleration values
-     * @return the rolling average of acceleration
-     */
-    private float getRollingAverageLAcc(ArrayList<Double> lAccHistoric) {
-        float average = 0;
-        if (lAccHistoric.size() > 0) {
-            for (Double element : lAccHistoric) {
-                average += element;
-            }
-            average /= lAccHistoric.size();
-        }
-        return average;
-    }
-
-    /**
-     * Calculate the quadratic sum
-     *
-     * @param x the first axe value
-     * @param y the second axe value
-     * @param z the third axe value
-     * @return the quadratic sum of the three axes
-     */
-    private double getQuadratiqueSum(float x, float y, float z) {
-        return Math.sqrt(x * x + y * y + z * z);
-    }
-
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
             //near
             smartphoneIsInPocket = (event.values[0] == 0);
         }
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            mGravity = event.values;
-            if (lAccHistoric.size() == SdkPreferencesHelper.getInstance().getLinAccSize()) {
-                lAccHistoric.remove(0);
-            }
-            double currentLinAcc = getQuadratiqueSum(event.values[0], event.values[1], event.values[2]);
-            lAccHistoric.add(currentLinAcc);
-            double averageLinAcc = getRollingAverageLAcc(lAccHistoric);
-            deltaLinAcc = Math.abs(currentLinAcc - averageLinAcc);
-            if (deltaLinAcc < SdkPreferencesHelper.getInstance().getFrozenThreshold()) {
-                if (!isFrozenRunnableAlreadyLaunched) {
-                    mIsFrozenTimeOutHandler.postDelayed(isFrozenRunnable, 3000); // wait before apply stillness
-                    isFrozenRunnableAlreadyLaunched = true;
-                }
-            } else {
-                smartphoneIsFrozen = false; // smartphone is moving
-                mIsFrozenTimeOutHandler.removeCallbacks(isFrozenRunnable);
-                isFrozenRunnableAlreadyLaunched = false;
-            }
-            if (deltaLinAcc < SdkPreferencesHelper.getInstance().getCorrectionLinAcc()) {
-                if (!isLaidRunnableAlreadyLaunched) {
-                    mIsLaidTimeOutHandler.postDelayed(isLaidRunnable, 3000); // wait before apply stillness
-                    isLaidRunnableAlreadyLaunched = true;
-                }
-            } else {
-                smartphoneIsMovingSlowly = false; // smartphone is moving
-                mIsLaidTimeOutHandler.removeCallbacks(isLaidRunnable);
-                isLaidRunnableAlreadyLaunched = false;
-            }
-        }
-        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-            mGeomagnetic = event.values;
-        }
-        if (mGravity != null && mGeomagnetic != null) {
-            Arrays.fill(R, 0);
-            Arrays.fill(I, 0);
-            boolean success = SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
-            if (success) {
-                SensorManager.getOrientation(R, orientation); // orientation contains: azimut, pitch and roll
-            }
-        }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-    }
-
-    public boolean isForcedStart() {
-        return forcedStart;
-    }
-
-    public boolean isBlockStart() {
-        return blockStart;
-    }
-
-    public boolean isForcedLock() {
-        return forcedLock;
-    }
-
-    public boolean isBlockLock() {
-        return blockLock;
-    }
-
-    public boolean isForcedUnlock() {
-        return forcedUnlock;
-    }
-
-    public boolean isBlockUnlock() {
-        return blockUnlock;
     }
 
     public List<Integer> getIsStartStrategyValid() {
@@ -708,14 +471,6 @@ public class AlgoManager implements SensorEventListener {
         return smartphoneIsInPocket;
     }
 
-    public boolean isSmartphoneFrozen() {
-        return smartphoneIsFrozen;
-    }
-
-    public boolean isSmartphoneMovingSlowly() {
-        return smartphoneIsMovingSlowly;
-    }
-
     public boolean areLockActionsAvailable() {
         return areLockActionsAvailable.get();
     }
@@ -750,13 +505,4 @@ public class AlgoManager implements SensorEventListener {
     public void setLastCommandFromTrx(boolean lastCommandFromTrx) {
         this.lastCommandFromTrx = lastCommandFromTrx;
     }
-
-    public float[] getOrientation() {
-        return orientation;
-    }
-
-    public double getDeltaLinAcc() {
-        return deltaLinAcc;
-    }
-
 }
