@@ -24,24 +24,16 @@ import com.valeo.bleranging.utils.FaceDetectorUtils;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.SoundUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.valeo.bleranging.BleRangingHelper.START_PASSENGER_AREA;
-import static com.valeo.bleranging.BleRangingHelper.START_TRUNK_AREA;
-import static com.valeo.bleranging.model.Ranging.PREDICTION_BACK;
-import static com.valeo.bleranging.model.Ranging.PREDICTION_FRONT;
-import static com.valeo.bleranging.model.Ranging.PREDICTION_LEFT;
-import static com.valeo.bleranging.model.Ranging.PREDICTION_LOCK;
-import static com.valeo.bleranging.model.Ranging.PREDICTION_RIGHT;
-import static com.valeo.bleranging.model.Ranging.PREDICTION_START;
-import static com.valeo.bleranging.model.Ranging.PREDICTION_TRUNK;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_BACK;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_FRONT_LEFT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_FRONT_RIGHT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_LEFT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_RIGHT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
 
 /**
@@ -119,11 +111,6 @@ public class AlgoManager implements SensorEventListener {
         }
     };
     private Integer rangingPredictionInt = -1;
-    private List<Integer> isStartStrategyValid;
-    private List<Integer> isUnlockStrategyValid;
-    private boolean isInLockArea = false;
-    private boolean isInUnlockArea = false;
-    private boolean isInStartArea = false;
     private boolean isInWelcomeArea = false;
     private boolean smartphoneIsInPocket = false;
     private boolean lastCommandFromTrx;
@@ -155,7 +142,7 @@ public class AlgoManager implements SensorEventListener {
                         lastThatchamChanged = true; // because when thatcham changed, maybe not in lock area yet
                     }
                 }
-                if (lastThatchamChanged && isInLockArea) { // when thatcham has changed, and get into lock area
+                if (lastThatchamChanged && getRangingPredictionString().equalsIgnoreCase(PREDICTION_LOCK)) { // when thatcham has changed, and get into lock area
                     if (!mProtocolManager.isLockedFromTrx()) { // if the vehicle is unlocked, lock it
                         new CountDownTimer(600, 90) { // Send safety close command several times in case it got lost
                             public void onTick(long millisUntilFinished) {
@@ -172,7 +159,6 @@ public class AlgoManager implements SensorEventListener {
                     makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 100);
                     lastThatchamChanged = false;
                 }
-
             }
         }
     };
@@ -267,96 +253,53 @@ public class AlgoManager implements SensorEventListener {
      */
     public void tryMachineLearningStrategies(boolean newLockStatus, ConnectedCar connectedCar) {
         boolean isWelcomeAllowed = false;
-        isStartStrategyValid = null;
-        isUnlockStrategyValid = null;
         // Cancel previous requested actions
-        isInStartArea = false;
-        isInUnlockArea = false;
-        isInLockArea = false;
+        boolean isInStartArea = false;
+        boolean isInUnlockArea = false;
+        boolean isInLockArea = false;
         mProtocolManager.setIsStartRequested(false);
         mProtocolManager.setIsWelcomeRequested(false);
         rangingPredictionInt = ranging.getPrediction(); //TODO Replace SdkPreferencesHelper.getInstance().getComSimulationEnabled() by CallReceiver.smartphoneComIsActivated after demo
-        if (rangingPredictionInt != -1) {
-            PSALogs.d("prediction", "rangingPredictionInt = " + rangingPredictionInt);
-            switch (ranging.classes[rangingPredictionInt]) {
-                case PREDICTION_START:
-                    List<Integer> result0 = new ArrayList<>(1);
-                    result0.add(START_PASSENGER_AREA);
-                    isStartStrategyValid = result0;
-                    isInStartArea = true;
-                    if (mProtocolManager.isStartRequested() != isInStartArea) {
-                        mProtocolManager.setIsStartRequested(isInStartArea);
-                    }
-                    break;
-                case PREDICTION_LOCK:
-                    isInLockArea = true;
-                    if (areLockActionsAvailable.get() && rearmLock.get() && isInLockArea) {
-                        performLockWithCryptoTimeout(false, true);
-                    }
-                    break;
-                case PREDICTION_TRUNK:
-                    List<Integer> result5 = new ArrayList<>(1);
-                    result5.add(START_TRUNK_AREA);
-                    isStartStrategyValid = result5;
-                    isInStartArea = true;
-                    if (mProtocolManager.isStartRequested() != isInStartArea) {
-                        mProtocolManager.setIsStartRequested(isInStartArea);
-                    }
-                    break;
-                case PREDICTION_BACK:
-                    List<Integer> result3 = new ArrayList<>(1);
-                    result3.add(NUMBER_TRX_BACK);
-                    isUnlockStrategyValid = result3;
-                    isInUnlockArea = true;
-                    if (areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
-                        performLockWithCryptoTimeout(false, false);
-                    }
-                    break;
-                case PREDICTION_RIGHT:
-                    List<Integer> result2 = new ArrayList<>(1);
-                    result2.add(NUMBER_TRX_RIGHT);
-                    isUnlockStrategyValid = result2;
-                    isInUnlockArea = true;
-                    if (areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
-                        performLockWithCryptoTimeout(false, false);
-                    }
-                    break;
-                case PREDICTION_LEFT:
-                    List<Integer> result1 = new ArrayList<>(1);
-                    result1.add(NUMBER_TRX_LEFT);
-                    isUnlockStrategyValid = result1;
-                    isInUnlockArea = true;
-                    if (areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
-                        performLockWithCryptoTimeout(false, false);
-                    }
-                    break;
-                case PREDICTION_FRONT:
-                    List<Integer> result4 = new ArrayList<>(1);
-                    result4.add(NUMBER_TRX_FRONT_LEFT);
-                    result4.add(NUMBER_TRX_FRONT_RIGHT);
-                    isUnlockStrategyValid = result4;
-                    isInUnlockArea = true;
-                    if (areLockActionsAvailable.get() && rearmUnlock.get() && isInUnlockArea) {
-                        performLockWithCryptoTimeout(false, false);
-                    }
-                    break;
-                default:
-                    PSALogs.d("prediction", "NOOO rangingPredictionInt !");
-                    break;
-            }
-            boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(connectedCar.getAllTrxAverage(), newLockStatus);
-            isInWelcomeArea = rearmWelcome.get() && isWelcomeStrategyValid;
-            if (isInWelcomeArea) {
-                isWelcomeAllowed = true;
-                rearmWelcome.set(false);
-                SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
-                bleRangingListener.doWelcome();
-            }
-            if (mProtocolManager.isWelcomeRequested() != isWelcomeAllowed) {
-                mProtocolManager.setIsWelcomeRequested(isWelcomeAllowed);
-            }
-            setIsThatcham(isInLockArea, isInUnlockArea, isInStartArea);
+        switch (getRangingPredictionString()) {
+            case PREDICTION_LOCK:
+                isInLockArea = true;
+                if (areLockActionsAvailable.get() && rearmLock.get()) {
+                    performLockWithCryptoTimeout(false, true);
+                }
+                break;
+            case PREDICTION_START:
+            case PREDICTION_TRUNK:
+                isInStartArea = true;
+                if (!mProtocolManager.isStartRequested()) {
+                    mProtocolManager.setIsStartRequested(true);
+                }
+                break;
+            case PREDICTION_BACK:
+            case PREDICTION_RIGHT:
+            case PREDICTION_LEFT:
+            case PREDICTION_FRONT:
+                isInUnlockArea = true;
+                if (areLockActionsAvailable.get() && rearmUnlock.get()) {
+                    performLockWithCryptoTimeout(false, false);
+                }
+                break;
+            case PREDICTION_UNKNOWN:
+            default:
+                PSALogs.d("prediction", "NOOO rangingPredictionInt !");
+                break;
         }
+        boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(connectedCar.getAllTrxAverage(), newLockStatus);
+        isInWelcomeArea = rearmWelcome.get() && isWelcomeStrategyValid;
+        if (isInWelcomeArea) {
+            isWelcomeAllowed = true;
+            rearmWelcome.set(false);
+            SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
+            bleRangingListener.doWelcome();
+        }
+        if (mProtocolManager.isWelcomeRequested() != isWelcomeAllowed) {
+            mProtocolManager.setIsWelcomeRequested(isWelcomeAllowed);
+        }
+        setIsThatcham(isInLockArea, isInUnlockArea, isInStartArea);
     }
 
     private void launchThatchamValidityTimeOut() {
@@ -376,7 +319,7 @@ public class AlgoManager implements SensorEventListener {
             if (!thatchamIsChanging.get()) { // if thatcham is not changing
                 mProtocolManager.setThatcham(false);
             }
-        } else if (isInUnlockArea) {
+        } else { // if is in unlock area
             launchThatchamValidityTimeOut();
         }
     }
@@ -427,26 +370,6 @@ public class AlgoManager implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
-    public List<Integer> getIsStartStrategyValid() {
-        return isStartStrategyValid;
-    }
-
-    public List<Integer> getIsUnlockStrategyValid() {
-        return isUnlockStrategyValid;
-    }
-
-    public boolean isInLockArea() {
-        return isInLockArea;
-    }
-
-    public boolean isInUnlockArea() {
-        return isInUnlockArea;
-    }
-
-    public boolean isInStartArea() {
-        return isInStartArea;
-    }
-
     public boolean isInWelcomeArea() {
         return isInWelcomeArea;
     }
@@ -489,7 +412,7 @@ public class AlgoManager implements SensorEventListener {
 
     public String getRangingPredictionString() {
         if (rangingPredictionInt == -1) {
-            return "UNKNOWN";
+            return PREDICTION_UNKNOWN;
         }
         return ranging.classes[rangingPredictionInt];
     }

@@ -16,19 +16,15 @@ import weka.core.Instances;
 import weka.core.SerializationHelper;
 import weka.core.converters.ConverterUtils;
 
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INDOOR;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTDOOR;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
+
 /**
  * Created by zgu4 on 02/12/2016.
  */
 public class Ranging {
-    public static final String PREDICTION_START = "start";
-    public static final String PREDICTION_LOCK = "lock";
-    public static final String PREDICTION_TRUNK = "trunk";
-    public static final String PREDICTION_LEFT = "left";
-    public static final String PREDICTION_RIGHT = "right";
-    public static final String PREDICTION_BACK = "back";
-    public static final String PREDICTION_FRONT = "front";
-    public static final String PREDICTION_OUTDOOR = "outdoor";
-    public static final String PREDICTION_INDOOR = "indoor";
     public double[] distribution;
     public double[] distribution_indoor;
     public double[] distribution_near_far;
@@ -149,7 +145,7 @@ public class Ranging {
     }
 
 
-    public double correct_unilateral(int index, double dist_new) {
+    private double correct_unilateral(int index, double dist_new) {
         double dist_correted;
         if (dist_new < dist[index])
             dist_correted = dist_new;
@@ -170,43 +166,43 @@ public class Ranging {
     }
 
 
-    public int predict2int() {
+    private int predict2int() {
         int result = -1;
         try {
             result = (int) rf.classifyInstance(sample);
             distribution = rf.distributionForInstance(sample);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return result;
     }
 
 
-    public int predict2int_indoor() {
+    private int predict2int_indoor() {
         int result = -1;
         try {
             result = (int) rf_indoor.classifyInstance(sample_indoor);
             distribution_indoor = rf_indoor.distributionForInstance(sample_indoor);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return result;
     }
 
 
-    public int predict2int_near_far() {
+    private int predict2int_near_far() {
         int result = -1;
         try {
             result = (int) rf_near_far.classifyInstance(sample_near_far);
             distribution_near_far = rf.distributionForInstance(sample_near_far);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return result;
     }
 
 
-    public int vote2int() {
+    private int vote2int() {
         int result = most(predictions);
         if (result != -1)
             return result;
@@ -214,7 +210,7 @@ public class Ranging {
     }
 
 
-    public int vote2int_indoor() {
+    private int vote2int_indoor() {
         int result = most(predictions_indoor);
         if (result != -1)
             return result;
@@ -222,7 +218,7 @@ public class Ranging {
     }
 
 
-    public int vote2int_near_far() {
+    private int vote2int_near_far() {
         int result = most(predictions_near_far);
         if (result != -1)
             return result;
@@ -289,7 +285,7 @@ public class Ranging {
     }
 
 
-    public synchronized Integer most(final List<Integer> list) {
+    private synchronized Integer most(final List<Integer> list) {
         if (list.size() == 0) {
             return -1;
         }
@@ -312,8 +308,8 @@ public class Ranging {
         if (dist == null) {
             return null;
         } else {
-            for (int i = 0; i < dist.length; i++) {
-                sb.append(String.format(Locale.FRANCE, "%.2f", dist[i])).append(" ");
+            for (double aDist : dist) {
+                sb.append(String.format(Locale.FRANCE, "%.2f", aDist)).append(" ");
             }
             sb.append("\n");
             return sb.toString();

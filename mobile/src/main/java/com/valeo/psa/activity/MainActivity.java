@@ -79,6 +79,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_THATCHAM;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_WELCOME;
 import static com.valeo.bleranging.BleRangingHelper.RKE_USE_TIMEOUT;
 
 public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter.OnStartDragListener,
@@ -127,12 +136,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private GradientDrawable start_area;
     private GradientDrawable trunk_area;
     private GradientDrawable lock_area;
-    private GradientDrawable unlock_area_front_left;
     private GradientDrawable unlock_area_left;
-    private GradientDrawable unlock_area_rear_left;
-    private GradientDrawable unlock_area_front_right;
     private GradientDrawable unlock_area_right;
-    private GradientDrawable unlock_area_rear_right;
     private GradientDrawable unlock_area_back;
     private GradientDrawable unlock_area_front;
     private GradientDrawable thatcham_area;
@@ -842,111 +847,67 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     }
 
     @Override
-    public void lightUpArea(int area) {
+    public void lightUpArea(String area) {
         switch (area) {
-            case BleRangingHelper.WELCOME_AREA:
+            case PREDICTION_WELCOME:
                 welcome_area.setColor(Color.WHITE);
                 break;
-            case BleRangingHelper.LOCK_AREA:
+            case PREDICTION_LOCK:
                 lock_area.setColor(Color.RED);
                 break;
-            case BleRangingHelper.UNLOCK_LEFT_AREA:
+            case PREDICTION_LEFT:
                 unlock_area_left.setColor(Color.GREEN);
                 break;
-            case BleRangingHelper.UNLOCK_RIGHT_AREA:
+            case PREDICTION_RIGHT:
                 unlock_area_right.setColor(Color.GREEN);
                 break;
-            case BleRangingHelper.UNLOCK_FRONT_LEFT_AREA:
-                if (unlock_area_front_left != null) {
-                    unlock_area_front_left.setColor(Color.GREEN);
-                }
+            case PREDICTION_FRONT:
+                unlock_area_front.setColor(Color.GREEN);
                 break;
-            case BleRangingHelper.UNLOCK_FRONT_RIGHT_AREA:
-                if (unlock_area_front_right != null) {
-                    unlock_area_front_right.setColor(Color.GREEN);
-                }
-                break;
-            case BleRangingHelper.UNLOCK_REAR_LEFT_AREA:
-                if (unlock_area_rear_left != null) {
-                    unlock_area_rear_left.setColor(Color.GREEN);
-                }
-                break;
-            case BleRangingHelper.UNLOCK_REAR_RIGHT_AREA:
-                if (unlock_area_rear_right != null) {
-                    unlock_area_rear_right.setColor(Color.GREEN);
-                }
-                break;
-            case BleRangingHelper.UNLOCK_BACK_AREA:
+            case PREDICTION_BACK:
                 unlock_area_back.setColor(Color.GREEN);
                 break;
-            case BleRangingHelper.START_PASSENGER_AREA:
+            case PREDICTION_START:
                 start_area.setColor(Color.CYAN);
                 break;
-            case BleRangingHelper.START_TRUNK_AREA:
-                if (trunk_area != null) {
-                    trunk_area.setColor(Color.MAGENTA);
-                }
+            case PREDICTION_TRUNK:
+                trunk_area.setColor(Color.MAGENTA);
                 break;
-            case BleRangingHelper.THATCHAM_AREA:
+            case PREDICTION_THATCHAM:
                 thatcham_area.setColor(Color.YELLOW);
-                break;
-            case BleRangingHelper.UNLOCK_FRONT_AREA:
-                unlock_area_front.setColor(Color.GREEN);
                 break;
         }
     }
 
     @Override
-    public void darkenArea(int area) {
+    public void darkenArea(String area) {
         switch (area) {
-            case BleRangingHelper.WELCOME_AREA:
+            case PREDICTION_WELCOME:
                 welcome_area.setColor(Color.BLACK);
                 break;
-            case BleRangingHelper.LOCK_AREA:
+            case PREDICTION_LOCK:
                 lock_area.setColor(Color.BLACK);
                 break;
-            case BleRangingHelper.UNLOCK_LEFT_AREA:
+            case PREDICTION_LEFT:
                 unlock_area_left.setColor(Color.BLACK);
                 break;
-            case BleRangingHelper.UNLOCK_RIGHT_AREA:
+            case PREDICTION_RIGHT:
                 unlock_area_right.setColor(Color.BLACK);
                 break;
-            case BleRangingHelper.UNLOCK_FRONT_LEFT_AREA:
-                if (unlock_area_front_left != null) {
-                    unlock_area_front_left.setColor(Color.BLACK);
-                }
+            case PREDICTION_FRONT:
+                unlock_area_front.setColor(Color.BLACK);
                 break;
-            case BleRangingHelper.UNLOCK_FRONT_RIGHT_AREA:
-                if (unlock_area_front_right != null) {
-                    unlock_area_front_right.setColor(Color.BLACK);
-                }
-                break;
-            case BleRangingHelper.UNLOCK_REAR_LEFT_AREA:
-                if (unlock_area_rear_left != null) {
-                    unlock_area_rear_left.setColor(Color.BLACK);
-                }
-                break;
-            case BleRangingHelper.UNLOCK_REAR_RIGHT_AREA:
-                if (unlock_area_rear_right != null) {
-                    unlock_area_rear_right.setColor(Color.BLACK);
-                }
-                break;
-            case BleRangingHelper.UNLOCK_BACK_AREA:
+            case PREDICTION_BACK:
                 unlock_area_back.setColor(Color.BLACK);
                 break;
-            case BleRangingHelper.START_PASSENGER_AREA:
+            case PREDICTION_START:
                 start_area.setColor(Color.BLACK);
                 break;
-            case BleRangingHelper.START_TRUNK_AREA:
-                if (trunk_area != null) {
-                    trunk_area.setColor(Color.BLACK);
-                }
+            case PREDICTION_TRUNK:
+                trunk_area.setColor(Color.BLACK);
                 break;
-            case BleRangingHelper.THATCHAM_AREA:
+            case PREDICTION_THATCHAM:
                 thatcham_area.setColor(Color.BLACK);
-                break;
-            case BleRangingHelper.UNLOCK_FRONT_AREA:
-                unlock_area_front.setColor(Color.BLACK);
                 break;
         }
     }
@@ -1013,10 +974,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_a_open));
                 }
                 trunk_area = null;
-                unlock_area_front_left = null;
-                unlock_area_rear_left = null;
-                unlock_area_front_right = null;
-                unlock_area_rear_right = null;
                 break;
             case ConnectedCarFactory.TYPE_4_B:
                 layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_four_b);
@@ -1026,10 +983,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_b_open));
                 }
                 trunk_area = null;
-                unlock_area_front_left = null;
-                unlock_area_rear_left = null;
-                unlock_area_front_right = null;
-                unlock_area_rear_right = null;
                 break;
             case ConnectedCarFactory.TYPE_5_A:
                 layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_five);
@@ -1039,10 +992,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_5_open));
                 }
                 trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                unlock_area_front_left = null;
-                unlock_area_rear_left = null;
-                unlock_area_front_right = null;
-                unlock_area_rear_right = null;
                 break;
             case ConnectedCarFactory.TYPE_7_A:
                 layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_seven);
@@ -1052,10 +1001,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_7_open));
                 }
                 trunk_area = null;
-                unlock_area_front_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_left);
-                unlock_area_rear_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_left);
-                unlock_area_front_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_right);
-                unlock_area_rear_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_right);
                 break;
             case ConnectedCarFactory.TYPE_8_A:
                 layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_eight);
@@ -1065,10 +1010,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_8_open));
                 }
                 trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                unlock_area_front_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_left);
-                unlock_area_rear_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_left);
-                unlock_area_front_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_right);
-                unlock_area_rear_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_right);
                 break;
             default:
                 layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_eight);
@@ -1078,10 +1019,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_8_open));
                 }
                 trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                unlock_area_front_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_left);
-                unlock_area_rear_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_left);
-                unlock_area_front_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front_right);
-                unlock_area_rear_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_rear_right);
                 break;
         }
         welcome_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.welcome_area);
