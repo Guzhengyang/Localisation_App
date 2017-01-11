@@ -30,7 +30,7 @@ public abstract class ConnectedCar {
     final static String TRX_FRONT_LEFT_NAME = "FLeft";
     final static String TRX_FRONT_RIGHT_NAME = "FRight";
     final static String TRX_LEFT_NAME = "Left";
-    final static String TRX_MIDDLE_NAME = "Mid";
+    final static String TRX_MIDDLE_NAME = "Middle";
     final static String TRX_RIGHT_NAME = "Right";
     final static String TRX_TRUNK_NAME = "Trunk";
     final static String TRX_REAR_LEFT_NAME = "RLeft";

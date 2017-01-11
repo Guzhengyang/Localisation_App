@@ -16,28 +16,14 @@
             android:entryValues="@array/base_entryvalues_list_preference"
             android:key="@string/connected_car_base_pref_name"
             android:title="@string/pref_car_base_title" />
-        <ListPreference
-            android:dialogTitle="@string/model_title_list_preference"
-            android:entries="@array/model_list_preference"
-            android:entryValues="@array/model_entryvalues_list_preference"
-            android:key="@string/machine_learning_model_pref_name"
-            android:title="@string/pref_machine_learning_model" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="@string/is_indoor_enabled_pref_name"
-            android:title="@string/pref_is_indoor_enabled" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="@string/connected_car_trame_enabled_pref_name"
-            android:title="@string/pref_car_forced_trame_enabled" />
-        <EditTextPreference
-            android:dependency="@string/connected_car_trame_enabled_pref_name"
-            android:key="@string/connected_car_trame_pref_name"
-            android:title="@string/pref_car_forced_trame" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/com_simulation_enabled_pref_name"
             android:title="@string/pref_com_simulation_enabled" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/security_wal_enabled_pref_name"
+            android:title="@string/pref_security_wal_enabled" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_ble_address">
         <EditTextPreference
@@ -99,11 +85,21 @@
             android:key="@string/rolling_av_element_pref_name"
             android:title="@string/pref_nb_element_rolling_average" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_timeout">
+    <PreferenceCategory android:title="@string/pref_offset">
         <EditTextPreference
-            android:inputType="number|numberDecimal"
-            android:key="@string/thatcham_timeout_pref_name"
-            android:title="@string/pref_thatcham_timeout" />
+            android:inputType="number"
+            android:key="@string/offset_smartphone_pref_name"
+            android:title="@string/pref_offset_smartphone" />
+        <EditTextPreference
+            android:inputType="number"
+            android:key="@string/offset_hysteresis_lock_pref_name"
+            android:title="@string/pref_offset_hysteresis_lock" />
+        <EditTextPreference
+            android:inputType="number"
+            android:key="@string/offset_hysteresis_unlock_pref_name"
+            android:title="@string/pref_offset_hysteresis_unlock" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_timeout">
         <EditTextPreference
             android:inputType="number|numberDecimal"
             android:key="@string/crypto_pre_auth_timeout_pref_name"

@@ -61,8 +61,8 @@
     <item
         android:id="@+id/unlock_area_left"
         android:bottom="20dp"
-        android:left="120dp"
-        android:right="100dp"
+        android:left="100dp"
+        android:right="80dp"
         android:top="110dp">
         <shape android:shape="rectangle">
             <solid android:color="#FF000000" />
@@ -75,8 +75,8 @@
     <item
         android:id="@+id/unlock_area_right"
         android:bottom="110dp"
-        android:left="120dp"
-        android:right="100dp"
+        android:left="100dp"
+        android:right="80dp"
         android:top="20dp">
         <shape android:shape="rectangle">
             <solid android:color="#FF000000" />
@@ -119,6 +119,20 @@
         android:bottom="120dp"
         android:left="10dp"
         android:right="240dp"
+        android:top="10dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FF000000" />
+            <stroke
+                android:width="1dp"
+                android:color="#FF000000" />
+        </shape>
+    </item>
+    <!-- remote parking area -->
+    <item
+        android:id="@+id/remote_parking_area"
+        android:bottom="120dp"
+        android:left="240dp"
+        android:right="10dp"
         android:top="10dp">
         <shape android:shape="rectangle">
             <solid android:color="#FF000000" />

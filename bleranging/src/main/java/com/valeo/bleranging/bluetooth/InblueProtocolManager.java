@@ -24,6 +24,7 @@ public class InblueProtocolManager {
     private boolean isLockedFromTrx = false;
     private boolean isLockedToSend = false;
     private boolean isThatcham = false;
+    private boolean isInRemoteParkingArea = false;
     private String carBase;
 
     public InblueProtocolManager() {
@@ -51,6 +52,10 @@ public class InblueProtocolManager {
 
     public void setThatcham(boolean thatcham) {
         this.isThatcham = thatcham;
+    }
+
+    public void setInRemoteParkingArea(boolean inRemoteParkingArea) {
+        isInRemoteParkingArea = inRemoteParkingArea;
     }
 
     public void setIsStartRequested(boolean isStartRequested) {
@@ -90,8 +95,8 @@ public class InblueProtocolManager {
         payload[1] = (byte) (packetOneCounter & 0xFF);
         payload[2] = (0x01);
         payload[3] = getPayloadThirdByte();
-        payload[4] = getPayloadFourthByte(isRKE, mAlgoManager.getRangingPredictionString());
-        payload[5] = getPayloadFifthByte(isRKE, mAlgoManager.getRangingPredictionString());
+        payload[4] = getPayloadFourthByte(isRKE, mAlgoManager.getRangingPositionPrediction());
+        payload[5] = getPayloadFifthByte(isRKE, mAlgoManager.getRangingPositionPrediction());
         packetOneCounter++;
         if (packetOneCounter > 65534) { // packetOneCounter > FF FE
             packetOneCounter = 0;
@@ -122,6 +127,9 @@ public class InblueProtocolManager {
             default:
                 payloadThree |= 0x00;
                 break;
+        }
+        if (isInRemoteParkingArea) {
+            payloadThree |= 0x10;
         }
         return payloadThree;
     }

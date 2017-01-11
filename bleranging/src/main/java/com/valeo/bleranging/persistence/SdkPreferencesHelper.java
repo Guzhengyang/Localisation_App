@@ -11,7 +11,9 @@ import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
  * Constants file for SharedPrefs
  */
 public final class SdkPreferencesHelper {
-    public final static float THATCHAM_TIMEOUT = 3.0f;
+    public final static int OFFSET_SMARTPHONE = 5;
+    public final static int OFFSET_HYSTERESIS_LOCK = 2;
+    public final static int OFFSET_HYSTERESIS_UNLOCK = 3;
     public final static float CRYPTO_PRE_AUTH_TIMEOUT = 1.3f;
     public final static float CRYPTO_ACTION_TIMEOUT = 0.02f;
     public final static int RSSI_LOG_NUMBER = 0;
@@ -79,12 +81,12 @@ public final class SdkPreferencesHelper {
         return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_base_pref_name), ConnectedCarFactory.BASE_3);
     }
 
-    public Boolean getIsIndoor() {
-        return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.is_indoor_enabled_pref_name), false);
-    }
-
     public Boolean getComSimulationEnabled() {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.com_simulation_enabled_pref_name), false);
+    }
+
+    public Boolean getSecurityWALEnabled() {
+        return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.security_wal_enabled_pref_name), false);
     }
 
     public Boolean getConnectedCarTrameEnabled() {
@@ -93,10 +95,6 @@ public final class SdkPreferencesHelper {
 
     public String getConnectedCarTrame() {
         return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_trame_pref_name), "");
-    }
-
-    public float getThatchamTimeout() {
-        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.thatcham_timeout_pref_name), THATCHAM_TIMEOUT);
     }
 
     public float getCryptoPreAuthTimeout() {

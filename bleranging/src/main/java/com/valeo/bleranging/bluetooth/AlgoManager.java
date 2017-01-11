@@ -20,7 +20,6 @@ import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
 import com.valeo.bleranging.utils.CallReceiver;
-import com.valeo.bleranging.utils.FaceDetectorUtils;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.SoundUtils;
 
@@ -30,10 +29,13 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_NEAR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_THATCHAM;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_WELCOME;
 import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
 
 /**
@@ -44,19 +46,11 @@ public class AlgoManager implements SensorEventListener {
     private final InblueProtocolManager mProtocolManager;
     private final BleRangingListener bleRangingListener;
     private final Context mContext;
-    private final FaceDetectorUtils faceDetectorUtils;
+    //    private final FaceDetectorUtils faceDetectorUtils;
     private final Handler mMainHandler;
     private final Handler mHandlerLockTimeOut;
-    private final Handler mHandlerThatchamTimeOut;
     private final Handler mHandlerCryptoTimeOut;
     private final Handler mLockStatusChangedHandler;
-    private final AtomicBoolean thatchamIsChanging = new AtomicBoolean(false);
-    private final Runnable mHasThatchamChanged = new Runnable() {
-        @Override
-        public void run() {
-            thatchamIsChanging.set(false);
-        }
-    };
     /* Avoid multiple click on rke buttons */
     private final AtomicBoolean isRKEAvailable = new AtomicBoolean(true);
     /* Avoid concurrent lock action from rke and strategy loop */
@@ -142,7 +136,7 @@ public class AlgoManager implements SensorEventListener {
                         lastThatchamChanged = true; // because when thatcham changed, maybe not in lock area yet
                     }
                 }
-                if (lastThatchamChanged && getRangingPredictionString().equalsIgnoreCase(PREDICTION_LOCK)) { // when thatcham has changed, and get into lock area
+                if (lastThatchamChanged && getRangingPositionPrediction().equalsIgnoreCase(PREDICTION_LOCK)) { // when thatcham has changed, and get into lock area
                     if (!mProtocolManager.isLockedFromTrx()) { // if the vehicle is unlocked, lock it
                         new CountDownTimer(600, 90) { // Send safety close command several times in case it got lost
                             public void onTick(long millisUntilFinished) {
@@ -170,10 +164,9 @@ public class AlgoManager implements SensorEventListener {
         this.mProtocolManager = mProtocolManager;
         this.mMainHandler = mMainHandler;
         this.mHandlerLockTimeOut = new Handler();
-        this.mHandlerThatchamTimeOut = new Handler();
         this.mHandlerCryptoTimeOut = new Handler();
         this.mLockStatusChangedHandler = new Handler();
-        this.faceDetectorUtils = new FaceDetectorUtils(mContext);
+//        this.faceDetectorUtils = new FaceDetectorUtils(mContext);
         SensorManager senSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         Sensor senProximity = senSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         Sensor magnetometer = senSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -182,7 +175,6 @@ public class AlgoManager implements SensorEventListener {
         mContext.registerReceiver(callReceiver, new IntentFilter());
         mContext.registerReceiver(bleStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         mContext.registerReceiver(mDataReceiver, new IntentFilter(BluetoothLeService.ACTION_DATA_AVAILABLE2));
-        faceDetectorUtils.createFaceDetector();
     }
 
     public SpannableStringBuilder createDebugData(SpannableStringBuilder spannableStringBuilder) {
@@ -190,17 +182,7 @@ public class AlgoManager implements SensorEventListener {
             spannableStringBuilder.append("Indoor Localisation: ").append(ranging.getPrediction_indoor()).append("\n");
             spannableStringBuilder.append("Near-Far Localisation: ").append(ranging.getPrediction_near_far()).append("\n");
             spannableStringBuilder.append(ranging.printDist());
-            if (rangingPredictionInt != -1) {
-                spannableStringBuilder.append("Prediction: ")
-                        .append(ranging.classes[rangingPredictionInt]).append(" ")
-                        .append(String.valueOf(ranging.distribution[rangingPredictionInt]))
-                        .append("\n");
-            }
-            for (int i = 0; i < ranging.distribution.length; i++) {
-                spannableStringBuilder.append(ranging.classes[i]).append(": ")
-                        .append(String.valueOf(ranging.distribution[i]))
-                        .append("\n");
-            }
+            spannableStringBuilder.append(ranging.printDebug());
         }
         return spannableStringBuilder;
     }
@@ -260,7 +242,7 @@ public class AlgoManager implements SensorEventListener {
         mProtocolManager.setIsStartRequested(false);
         mProtocolManager.setIsWelcomeRequested(false);
         rangingPredictionInt = ranging.getPrediction(); //TODO Replace SdkPreferencesHelper.getInstance().getComSimulationEnabled() by CallReceiver.smartphoneComIsActivated after demo
-        switch (getRangingPredictionString()) {
+        switch (getRangingPositionPrediction()) {
             case PREDICTION_LOCK:
                 isInLockArea = true;
                 if (areLockActionsAvailable.get() && rearmLock.get()) {
@@ -284,6 +266,8 @@ public class AlgoManager implements SensorEventListener {
                 }
                 break;
             case PREDICTION_UNKNOWN:
+            case PREDICTION_WELCOME:
+            case PREDICTION_THATCHAM:
             default:
                 PSALogs.d("prediction", "NOOO rangingPredictionInt !");
                 break;
@@ -300,27 +284,18 @@ public class AlgoManager implements SensorEventListener {
             mProtocolManager.setIsWelcomeRequested(isWelcomeAllowed);
         }
         setIsThatcham(isInLockArea, isInUnlockArea, isInStartArea);
-    }
-
-    private void launchThatchamValidityTimeOut() {
-        mProtocolManager.setThatcham(true);
-        if (thatchamIsChanging.get()) {
-            mHandlerThatchamTimeOut.removeCallbacks(mHasThatchamChanged);
-            mHandlerThatchamTimeOut.removeCallbacks(null);
+        if (ranging.getPrediction_near_far().equalsIgnoreCase(PREDICTION_NEAR)) {
+            mProtocolManager.setInRemoteParkingArea(true);
         } else {
-            thatchamIsChanging.set(true);
+            mProtocolManager.setInRemoteParkingArea(false);
         }
-        mHandlerThatchamTimeOut.postDelayed(mHasThatchamChanged,
-                (long) (SdkPreferencesHelper.getInstance().getThatchamTimeout() * 1000));
     }
 
     private void setIsThatcham(boolean isInLockArea, boolean isInUnlockArea, boolean isInStartArea) {
         if (isInLockArea || isInStartArea || !isInUnlockArea) {
-            if (!thatchamIsChanging.get()) { // if thatcham is not changing
-                mProtocolManager.setThatcham(false);
-            }
+            mProtocolManager.setThatcham(false);
         } else { // if is in unlock area
-            launchThatchamValidityTimeOut();
+            mProtocolManager.setThatcham(true);
         }
     }
 
@@ -352,7 +327,7 @@ public class AlgoManager implements SensorEventListener {
         mContext.unregisterReceiver(mDataReceiver);
         mContext.unregisterReceiver(callReceiver);
         mContext.unregisterReceiver(bleStateReceiver);
-        faceDetectorUtils.deleteFaceDetector();
+//        faceDetectorUtils.deleteFaceDetector();
         if (mLockStatusChangedHandler != null) {
             mLockStatusChangedHandler.removeCallbacks(mManageIsLockStatusChangedPeriodicTimer);
         }
@@ -410,11 +385,18 @@ public class AlgoManager implements SensorEventListener {
         return ranging;
     }
 
-    public String getRangingPredictionString() {
+    public String getRangingPositionPrediction() {
         if (rangingPredictionInt == -1) {
             return PREDICTION_UNKNOWN;
         }
         return ranging.classes[rangingPredictionInt];
+    }
+
+    public String getRangingProximityPrediction() {
+        if (rangingPredictionInt == -1) {
+            return PREDICTION_UNKNOWN;
+        }
+        return ranging.classes_near_far[rangingPredictionInt];
     }
 
     public boolean getIsRKE() {

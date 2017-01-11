@@ -194,12 +194,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private static final int PICK_IMPORT_GENERAL_FILE_RESULT_CODE = 92164;
         private ListPreference connected_car_type;
         private ListPreference connected_car_base;
-        private ListPreference selected_ml_model;
-        private CheckBoxPreference is_indoor_enabled;
-        private CheckBoxPreference connected_car_trame_enabled;
-        private EditTextPreference connected_car_trame;
         private CheckBoxPreference com_simulation_enabled;
-        private EditTextPreference thatcham_timeout;
+        private CheckBoxPreference security_wal_enabled;
+        private EditTextPreference offset_smartphone;
+        private EditTextPreference offset_hysteresis_lock;
+        private EditTextPreference offset_hysteresis_unlock;
         private EditTextPreference crypto_pre_auth_timeout;
         private EditTextPreference crypto_action_timeout;
         private EditTextPreference rssi_log_number;
@@ -394,12 +393,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void setViews() {
             connected_car_type = ((ListPreference) findPreference(getString(R.string.connected_car_type_pref_name)));
             connected_car_base = ((ListPreference) findPreference(getString(R.string.connected_car_base_pref_name)));
-            selected_ml_model = ((ListPreference) findPreference(getString(R.string.machine_learning_model_pref_name)));
-            is_indoor_enabled = ((CheckBoxPreference) findPreference(getString(R.string.is_indoor_enabled_pref_name)));
-            connected_car_trame_enabled = ((CheckBoxPreference) findPreference(getString(R.string.connected_car_trame_enabled_pref_name)));
-            connected_car_trame = ((EditTextPreference) findPreference(getString(R.string.connected_car_trame_pref_name)));
             com_simulation_enabled = ((CheckBoxPreference) findPreference(getString(R.string.com_simulation_enabled_pref_name)));
-            thatcham_timeout = ((EditTextPreference) findPreference(getString(R.string.thatcham_timeout_pref_name)));
+            security_wal_enabled = ((CheckBoxPreference) findPreference(getString(R.string.security_wal_enabled_pref_name)));
+            offset_smartphone = ((EditTextPreference) findPreference(getString(R.string.offset_smartphone_pref_name)));
+            offset_hysteresis_lock = ((EditTextPreference) findPreference(getString(R.string.offset_hysteresis_lock_pref_name)));
+            offset_hysteresis_unlock = ((EditTextPreference) findPreference(getString(R.string.offset_hysteresis_unlock_pref_name)));
             crypto_pre_auth_timeout = ((EditTextPreference) findPreference(getString(R.string.crypto_pre_auth_timeout_pref_name)));
             crypto_action_timeout = ((EditTextPreference) findPreference(getString(R.string.crypto_action_timeout_pref_name)));
             rssi_log_number = ((EditTextPreference) findPreference(getString(R.string.rssi_log_number_pref_name)));
@@ -424,11 +422,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         private void setDefaultValues() {
-            is_indoor_enabled.setChecked(SdkPreferencesHelper.getInstance().getIsIndoor());
-            connected_car_trame_enabled.setChecked(SdkPreferencesHelper.getInstance().getConnectedCarTrameEnabled());
             com_simulation_enabled.setChecked(SdkPreferencesHelper.getInstance().getComSimulationEnabled());
+            security_wal_enabled.setChecked(SdkPreferencesHelper.getInstance().getSecurityWALEnabled());
             user_speed_enabled.setChecked(SdkPreferencesHelper.getInstance().getUserSpeedEnabled());
-            thatcham_timeout.setText(thatcham_timeout.getSummary().toString());
+            offset_smartphone.setText(offset_smartphone.getSummary().toString());
+            offset_hysteresis_lock.setText(offset_hysteresis_lock.getSummary().toString());
+            offset_hysteresis_unlock.setText(offset_hysteresis_unlock.getSummary().toString());
             crypto_pre_auth_timeout.setText(crypto_pre_auth_timeout.getSummary().toString());
             crypto_action_timeout.setText(crypto_action_timeout.getSummary().toString());
             rssi_log_number.setText(rssi_log_number.getSummary().toString());
@@ -456,12 +455,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void bindSummaries() {
             bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_A);
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
-            bindPreferenceSummaryToValue(selected_ml_model, ConnectedCarFactory.MODEL_RF);
-            is_indoor_enabled.setSummary(R.string.pref_is_indoor_enabled_summary);
-            connected_car_trame_enabled.setSummary(R.string.pref_car_forced_trame_enabled_summary);
             com_simulation_enabled.setSummary(R.string.pref_com_simulation_enabled);
-            bindPreferenceSummaryToValue(connected_car_trame, "");
-            bindPreferenceSummaryToValue(thatcham_timeout, String.valueOf(SdkPreferencesHelper.THATCHAM_TIMEOUT));
+            security_wal_enabled.setSummary(R.string.pref_security_wal_enabled);
+            bindPreferenceSummaryToValue(offset_smartphone, String.valueOf(SdkPreferencesHelper.OFFSET_SMARTPHONE));
+            bindPreferenceSummaryToValue(offset_hysteresis_lock, String.valueOf(SdkPreferencesHelper.OFFSET_HYSTERESIS_LOCK));
+            bindPreferenceSummaryToValue(offset_hysteresis_unlock, String.valueOf(SdkPreferencesHelper.OFFSET_HYSTERESIS_UNLOCK));
             bindPreferenceSummaryToValue(crypto_pre_auth_timeout, String.valueOf(SdkPreferencesHelper.CRYPTO_PRE_AUTH_TIMEOUT));
             bindPreferenceSummaryToValue(crypto_action_timeout, String.valueOf(SdkPreferencesHelper.CRYPTO_ACTION_TIMEOUT));
             bindPreferenceSummaryToValue(rssi_log_number, String.valueOf(SdkPreferencesHelper.RSSI_LOG_NUMBER));

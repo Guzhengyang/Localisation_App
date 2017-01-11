@@ -80,9 +80,11 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FAR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_NEAR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_THATCHAM;
@@ -140,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private GradientDrawable unlock_area_back;
     private GradientDrawable unlock_area_front;
     private GradientDrawable thatcham_area;
+    private GradientDrawable remote_parking_area;
     private DottedProgressBar little_round_progressBar;
     private TextView debug_info;
     private ItemTouchHelper ith;
@@ -869,6 +872,12 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             case PREDICTION_THATCHAM:
                 thatcham_area.setColor(Color.YELLOW);
                 break;
+            case PREDICTION_NEAR:
+                remote_parking_area.setColor(Color.CYAN);
+                break;
+            case PREDICTION_FAR:
+                remote_parking_area.setColor(Color.RED);
+                break;
         }
     }
 
@@ -901,6 +910,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 break;
             case PREDICTION_THATCHAM:
                 thatcham_area.setColor(Color.BLACK);
+                break;
+            case PREDICTION_NEAR:
+            case PREDICTION_FAR:
+                remote_parking_area.setColor(Color.BLACK);
                 break;
         }
     }
@@ -958,9 +971,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 
     @Override
     public void updateCarDrawable() {
+        layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization);
         switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
             case ConnectedCarFactory.TYPE_4_A:
-                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_four_a);
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_a_close));
                 } else {
@@ -969,7 +982,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 trunk_area = null;
                 break;
             case ConnectedCarFactory.TYPE_4_B:
-                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_four_b);
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_b_close));
                 } else {
@@ -978,7 +990,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 trunk_area = null;
                 break;
             case ConnectedCarFactory.TYPE_5_A:
-                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_five);
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_5_close));
                 } else {
@@ -987,7 +998,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                 break;
             case ConnectedCarFactory.TYPE_7_A:
-                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_seven);
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_7_close));
                 } else {
@@ -996,7 +1006,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 trunk_area = null;
                 break;
             case ConnectedCarFactory.TYPE_8_A:
-                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_eight);
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_8_close));
                 } else {
@@ -1005,7 +1014,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                 break;
             default:
-                layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization_eight);
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_8_close));
                 } else {
@@ -1022,6 +1030,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         unlock_area_back = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_back);
         unlock_area_front = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front);
         thatcham_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.thatcham_area);
+        remote_parking_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.remote_parking_area);
     }
 
     @Override
@@ -1089,7 +1098,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
                 TrxUtils.appendSettingLogs(connectedCarType,
                         SdkPreferencesHelper.getInstance().getConnectedCarBase(),
-                        SdkPreferencesHelper.getInstance().getIsIndoor(),
                         SdkPreferencesHelper.getInstance().getTrxAddressConnectable(),
                         SdkPreferencesHelper.getInstance().getTrxAddressConnectableRemoteControl(),
                         SdkPreferencesHelper.getInstance().getTrxAddressConnectablePC(), SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft(),
@@ -1098,7 +1106,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                         SdkPreferencesHelper.getInstance().getTrxAddressTrunk(), SdkPreferencesHelper.getInstance().getTrxAddressRearLeft(),
                         SdkPreferencesHelper.getInstance().getTrxAddressBack(), SdkPreferencesHelper.getInstance().getTrxAddressRearRight(),
                         SdkPreferencesHelper.getInstance().getRssiLogNumber(), SdkPreferencesHelper.getInstance().getRollingAvElement(),
-                        SdkPreferencesHelper.getInstance().getThatchamTimeout(),
                         SdkPreferencesHelper.getInstance().getCryptoPreAuthTimeout(),
                         SdkPreferencesHelper.getInstance().getCryptoActionTimeout(),
                         SdkPreferencesHelper.getInstance().getWantedSpeed(), SdkPreferencesHelper.getInstance().getOneStepSize());

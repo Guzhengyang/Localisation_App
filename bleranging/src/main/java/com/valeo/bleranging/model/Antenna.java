@@ -9,15 +9,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by l-avaratha on 08/06/2016
  */
 public class Antenna {
-    public static final int AVERAGE_DEFAULT = 0;
-    public static final int AVERAGE_START = 1;
-    public static final int AVERAGE_LOCK = 2;
-    public static final int AVERAGE_UNLOCK = 3;
-    public static final int AVERAGE_WELCOME = 4;
-    public static final int AVERAGE_LONG = 5;
-    public static final int AVERAGE_SHORT = 6;
-    public static final int AVERAGE_DELTA_LOCK = 7;   // use for threshold calculation
-    public static final int AVERAGE_DELTA_UNLOCK = 8; // use for threshold calculation
     private final AtomicBoolean isAntennaActive;
     private final AtomicBoolean hasReceivedRssi;
     private final ArrayList<Integer> rssiHistoric;

@@ -65,9 +65,27 @@ public class BleRangingHelper {
     public static final String PREDICTION_INDOOR = "indoor";
     public static final String PREDICTION_WELCOME = "welcome";
     public static final String PREDICTION_THATCHAM = "thatcham";
+    public static final String PREDICTION_NEAR = "near";
+    public static final String PREDICTION_FAR = "far";
     public static final String PREDICTION_UNKNOWN = "unknown";
     public final static int RKE_USE_TIMEOUT = 5000;
     public final static int REQUEST_PERMISSION_ALL = 25110;
+    private final static String[] PREDICTIONS = {
+            PREDICTION_START,
+            PREDICTION_LOCK,
+            PREDICTION_TRUNK,
+            PREDICTION_LEFT,
+            PREDICTION_RIGHT,
+            PREDICTION_BACK,
+            PREDICTION_FRONT,
+            PREDICTION_OUTDOOR,
+            PREDICTION_INDOOR,
+            PREDICTION_WELCOME,
+            PREDICTION_THATCHAM,
+            PREDICTION_NEAR,
+            PREDICTION_FAR,
+            PREDICTION_UNKNOWN
+    };
     private final static String[] PERMISSIONS = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -151,7 +169,6 @@ public class BleRangingHelper {
             isTryingToConnect = false;
         }
     };
-    private boolean isIndoor = false;
     private ConnectedCar connectedCar;
     private final Runnable setRssiForRangingPrediction = new Runnable() {
         @Override
@@ -164,7 +181,7 @@ public class BleRangingHelper {
         @Override
         public void run() {
             mAlgoManager.tryMachineLearningStrategies(newLockStatus, connectedCar);
-            updateCarLocalization(mAlgoManager.getRangingPredictionString());
+            updateCarLocalization(mAlgoManager.getRangingPositionPrediction(), mAlgoManager.getRangingProximityPrediction());
             mMainHandler.postDelayed(this, 400);
         }
     };
@@ -185,112 +202,7 @@ public class BleRangingHelper {
             mMainHandler.postDelayed(this, 105);
         }
     };
-    private final Runnable checkNewPacketsRunner = new Runnable() {
-        @Override
-        public void run() {
-            if (bytesReceived != null) {
-                lock.readLock().lock();
-                PSALogs.d("NIH", "checkNewPacketsRunnable " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
-                if ((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
-                    lock.readLock().unlock();
-                    PSALogs.w("NIH", "LAST_EQUALS_NEW_PACKETS_RECEIVED");
-                    PSALogs.i("restartConnection", "received packet have not changed in a second");
-                    restartConnection(false);
-                } else {
-                    lastPacketIdNumber[0] = bytesReceived[0];
-                    lastPacketIdNumber[1] = bytesReceived[1];
-                    lock.readLock().unlock();
-                    if (isFullyConnected()) {
-                        mMainHandler.postDelayed(this, 1000);
-                    }
-                }
-            } else {
-                PSALogs.w("NIH", "PACKETS_RECEIVED_ARE_NULL");
-                PSALogs.i("restartConnection", "received packet is null");
-                restartConnection(false);
-            }
-        }
-    };
     private int reconnectionCounter = 0;
-    private byte welcomeByte = 0;
-    private byte lockByte = 0;
-    private byte startByte = 0;
-    private byte leftAreaByte = 0;
-    private byte rightAreaByte = 0;
-    private byte backAreaByte = 0;
-    private byte walkAwayByte = 0;
-    private byte approachByte = 0;
-    private byte leftTurnByte = 0;
-    private byte rightTurnByte = 0;
-    private byte approachSideByte = 0;
-    private byte approachRoadByte = 0;
-    private byte recordByte = 0;
-    private int beepInt = 0;
-    private final Runnable beepRunner = new Runnable() {
-        @Override
-        public void run() {
-            long delayedTime = 500;
-            if (SdkPreferencesHelper.getInstance().getUserSpeedEnabled()) {
-                beepInt = 1;
-                makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_LOW_SS, 100);
-                // interval time between each beep sound in milliseconds
-                delayedTime = Math.round(((SdkPreferencesHelper.getInstance().getOneStepSize() / 100.0f) / (SdkPreferencesHelper.getInstance().getWantedSpeed() / 3.6)) * 1000);
-            }
-            PSALogs.d("beep", "delayedTime " + delayedTime);
-            if (isFullyConnected()) {
-                mMainHandler.postDelayed(this, delayedTime);
-            }
-        }
-    };
-    private boolean isLoggable = true;
-    private final Runnable logRunner = new Runnable() {
-        @Override
-        public void run() {
-            if (isLoggable) {
-                TrxUtils.appendRssiLogs(
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_LEFT),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_RIGHT),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_TRUNK),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT),
-                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_BACK),
-                        connectedCar.isActive(NUMBER_TRX_LEFT),
-                        connectedCar.isActive(NUMBER_TRX_MIDDLE),
-                        connectedCar.isActive(NUMBER_TRX_RIGHT),
-                        connectedCar.isActive(NUMBER_TRX_TRUNK),
-                        connectedCar.isActive(NUMBER_TRX_FRONT_LEFT),
-                        connectedCar.isActive(NUMBER_TRX_FRONT_RIGHT),
-                        connectedCar.isActive(NUMBER_TRX_REAR_LEFT),
-                        connectedCar.isActive(NUMBER_TRX_REAR_RIGHT),
-                        connectedCar.isActive(NUMBER_TRX_BACK),
-                        mAlgoManager.isSmartphoneInPocket(), mAlgoManager.areLockActionsAvailable(),
-                        mAlgoManager.getRearmLock(), mAlgoManager.getRearmUnlock(),
-                        mAlgoManager.getRearmWelcome(), newLockStatus, welcomeByte,
-                        lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
-                        walkAwayByte, approachByte, leftTurnByte, rightTurnByte,
-                        approachSideByte, approachRoadByte, recordByte, mAlgoManager.getRangingPredictionString(),
-                        mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(),
-                        mProtocolManager.isStartRequested(), mProtocolManager.isThatcham(),
-                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_LEFT).toString(),
-                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_MIDDLE).toString(),
-                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_RIGHT).toString(),
-                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_TRUNK).toString(),
-                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_FRONT_LEFT).toString(),
-                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_FRONT_RIGHT).toString(),
-                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_REAR_LEFT).toString(),
-                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_REAR_RIGHT).toString(),
-                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_BACK).toString(),
-                        beepInt);
-                beepInt = 0;
-            }
-            if (isFullyConnected()) {
-                mMainHandler.postDelayed(this, 105);
-            }
-        }
-    };
     /**
      * Handles various events fired by the Service.
      * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
@@ -353,6 +265,111 @@ public class BleRangingHelper {
             }
         }
     };
+    private byte welcomeByte = 0;
+    private byte lockByte = 0;
+    private byte startByte = 0;
+    private byte leftAreaByte = 0;
+    private byte rightAreaByte = 0;
+    private byte backAreaByte = 0;
+    private byte walkAwayByte = 0;
+    private byte approachByte = 0;
+    private byte leftTurnByte = 0;
+    private byte rightTurnByte = 0;
+    private byte approachSideByte = 0;
+    private byte approachRoadByte = 0;
+    private byte recordByte = 0;
+    private int beepInt = 0;
+    private final Runnable beepRunner = new Runnable() {
+        @Override
+        public void run() {
+            long delayedTime = 500;
+            if (SdkPreferencesHelper.getInstance().getUserSpeedEnabled()) {
+                beepInt = 1;
+                makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_LOW_SS, 100);
+                // interval time between each beep sound in milliseconds
+                delayedTime = Math.round(((SdkPreferencesHelper.getInstance().getOneStepSize() / 100.0f) / (SdkPreferencesHelper.getInstance().getWantedSpeed() / 3.6)) * 1000);
+            }
+            PSALogs.d("beep", "delayedTime " + delayedTime);
+            if (isFullyConnected()) {
+                mMainHandler.postDelayed(this, delayedTime);
+            }
+        }
+    };
+    private boolean isLoggable = true;
+    private final Runnable logRunner = new Runnable() {
+        @Override
+        public void run() {
+            if (isLoggable) {
+                TrxUtils.appendRssiLogs(
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_LEFT),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_RIGHT),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_TRUNK),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT),
+                        connectedCar.getCurrentOriginalRssi(NUMBER_TRX_BACK),
+                        connectedCar.isActive(NUMBER_TRX_LEFT),
+                        connectedCar.isActive(NUMBER_TRX_MIDDLE),
+                        connectedCar.isActive(NUMBER_TRX_RIGHT),
+                        connectedCar.isActive(NUMBER_TRX_TRUNK),
+                        connectedCar.isActive(NUMBER_TRX_FRONT_LEFT),
+                        connectedCar.isActive(NUMBER_TRX_FRONT_RIGHT),
+                        connectedCar.isActive(NUMBER_TRX_REAR_LEFT),
+                        connectedCar.isActive(NUMBER_TRX_REAR_RIGHT),
+                        connectedCar.isActive(NUMBER_TRX_BACK),
+                        mAlgoManager.isSmartphoneInPocket(), mAlgoManager.areLockActionsAvailable(),
+                        mAlgoManager.getRearmLock(), mAlgoManager.getRearmUnlock(),
+                        mAlgoManager.getRearmWelcome(), newLockStatus, welcomeByte,
+                        lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
+                        walkAwayByte, approachByte, leftTurnByte, rightTurnByte,
+                        approachSideByte, approachRoadByte, recordByte, mAlgoManager.getRangingPositionPrediction(),
+                        mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(),
+                        mProtocolManager.isStartRequested(), mProtocolManager.isThatcham(),
+                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_LEFT).toString(),
+                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_MIDDLE).toString(),
+                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_RIGHT).toString(),
+                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_TRUNK).toString(),
+                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_FRONT_LEFT).toString(),
+                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_FRONT_RIGHT).toString(),
+                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_REAR_LEFT).toString(),
+                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_REAR_RIGHT).toString(),
+                        connectedCar.getCurrentBLEChannel(NUMBER_TRX_BACK).toString(),
+                        beepInt);
+                beepInt = 0;
+            }
+            if (isFullyConnected()) {
+                mMainHandler.postDelayed(this, 105);
+            }
+        }
+    };
+    private final Runnable checkNewPacketsRunner = new Runnable() {
+        @Override
+        public void run() {
+            if (bytesReceived != null) {
+                lock.readLock().lock();
+                PSALogs.d("NIH", "checkNewPacketsRunnable " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
+                if ((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
+                    lock.readLock().unlock();
+                    PSALogs.w("NIH", "LAST_EQUALS_NEW_PACKETS_RECEIVED");
+                    PSALogs.i("restartConnection", "received packet have not changed in a second");
+                    restartConnection(false);
+                } else {
+                    lastPacketIdNumber[0] = bytesReceived[0];
+                    lastPacketIdNumber[1] = bytesReceived[1];
+                    lock.readLock().unlock();
+                    if (isFullyConnected()) {
+                        mMainHandler.postDelayed(this, 1000);
+                    }
+                }
+            } else {
+                PSALogs.w("NIH", "PACKETS_RECEIVED_ARE_NULL");
+                PSALogs.i("restartConnection", "received packet is null");
+                restartConnection(false);
+            }
+        }
+    };
 
     public BleRangingHelper(Context context, BleRangingListener bleRangingListener) {
         this.mContext = context;
@@ -382,7 +399,6 @@ public class BleRangingHelper {
             public void onBeaconScanResponseCatch(final BluetoothDevice device, final int rssi,
                                                   final BeaconScanResponse beaconScanResponse,
                                                   final byte[] advertisedData) {
-                isIndoor = getIsIndoorParameter(beaconScanResponse);
                 executorService.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -655,17 +671,6 @@ public class BleRangingHelper {
     }
 
     /**
-     * Get the current isIndoor parameter from the beacon scan response
-     *
-     * @param scanResponse the beacon scan response
-     * @return the received isIndoor parameter
-     */
-    private boolean getIsIndoorParameter(BeaconScanResponse scanResponse) {
-        return SdkPreferencesHelper.getInstance().getIsIndoor();
-//        return ((scanResponse.isIndoor & 0xC0) == 0x40); //TODO change mask and comparaison
-    }
-
-    /**
      * Connect to central trx
      *
      * @param device              the trx that send the centralScanResponse
@@ -702,7 +707,6 @@ public class BleRangingHelper {
                         } else {
                             isRestartAuthorized = true;
                         }
-                        return;
                     }
                 }
             }
@@ -789,26 +793,24 @@ public class BleRangingHelper {
     /**
      * Update the mini map with our location around the car
      */
-    private void updateCarLocalization(String prediction) {
-        bleRangingListener.darkenArea(PREDICTION_FRONT);
-        bleRangingListener.darkenArea(PREDICTION_THATCHAM);
-        bleRangingListener.darkenArea(PREDICTION_LEFT);
-        bleRangingListener.darkenArea(PREDICTION_RIGHT);
-        bleRangingListener.darkenArea(PREDICTION_BACK);
-        bleRangingListener.darkenArea(PREDICTION_TRUNK);
-        bleRangingListener.darkenArea(PREDICTION_START);
-        bleRangingListener.darkenArea(PREDICTION_LOCK);
-        bleRangingListener.darkenArea(PREDICTION_WELCOME);
+    private void updateCarLocalization(String predictionPosition, String predictionProximity) {
+        for (String elementPred : PREDICTIONS) {
+            bleRangingListener.darkenArea(elementPred);
+        }
         //THATCHAM
         if (mProtocolManager.isThatcham()) {
             bleRangingListener.lightUpArea(PREDICTION_THATCHAM);
         }
+        // WELCOME
         if (mAlgoManager.isInWelcomeArea()) {
-            // WELCOME
             bleRangingListener.lightUpArea(PREDICTION_WELCOME);
         }
-        if (prediction != null && !prediction.isEmpty()) {
-            bleRangingListener.lightUpArea(prediction);
+        if (predictionPosition != null && !predictionPosition.isEmpty()) {
+            bleRangingListener.lightUpArea(predictionPosition);
+        }
+        // REMOTE PARKING
+        if (predictionProximity != null && !predictionProximity.isEmpty()) {
+            bleRangingListener.lightUpArea(predictionProximity);
         }
         bleRangingListener.applyNewDrawable();
     }

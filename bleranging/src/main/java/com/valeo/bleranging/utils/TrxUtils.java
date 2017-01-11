@@ -161,7 +161,6 @@ public class TrxUtils {
      * Create the string to write in the settings log file and add it
      * @param carType the car type
      * @param carBase the car base
-     * @param isIndoor true if the car is indoor, false if it is outside
      * @param addressConnectable the car connectable trx address
      * @param addressConnectableRemote the remote control address
      * @param addressConnectablePC the computer address
@@ -176,28 +175,27 @@ public class TrxUtils {
      * @param addressRearRight the rear right trx address
      * @param logNumber the next log file number
      * @param rollAvElement the default rolling average size
-     * @param thatchamTimeout the thatcham timeout duration
      * @param preAuthTimeout the preAuth timeout duration
      * @param actionTimeout the action timeout duration
      * @param wantedSpeed the wanted speed for the test procedure
      * @param stepSize the step size for the test procedure
      */
-    public static void appendSettingLogs(String carType, String carBase, boolean isIndoor,
+    public static void appendSettingLogs(String carType, String carBase,
                                          String addressConnectable, String addressConnectableRemote, String addressConnectablePC,
                                          String addressFrontLeft, String addressFrontRight,
                                          String addressLeft, String addressMiddle, String addressRight, String addressTrunk,
                                          String addressRearLeft, String addressBack, String addressRearRight,
                                          int logNumber, int rollAvElement,
-                                         float thatchamTimeout, float preAuthTimeout, float actionTimeout,
+                                         float preAuthTimeout, float actionTimeout,
                                          float wantedSpeed, int stepSize) {
         final String comma = ";";
-        String log = carType + comma + carBase + comma + String.valueOf(isIndoor) + comma
+        String log = carType + comma + carBase + comma
                 + addressConnectable + comma + addressConnectableRemote + comma
                 + addressConnectablePC + comma + addressFrontLeft + comma + addressFrontRight + comma
                 + addressLeft + comma + addressMiddle + comma + addressRight + comma + addressTrunk + comma
                 + addressRearLeft + comma + addressBack + comma + addressRearRight + comma
                 + String.valueOf(logNumber) + comma + String.valueOf(rollAvElement) + comma
-                + String.valueOf(thatchamTimeout) + comma + String.valueOf(preAuthTimeout) + comma
+                + String.valueOf(preAuthTimeout) + comma
                 + String.valueOf(actionTimeout) + comma
                 + String.valueOf(wantedSpeed) + comma + String.valueOf(stepSize) + comma;
         appendRssiLog(log);
@@ -267,12 +265,12 @@ public class TrxUtils {
     public static void writeFirstColumnSettings() {
         //Write 1st row with column names
         //BufferedWriter for performance, true to set append to file flag
-        String ColNames = "TIMESTAMP;carType;carBase;algoSelected;isIndoor;addressConnectable;"
+        String ColNames = "TIMESTAMP;carType;carBase;addressConnectable;"
                 + "addressConnectableRemote;addressConnectablePC;addressFrontLeft;addressFrontRight;"
                 + "addressLeft;addressMiddle;addressRight;addressTrunk;"
                 + "addressRearLeft;addressBack;addressRearRight;"
                 + "logNumber;rollAvElement;"
-                + "thatchamTimeout;preAuthTimeout;actionTimeout;wantedSpeed;stepSize;";
+                + "preAuthTimeout;actionTimeout;wantedSpeed;stepSize;";
         try {
             BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
             buf.append(ColNames);

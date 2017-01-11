@@ -26,9 +26,10 @@ public class FaceDetectorUtils {
 
     public FaceDetectorUtils(Context context) {
         this.mContext = context;
+        createFaceDetector();
     }
 
-    public void createFaceDetector() {
+    private void createFaceDetector() {
         detector = new FaceDetector.Builder(mContext)
                 .setProminentFaceOnly(true)
                 .setTrackingEnabled(false)
