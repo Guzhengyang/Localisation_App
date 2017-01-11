@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private TextView car_start_countdown_min_sec;
     private TextView activity_title;
     private TextView ble_status;
-    private TextView selected_algo;
     private TextView car_door_status;
     private TextView tips;
     private TextView nfc_disclaimer;
@@ -450,7 +449,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         close_all_windows_title.setTypeface(lightTypeFace, Typeface.NORMAL);
         activity_title.setGravity(Gravity.CENTER);
         ble_status.setTypeface(romanTypeFace, Typeface.NORMAL);
-        selected_algo.setTypeface(romanTypeFace, Typeface.NORMAL);
         car_door_status.setTypeface(lightTypeFace, Typeface.NORMAL);
         tips.setTypeface(boldTypeFace, Typeface.BOLD);
         nfc_disclaimer.setTypeface(lightTypeFace, Typeface.NORMAL);
@@ -469,7 +467,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         start_car_timeout = (ReverseProgressBar) findViewById(R.id.start_car_timeout);
         car_start_countdown_min_sec = (TextView) findViewById(R.id.car_start_countdown_min_sec);
         ble_status = (TextView) findViewById(R.id.ble_status);
-        selected_algo = (TextView) findViewById(R.id.selected_algo);
         car_door_status = (TextView) findViewById(R.id.car_door_status);
         tips = (TextView) findViewById(R.id.tips);
         nfc_disclaimer = (TextView) findViewById(R.id.nfc_disclaimer);
@@ -622,7 +619,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         if (mainToStart) {
             content_start_car_dialog.setVisibility(View.VISIBLE);
             ble_status.setVisibility(View.GONE);
-            selected_algo.setVisibility(View.GONE);
             activity_title.setText(R.string.cancel_start_car);
             activity_title.setGravity(Gravity.CENTER_VERTICAL);
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) activity_title.getLayoutParams();
@@ -642,7 +638,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         } else {
             content_start_car_dialog.setVisibility(View.GONE);
             ble_status.setVisibility(View.VISIBLE);
-            selected_algo.setVisibility(View.VISIBLE);
             setActivityTitle();
             activity_title.setGravity(Gravity.CENTER);
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) activity_title.getLayoutParams();
@@ -719,13 +714,11 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             blur_on_touch.setVisibility(View.VISIBLE);
             main_scroll.setVisibility(View.GONE);
             ble_status.setVisibility(View.GONE);
-            selected_algo.setVisibility(View.GONE);
         } else {
             blur_on_touch.setImageDrawable(null);
             blur_on_touch.setVisibility(View.GONE);
             main_scroll.setVisibility(View.VISIBLE);
             ble_status.setVisibility(View.VISIBLE);
-            selected_algo.setVisibility(View.VISIBLE);
         }
     }
 

@@ -17,12 +17,6 @@
             android:key="@string/connected_car_base_pref_name"
             android:title="@string/pref_car_base_title" />
         <ListPreference
-            android:dialogTitle="@string/algo_title_list_preference"
-            android:entries="@array/algo_list_preference"
-            android:entryValues="@array/algo_entryvalues_list_preference"
-            android:key="@string/selected_algo_pref_name"
-            android:title="@string/pref_algo_title" />
-        <ListPreference
             android:dialogTitle="@string/model_title_list_preference"
             android:entries="@array/model_list_preference"
             android:entryValues="@array/model_entryvalues_list_preference"
@@ -104,36 +98,8 @@
             android:inputType="number"
             android:key="@string/rolling_av_element_pref_name"
             android:title="@string/pref_nb_element_rolling_average" />
-        <EditTextPreference
-            android:inputType="number"
-            android:key="@string/start_nb_element_pref_name"
-            android:title="@string/pref_nb_element_start" />
-        <EditTextPreference
-            android:inputType="number"
-            android:key="@string/lock_nb_element_pref_name"
-            android:title="@string/pref_nb_element_lock" />
-        <EditTextPreference
-            android:inputType="number"
-            android:key="@string/unlock_nb_element_pref_name"
-            android:title="@string/pref_nb_element_unlock" />
-        <EditTextPreference
-            android:inputType="number"
-            android:key="@string/welcome_nb_element_pref_name"
-            android:title="@string/pref_nb_element_welcome" />
-        <EditTextPreference
-            android:inputType="number"
-            android:key="@string/long_nb_element_pref_name"
-            android:title="@string/pref_nb_element_long" />
-        <EditTextPreference
-            android:inputType="number"
-            android:key="@string/short_nb_element_pref_name"
-            android:title="@string/pref_nb_element_short" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_timeout">
-        <EditTextPreference
-            android:inputType="number|numberDecimal"
-            android:key="@string/back_timeout_pref_name"
-            android:title="@string/pref_back_timeout" />
         <EditTextPreference
             android:inputType="number|numberDecimal"
             android:key="@string/thatcham_timeout_pref_name"
@@ -146,20 +112,6 @@
             android:inputType="number|numberDecimal"
             android:key="@string/crypto_action_timeout_pref_name"
             android:title="@string/pref_crypto_action_timeout" />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_acc">
-        <EditTextPreference
-            android:inputType="number"
-            android:key="@string/lin_acc_size_pref_name"
-            android:title="@string/pref_acc_size" />
-        <EditTextPreference
-            android:inputType="number|numberDecimal"
-            android:key="@string/correction_lin_acc_pref_name"
-            android:title="@string/pref_acc_correction" />
-        <EditTextPreference
-            android:inputType="number|numberDecimal"
-            android:key="@string/frozen_threshold_pref_name"
-            android:title="@string/pref_frozen_threshold" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_user_speed">
         <CheckBoxPreference

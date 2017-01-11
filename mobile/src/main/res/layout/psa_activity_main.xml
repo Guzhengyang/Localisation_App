@@ -80,17 +80,6 @@
             android:text="@string/not_connected_over_ble"
             android:textColor="@color/ble_status"
             android:textSize="@dimen/psa_40_px" />
-
-        <TextView
-            android:id="@+id/selected_algo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:gravity="center_vertical"
-            android:padding="@dimen/imageview_padding"
-            android:text="@string/pref_algo_title"
-            android:textColor="@color/ble_status"
-            android:textSize="@dimen/psa_40_px" />
     </FrameLayout>
 
     <include
