@@ -179,7 +179,6 @@ public class AlgoManager implements SensorEventListener {
     public SpannableStringBuilder createDebugData(SpannableStringBuilder spannableStringBuilder) {
         if (ranging != null) {
             spannableStringBuilder.append("Near-Far Localisation: ").append(getPredictionProximity()).append("\n");
-            spannableStringBuilder.append(ranging.printDist());
             spannableStringBuilder.append(ranging.printDebug());
         }
         return spannableStringBuilder;
@@ -335,17 +334,15 @@ public class AlgoManager implements SensorEventListener {
     public String getPredictionPosition() {
         if (ranging != null) {
             return ranging.getPrediction();
-        } else {
-            return PREDICTION_UNKNOWN;
         }
+        return PREDICTION_UNKNOWN;
     }
 
     public String getPredictionProximity() {
         if (ranging != null) {
-            return ranging.getPrediction_near_far();
-        } else {
-            return PREDICTION_UNKNOWN;
+            return ranging.getPredictionNearFar();
         }
+        return PREDICTION_UNKNOWN;
     }
 
     @Override
