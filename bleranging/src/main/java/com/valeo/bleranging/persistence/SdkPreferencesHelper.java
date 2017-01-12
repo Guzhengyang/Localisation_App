@@ -89,12 +89,16 @@ public final class SdkPreferencesHelper {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.security_wal_enabled_pref_name), false);
     }
 
-    public Boolean getConnectedCarTrameEnabled() {
-        return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_trame_enabled_pref_name), false);
+    public int getOffsetSmartphone() {
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.offset_smartphone_pref_name), OFFSET_SMARTPHONE);
     }
 
-    public String getConnectedCarTrame() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_trame_pref_name), "");
+    public int getOffsetHysteresisLock() {
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.offset_hysteresis_lock_pref_name), OFFSET_HYSTERESIS_LOCK);
+    }
+
+    public int getOffsetHysteresisUnlock() {
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.offset_hysteresis_unlock_pref_name), OFFSET_HYSTERESIS_UNLOCK);
     }
 
     public float getCryptoPreAuthTimeout() {

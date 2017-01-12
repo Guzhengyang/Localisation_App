@@ -8,8 +8,8 @@
 @attribute 'RSSI FRONTRIGHT_ORIGIN' numeric
 @attribute 'RSSI REARLEFT_ORIGIN' numeric
 @attribute 'RSSI REARRIGHT_ORIGIN' numeric
-@attribute class {far,near}
+@attribute class {near,far}
 
 @data
--85.25,-92.5,-95.75,-85.5,-80.5,-90.75,-83,-87.25,far
+2.33138,6.748351,11.24418,3.833659,1.093315,8.182787,8.993485,10.19418,near
 
