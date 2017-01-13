@@ -271,6 +271,11 @@ public abstract class ConnectedCar {
             rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
             rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
         }
+        for (Double elem : rssi) {
+            if (elem == 0) {
+                return null;
+            }
+        }
         return rssi;
     }
 
