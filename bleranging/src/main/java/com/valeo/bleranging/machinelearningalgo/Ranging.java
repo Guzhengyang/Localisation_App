@@ -9,7 +9,7 @@ import com.valeo.bleranging.persistence.SdkPreferencesHelper;
  * Created by zgu4 on 02/12/2016.
  */
 public class Ranging {
-    private static final double THRESHOLD_PROB_Standard = 0.7;
+    private static final double THRESHOLD_PROB_STANDARD = 0.7;
     private static final int N_VOTE = 3;
     private static final double THRESHOLD_PROB_EAR = 0.8;
     private static final int N_VOTE_EAR = 3;
@@ -50,7 +50,7 @@ public class Ranging {
     }
 
     void calculatePrediction() {
-        standardPrediction.calculatePredictionStandard(THRESHOLD_PROB_Standard);
+        standardPrediction.calculatePredictionStandard(THRESHOLD_PROB_STANDARD);
         earPrediction.calculatePredictionEar(THRESHOLD_PROB_EAR);
         nearFarPrediction.calculatePredictionStandard(THRESHOLD_PROB_NEAR_FAR);
     }
