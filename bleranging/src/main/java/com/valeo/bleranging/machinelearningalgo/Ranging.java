@@ -21,7 +21,7 @@ public class Ranging {
     private Prediction standardPrediction;
     private Prediction earPrediction;
     private Prediction nearFarPrediction;
-    private int OFFSET_EAR = 10;
+    private int OFFSET_EAR = 5;
 
     Ranging(Context context, double[] rssi) {
         this.standardPrediction = new Prediction(context, R.raw.eight_flfrlmrtrlrr_classes,
