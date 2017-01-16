@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.SpannableStringBuilder;
 
-import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.bluetooth.AlgoManager;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
@@ -98,7 +97,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                     (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_REAR_LEFT, nearDoorThresholdMRLorMRR, true)
                             || compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_REAR_RIGHT, nearDoorThresholdMRLorMRR, true)) &&
                     (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_TRUNK, -10, true))) {
-                result.add(BleRangingHelper.START_PASSENGER_AREA);
+//                result.add(BleRangingHelper.PREDICTION_START);
             }
             if ((compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_LEFT, nearDoorThresholdTLorTRMax, true)
                     || compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_RIGHT, nearDoorThresholdTLorTRMax, true))
@@ -107,7 +106,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                     && (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_REAR_LEFT, nearDoorThresholdTRLorTRR, true)
                     || compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_REAR_RIGHT, nearDoorThresholdTRLorTRR, true))
                     && compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_TRUNK, -10, false)) {
-                result.add(BleRangingHelper.START_TRUNK_AREA);
+//                result.add(BleRangingHelper.PREDICTION_TRUNK);
             }
             if (result.isEmpty()) {
                 return null;

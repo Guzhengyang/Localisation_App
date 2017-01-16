@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.SpannableStringBuilder;
 
-import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.bluetooth.AlgoManager;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
@@ -77,7 +76,7 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
                     || compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_RIGHT, nearDoorThresholdMLorMRMax, true))
                     && (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_LEFT, nearDoorThresholdMLorMRMin, true)
                     && compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_RIGHT, nearDoorThresholdMLorMRMin, true))) {
-                result.add(BleRangingHelper.START_PASSENGER_AREA);
+//                result.add(BleRangingHelper.PREDICTION_START);
             }
             if (result.isEmpty()) {
                 return null;

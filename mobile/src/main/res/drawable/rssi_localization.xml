@@ -26,7 +26,21 @@
         android:id="@+id/start_area"
         android:bottom="40dp"
         android:left="90dp"
-        android:right="60dp"
+        android:right="80dp"
+        android:top="40dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FF000000" />
+            <stroke
+                android:width="1dp"
+                android:color="#FF000000" />
+        </shape>
+    </item>
+    <!-- trunk -->
+    <item
+        android:id="@+id/trunk_area"
+        android:bottom="40dp"
+        android:left="190dp"
+        android:right="64dp"
         android:top="40dp">
         <shape android:shape="rectangle">
             <solid android:color="#FF000000" />
@@ -38,18 +52,60 @@
     <item
         android:id="@+id/car_drawable"
         android:bottom="10dp"
-        android:drawable="@drawable/car_4_b"
+        android:drawable="@drawable/car_8"
         android:gravity="center"
         android:left="10dp"
         android:right="10dp"
         android:top="10dp" />
+    <!-- front left entry -->
+    <item
+        android:id="@+id/unlock_area_front_left"
+        android:bottom="20dp"
+        android:left="60dp"
+        android:right="160dp"
+        android:top="110dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FF000000" />
+            <stroke
+                android:width="1dp"
+                android:color="#FF000000" />
+        </shape>
+    </item>
     <!-- left entry -->
     <item
         android:id="@+id/unlock_area_left"
         android:bottom="20dp"
-        android:left="120dp"
-        android:right="100dp"
+        android:left="100dp"
+        android:right="80dp"
         android:top="110dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FF000000" />
+            <stroke
+                android:width="1dp"
+                android:color="#FF000000" />
+        </shape>
+    </item>
+    <!-- rear left entry -->
+    <item
+        android:id="@+id/unlock_area_rear_left"
+        android:bottom="20dp"
+        android:left="180dp"
+        android:right="60dp"
+        android:top="110dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FF000000" />
+            <stroke
+                android:width="1dp"
+                android:color="#FF000000" />
+        </shape>
+    </item>
+    <!-- front right entry -->
+    <item
+        android:id="@+id/unlock_area_front_right"
+        android:bottom="110dp"
+        android:left="60dp"
+        android:right="160dp"
+        android:top="20dp">
         <shape android:shape="rectangle">
             <solid android:color="#FF000000" />
             <stroke
@@ -61,8 +117,22 @@
     <item
         android:id="@+id/unlock_area_right"
         android:bottom="110dp"
-        android:left="120dp"
-        android:right="100dp"
+        android:left="100dp"
+        android:right="80dp"
+        android:top="20dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FF000000" />
+            <stroke
+                android:width="1dp"
+                android:color="#FF000000" />
+        </shape>
+    </item>
+    <!-- rear right entry -->
+    <item
+        android:id="@+id/unlock_area_rear_right"
+        android:bottom="110dp"
+        android:left="180dp"
+        android:right="60dp"
         android:top="20dp">
         <shape android:shape="rectangle">
             <solid android:color="#FF000000" />
@@ -89,7 +159,7 @@
     <item
         android:id="@+id/unlock_area_back"
         android:bottom="40dp"
-        android:left="214dp"
+        android:left="210dp"
         android:right="30dp"
         android:top="40dp">
         <shape android:shape="rectangle">
@@ -105,6 +175,20 @@
         android:bottom="120dp"
         android:left="10dp"
         android:right="240dp"
+        android:top="10dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FF000000" />
+            <stroke
+                android:width="1dp"
+                android:color="#FF000000" />
+        </shape>
+    </item>
+    <!-- remote parking area -->
+    <item
+        android:id="@+id/remote_parking_area"
+        android:bottom="120dp"
+        android:left="240dp"
+        android:right="10dp"
         android:top="10dp">
         <shape android:shape="rectangle">
             <solid android:color="#FF000000" />

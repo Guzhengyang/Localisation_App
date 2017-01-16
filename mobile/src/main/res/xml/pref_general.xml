@@ -44,6 +44,10 @@
             android:defaultValue="false"
             android:key="@string/com_simulation_enabled_pref_name"
             android:title="@string/pref_com_simulation_enabled" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/security_wal_enabled_pref_name"
+            android:title="@string/pref_security_wal_enabled" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_ble_address">
         <EditTextPreference
@@ -160,6 +164,20 @@
             android:inputType="number|numberDecimal"
             android:key="@string/frozen_threshold_pref_name"
             android:title="@string/pref_frozen_threshold" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_offset">
+        <EditTextPreference
+            android:inputType="number"
+            android:key="@string/offset_smartphone_pref_name"
+            android:title="@string/pref_offset_smartphone" />
+        <EditTextPreference
+            android:inputType="number"
+            android:key="@string/offset_hysteresis_lock_pref_name"
+            android:title="@string/pref_offset_hysteresis_lock" />
+        <EditTextPreference
+            android:inputType="number"
+            android:key="@string/offset_hysteresis_unlock_pref_name"
+            android:title="@string/pref_offset_hysteresis_unlock" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_user_speed">
         <CheckBoxPreference
