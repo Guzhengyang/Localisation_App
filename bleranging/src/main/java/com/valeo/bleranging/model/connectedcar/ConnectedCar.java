@@ -6,7 +6,7 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
-import com.valeo.bleranging.bluetooth.AlgoManager;
+import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
@@ -710,6 +710,11 @@ public abstract class ConnectedCar {
             rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
             rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
             rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
+        }
+        for (Double elem : rssi) {
+            if (elem == 0) {
+                return null;
+            }
         }
         return rssi;
     }

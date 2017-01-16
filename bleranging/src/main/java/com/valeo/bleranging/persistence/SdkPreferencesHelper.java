@@ -453,6 +453,18 @@ public final class SdkPreferencesHelper {
         return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.back_timeout_pref_name), BACK_TIMEOUT);
     }
 
+    public int getOffsetSmartphone() {
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.offset_smartphone_pref_name), OFFSET_SMARTPHONE);
+    }
+
+    public int getOffsetHysteresisLock() {
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.offset_hysteresis_lock_pref_name), OFFSET_HYSTERESIS_LOCK);
+    }
+
+    public int getOffsetHysteresisUnlock() {
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.offset_hysteresis_unlock_pref_name), OFFSET_HYSTERESIS_UNLOCK);
+    }
+
     public float getCryptoPreAuthTimeout() {
         return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.crypto_pre_auth_timeout_pref_name), CRYPTO_PRE_AUTH_TIMEOUT);
     }

@@ -3,7 +3,7 @@ package com.valeo.bleranging.model.connectedcar;
 import android.content.Context;
 import android.text.SpannableStringBuilder;
 
-import com.valeo.bleranging.bluetooth.AlgoManager;
+import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.Trx;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.valeo.bleranging.bluetooth;
+package com.valeo.bleranging.machinelearningalgo;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -14,8 +14,8 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.text.SpannableStringBuilder;
 
+import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
-import com.valeo.bleranging.model.Ranging;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
@@ -198,7 +198,7 @@ public class AlgoManager implements SensorEventListener {
                         lastThatchamChanged = true; // because when thatcham changed, maybe not in lock area yet
                     }
                 }
-                if (lastThatchamChanged && getRangingPositionPrediction().equalsIgnoreCase(PREDICTION_LOCK)) { // when thatcham has changed, and get into lock area
+                if (lastThatchamChanged && getPredictionPosition().equalsIgnoreCase(PREDICTION_LOCK)) { // when thatcham has changed, and get into lock area
                     if (!mProtocolManager.isLockedFromTrx()) { // if the vehicle is unlocked, lock it
                         new CountDownTimer(600, 90) { // Send safety close command several times in case it got lost
                             public void onTick(long millisUntilFinished) {
@@ -247,9 +247,6 @@ public class AlgoManager implements SensorEventListener {
 
     public SpannableStringBuilder createDebugData(SpannableStringBuilder spannableStringBuilder) {
         if (ranging != null) {
-            spannableStringBuilder.append("Indoor Localisation: ").append(ranging.getPrediction_indoor()).append("\n");
-            spannableStringBuilder.append("Near-Far Localisation: ").append(ranging.getPrediction_near_far()).append("\n");
-            spannableStringBuilder.append(ranging.printDist());
             spannableStringBuilder.append(ranging.printDebug());
         }
         spannableStringBuilder
@@ -374,8 +371,9 @@ public class AlgoManager implements SensorEventListener {
         isInLockArea = false;
         mProtocolManager.setIsStartRequested(false);
         mProtocolManager.setIsWelcomeRequested(false);
-        rangingPredictionInt = ranging.getPrediction(); //TODO Replace SdkPreferencesHelper.getInstance().getComSimulationEnabled() by CallReceiver.smartphoneComIsActivated after demo
-        switch (getRangingPositionPrediction()) {
+        ranging.calculatePrediction();
+        //TODO Replace SdkPreferencesHelper.getInstance().getComSimulationEnabled() by CallReceiver.smartphoneComIsActivated after demo
+        switch (getPredictionPosition()) {
             case PREDICTION_LOCK:
                 isInLockArea = true;
                 if (areLockActionsAvailable.get() && rearmLock.get()) {
@@ -417,7 +415,7 @@ public class AlgoManager implements SensorEventListener {
             mProtocolManager.setIsWelcomeRequested(isWelcomeAllowed);
         }
         setIsThatcham(isInLockArea, isInUnlockArea, isInStartArea);
-        if (ranging.getPrediction_near_far().equalsIgnoreCase(PREDICTION_NEAR)) {
+        if (getPredictionProximity().equalsIgnoreCase(PREDICTION_NEAR)) {
             mProtocolManager.setInRemoteParkingArea(true);
         } else {
             mProtocolManager.setInRemoteParkingArea(false);
@@ -593,6 +591,24 @@ public class AlgoManager implements SensorEventListener {
         return Math.sqrt(x * x + y * y + z * z);
     }
 
+    public String getPredictionPosition() {
+        if (ranging != null) {
+            if (SdkPreferencesHelper.getInstance().getComSimulationEnabled()) {
+                return ranging.getPredictionEar();
+            } else {
+                return ranging.getPrediction();
+            }
+        }
+        return PREDICTION_UNKNOWN;
+    }
+
+    public String getPredictionProximity() {
+        if (ranging != null) {
+            return ranging.getPredictionNearFar();
+        }
+        return PREDICTION_UNKNOWN;
+    }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
@@ -736,20 +752,6 @@ public class AlgoManager implements SensorEventListener {
 
     public Ranging getRanging() {
         return ranging;
-    }
-
-    public String getRangingPositionPrediction() {
-        if (rangingPredictionInt == -1) {
-            return PREDICTION_UNKNOWN;
-        }
-        return ranging.classes[rangingPredictionInt];
-    }
-
-    public String getRangingProximityPrediction() {
-        if (rangingPredictionInt == -1) {
-            return PREDICTION_UNKNOWN;
-        }
-        return ranging.classes_near_far[rangingPredictionInt];
     }
 
     public boolean getIsRKE() {

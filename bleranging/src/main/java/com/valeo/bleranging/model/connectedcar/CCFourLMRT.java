@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.SpannableStringBuilder;
 
-import com.valeo.bleranging.bluetooth.AlgoManager;
+import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.utils.TextUtils;

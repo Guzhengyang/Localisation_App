@@ -1,5 +1,6 @@
 package com.valeo.bleranging.bluetooth;
 
+import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
@@ -95,8 +96,8 @@ public class InblueProtocolManager {
         payload[1] = (byte) (packetOneCounter & 0xFF);
         payload[2] = (0x01);
         payload[3] = getPayloadThirdByte();
-        payload[4] = getPayloadFourthByte(isRKE, mAlgoManager.getRangingPositionPrediction());
-        payload[5] = getPayloadFifthByte(isRKE, mAlgoManager.getRangingPositionPrediction());
+        payload[4] = getPayloadFourthByte(isRKE, mAlgoManager.getPredictionPosition());
+        payload[5] = getPayloadFifthByte(isRKE, mAlgoManager.getPredictionPosition());
         packetOneCounter++;
         if (packetOneCounter > 65534) { // packetOneCounter > FF FE
             packetOneCounter = 0;
