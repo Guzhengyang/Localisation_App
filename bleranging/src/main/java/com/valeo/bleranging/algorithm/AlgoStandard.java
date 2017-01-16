@@ -25,6 +25,9 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.algorithm.RKEManager.LOCK_STATUS_CHANGED_TIMEOUT;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_MIDDLE;
 import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
@@ -283,9 +286,10 @@ public class AlgoStandard implements SensorEventListener {
      *
      * @param newLockStatus the lock status of the vehicle
      */
-    public void tryStandardStrategies(boolean newLockStatus, boolean isFullyConnected,
-                                      boolean isIndoor, ConnectedCar connectedCar, int totalAverage,
-                                      BleRangingListener bleRangingListener) {
+    public String tryStandardStrategies(boolean newLockStatus, boolean isFullyConnected,
+                                        boolean isIndoor, ConnectedCar connectedCar, int totalAverage,
+                                        BleRangingListener bleRangingListener) {
+        String result = PREDICTION_UNKNOWN;
         rearmWelcome(connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE)); // rearm rearmWelcome Boolean
         if (isFullyConnected) {
             boolean isStartAllowed = false;
@@ -317,10 +321,15 @@ public class AlgoStandard implements SensorEventListener {
             }
             if (isInLockArea) {
                 mRKEManager.performLockWithCryptoTimeout(false, true);
+                result = PREDICTION_LOCK;
             } else if (isInStartArea) { //smartphone in start area and moving
                 isStartAllowed = true;
+                result = PREDICTION_START;
             } else if (isInUnlockArea) {
                 mRKEManager.performLockWithCryptoTimeout(false, false);
+                if (isUnlockStrategyValid != null && !isUnlockStrategyValid.isEmpty()) {
+                    result = isUnlockStrategyValid.get(0);
+                }
             }
             if (mProtocolManager.isWelcomeRequested() != isWelcomeAllowed) {
                 mProtocolManager.setIsWelcomeRequested(isWelcomeAllowed);
@@ -328,6 +337,7 @@ public class AlgoStandard implements SensorEventListener {
                 mProtocolManager.setIsStartRequested(isStartAllowed);
             }
         }
+        return result;
     }
 
     public boolean isForcedStart() {

@@ -72,11 +72,11 @@ public class Ranging {
         nearFarPrediction.predict(N_VOTE_NEAR_FAR);
     }
 
-    public void tryMachineLearningStrategies(InblueProtocolManager mProtocolManager,
-                                             RKEManager mRKEManager, ConnectedCar connectedCar,
-                                             BleRangingListener bleRangingListener,
-                                             Handler mMainHandler, Context mContext,
-                                             boolean newLockStatus) {
+    public String tryMachineLearningStrategies(InblueProtocolManager mProtocolManager,
+                                               RKEManager mRKEManager, ConnectedCar connectedCar,
+                                               BleRangingListener bleRangingListener,
+                                               Handler mMainHandler, Context mContext,
+                                               boolean newLockStatus) {
         boolean isWelcomeAllowed = false;
         // Cancel previous requested actions
         boolean isInUnlockArea = false;
@@ -126,6 +126,7 @@ public class Ranging {
         } else {
             mProtocolManager.setInRemoteParkingArea(false);
         }
+        return getPredictionPosition();
     }
 
     private void setIsThatcham(boolean isInUnlockArea, InblueProtocolManager mProtocolManager) {

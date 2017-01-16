@@ -73,11 +73,13 @@ public class AlgoManager {
         mContext.registerReceiver(mDataReceiver, new IntentFilter(BluetoothLeService.ACTION_DATA_AVAILABLE2));
     }
 
-    public SpannableStringBuilder createDebugData(SpannableStringBuilder spannableStringBuilder) {
+    public SpannableStringBuilder createDebugData(SpannableStringBuilder spannableStringBuilder,
+                                                  String predictionStd, String predictionMl) {
         if (ranging != null) {
             spannableStringBuilder.append(ranging.printDebug());
         }
         spannableStringBuilder = algoStandard.createDebugData(spannableStringBuilder);
+        spannableStringBuilder.append("Std:").append(predictionStd).append(" ML:").append(predictionMl).append("\n");
         return spannableStringBuilder;
     }
 
@@ -86,17 +88,17 @@ public class AlgoManager {
      *
      * @param newLockStatus the lock status of the vehicle
      */
-    public void tryStandardStrategies(boolean newLockStatus, boolean isFullyConnected,
-                                      boolean isIndoor, ConnectedCar connectedCar, int totalAverage) {
-        algoStandard.tryStandardStrategies(newLockStatus, isFullyConnected,
+    public String tryStandardStrategies(boolean newLockStatus, boolean isFullyConnected,
+                                        boolean isIndoor, ConnectedCar connectedCar, int totalAverage) {
+        return algoStandard.tryStandardStrategies(newLockStatus, isFullyConnected,
                 isIndoor, connectedCar, totalAverage, bleRangingListener);
     }
 
     /**
      * Try all strategy based on machine learning
      */
-    public void tryMachineLearningStrategies(boolean newLockStatus, ConnectedCar connectedCar) {
-        ranging.tryMachineLearningStrategies(mProtocolManager, mRKEManager, connectedCar,
+    public String tryMachineLearningStrategies(boolean newLockStatus, ConnectedCar connectedCar) {
+        return ranging.tryMachineLearningStrategies(mProtocolManager, mRKEManager, connectedCar,
                 bleRangingListener, mMainHandler, mContext, newLockStatus);
     }
 
