@@ -62,6 +62,8 @@ public class Ranging {
     private int OFFSET_A5 = 5;
     private int OFFSET_HYSTERIS = 2;
     private int INDEX_TRUNK = 3;
+    private int prediction_position;
+
 
 
     public Ranging(Context context, double[] rssi) {
@@ -108,7 +110,7 @@ public class Ranging {
     }
 
 
-    public double rssi2dist(double rssi) {
+    private double rssi2dist(double rssi) {
         return c / f / 4 / Math.PI * Math.pow(10, -(rssi - P) / 20);
     }
 
@@ -231,19 +233,18 @@ public class Ranging {
 
 
     public int getPrediction() {
-        int prediction;
         if (prediction_old == -1) {
-            prediction = vote2int();
-            prediction_old = prediction;
+            prediction_position = vote2int();
+            prediction_old = prediction_position;
         } else {
             if (distribution[vote2int()] > threshold_prob) {
-                prediction = vote2int();
-                prediction_old = prediction;
+                prediction_position = vote2int();
+                prediction_old = prediction_position;
             } else {
-                prediction = prediction_old;
+                prediction_position = prediction_old;
             }
         }
-        return prediction;
+        return prediction_position;
     }
 
 
@@ -320,4 +321,17 @@ public class Ranging {
         }
     }
 
+    public String printDebug() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Prediction: ")
+                .append(classes[prediction_position]).append(" ")
+                .append(String.valueOf(distribution[prediction_position]))
+                .append("\n");
+        for (int i = 0; i < distribution.length; i++) {
+            sb.append(classes[i]).append(": ")
+                    .append(String.valueOf(distribution[i]))
+                    .append("\n");
+        }
+        return sb.toString();
+    }
 }

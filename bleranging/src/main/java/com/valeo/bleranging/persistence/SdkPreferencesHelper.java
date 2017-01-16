@@ -53,6 +53,9 @@ public final class SdkPreferencesHelper {
     public final static int OUTSIDE_AVERAGE_DELTA_UNLOCK_THRESHOLD = 10;
     public final static float BACK_TIMEOUT = 3.0f;
     public final static float THATCHAM_TIMEOUT = 3.0f;
+    public final static int OFFSET_SMARTPHONE = 5;
+    public final static int OFFSET_HYSTERESIS_LOCK = 2;
+    public final static int OFFSET_HYSTERESIS_UNLOCK = 3;
     public final static float CRYPTO_PRE_AUTH_TIMEOUT = 1.3f;
     public final static float CRYPTO_ACTION_TIMEOUT = 0.02f;
     public final static int RSSI_LOG_NUMBER = 0;
@@ -428,6 +431,10 @@ public final class SdkPreferencesHelper {
 
     public Boolean getComSimulationEnabled() {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.com_simulation_enabled_pref_name), false);
+    }
+
+    public Boolean getSecurityWALEnabled() {
+        return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.security_wal_enabled_pref_name), false);
     }
 
     public Boolean getConnectedCarTrameEnabled() {

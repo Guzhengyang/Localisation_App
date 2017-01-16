@@ -1,12 +1,15 @@
 package com.valeo.bleranging.bluetooth;
 
-import com.valeo.bleranging.BleRangingHelper;
-import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
-import java.util.List;
-
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.BASE_1;
 
 /**
@@ -21,6 +24,7 @@ public class InblueProtocolManager {
     private boolean isLockedFromTrx = false;
     private boolean isLockedToSend = false;
     private boolean isThatcham = false;
+    private boolean isInRemoteParkingArea = false;
     private String carBase;
 
     public InblueProtocolManager() {
@@ -48,6 +52,10 @@ public class InblueProtocolManager {
 
     public void setThatcham(boolean thatcham) {
         this.isThatcham = thatcham;
+    }
+
+    public void setInRemoteParkingArea(boolean inRemoteParkingArea) {
+        isInRemoteParkingArea = inRemoteParkingArea;
     }
 
     public void setIsStartRequested(boolean isStartRequested) {
@@ -81,20 +89,14 @@ public class InblueProtocolManager {
      * @return the packet one payload containing six bytes
      */
     public byte[] getPacketOnePayload(final AlgoManager mAlgoManager) {
-        List<Integer> isUnlockStrategyValid = mAlgoManager.getIsUnlockStrategyValid();
-        boolean isInUnlockArea = mAlgoManager.isInUnlockArea();
-        List<Integer> isStartStrategyValid = mAlgoManager.getIsStartStrategyValid();
-        boolean isInStartArea = mAlgoManager.isInStartArea();
-        boolean isInLockArea = mAlgoManager.isInLockArea();
         boolean isRKE = mAlgoManager.getIsRKE();
         byte[] payload = new byte[MAX_BLE_TRAME_BYTE];
         payload[0] = (byte) ((packetOneCounter >> 8) & 0xFF);
         payload[1] = (byte) (packetOneCounter & 0xFF);
         payload[2] = (0x01);
         payload[3] = getPayloadThirdByte();
-        payload[4] = getPayloadFourthByte(isRKE, isUnlockStrategyValid, isInUnlockArea,
-                isStartStrategyValid, isInStartArea, isInLockArea);
-        payload[5] = getPayloadFifthByte(isRKE, isUnlockStrategyValid);
+        payload[4] = getPayloadFourthByte(isRKE, mAlgoManager.getRangingPositionPrediction());
+        payload[5] = getPayloadFifthByte(isRKE, mAlgoManager.getRangingPositionPrediction());
         packetOneCounter++;
         if (packetOneCounter > 65534) { // packetOneCounter > FF FE
             packetOneCounter = 0;
@@ -126,64 +128,44 @@ public class InblueProtocolManager {
                 payloadThree |= 0x00;
                 break;
         }
+        if (isInRemoteParkingArea) {
+            payloadThree |= 0x10;
+        }
         return payloadThree;
     }
 
     /**
      * Set jlr protocol in payload fourth byte
      * @param isRKE true if the action is RKE, flase otherwise
-     * @param isUnlockStrategyValid the list of valid unlock area
-     * @param isInUnlockArea true if in unlock area; false otherwise
-     * @param isInStartArea true if in start area; false otherwise
-     * @param isInLockArea true if in lock area; false otherwise
+     * @param prediction the algo prediction
      * @return the payload fourth byte
      */
-    private byte getPayloadFourthByte(boolean isRKE, List<Integer> isUnlockStrategyValid, boolean
-            isInUnlockArea, List<Integer> isStartStrategyValid, boolean isInStartArea, boolean isInLockArea) {
+    private byte getPayloadFourthByte(boolean isRKE, String prediction) {
         byte payloadFour = (byte) 0;
-        if (isInLockArea) {
-            payloadFour |= 0x06;
-        } else if (isStartStrategyValid != null && isInStartArea) {
-            for (Integer integer : isStartStrategyValid) {
-                switch (integer) {
-                    case BleRangingHelper.START_TRUNK_AREA:
-                        payloadFour |= 0x04;
-                        break;
-                    case BleRangingHelper.START_PASSENGER_AREA:
-                        payloadFour |= 0x01;
-                        break;
-                    default:
-                        break;
-                }
-            }
-        } else if (isUnlockStrategyValid != null && isInUnlockArea) {
-            for (Integer integer : isUnlockStrategyValid) {
-                switch (integer) {
-                    case ConnectedCar.NUMBER_TRX_LEFT:
-                        payloadFour |= 0x03;
-                        break;
-                    case ConnectedCar.NUMBER_TRX_RIGHT:
-                        payloadFour |= 0x02;
-                        break;
-                    case ConnectedCar.NUMBER_TRX_BACK:
-                        payloadFour |= 0x05;
-                        break;
-                    case ConnectedCar.NUMBER_TRX_FRONT_LEFT:
-                        payloadFour |= 0x09;
-                        break;
-                    case ConnectedCar.NUMBER_TRX_FRONT_RIGHT:
-                        payloadFour |= 0x10;
-                        break;
-                    case ConnectedCar.NUMBER_TRX_REAR_LEFT:
-                        payloadFour |= 0x11;
-                        break;
-                    case ConnectedCar.NUMBER_TRX_REAR_RIGHT:
-                        payloadFour |= 0x12;
-                        break;
-                    default:
-                        break;
-                }
-            }
+        switch (prediction) {
+            case PREDICTION_LOCK:
+                payloadFour |= 0x06;
+                break;
+            case PREDICTION_TRUNK:
+                payloadFour |= 0x04;
+                break;
+            case PREDICTION_START:
+                payloadFour |= 0x01;
+                break;
+            case PREDICTION_LEFT:
+                payloadFour |= 0x03;
+                break;
+            case PREDICTION_RIGHT:
+                payloadFour |= 0x02;
+                break;
+            case PREDICTION_BACK:
+                payloadFour |= 0x05;
+                break;
+            case PREDICTION_FRONT:
+                payloadFour |= 0x09;
+                break;
+            default:
+                break;
         }
         if (isRKE) {
             payloadFour |= isLockedToSend ? 0x08 : 0x07;
@@ -196,18 +178,15 @@ public class InblueProtocolManager {
      *
      * @return the payload fifth byte
      */
-    private byte getPayloadFifthByte(boolean isRKE, List<Integer> isUnlockStrategyValid) {
+    private byte getPayloadFifthByte(boolean isRKE, String prediction) {
         byte payloadFive = (byte) 0;
-//        payloadFive |= isStartRequested ? 0x04 : 0x00;
         payloadFive |= isThatcham ? 0x08 : 0x00;
-//        payloadFive |= isWelcomeRequested ? 0x40 : 0x00;
         if (isWelcomeRequested) {
             payloadFive |= 0x40;
         }
         if (isStartRequested) {
             payloadFive |= 0x04;
-        } else if (isUnlockStrategyValid != null
-                && isUnlockStrategyValid.contains(ConnectedCar.NUMBER_TRX_BACK)) {
+        } else if (prediction.equalsIgnoreCase(PREDICTION_BACK)) {
             payloadFive |= 0x80;
         }
         switch (carBase) {
@@ -220,14 +199,10 @@ public class InblueProtocolManager {
                 } else {
                     payloadFive |= 0x00;
                 }
-                if (!isLockedFromTrx) { // no psu_lock, so if unlock force thatcham to 0, so psu deactivated
-                    payloadFive &= 0xF7; // TODO delete workaround after bml flash
-                }
                 payloadFive |= 0x20; // Unlock PSU activated 0010 0000
                 break;
             case ConnectedCarFactory.BASE_3:
                 payloadFive |= isLockedToSend ? 0x01 : 0x02;
-                payloadFive &= 0xF7; // TODO delete workaround after bml flash
                 // WAL & UIR, PSU deactivated 0000 0000
                 break;
             case ConnectedCarFactory.BASE_4:
@@ -236,9 +211,6 @@ public class InblueProtocolManager {
                 } else {
                     payloadFive |= 0x00;
                 }
-//                if (isLockedFromTrx) { // no psu_unlock, so if lock force thatcham to 0, so psu deactivated
-//                    payloadFive &= 0xF7; // TODO delete workaround after bml flash
-//                }
                 payloadFive |= 0x10; // Lock PSU activated 0001 0000
                 break;
         }

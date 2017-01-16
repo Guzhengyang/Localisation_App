@@ -56,21 +56,38 @@ import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
  * Created by l-avaratha on 19/07/2016
  */
 public class BleRangingHelper {
-    public final static int WELCOME_AREA = 1;
-    public final static int LOCK_AREA = 2;
-    public final static int UNLOCK_LEFT_AREA = 3;
-    public final static int UNLOCK_RIGHT_AREA = 4;
-    public final static int UNLOCK_BACK_AREA = 5;
-    public final static int START_PASSENGER_AREA = 6;
-    public final static int UNLOCK_FRONT_LEFT_AREA = 7;
-    public final static int UNLOCK_REAR_LEFT_AREA = 8;
-    public final static int UNLOCK_FRONT_RIGHT_AREA = 9;
-    public final static int UNLOCK_REAR_RIGHT_AREA = 10;
-    public final static int START_TRUNK_AREA = 11;
-    public final static int THATCHAM_AREA = 12;
-    public final static int UNLOCK_FRONT_AREA = 13;
+    public static final String PREDICTION_START = "start";
+    public static final String PREDICTION_LOCK = "lock";
+    public static final String PREDICTION_TRUNK = "trunk";
+    public static final String PREDICTION_LEFT = "left";
+    public static final String PREDICTION_RIGHT = "right";
+    public static final String PREDICTION_BACK = "back";
+    public static final String PREDICTION_FRONT = "front";
+    public static final String PREDICTION_OUTDOOR = "outdoor";
+    public static final String PREDICTION_INDOOR = "indoor";
+    public static final String PREDICTION_WELCOME = "welcome";
+    public static final String PREDICTION_THATCHAM = "thatcham";
+    public static final String PREDICTION_NEAR = "near";
+    public static final String PREDICTION_FAR = "far";
+    public static final String PREDICTION_UNKNOWN = "unknown";
     public final static int RKE_USE_TIMEOUT = 5000;
     public final static int REQUEST_PERMISSION_ALL = 25110;
+    private final static String[] PREDICTIONS = {
+            PREDICTION_START,
+            PREDICTION_LOCK,
+            PREDICTION_TRUNK,
+            PREDICTION_LEFT,
+            PREDICTION_RIGHT,
+            PREDICTION_BACK,
+            PREDICTION_FRONT,
+            PREDICTION_OUTDOOR,
+            PREDICTION_INDOOR,
+            PREDICTION_WELCOME,
+            PREDICTION_THATCHAM,
+            PREDICTION_NEAR,
+            PREDICTION_FAR,
+            PREDICTION_UNKNOWN
+    };
     private final static String[] PERMISSIONS = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -115,11 +132,8 @@ public class BleRangingHelper {
 
         @Override
         public void run() {
-//            PSALogs.d("Runner", "START sendPacket Runner");
-//            PSALogs.d("Runner", "   Construct Packet: start");
             lock.writeLock().lock();
             bytesToSend = mProtocolManager.getPacketOnePayload(mAlgoManager);
-            //isUnlockStrategyValid, isInUnlockArea, isStartStrategyValid, isInStartArea, isInLockArea);
             if (SdkPreferencesHelper.getInstance().getConnectedCarTrameEnabled()
                     && !SdkPreferencesHelper.getInstance().getConnectedCarTrame().isEmpty()) { // Replace by forced trame if enabled
                 int index = 3;
@@ -134,14 +148,12 @@ public class BleRangingHelper {
                 }
             }
             lock.writeLock().unlock();
-//            PSALogs.d("Runner", "   Construct Packet: stop");
             lock.readLock().lock();
             mBluetoothManager.sendPackets(bytesToSend, bytesReceived);
             lock.readLock().unlock();
             if (mAlgoManager.getIsRKE()) {
                 mAlgoManager.setIsRKE(false);
             }
-//            PSALogs.d("Runner", "STOP sendPacket Runner");
             if (isFullyConnected()) {
                 mMainHandler.postDelayed(this, 200);
             }
@@ -186,9 +198,9 @@ public class BleRangingHelper {
                 mAlgoManager.tryStandardStrategies(newLockStatus, isFullyConnected(), isIndoor,
                         connectedCar, totalAverage);
             } else if (SdkPreferencesHelper.getInstance().getSelectedAlgo().equalsIgnoreCase(MACHINE_LEARNING)) {
-                mAlgoManager.tryMachineLearningStrategies(newLockStatus, connectedCar, totalAverage);
+                mAlgoManager.tryMachineLearningStrategies(newLockStatus, connectedCar);
             }
-            updateCarLocalization();
+            updateCarLocalization(mAlgoManager.getRangingPositionPrediction(), mAlgoManager.getRangingProximityPrediction());
             mMainHandler.postDelayed(this, 400);
         }
     };
@@ -224,11 +236,9 @@ public class BleRangingHelper {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-//                PSALogs.d("NIH", "Received (before): " + TextUtils.printBleBytes(bytesReceived));
                 lock.writeLock().lock();
                 bytesReceived = mBluetoothManager.getBytesReceived();
                 lock.writeLock().unlock();
-//                PSALogs.d("NIH", "Received (after): " + TextUtils.printBleBytes(bytesReceived));
                 boolean oldLockStatus = newLockStatus;
                 if (bytesReceived != null) {
                     lock.readLock().lock();
@@ -238,8 +248,6 @@ public class BleRangingHelper {
                 if (oldLockStatus != newLockStatus) {
                     bleRangingListener.updateCarDoorStatus(newLockStatus);
                 }
-//                PSALogs.d("autoRelock", "newLockStatus =" + newLockStatus +
-//                        ", isLockedFromTrx=" + mProtocolManager.isLockedFromTrx());
                 mProtocolManager.setIsLockedFromTrx(newLockStatus);
                 if (checkNewPacketOnlyOneLaunch) {
                     checkNewPacketOnlyOneLaunch = false;
@@ -369,7 +377,7 @@ public class BleRangingHelper {
                         mAlgoManager.getRearmWelcome(), newLockStatus, welcomeByte,
                         lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
                         walkAwayByte, approachByte, leftTurnByte, rightTurnByte,
-                        approachSideByte, approachRoadByte, recordByte, mAlgoManager.getRangingPredictionString(),
+                        approachSideByte, approachRoadByte, recordByte, mAlgoManager.getRangingPositionPrediction(),
                         mProtocolManager.isLockedFromTrx(), mProtocolManager.isLockedToSend(),
                         mProtocolManager.isStartRequested(), mProtocolManager.isThatcham(),
                         connectedCar.getCurrentBLEChannel(NUMBER_TRX_LEFT).toString(),
@@ -776,7 +784,6 @@ public class BleRangingHelper {
                         } else {
                             isRestartAuthorized = true;
                         }
-                        return;
                     }
                 }
             }
@@ -867,86 +874,24 @@ public class BleRangingHelper {
     /**
      * Update the mini map with our location around the car
      */
-    private void updateCarLocalization() {
-        bleRangingListener.darkenArea(UNLOCK_FRONT_AREA);
-        bleRangingListener.darkenArea(THATCHAM_AREA);
-        bleRangingListener.darkenArea(UNLOCK_LEFT_AREA);
-        bleRangingListener.darkenArea(UNLOCK_RIGHT_AREA);
-        bleRangingListener.darkenArea(UNLOCK_BACK_AREA);
-        bleRangingListener.darkenArea(START_TRUNK_AREA);
-        bleRangingListener.darkenArea(UNLOCK_FRONT_LEFT_AREA);
-        bleRangingListener.darkenArea(UNLOCK_REAR_LEFT_AREA);
-        bleRangingListener.darkenArea(UNLOCK_FRONT_RIGHT_AREA);
-        bleRangingListener.darkenArea(UNLOCK_REAR_RIGHT_AREA);
-        bleRangingListener.darkenArea(START_PASSENGER_AREA);
-        bleRangingListener.darkenArea(LOCK_AREA);
-        bleRangingListener.darkenArea(WELCOME_AREA);
+    private void updateCarLocalization(String predictionPosition, String predictionProximity) {
+        for (String elementPred : PREDICTIONS) {
+            bleRangingListener.darkenArea(elementPred);
+        }
         //THATCHAM
         if (mProtocolManager.isThatcham()) {
-            bleRangingListener.lightUpArea(THATCHAM_AREA);
+            bleRangingListener.lightUpArea(PREDICTION_THATCHAM);
         }
+        // WELCOME
         if (mAlgoManager.isInWelcomeArea()) {
-            // WELCOME
-            bleRangingListener.lightUpArea(WELCOME_AREA);
+            bleRangingListener.lightUpArea(PREDICTION_WELCOME);
         }
-        if (mAlgoManager.isInLockArea()) {
-            // LOCK
-            bleRangingListener.lightUpArea(LOCK_AREA);
-        } else if (mAlgoManager.getIsStartStrategyValid() != null && mAlgoManager.isInStartArea()) {
-            //START
-            for (Integer integer : mAlgoManager.getIsStartStrategyValid()) {
-                switch (integer) {
-                    case START_PASSENGER_AREA:
-                        bleRangingListener.lightUpArea(START_PASSENGER_AREA);
-                        break;
-                    case START_TRUNK_AREA:
-                        bleRangingListener.lightUpArea(START_TRUNK_AREA);
-                        break;
-                    default:
-                        bleRangingListener.lightUpArea(START_PASSENGER_AREA);
-                        bleRangingListener.lightUpArea(START_TRUNK_AREA);
-                        break;
-                }
-            }
-        } else if (mAlgoManager.getIsUnlockStrategyValid() != null && mAlgoManager.isInUnlockArea()) { // if unlock forced, unlock Strategy may be null
-            //UNLOCK
-            for (Integer integer : mAlgoManager.getIsUnlockStrategyValid()) {
-                switch (integer) {
-                    case NUMBER_TRX_LEFT:
-                        bleRangingListener.lightUpArea(UNLOCK_LEFT_AREA);
-                        break;
-                    case NUMBER_TRX_RIGHT:
-                        bleRangingListener.lightUpArea(UNLOCK_RIGHT_AREA);
-                        break;
-                    case NUMBER_TRX_BACK:
-                        bleRangingListener.lightUpArea(UNLOCK_BACK_AREA);
-                        break;
-                    case NUMBER_TRX_FRONT_LEFT:
-                        bleRangingListener.lightUpArea(UNLOCK_FRONT_LEFT_AREA);
-                        bleRangingListener.lightUpArea(UNLOCK_FRONT_AREA);
-                        break;
-                    case NUMBER_TRX_REAR_LEFT:
-                        bleRangingListener.lightUpArea(UNLOCK_REAR_LEFT_AREA);
-                        break;
-                    case NUMBER_TRX_FRONT_RIGHT:
-                        bleRangingListener.lightUpArea(UNLOCK_FRONT_RIGHT_AREA);
-                        bleRangingListener.lightUpArea(UNLOCK_FRONT_AREA);
-                        break;
-                    case NUMBER_TRX_REAR_RIGHT:
-                        bleRangingListener.lightUpArea(UNLOCK_REAR_RIGHT_AREA);
-                        break;
-                    default:
-                        bleRangingListener.lightUpArea(UNLOCK_LEFT_AREA);
-                        bleRangingListener.lightUpArea(UNLOCK_RIGHT_AREA);
-                        bleRangingListener.lightUpArea(UNLOCK_BACK_AREA);
-                        bleRangingListener.lightUpArea(UNLOCK_FRONT_AREA);
-                        bleRangingListener.lightUpArea(UNLOCK_FRONT_LEFT_AREA);
-                        bleRangingListener.lightUpArea(UNLOCK_REAR_LEFT_AREA);
-                        bleRangingListener.lightUpArea(UNLOCK_FRONT_RIGHT_AREA);
-                        bleRangingListener.lightUpArea(UNLOCK_REAR_RIGHT_AREA);
-                        break;
-                }
-            }
+        if (predictionPosition != null && !predictionPosition.isEmpty()) {
+            bleRangingListener.lightUpArea(predictionPosition);
+        }
+        // REMOTE PARKING
+        if (predictionProximity != null && !predictionProximity.isEmpty()) {
+            bleRangingListener.lightUpArea(predictionProximity);
         }
         bleRangingListener.applyNewDrawable();
     }
