@@ -1,6 +1,7 @@
 package com.valeo.bleranging.bluetooth;
 
-import com.valeo.bleranging.machinelearningalgo.AlgoManager;
+import com.valeo.bleranging.algorithm.AlgoManager;
+import com.valeo.bleranging.algorithm.RKEManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
@@ -89,8 +90,8 @@ public class InblueProtocolManager {
      * @param mAlgoManager the algoManager
      * @return the packet one payload containing six bytes
      */
-    public byte[] getPacketOnePayload(final AlgoManager mAlgoManager) {
-        boolean isRKE = mAlgoManager.getIsRKE();
+    public byte[] getPacketOnePayload(final AlgoManager mAlgoManager, final RKEManager mRKEManager) {
+        boolean isRKE = mRKEManager.getIsRKE();
         byte[] payload = new byte[MAX_BLE_TRAME_BYTE];
         payload[0] = (byte) ((packetOneCounter >> 8) & 0xFF);
         payload[1] = (byte) (packetOneCounter & 0xFF);

@@ -15,13 +15,14 @@ import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.text.SpannableStringBuilder;
 
+import com.valeo.bleranging.algorithm.AlgoManager;
+import com.valeo.bleranging.algorithm.RKEManager;
 import com.valeo.bleranging.bluetooth.BluetoothManagement;
 import com.valeo.bleranging.bluetooth.BluetoothManagementListener;
 import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
 import com.valeo.bleranging.bluetooth.scanresponse.BeaconScanResponse;
 import com.valeo.bleranging.bluetooth.scanresponse.CentralScanResponse;
-import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
@@ -99,6 +100,7 @@ public class BleRangingHelper {
     };
     private final Context mContext;
     private final AlgoManager mAlgoManager;
+    private final RKEManager mRKEManager;
     private final BluetoothManagement mBluetoothManager;
     private final InblueProtocolManager mProtocolManager;
     private final BleRangingListener bleRangingListener;
@@ -109,9 +111,9 @@ public class BleRangingHelper {
     private final Runnable toggleOnIsRKEAvailable = new Runnable() {
         @Override
         public void run() {
-            PSALogs.d("performLock", "before isRKEAvailable =" + mAlgoManager.isRKEAvailable());
-            mAlgoManager.setIsRKEAvailable(true);
-            PSALogs.d("performLock", "after isRKEAvailable =" + mAlgoManager.isRKEAvailable());
+            PSALogs.d("performLock", "before isRKEAvailable =" + mRKEManager.isRKEAvailable());
+            mRKEManager.setIsRKEAvailable(true);
+            PSALogs.d("performLock", "after isRKEAvailable =" + mRKEManager.isRKEAvailable());
         }
     };
     private boolean checkNewPacketOnlyOneLaunch = true;
@@ -132,7 +134,7 @@ public class BleRangingHelper {
         @Override
         public void run() {
             lock.writeLock().lock();
-            bytesToSend = mProtocolManager.getPacketOnePayload(mAlgoManager);
+            bytesToSend = mProtocolManager.getPacketOnePayload(mAlgoManager, mRKEManager);
             if (SdkPreferencesHelper.getInstance().getConnectedCarTrameEnabled()
                     && !SdkPreferencesHelper.getInstance().getConnectedCarTrame().isEmpty()) { // Replace by forced trame if enabled
                 int index = 3;
@@ -150,8 +152,8 @@ public class BleRangingHelper {
             lock.readLock().lock();
             mBluetoothManager.sendPackets(bytesToSend, bytesReceived);
             lock.readLock().unlock();
-            if (mAlgoManager.getIsRKE()) {
-                mAlgoManager.setIsRKE(false);
+            if (mRKEManager.getIsRKE()) {
+                mRKEManager.setIsRKE(false);
             }
             if (isFullyConnected()) {
                 mMainHandler.postDelayed(this, 200);
@@ -196,8 +198,8 @@ public class BleRangingHelper {
         @Override
         public void run() {
             if (SdkPreferencesHelper.getInstance().getSelectedAlgo().equalsIgnoreCase(ALGO_STANDARD)) {
-                mAlgoManager.tryStandardStrategies(newLockStatus, isFullyConnected(), isIndoor,
-                        connectedCar, totalAverage);
+                mAlgoManager.tryStandardStrategies(newLockStatus, isFullyConnected(),
+                        isIndoor, connectedCar, totalAverage);
             } else if (SdkPreferencesHelper.getInstance().getSelectedAlgo().equalsIgnoreCase(MACHINE_LEARNING)) {
                 mAlgoManager.tryMachineLearningStrategies(newLockStatus, connectedCar);
             }
@@ -217,41 +219,79 @@ public class BleRangingHelper {
             totalAverage = connectedCar.getAllTrxAverage(Antenna.AVERAGE_DEFAULT);
             spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
             spannableStringBuilder = mAlgoManager.createDebugData(spannableStringBuilder);
-            spannableStringBuilder = connectedCar.createSecondFooterDebugData(spannableStringBuilder, totalAverage, mAlgoManager);
-            spannableStringBuilder = connectedCar.createThirdFooterDebugData(spannableStringBuilder, mAlgoManager);
+            spannableStringBuilder = connectedCar.createSecondFooterDebugData(
+                    spannableStringBuilder, totalAverage, mAlgoManager, mRKEManager);
+            spannableStringBuilder = connectedCar.createThirdFooterDebugData(
+                    spannableStringBuilder, mAlgoManager);
             bleRangingListener.printDebugInfo(spannableStringBuilder);
             bleRangingListener.updateBLEStatus();
             PSALogs.w(" rssiHistorics", "************************************** IHM LOOP END *************************************************");
             mMainHandler.postDelayed(this, 105);
         }
     };
-    private final Runnable checkNewPacketsRunner = new Runnable() {
+    private int reconnectionCounter = 0;
+    /**
+     * Handles various events fired by the Service.
+     * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
+     * ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
+     * or notification operations.
+     */
+    private final BroadcastReceiver mTrxUpdateReceiver = new BroadcastReceiver() {
         @Override
-        public void run() {
-            if (bytesReceived != null) {
-                lock.readLock().lock();
-                PSALogs.d("NIH", "checkNewPacketsRunnable " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
-                if ((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                lock.writeLock().lock();
+                bytesReceived = mBluetoothManager.getBytesReceived();
+                lock.writeLock().unlock();
+                boolean oldLockStatus = newLockStatus;
+                if (bytesReceived != null) {
+                    lock.readLock().lock();
+                    newLockStatus = (bytesReceived[5] & 0x01) != 0;
                     lock.readLock().unlock();
-                    PSALogs.w("NIH", "LAST_EQUALS_NEW_PACKETS_RECEIVED");
-                    PSALogs.i("restartConnection", "received packet have not changed in a second");
-                    restartConnection(false);
-                } else {
-                    lastPacketIdNumber[0] = bytesReceived[0];
-                    lastPacketIdNumber[1] = bytesReceived[1];
-                    lock.readLock().unlock();
-                    if (isFullyConnected()) {
-                        mMainHandler.postDelayed(this, 1000);
-                    }
                 }
-            } else {
-                PSALogs.w("NIH", "PACKETS_RECEIVED_ARE_NULL");
-                PSALogs.i("restartConnection", "received packet is null");
-                restartConnection(false);
+                if (oldLockStatus != newLockStatus) {
+                    bleRangingListener.updateCarDoorStatus(newLockStatus);
+                }
+                mProtocolManager.setIsLockedFromTrx(newLockStatus);
+                if (checkNewPacketOnlyOneLaunch) {
+                    checkNewPacketOnlyOneLaunch = false;
+                    mMainHandler.postDelayed(checkNewPacketsRunner, 1000);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_CHARACTERISTIC_SUBSCRIBED");
+                mMainHandler.post(sendPacketRunner); // send works only after subscribed
+                bleRangingListener.updateBLEStatus();
+                if (isFirstConnection && isFullyConnected()) {
+                    isFirstConnection = false;
+                    runFirstConnection(newLockStatus);
+                }
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
+                bleRangingListener.updateBLEStatus();
+                PSALogs.i("restartConnection", "after being disconnected");
+                reconnectAfterDisconnection();
+            } else if (BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
+                PSALogs.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
+                bleRangingListener.updateBLEStatus();
+                PSALogs.i("restartConnection", "after connection loss");
+                reconnectAfterDisconnection();
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
+                isRestartAuthorized = true;
+                mAlgoManager.setRearmWelcome(true);
+                bleRangingListener.updateBLEStatus();
+                mBluetoothManager.resumeLeScan();
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_DISCOVERED");
+                bleRangingListener.updateBLEStatus();
+            } else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                PSALogs.d("NIH", "TRX ACTION_GATT_CONNECTED");
+                bleRangingListener.updateBLEStatus();
+                mBluetoothManager.resumeLeScan();
             }
         }
     };
-    private int reconnectionCounter = 0;
     private byte welcomeByte = 0;
     private byte lockByte = 0;
     private byte startByte = 0;
@@ -332,14 +372,14 @@ public class BleRangingHelper {
                         connectedCar.isActive(NUMBER_TRX_REAR_LEFT),
                         connectedCar.isActive(NUMBER_TRX_REAR_RIGHT),
                         connectedCar.isActive(NUMBER_TRX_BACK),
-                        mAlgoManager.getOrientation()[0], mAlgoManager.getOrientation()[1], mAlgoManager.getOrientation()[2],
-                        mAlgoManager.isSmartphoneInPocket(), mAlgoManager.isSmartphoneMovingSlowly(), mAlgoManager.areLockActionsAvailable(),
-                        mAlgoManager.isBlockStart(), mAlgoManager.isForcedStart(),
-                        mAlgoManager.isBlockLock(), mAlgoManager.isForcedLock(),
-                        mAlgoManager.isBlockUnlock(), mAlgoManager.isForcedUnlock(),
-                        mAlgoManager.isSmartphoneFrozen(),
-                        mAlgoManager.getRearmLock(), mAlgoManager.getRearmUnlock(),
-                        mAlgoManager.getRearmWelcome(), newLockStatus, welcomeByte,
+                        mAlgoManager.getAlgoStandard().getOrientation()[0], mAlgoManager.getAlgoStandard().getOrientation()[1], mAlgoManager.getAlgoStandard().getOrientation()[2],
+                        mAlgoManager.getAlgoStandard().isSmartphoneInPocket(), mAlgoManager.getAlgoStandard().isSmartphoneMovingSlowly(), mRKEManager.areLockActionsAvailable(),
+                        mAlgoManager.getAlgoStandard().isBlockStart(), mAlgoManager.getAlgoStandard().isForcedStart(),
+                        mAlgoManager.getAlgoStandard().isBlockLock(), mAlgoManager.getAlgoStandard().isForcedLock(),
+                        mAlgoManager.getAlgoStandard().isBlockUnlock(), mAlgoManager.getAlgoStandard().isForcedUnlock(),
+                        mAlgoManager.getAlgoStandard().isSmartphoneFrozen(),
+                        mRKEManager.getRearmLock(), mRKEManager.getRearmUnlock(),
+                        mAlgoManager.getAlgoStandard().getRearmWelcome(), newLockStatus, welcomeByte,
                         lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
                         walkAwayByte, approachByte, leftTurnByte, rightTurnByte,
                         approachSideByte, approachRoadByte, recordByte, mAlgoManager.getPredictionPosition(),
@@ -362,65 +402,29 @@ public class BleRangingHelper {
             }
         }
     };
-    /**
-     * Handles various events fired by the Service.
-     * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
-     * ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
-     * or notification operations.
-     */
-    private final BroadcastReceiver mTrxUpdateReceiver = new BroadcastReceiver() {
+    private final Runnable checkNewPacketsRunner = new Runnable() {
         @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
-                lock.writeLock().lock();
-                bytesReceived = mBluetoothManager.getBytesReceived();
-                lock.writeLock().unlock();
-                boolean oldLockStatus = newLockStatus;
-                if (bytesReceived != null) {
-                    lock.readLock().lock();
-                    newLockStatus = (bytesReceived[5] & 0x01) != 0;
+        public void run() {
+            if (bytesReceived != null) {
+                lock.readLock().lock();
+                PSALogs.d("NIH", "checkNewPacketsRunnable " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
+                if ((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
                     lock.readLock().unlock();
+                    PSALogs.w("NIH", "LAST_EQUALS_NEW_PACKETS_RECEIVED");
+                    PSALogs.i("restartConnection", "received packet have not changed in a second");
+                    restartConnection(false);
+                } else {
+                    lastPacketIdNumber[0] = bytesReceived[0];
+                    lastPacketIdNumber[1] = bytesReceived[1];
+                    lock.readLock().unlock();
+                    if (isFullyConnected()) {
+                        mMainHandler.postDelayed(this, 1000);
+                    }
                 }
-                if (oldLockStatus != newLockStatus) {
-                    bleRangingListener.updateCarDoorStatus(newLockStatus);
-                }
-                mProtocolManager.setIsLockedFromTrx(newLockStatus);
-                if (checkNewPacketOnlyOneLaunch) {
-                    checkNewPacketOnlyOneLaunch = false;
-                    mMainHandler.postDelayed(checkNewPacketsRunner, 1000);
-                }
-            } else if (BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_CHARACTERISTIC_SUBSCRIBED");
-                mMainHandler.post(sendPacketRunner); // send works only after subscribed
-                bleRangingListener.updateBLEStatus();
-                if (isFirstConnection && isFullyConnected()) {
-                    isFirstConnection = false;
-                    runFirstConnection(newLockStatus);
-                }
-            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
-                bleRangingListener.updateBLEStatus();
-                PSALogs.i("restartConnection", "after being disconnected");
-                reconnectAfterDisconnection();
-            } else if (BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
-                PSALogs.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
-                bleRangingListener.updateBLEStatus();
-                PSALogs.i("restartConnection", "after connection loss");
-                reconnectAfterDisconnection();
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
-                isRestartAuthorized = true;
-                mAlgoManager.setRearmWelcome(true);
-                bleRangingListener.updateBLEStatus();
-                mBluetoothManager.resumeLeScan();
-            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_DISCOVERED");
-                bleRangingListener.updateBLEStatus();
-            } else if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
-                PSALogs.d("NIH", "TRX ACTION_GATT_CONNECTED");
-                bleRangingListener.updateBLEStatus();
-                mBluetoothManager.resumeLeScan();
+            } else {
+                PSALogs.w("NIH", "PACKETS_RECEIVED_ARE_NULL");
+                PSALogs.i("restartConnection", "received packet is null");
+                restartConnection(false);
             }
         }
     };
@@ -432,7 +436,8 @@ public class BleRangingHelper {
         this.bleRangingListener = bleRangingListener;
         this.mProtocolManager = new InblueProtocolManager();
         this.mMainHandler = new Handler(Looper.getMainLooper());
-        this.mAlgoManager = new AlgoManager(mContext, bleRangingListener, mProtocolManager, mMainHandler);
+        this.mRKEManager = new RKEManager(mProtocolManager, bleRangingListener);
+        this.mAlgoManager = new AlgoManager(mContext, bleRangingListener, mProtocolManager, mMainHandler, mRKEManager);
         this.mHandlerTimeOut = new Handler();
         this.mHandlerCryptoTimeOut = new Handler();
         mBluetoothManager.addBluetoothManagementListener(new BluetoothManagementListener() {
@@ -531,16 +536,16 @@ public class BleRangingHelper {
      * @param lockCar true to send a lock action, false to send an unlock action
      */
     public void performRKELockAction(final boolean lockCar) {
-        PSALogs.d("performLock", "isRKEAvailable =" + mAlgoManager.isRKEAvailable() +
+        PSALogs.d("performLock", "isRKEAvailable =" + mRKEManager.isRKEAvailable() +
                 ", Fco =" + isFullyConnected() +
-                ", lockActionAvailable =" + mAlgoManager.areLockActionsAvailable());
+                ", lockActionAvailable =" + mRKEManager.areLockActionsAvailable());
         if (isRKEButtonClickable()) {
-            mAlgoManager.setIsRKEAvailable(false);
+            mRKEManager.setIsRKEAvailable(false);
             mHandlerCryptoTimeOut.postDelayed(toggleOnIsRKEAvailable, RKE_USE_TIMEOUT);
             // Send command several times in case it got lost
             new CountDownTimer(200, 50) {
                 public void onTick(long millisUntilFinished) {
-                    mAlgoManager.performLockWithCryptoTimeout(true, lockCar);
+                    mRKEManager.performLockWithCryptoTimeout(true, lockCar);
                 }
 
                 public void onFinish() {
@@ -592,8 +597,8 @@ public class BleRangingHelper {
      * @return true if the rke button is ready, false otherwise
      */
     public boolean isRKEButtonClickable() {
-        return isFullyConnected() && mAlgoManager.isRKEAvailable()
-                && mAlgoManager.areLockActionsAvailable();
+        return isFullyConnected() && mRKEManager.isRKEAvailable()
+                && mRKEManager.areLockActionsAvailable();
     }
 
     /**
@@ -805,7 +810,7 @@ public class BleRangingHelper {
                 if (trxNumber != -1) {
                     connectedCar.saveBleChannel(trxNumber, getCurrentChannel(beaconScanResponse));
                     PSALogs.d("bleChannel " + trxNumber, "channel " + connectedCar.getCurrentBLEChannel(trxNumber) + " " + beaconScanResponse.advertisingChannel);
-                    connectedCar.saveRssi(trxNumber, rssi, mAlgoManager.isSmartphoneMovingSlowly());
+                    connectedCar.saveRssi(trxNumber, rssi, mAlgoManager.getAlgoStandard().isSmartphoneMovingSlowly());
 //                    PSALogs.d("NIH", "BLE_ADDRESS=" + device.getAddress()
 //                            + " " + connectedCar.getRssiAverage(trxNumber, Trx.ANTENNA_ID_1, Antenna.AVERAGE_DEFAULT)
 //                            + " " + connectedCar.getRssiAverage(trxNumber, Trx.ANTENNA_ID_2, Antenna.AVERAGE_DEFAULT));
@@ -883,7 +888,7 @@ public class BleRangingHelper {
             bleRangingListener.lightUpArea(PREDICTION_THATCHAM);
         }
         // WELCOME
-        if (mAlgoManager.isInWelcomeArea()) {
+        if (mProtocolManager.isWelcomeRequested()) {
             bleRangingListener.lightUpArea(PREDICTION_WELCOME);
         }
         if (predictionPosition != null && !predictionPosition.isEmpty()) {
@@ -905,7 +910,7 @@ public class BleRangingHelper {
         PSALogs.w(" rssiHistorics", "************************************** runFirstConnection ************************************************");
         bleRangingListener.updateCarDoorStatus(newLockStatus);
         mProtocolManager.setIsLockedToSend(newLockStatus);
-        mAlgoManager.setLastCommandFromTrx(newLockStatus);
+        mAlgoManager.getAlgoStandard().setLastCommandFromTrx(newLockStatus);
         if (connectedCar != null) {
             connectedCar.initializeTrx(newLockStatus);
         }

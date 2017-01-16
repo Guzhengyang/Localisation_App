@@ -3,7 +3,8 @@ package com.valeo.bleranging.model.connectedcar;
 import android.content.Context;
 import android.text.SpannableStringBuilder;
 
-import com.valeo.bleranging.machinelearningalgo.AlgoManager;
+import com.valeo.bleranging.algorithm.AlgoManager;
+import com.valeo.bleranging.algorithm.RKEManager;
 import com.valeo.bleranging.model.Trx;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class CCFiveLMRTB extends ConnectedCar {
     }
 
     @Override
-    public List<Integer> startStrategy() {
+    public List<String> startStrategy() {
         return null;
     }
 
@@ -56,7 +57,7 @@ public class CCFiveLMRTB extends ConnectedCar {
     }
 
     @Override
-    public List<Integer> unlockStrategy() {
+    public List<String> unlockStrategy() {
         //TODO ADD TRUNK
         return null;
     }
@@ -88,7 +89,8 @@ public class CCFiveLMRTB extends ConnectedCar {
 
     @Override
     public SpannableStringBuilder createSecondFooterDebugData(
-            SpannableStringBuilder spannableStringBuilder, int totalAverage, AlgoManager mAlgoManager) {
+            SpannableStringBuilder spannableStringBuilder, int totalAverage,
+            AlgoManager mAlgoManager, RKEManager rkeManager) {
         return createSecondFooterDebugData(spannableStringBuilder, SPACE_TWO);
     }
 }

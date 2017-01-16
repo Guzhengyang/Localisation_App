@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.SpannableStringBuilder;
 
-import com.valeo.bleranging.machinelearningalgo.AlgoManager;
+import com.valeo.bleranging.BleRangingHelper;
+import com.valeo.bleranging.algorithm.AlgoManager;
+import com.valeo.bleranging.algorithm.RKEManager;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.utils.TextUtils;
@@ -14,6 +16,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
 
 /**
  * Created by l-avaratha on 07/09/2016
@@ -84,10 +91,10 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     }
 
     @Override
-    public List<Integer> startStrategy() {
+    public List<String> startStrategy() {
         boolean isInStartArea = isInStartArea(startThreshold);
         if (isInStartArea) {
-            List<Integer> result = new ArrayList<>();
+            List<String> result = new ArrayList<>();
             if ((compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, -nearDoorRatioThreshold, true)
                     || compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_LEFT, NUMBER_TRX_RIGHT, nearDoorRatioThreshold, false)) &&
                     (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_LEFT, nearDoorThresholdMLorMRMax, true)
@@ -97,7 +104,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                     (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_REAR_LEFT, nearDoorThresholdMRLorMRR, true)
                             || compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_REAR_RIGHT, nearDoorThresholdMRLorMRR, true)) &&
                     (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_TRUNK, -10, true))) {
-//                result.add(BleRangingHelper.PREDICTION_START);
+                result.add(BleRangingHelper.PREDICTION_START);
             }
             if ((compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_LEFT, nearDoorThresholdTLorTRMax, true)
                     || compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_RIGHT, nearDoorThresholdTLorTRMax, true))
@@ -106,7 +113,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                     && (compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_REAR_LEFT, nearDoorThresholdTRLorTRR, true)
                     || compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_TRUNK, NUMBER_TRX_REAR_RIGHT, nearDoorThresholdTRLorTRR, true))
                     && compareRatioWithThreshold(Antenna.AVERAGE_START, NUMBER_TRX_MIDDLE, NUMBER_TRX_TRUNK, -10, false)) {
-//                result.add(BleRangingHelper.PREDICTION_TRUNK);
+                result.add(BleRangingHelper.PREDICTION_TRUNK);
             }
             if (result.isEmpty()) {
                 return null;
@@ -127,7 +134,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     }
 
     @Override
-    public List<Integer> unlockStrategy() {
+    public List<String> unlockStrategy() {
         boolean isInUnlockArea = isInUnlockArea(unlockThreshold);
         rssiDecreaseRL = trxRearLeft.getRssiDecrease();
         rssiDecreaseFL = trxFrontLeft.getRssiDecrease();
@@ -183,40 +190,40 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             boolean closeToBeaconRL = compareTrxWithThreshold(NUMBER_TRX_REAR_LEFT, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
             boolean closeToBeaconRR = compareTrxWithThreshold(NUMBER_TRX_REAR_RIGHT, Antenna.AVERAGE_UNLOCK, closeToBeaconThreshold, true);
 
-            List<Integer> result = new ArrayList<>();
+            List<String> result = new ArrayList<>();
             isLeftSide = isLeftSide();// if(average 3lefttrx - average 3righttrx) >0 isLeftSide is true, <0 isLeftSide is false
             if (isLeftSide) {
                 isInFrontLeft = isFrontLeft(); // if(average fl& L - rearL&rearR) > 0 isInFrontLeft is true, <0 isInFrontLeft is false
                 if (isInFrontLeft) {
                     if (closeToCarFrontLeft || closeToBeaconFL) { //maxMinFrontLeft ||
-                        result.add(NUMBER_TRX_FRONT_LEFT);
+                        result.add(PREDICTION_FRONT);
                     }
                     if (isNearDoorLRMax || closeToBeaconL) { // || xRssiDeltaRearLeft || xRssiDeltaFrontLeftmaxMinLeft ||
-                        result.add(NUMBER_TRX_LEFT);
+                        result.add(PREDICTION_LEFT);
                     }
                 } else {
                     if (closeToCarRearLeft || closeToBeaconRL) { //maxMinRearLeft ||
-                        result.add(NUMBER_TRX_REAR_LEFT);
+                        result.add(PREDICTION_BACK);
                     }
                     if (((closeToCarRL + closeToCarRR) > (2 * thresholdMaxMinRatio)) || closeToBeaconRL || closeToBeaconRR) {
-                        result.add(NUMBER_TRX_BACK);
+                        result.add(PREDICTION_BACK);
                     }
                 }
             } else {
                 isInFrontRight = isFrontRight(); // if(average fR& R - rearR&rearL) > 0 isInFrontRight is true, <0 isInFrontRight is false
                 if (isInFrontRight) {
                     if (closeToCarFrontRight || closeToBeaconFR) { //maxMinFrontRight ||
-                        result.add(NUMBER_TRX_FRONT_RIGHT);
+                        result.add(PREDICTION_FRONT);
                     }
                     if (isNearDoorLRMin || closeToBeaconR) { //  || xRssiDeltaRearRight || xRssiDeltaFrontRight maxMinRight ||
-                        result.add(NUMBER_TRX_RIGHT);
+                        result.add(PREDICTION_RIGHT);
                     }
                 } else {
                     if (closeToCarRearRight || closeToBeaconRR) { //maxMinRearRight ||
-                        result.add(NUMBER_TRX_REAR_RIGHT);
+                        result.add(PREDICTION_BACK);
                     }
                     if (((closeToCarRL + closeToCarRR) > (2 * thresholdMaxMinRatio)) || closeToBeaconRL || closeToBeaconRR) {
-                        result.add(NUMBER_TRX_BACK);
+                        result.add(PREDICTION_BACK);
                     }
                 }
             }
@@ -307,11 +314,12 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
      * @param spannableStringBuilder   the string builder to fill
      * @param totalAverage             the total average of all trx
      * @param mAlgoManager             the algorithm manager
+     * @param rkeManager               the rke manager
      * @return the spannable string builder filled with the second footer
      */
     @Override
     public SpannableStringBuilder createSecondFooterDebugData(
-            SpannableStringBuilder spannableStringBuilder, int totalAverage, AlgoManager mAlgoManager) {
+            SpannableStringBuilder spannableStringBuilder, int totalAverage, AlgoManager mAlgoManager, RKEManager rkeManager) {
         lock.readLock().lock();
         spannableStringBuilder //TODO Remove after test
                 .append(String.valueOf(getThreeCornerLowerMaxMinRatio())).append(" ")
@@ -342,7 +350,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         spannableStringBuilder.append(TextUtils.colorText(
                 totalAverage > welcomeThreshold,
                 footerSB.toString(), Color.WHITE, Color.DKGRAY));
-        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_WELCOME, mAlgoManager.isSmartphoneMovingSlowly()))).append("\n");
+        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_WELCOME, mAlgoManager.getAlgoStandard().isSmartphoneMovingSlowly()))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_WELCOME, Color.WHITE,
                 welcomeThreshold, ">", SPACE_TWO));
         // LOCK
@@ -368,10 +376,10 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 compareTrxWithThreshold(NUMBER_TRX_TRUNK, Antenna.AVERAGE_LOCK, -60, false),
                 footerSB.toString(), Color.RED, Color.DKGRAY));
         footerSB.setLength(0);
-        footerSB.append("rearm Lock: ").append(mAlgoManager.getRearmLock());
+        footerSB.append("rearm Lock: ").append(rkeManager.getRearmLock());
         spannableStringBuilder.append(TextUtils.colorText(
-                mAlgoManager.getRearmLock(), footerSB.toString(), Color.RED, Color.DKGRAY));
-        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_LOCK, mAlgoManager.isSmartphoneMovingSlowly()))).append("\n");
+                rkeManager.getRearmLock(), footerSB.toString(), Color.RED, Color.DKGRAY));
+        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_LOCK, mAlgoManager.getAlgoStandard().isSmartphoneMovingSlowly()))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_LOCK, Color.RED,
                 lockThreshold, "<", SPACE_TWO));
         // UNLOCK
@@ -387,10 +395,10 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 isInUnlockArea(unlockThreshold),
                 footerSB.toString(), Color.GREEN, Color.DKGRAY));
         footerSB.setLength(0);
-        footerSB.append("rearm Unlock: ").append(mAlgoManager.getRearmUnlock());
+        footerSB.append("rearm Unlock: ").append(rkeManager.getRearmUnlock());
         spannableStringBuilder.append(TextUtils.colorText(
-                mAlgoManager.getRearmUnlock(), footerSB.toString(), Color.GREEN, Color.DKGRAY));
-        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_UNLOCK, mAlgoManager.isSmartphoneMovingSlowly()))).append("\n");
+                rkeManager.getRearmUnlock(), footerSB.toString(), Color.GREEN, Color.DKGRAY));
+        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_UNLOCK, mAlgoManager.getAlgoStandard().isSmartphoneMovingSlowly()))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_UNLOCK, Color.GREEN,
                 unlockThreshold, ">", SPACE_TWO));
         footerSB.setLength(0);
@@ -408,7 +416,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         spannableStringBuilder.append(TextUtils.colorText(
                 isInStartArea(startThreshold),
                 footerSB.toString(), Color.CYAN, Color.DKGRAY));
-        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_START, mAlgoManager.isSmartphoneMovingSlowly()))).append("\n");
+        spannableStringBuilder.append(" ").append(String.valueOf(TextUtils.getNbElement(Antenna.AVERAGE_START, mAlgoManager.getAlgoStandard().isSmartphoneMovingSlowly()))).append("\n");
         spannableStringBuilder.append(printModedAverage(Antenna.AVERAGE_START, Color.CYAN,
                 startThreshold, ">", SPACE_TWO));
         footerSB.setLength(0);

@@ -6,7 +6,8 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
-import com.valeo.bleranging.machinelearningalgo.AlgoManager;
+import com.valeo.bleranging.algorithm.AlgoManager;
+import com.valeo.bleranging.algorithm.RKEManager;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
@@ -448,7 +449,7 @@ public abstract class ConnectedCar {
      * Condition to enable Start action
      * @return true if the strategy is verified, false otherwise
      */
-    public abstract List<Integer> startStrategy();
+    public abstract List<String> startStrategy();
 
     /**
      * Check if we are in start area
@@ -460,7 +461,7 @@ public abstract class ConnectedCar {
      * Condition to enable unlock action
      * @return true if the strategy is verified, false otherwise
      */
-    public abstract List<Integer> unlockStrategy();
+    public abstract List<String> unlockStrategy();
 
     /**
      * Check if we are in unlock area
@@ -588,7 +589,8 @@ public abstract class ConnectedCar {
      * @return the spannable string builder filled with the second footer
      */
     public abstract SpannableStringBuilder createSecondFooterDebugData(
-            SpannableStringBuilder spannableStringBuilder, int totalAverage, AlgoManager mAlgoManager);
+            SpannableStringBuilder spannableStringBuilder, int totalAverage,
+            AlgoManager mAlgoManager, RKEManager rkeManager);
 
     SpannableStringBuilder createSecondFooterDebugData(SpannableStringBuilder spannableStringBuilder, String space2) {
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
@@ -623,8 +625,8 @@ public abstract class ConnectedCar {
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
         spannableStringBuilder.append("Scanning on channel: ").append(getCurrentBLEChannel(NUMBER_TRX_RIGHT).toString()).append("\n");
         String lAccStringBuilder = "Linear Acceleration < (" + linAccThreshold + "): "
-                + String.format(Locale.FRANCE, "%1$.4f", mAlgoManager.getDeltaLinAcc()) + "\n";
-        spannableStringBuilder.append(TextUtils.colorText(mAlgoManager.isSmartphoneMovingSlowly(),
+                + String.format(Locale.FRANCE, "%1$.4f", mAlgoManager.getAlgoStandard().getDeltaLinAcc()) + "\n";
+        spannableStringBuilder.append(TextUtils.colorText(mAlgoManager.getAlgoStandard().isSmartphoneMovingSlowly(),
                 lAccStringBuilder, Color.WHITE, Color.DKGRAY));
         return spannableStringBuilder;
     }
