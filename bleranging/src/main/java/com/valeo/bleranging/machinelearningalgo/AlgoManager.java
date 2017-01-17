@@ -332,11 +332,7 @@ public class AlgoManager implements SensorEventListener {
 
     public String getPredictionPosition() {
         if (ranging != null) {
-            if (SdkPreferencesHelper.getInstance().getComSimulationEnabled()) {
-                return ranging.getPredictionEar();
-            } else {
-                return ranging.getPrediction();
-            }
+            return ranging.getPredictionPosition(smartphoneIsInPocket);
         }
         return PREDICTION_UNKNOWN;
     }

@@ -27,7 +27,6 @@ public class Prediction {
     private static final double f = 2.45 * Math.pow(10, 9);
     private static final double c = 3 * Math.pow(10, 8);
     private static final double P = -30;
-    private static final double THRESHOLD_DIST_AWAY = 0.3;
     private static final double THRESHOLD_RSSI_AWAY = 1;
     private List<Integer> predictions = new ArrayList<>();
     private double[] distribution;
@@ -38,6 +37,7 @@ public class Prediction {
     private RandomForest rf;
     private String[] classes;
     private Context mContext;
+    private int OFFSET_ANGLE = 5;
 
     public Prediction(Context context, int classesId, int rfId, int sampleId) {
         this.mContext = context;
@@ -63,13 +63,20 @@ public class Prediction {
         }
     }
 
-    public void setRssi(int index, double rssi, int offset) {
+    public void setRssi(int index, double rssi, int offset, double threshold, boolean comValid) {
         this.rssiModified[index] = rssi - offset;
         if (prediction_old != -1) {
             // trx order : l, m, r, t, fl, fr, rl, rr
+            // Add hysteresis to all the trx
             if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
                 rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
             }
+
+//            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)
+//                    && (index == 0 | index == 2 | index == 3 |index == 4 | index == 5)) {
+//                rssiModified[index] -= 2;
+//            }
+
             // Add hysteresis to all left sided trx
             if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT)
                     && (index == 0 | index == 4 | index == 6)) {
@@ -82,7 +89,11 @@ public class Prediction {
             }
         }
         double dist_new = rssi2dist(rssiModified[index]);
-        distance[index] = correctDistUnilateral(distance[index], dist_new);
+        if (comValid) {
+            distance[index] = dist_new;
+        } else {
+            distance[index] = correctDistUnilateral(distance[index], dist_new, threshold);
+        }
         sample.setValue(index, distance[index]);
     }
 
@@ -105,12 +116,12 @@ public class Prediction {
         return c / f / 4 / Math.PI * Math.pow(10, -(rssi - P) / 20);
     }
 
-    private double correctDistUnilateral(double dist_old, double dist_new) {
+    private double correctDistUnilateral(double dist_old, double dist_new, double threshold) {
         double dist_correted;
         if (dist_new < dist_old) {
             dist_correted = dist_new;
         } else {
-            dist_correted = Math.min(dist_new - dist_old, THRESHOLD_DIST_AWAY) + dist_old;
+            dist_correted = Math.min(dist_new - dist_old, threshold) + dist_old;
         }
         return dist_correted;
     }
@@ -183,8 +194,10 @@ public class Prediction {
             return null;
         } else if (distribution == null) {
             return null;
+        } else if (prediction_old == -1) {
+            return null;
         } else {
-            sb.append(title).append(" ");
+            sb.append(title).append(" ").append(getPrediction()).append(" ").append(distribution[prediction_old]).append("\n");
             for (double aDistance : distance) {
                 sb.append(String.format(Locale.FRANCE, "%.2f", aDistance)).append(" ");
             }
