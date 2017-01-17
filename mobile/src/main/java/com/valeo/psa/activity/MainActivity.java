@@ -90,7 +90,7 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_THATCHAM;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_WELCOME;
-import static com.valeo.bleranging.BleRangingHelper.RKE_USE_TIMEOUT;
+import static com.valeo.bleranging.bluetooth.RKEManager.RKE_USE_TIMEOUT;
 
 public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter.OnStartDragListener,
         MyRecyclerAdapter.OnIconLongPressedListener, View.OnTouchListener, BleRangingListener {
@@ -343,7 +343,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         vehicle_locked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBleRangingHelper.isRKEButtonClickable()) {
+                if (mBleRangingHelper.performRKELockAction(true)) { //lockVehicle
                     rke_loading_progress_bar.setVisibility(View.VISIBLE);
                     carDoorStatus = CarDoorStatus.LOCKED;
                     vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
@@ -351,7 +351,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     vehicle_unlocked.setBackgroundResource(0);
                     startButtonAnimation(false);
                     PSALogs.d("performLock", "RKE LOCK");
-                    mBleRangingHelper.performRKELockAction(true); //lockVehicle
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -364,7 +363,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         driver_s_door_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBleRangingHelper.isRKEButtonClickable()) {
+                if (mBleRangingHelper.performRKELockAction(false)) { //unlockVehicle
                     rke_loading_progress_bar.setVisibility(View.VISIBLE);
                     carDoorStatus = CarDoorStatus.DRIVER_DOOR_OPEN;
                     driver_s_door_unlocked.setBackgroundResource(R.mipmap.slider_button);
@@ -373,7 +372,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     start_button.setBackgroundResource(0);
                     startButtonAnimation(false);
                     PSALogs.d("performLock", "RKE UNLOCK 1");
-                    mBleRangingHelper.performRKELockAction(false); //unlockVehicle
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -386,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         vehicle_unlocked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBleRangingHelper.isRKEButtonClickable()) {
+                if (mBleRangingHelper.performRKELockAction(false)) { //unlockVehicle
                     rke_loading_progress_bar.setVisibility(View.VISIBLE);
                     carDoorStatus = CarDoorStatus.UNLOCKED;
                     vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
@@ -394,7 +392,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     vehicle_locked.setBackgroundResource(0);
                     startButtonAnimation(true);
                     PSALogs.d("performLock", "RKE UNLOCK 2");
-                    mBleRangingHelper.performRKELockAction(false); //unlockVehicle
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {

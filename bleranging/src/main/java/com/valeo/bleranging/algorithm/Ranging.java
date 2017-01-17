@@ -1,29 +1,15 @@
 package com.valeo.bleranging.algorithm;
 
 import android.content.Context;
-import android.media.ToneGenerator;
-import android.os.Handler;
 
 import com.valeo.bleranging.R;
 import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.BleRangingListener;
-import com.valeo.bleranging.utils.PSALogs;
-import com.valeo.bleranging.utils.SoundUtils;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_NEAR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_THATCHAM;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_WELCOME;
 import static com.valeo.bleranging.model.Antenna.AVERAGE_WELCOME;
 
@@ -47,12 +33,12 @@ public class Ranging {
     private int OFFSET_EAR = 10;
 
     Ranging(Context context, double[] rssi) {
-        this.standardPrediction = new Prediction(context, R.raw.eight_flfrlmrtrlrr_classes,
-                R.raw.eight_flfrlmrtrlrr_rf, R.raw.eight_flfrlmrtrlrr_sample);
-        this.earPrediction = new Prediction(context, R.raw.eight_flfrlmrtrlrr_classes_ear,
-                R.raw.eight_flfrlmrtrlrr_rf_ear, R.raw.eight_flfrlmrtrlrr_sample_ear);
-        this.nearFarPrediction = new Prediction(context, R.raw.eight_flfrlmrtrlrr_classes_near_far,
-                R.raw.eight_flfrlmrtrlrr_rf_near_far, R.raw.eight_flfrlmrtrlrr_sample_near_far);
+        this.standardPrediction = new Prediction(context, R.raw.classes_standard, R.raw.rf_standard,
+                R.raw.sample_standard);
+        this.earPrediction = new Prediction(context, R.raw.classes_ear, R.raw.rf_ear,
+                R.raw.sample_ear);
+        this.nearFarPrediction = new Prediction(context, R.raw.classes_near_far, R.raw.rf_near_far,
+                R.raw.sample_near_far);
         standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
         earPrediction.init(rssi, OFFSET_EAR); //TODO create other offsets
         nearFarPrediction.init(rssi, 0);
@@ -73,68 +59,22 @@ public class Ranging {
     }
 
     public String tryMachineLearningStrategies(InblueProtocolManager mProtocolManager,
-                                               RKEManager mRKEManager, ConnectedCar connectedCar,
-                                               BleRangingListener bleRangingListener,
-                                               Handler mMainHandler, Context mContext,
-                                               boolean newLockStatus) {
-        boolean isWelcomeAllowed = false;
-        // Cancel previous requested actions
-        boolean isInUnlockArea = false;
-        mProtocolManager.setIsStartRequested(false);
-        mProtocolManager.setIsWelcomeRequested(false);
+                                               ConnectedCar connectedCar, boolean newLockStatus) {
         calculatePrediction();
-        //TODO Replace SdkPreferencesHelper.getInstance().getComSimulationEnabled() by CallReceiver.smartphoneComIsActivated after demo
-        switch (getPredictionPosition()) {
-            case PREDICTION_LOCK:
-                mRKEManager.performLockWithCryptoTimeout(false, true);
-                break;
-            case PREDICTION_START:
-            case PREDICTION_TRUNK:
-                if (!mProtocolManager.isStartRequested()) {
-                    mProtocolManager.setIsStartRequested(true);
-                }
-                break;
-            case PREDICTION_BACK:
-            case PREDICTION_RIGHT:
-            case PREDICTION_LEFT:
-            case PREDICTION_FRONT:
-                isInUnlockArea = true;
-                mRKEManager.performLockWithCryptoTimeout(false, false);
-                break;
-            case PREDICTION_UNKNOWN:
-            case PREDICTION_WELCOME:
-            case PREDICTION_THATCHAM:
-            default:
-                PSALogs.d("prediction", "NOOO rangingPredictionInt !");
-                break;
+        if (rearmWelcome.get()) {
+            boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(connectedCar
+                    .getAllTrxAverage(AVERAGE_WELCOME), newLockStatus);
+            if (isWelcomeStrategyValid) {
+                rearmWelcome.set(false);
+                return PREDICTION_WELCOME;
+            }
         }
-        boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(connectedCar
-                .getAllTrxAverage(AVERAGE_WELCOME), newLockStatus);
-        boolean isInWelcomeArea = rearmWelcome.get() && isWelcomeStrategyValid;
-        if (isInWelcomeArea) {
-            isWelcomeAllowed = true;
-            rearmWelcome.set(false);
-            SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
-            bleRangingListener.doWelcome();
-        }
-        if (mProtocolManager.isWelcomeRequested() != isWelcomeAllowed) {
-            mProtocolManager.setIsWelcomeRequested(isWelcomeAllowed);
-        }
-        setIsThatcham(isInUnlockArea, mProtocolManager);
         if (getPredictionProximity().equalsIgnoreCase(PREDICTION_NEAR)) {
             mProtocolManager.setInRemoteParkingArea(true);
         } else {
             mProtocolManager.setInRemoteParkingArea(false);
         }
         return getPredictionPosition();
-    }
-
-    private void setIsThatcham(boolean isInUnlockArea, InblueProtocolManager mProtocolManager) {
-        if (!isInUnlockArea) {
-            mProtocolManager.setThatcham(false);
-        } else {
-            mProtocolManager.setThatcham(false);
-        }
     }
 
     private void calculatePrediction() {

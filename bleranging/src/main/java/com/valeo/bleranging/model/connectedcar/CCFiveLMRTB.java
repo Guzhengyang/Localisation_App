@@ -4,7 +4,7 @@ import android.content.Context;
 import android.text.SpannableStringBuilder;
 
 import com.valeo.bleranging.algorithm.AlgoManager;
-import com.valeo.bleranging.algorithm.RKEManager;
+import com.valeo.bleranging.bluetooth.RKEManager;
 import com.valeo.bleranging.model.Trx;
 
 import java.util.List;

@@ -1,7 +1,6 @@
 package com.valeo.bleranging.bluetooth;
 
 import com.valeo.bleranging.algorithm.AlgoManager;
-import com.valeo.bleranging.algorithm.RKEManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 

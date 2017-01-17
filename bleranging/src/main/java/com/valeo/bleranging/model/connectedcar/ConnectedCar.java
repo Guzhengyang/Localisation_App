@@ -7,7 +7,7 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
 import com.valeo.bleranging.algorithm.AlgoManager;
-import com.valeo.bleranging.algorithm.RKEManager;
+import com.valeo.bleranging.bluetooth.RKEManager;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;

@@ -5,16 +5,28 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.ToneGenerator;
 import android.os.Handler;
 import android.text.SpannableStringBuilder;
 
 import com.valeo.bleranging.bluetooth.InblueProtocolManager;
+import com.valeo.bleranging.bluetooth.RKEManager;
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.utils.BleRangingListener;
 import com.valeo.bleranging.utils.CallReceiver;
+import com.valeo.bleranging.utils.PSALogs;
+import com.valeo.bleranging.utils.SoundUtils;
 
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_WELCOME;
 
 /**
  * Created by l-avaratha on 25/11/2016
@@ -58,6 +70,8 @@ public class AlgoManager {
         }
     };
     private Ranging ranging;
+    private String predictionSd = PREDICTION_UNKNOWN;
+    private String predictionMl = PREDICTION_UNKNOWN;
 
     public AlgoManager(Context context, BleRangingListener bleRangingListener,
                        InblueProtocolManager protocolManager, Handler mainHandler, RKEManager rKEManager) {
@@ -73,33 +87,66 @@ public class AlgoManager {
         mContext.registerReceiver(mDataReceiver, new IntentFilter(BluetoothLeService.ACTION_DATA_AVAILABLE2));
     }
 
-    public SpannableStringBuilder createDebugData(SpannableStringBuilder spannableStringBuilder,
-                                                  String predictionStd, String predictionMl) {
+    public SpannableStringBuilder createDebugData(SpannableStringBuilder spannableStringBuilder) {
+        spannableStringBuilder.append("Sd:").append(predictionSd).append(" ML:").append(predictionMl).append("\n");
         if (ranging != null) {
             spannableStringBuilder.append(ranging.printDebug());
         }
         spannableStringBuilder = algoStandard.createDebugData(spannableStringBuilder);
-        spannableStringBuilder.append("Std:").append(predictionStd).append(" ML:").append(predictionMl).append("\n");
         return spannableStringBuilder;
     }
 
     /**
-     * Try all strategy based on rssi values
-     *
-     * @param newLockStatus the lock status of the vehicle
+     * Try both strategies at once
+     * @param newLockStatus the car lock status, true if locked, false if open
+     * @param isFullyConnected true if connected in ble, false otherwise
+     * @param isIndoor true if indoor, false otherwise
+     * @param connectedCar the connected car
+     * @param totalAverage the trxs total average
+     * @return the double prediction of both strategy
      */
-    public String tryStandardStrategies(boolean newLockStatus, boolean isFullyConnected,
-                                        boolean isIndoor, ConnectedCar connectedCar, int totalAverage) {
-        return algoStandard.tryStandardStrategies(newLockStatus, isFullyConnected,
-                isIndoor, connectedCar, totalAverage, bleRangingListener);
-    }
-
-    /**
-     * Try all strategy based on machine learning
-     */
-    public String tryMachineLearningStrategies(boolean newLockStatus, ConnectedCar connectedCar) {
-        return ranging.tryMachineLearningStrategies(mProtocolManager, mRKEManager, connectedCar,
-                bleRangingListener, mMainHandler, mContext, newLockStatus);
+    public String tryDoubleStrategies(boolean newLockStatus, boolean isFullyConnected,
+                                      boolean isIndoor, ConnectedCar connectedCar, int totalAverage) {
+        //cancel previous action
+        mProtocolManager.setIsWelcomeRequested(false);
+        mProtocolManager.setIsStartRequested(false);
+        predictionSd = algoStandard.tryStandardStrategies(newLockStatus, isFullyConnected,
+                isIndoor, connectedCar, totalAverage);
+        predictionMl = ranging.tryMachineLearningStrategies(mProtocolManager, connectedCar, newLockStatus);
+        if (predictionSd.equalsIgnoreCase(predictionMl)) {
+            mProtocolManager.setThatcham(false);
+            switch (predictionSd) {
+                case PREDICTION_LOCK:
+                    mRKEManager.performLockWithCryptoTimeout(false, true);
+                    break;
+                case PREDICTION_START:
+                case PREDICTION_TRUNK:
+                    if (!mProtocolManager.isStartRequested()) {
+                        mProtocolManager.setIsStartRequested(true);
+                    }
+                    break;
+                case PREDICTION_BACK:
+                case PREDICTION_RIGHT:
+                case PREDICTION_LEFT:
+                case PREDICTION_FRONT:
+                    mProtocolManager.setThatcham(true);
+                    mRKEManager.performLockWithCryptoTimeout(false, false);
+                    break;
+                case PREDICTION_WELCOME:
+                    if (!mProtocolManager.isWelcomeRequested()) {
+                        mProtocolManager.setIsWelcomeRequested(true);
+                    }
+                    SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
+                    bleRangingListener.doWelcome();
+                    break;
+                case PREDICTION_UNKNOWN:
+                default:
+                    PSALogs.d("prediction", "NOOO rangingPredictionInt !");
+                    break;
+            }
+            return predictionSd;
+        }
+        return PREDICTION_UNKNOWN;
     }
 
     public void createRangingObject(double[] rssi) {
@@ -111,7 +158,6 @@ public class AlgoManager {
         mContext.unregisterReceiver(callReceiver);
         mContext.unregisterReceiver(bleStateReceiver);
 //        faceDetectorUtils.deleteFaceDetector();
-        algoStandard.closeApp();
     }
 
     public String getPredictionPosition() {

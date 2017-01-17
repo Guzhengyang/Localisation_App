@@ -6,17 +6,15 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.ToneGenerator;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.text.SpannableStringBuilder;
 
 import com.valeo.bleranging.bluetooth.InblueProtocolManager;
+import com.valeo.bleranging.bluetooth.RKEManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.BleRangingListener;
 import com.valeo.bleranging.utils.CallReceiver;
 import com.valeo.bleranging.utils.PSALogs;
-import com.valeo.bleranging.utils.SoundUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +26,7 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
-import static com.valeo.bleranging.algorithm.RKEManager.LOCK_STATUS_CHANGED_TIMEOUT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_WELCOME;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.NUMBER_TRX_MIDDLE;
 import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
 
@@ -42,27 +40,9 @@ public class AlgoStandard implements SensorEventListener {
     private final RKEManager mRKEManager;
     private final AtomicBoolean rearmWelcome = new AtomicBoolean(true);
     private final Handler mMainHandler;
-    private final Handler mHandlerThatchamTimeOut;
     private final Handler mHandlerBackTimeOut;
-    private final Handler mLockStatusChangedHandler;
     private final Handler mIsLaidTimeOutHandler;
     private final Handler mIsFrozenTimeOutHandler;
-    private final AtomicBoolean thatchamIsChanging = new AtomicBoolean(false);
-    private final Runnable mHasThatchamChanged = new Runnable() {
-        @Override
-        public void run() {
-            thatchamIsChanging.set(false);
-        }
-    };
-    /**
-     * Create a handler to detect if the vehicle can do a unlock
-     */
-    private final Runnable mManageIsLockStatusChangedPeriodicTimer = new Runnable() {
-        @Override
-        public void run() {
-            mRKEManager.setLockActionsAvailable(true);
-        }
-    };
     private final AtomicBoolean backIsChanging = new AtomicBoolean(false);
     private final Runnable mHasBackChanged = new Runnable() {
         @Override
@@ -82,12 +62,8 @@ public class AlgoStandard implements SensorEventListener {
     private boolean blockLock = false;
     private boolean forcedUnlock = false;
     private boolean blockUnlock = false;
-    private List<String> isStartStrategyValid;
     private List<String> isUnlockStrategyValid;
     private boolean isInLockArea = false;
-    private boolean isInUnlockArea = false;
-    private boolean isInStartArea = false;
-    private boolean isInWelcomeArea = false;
     private double deltaLinAcc = 0;
     private boolean smartphoneIsInPocket = false;
     private boolean smartphoneIsFrozen = false;
@@ -119,11 +95,9 @@ public class AlgoStandard implements SensorEventListener {
         this.mProtocolManager = mProtocolManager;
         this.mRKEManager = mRKEManager;
         this.mMainHandler = mainHandler;
-        this.mHandlerThatchamTimeOut = new Handler();
         this.mHandlerBackTimeOut = new Handler();
         this.mIsLaidTimeOutHandler = new Handler();
         this.mIsFrozenTimeOutHandler = new Handler();
-        this.mLockStatusChangedHandler = new Handler();
         SensorManager senSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         Sensor senProximity = senSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         Sensor senLinAcceleration = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -171,28 +145,6 @@ public class AlgoStandard implements SensorEventListener {
                 isUnlockStrategyValid = new ArrayList<>();
                 isUnlockStrategyValid.add(PREDICTION_BACK);
             }
-        }
-    }
-
-    private void launchThatchamValidityTimeOut() {
-        mProtocolManager.setThatcham(true);
-        if (thatchamIsChanging.get()) {
-            mHandlerThatchamTimeOut.removeCallbacks(mHasThatchamChanged);
-            mHandlerThatchamTimeOut.removeCallbacks(null);
-        } else {
-            thatchamIsChanging.set(true);
-        }
-        mHandlerThatchamTimeOut.postDelayed(mHasThatchamChanged,
-                (long) (SdkPreferencesHelper.getInstance().getThatchamTimeout() * 1000));
-    }
-
-    private void setIsThatcham(boolean isInLockArea, boolean isInUnlockArea, boolean isInStartArea) {
-        if (isInLockArea || isInStartArea || !isInUnlockArea) {
-            if (!thatchamIsChanging.get()) { // if thatcham is not changing
-                mProtocolManager.setThatcham(false);
-            }
-        } else if (isInUnlockArea) {
-            launchThatchamValidityTimeOut();
         }
     }
 
@@ -246,10 +198,7 @@ public class AlgoStandard implements SensorEventListener {
                     ", isLockedFromTrx=" + mProtocolManager.isLockedFromTrx());
             lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
             mProtocolManager.setIsLockedToSend(lastCommandFromTrx);
-            //Initialize timeout flag which is cleared in the runnable launched in the next instruction
-            mRKEManager.setLockActionsAvailable(false);
-            //Launch timeout
-            mLockStatusChangedHandler.postDelayed(mManageIsLockStatusChangedPeriodicTimer, LOCK_STATUS_CHANGED_TIMEOUT);
+            mRKEManager.lockStatusChanged();
             mRKEManager.manageRearms(lastCommandFromTrx);
         }
         // if car thatcham status changed
@@ -264,15 +213,7 @@ public class AlgoStandard implements SensorEventListener {
         }
         if (lastThatchamChanged && isInLockArea) { // when thatcham has changed, and get into lock area
             if (!mProtocolManager.isLockedFromTrx()) { // if the vehicle is unlocked, lock it
-                new CountDownTimer(600, 90) { // Send safety close command several times in case it got lost
-                    public void onTick(long millisUntilFinished) {
-                        mRKEManager.performLockWithCryptoTimeout(true, true);
-                    }
-
-                    public void onFinish() {
-//                                Toast.makeText(mContext, "All safety close command are sent !", Toast.LENGTH_SHORT).show();
-                    }
-                }.start();
+                mRKEManager.performMultipleLockWithCryptoTimeout(true, true);
             }
             // if not in thatcham area and in lock area, rearm unlock
             mRKEManager.setRearmUnlock(true);
@@ -287,54 +228,40 @@ public class AlgoStandard implements SensorEventListener {
      * @param newLockStatus the lock status of the vehicle
      */
     public String tryStandardStrategies(boolean newLockStatus, boolean isFullyConnected,
-                                        boolean isIndoor, ConnectedCar connectedCar, int totalAverage,
-                                        BleRangingListener bleRangingListener) {
+                                        boolean isIndoor, ConnectedCar connectedCar, int totalAverage) {
         String result = PREDICTION_UNKNOWN;
         rearmWelcome(connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE)); // rearm rearmWelcome Boolean
         if (isFullyConnected) {
-            boolean isStartAllowed = false;
-            boolean isWelcomeAllowed = false;
             String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
 //            AudioManager audM = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 //            PSALogs.d("test", "smartphoneComIsActivated " + CallReceiver.smartphoneComIsActivated + " " +
 //                    audM.isBluetoothScoOn() + " " + audM.isSpeakerphoneOn() + " " + smartphoneIsInPocket);
             connectedCar.updateThresholdValues(isIndoor, smartphoneIsInPocket, CallReceiver.smartphoneComIsActivated);
-            isStartStrategyValid = connectedCar.startStrategy();
+            List<String> isStartStrategyValid = connectedCar.startStrategy();
             isUnlockStrategyValid = connectedCar.unlockStrategy();
             setIsBackValid(); // activate a timer when back is detected
             boolean isLockStrategyValid = connectedCar.lockStrategy();
             boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(totalAverage, newLockStatus);
             isInLockArea = forcedLock || (!blockLock && isLockStrategyValid && (isUnlockStrategyValid == null || isUnlockStrategyValid.size() < SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType)));
-            isInUnlockArea = forcedUnlock || (!blockUnlock && !isLockStrategyValid && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType));
-            isInStartArea = forcedStart || (!blockStart && isStartStrategyValid != null);
-            isInWelcomeArea = rearmWelcome.get() && isWelcomeStrategyValid;
-            setIsThatcham(isInLockArea, isInUnlockArea, isInStartArea);
+            boolean isInUnlockArea = forcedUnlock || (!blockUnlock && !isLockStrategyValid && isUnlockStrategyValid != null && isUnlockStrategyValid.size() >= SdkPreferencesHelper.getInstance().getUnlockValidNb(connectedCarType));
+            boolean isInStartArea = forcedStart || (!blockStart && isStartStrategyValid != null);
+            boolean isInWelcomeArea = rearmWelcome.get() && isWelcomeStrategyValid;
             if (lastSmartphoneIsFrozen != smartphoneIsFrozen) {
                 rearmForcedBlock(isInLockArea, isInUnlockArea, isInStartArea, smartphoneIsFrozen);
                 lastSmartphoneIsFrozen = smartphoneIsFrozen;
             }
             if (isInWelcomeArea) {
-                isWelcomeAllowed = true;
                 rearmWelcome.set(false);
-                SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
-                bleRangingListener.doWelcome();
+                result = PREDICTION_WELCOME;
             }
             if (isInLockArea) {
-                mRKEManager.performLockWithCryptoTimeout(false, true);
                 result = PREDICTION_LOCK;
             } else if (isInStartArea) { //smartphone in start area and moving
-                isStartAllowed = true;
                 result = PREDICTION_START;
             } else if (isInUnlockArea) {
-                mRKEManager.performLockWithCryptoTimeout(false, false);
                 if (isUnlockStrategyValid != null && !isUnlockStrategyValid.isEmpty()) {
                     result = isUnlockStrategyValid.get(0);
                 }
-            }
-            if (mProtocolManager.isWelcomeRequested() != isWelcomeAllowed) {
-                mProtocolManager.setIsWelcomeRequested(isWelcomeAllowed);
-            } else if (mProtocolManager.isStartRequested() != isStartAllowed) {
-                mProtocolManager.setIsStartRequested(isStartAllowed);
             }
         }
         return result;
@@ -362,30 +289,6 @@ public class AlgoStandard implements SensorEventListener {
 
     public boolean isBlockUnlock() {
         return blockUnlock;
-    }
-
-    public List<String> getIsStartStrategyValid() {
-        return isStartStrategyValid;
-    }
-
-    public List<String> getIsUnlockStrategyValid() {
-        return isUnlockStrategyValid;
-    }
-
-    public boolean isInLockArea() {
-        return isInLockArea;
-    }
-
-    public boolean isInUnlockArea() {
-        return isInUnlockArea;
-    }
-
-    public boolean isInStartArea() {
-        return isInStartArea;
-    }
-
-    public boolean isInWelcomeArea() {
-        return isInWelcomeArea;
     }
 
     public boolean isSmartphoneInPocket() {
@@ -479,12 +382,6 @@ public class AlgoStandard implements SensorEventListener {
             if (success) {
                 SensorManager.getOrientation(R, orientation); // orientation contains: azimut, pitch and roll
             }
-        }
-    }
-
-    public void closeApp() {
-        if (mLockStatusChangedHandler != null) {
-            mLockStatusChangedHandler.removeCallbacks(mManageIsLockStatusChangedPeriodicTimer);
         }
     }
 
