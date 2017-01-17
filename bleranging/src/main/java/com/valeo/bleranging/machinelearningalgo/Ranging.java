@@ -65,9 +65,9 @@ public class Ranging {
         nearFarPrediction.calculatePredictionStandard(THRESHOLD_PROB_NEAR_FAR);
     }
 
-    String printDebug() {
+    String printDebug(boolean smartphoneIsInPocket) {
         String temp;
-        if (SdkPreferencesHelper.getInstance().getComSimulationEnabled()) {
+        if (SdkPreferencesHelper.getInstance().getComSimulationEnabled() && smartphoneIsInPocket) {
             temp = earPrediction.printDebug(EAR_HELD_LOC);
         } else {
             temp = standardPrediction.printDebug(STANDARD_LOC);

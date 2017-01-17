@@ -178,7 +178,7 @@ public class AlgoManager implements SensorEventListener {
 
     public SpannableStringBuilder createDebugData(SpannableStringBuilder spannableStringBuilder) {
         if (ranging != null) {
-            spannableStringBuilder.append(ranging.printDebug());
+            spannableStringBuilder.append(ranging.printDebug(smartphoneIsInPocket));
         }
         return spannableStringBuilder;
     }
