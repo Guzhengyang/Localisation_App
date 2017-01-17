@@ -210,5 +210,6 @@
     <string name="please_wait">Please wait…</string>
     <string name="algo_standard">SD</string>
     <string name="algo_machine_learning">ML</string>
+    <string name="algo_double">DB</string>
     <string name="algo_unknown">\?</string>
 </resources>

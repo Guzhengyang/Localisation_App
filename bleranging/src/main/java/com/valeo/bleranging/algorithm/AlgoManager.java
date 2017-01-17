@@ -13,6 +13,8 @@ import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.RKEManager;
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
+import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
+import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
 import com.valeo.bleranging.utils.CallReceiver;
 import com.valeo.bleranging.utils.PSALogs;
@@ -110,41 +112,51 @@ public class AlgoManager {
         //cancel previous action
         mProtocolManager.setIsWelcomeRequested(false);
         mProtocolManager.setIsStartRequested(false);
-        predictionSd = algoStandard.tryStandardStrategies(newLockStatus, isFullyConnected,
-                isIndoor, connectedCar, totalAverage);
-        predictionMl = ranging.tryMachineLearningStrategies(mProtocolManager, connectedCar, newLockStatus);
-        if (predictionSd.equalsIgnoreCase(predictionMl)) {
-            mProtocolManager.setThatcham(false);
-            switch (predictionSd) {
-                case PREDICTION_LOCK:
-                    mRKEManager.performLockWithCryptoTimeout(false, true);
-                    break;
-                case PREDICTION_START:
-                case PREDICTION_TRUNK:
-                    if (!mProtocolManager.isStartRequested()) {
-                        mProtocolManager.setIsStartRequested(true);
-                    }
-                    break;
-                case PREDICTION_BACK:
-                case PREDICTION_RIGHT:
-                case PREDICTION_LEFT:
-                case PREDICTION_FRONT:
-                    mProtocolManager.setThatcham(true);
-                    mRKEManager.performLockWithCryptoTimeout(false, false);
-                    break;
-                case PREDICTION_WELCOME:
-                    if (!mProtocolManager.isWelcomeRequested()) {
-                        mProtocolManager.setIsWelcomeRequested(true);
-                    }
-                    SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
-                    bleRangingListener.doWelcome();
-                    break;
-                case PREDICTION_UNKNOWN:
-                default:
-                    PSALogs.d("prediction", "NOOO rangingPredictionInt !");
-                    break;
+        if (SdkPreferencesHelper.getInstance().getSelectedAlgo().equalsIgnoreCase(
+                ConnectedCarFactory.ALGO_STANDARD)) {
+            return algoStandard.tryStandardStrategies(newLockStatus, isFullyConnected,
+                    isIndoor, connectedCar, totalAverage);
+        } else if (SdkPreferencesHelper.getInstance().getSelectedAlgo().equalsIgnoreCase(
+                ConnectedCarFactory.MACHINE_LEARNING)) {
+            return ranging.tryMachineLearningStrategies(mProtocolManager, connectedCar, newLockStatus);
+        } else if (SdkPreferencesHelper.getInstance().getSelectedAlgo().equalsIgnoreCase(
+                ConnectedCarFactory.DOUBLE_ALGO)) {
+            predictionSd = algoStandard.tryStandardStrategies(newLockStatus, isFullyConnected,
+                    isIndoor, connectedCar, totalAverage);
+            predictionMl = ranging.tryMachineLearningStrategies(mProtocolManager, connectedCar, newLockStatus);
+            if (predictionSd.equalsIgnoreCase(predictionMl)) {
+                mProtocolManager.setThatcham(false);
+                switch (predictionSd) {
+                    case PREDICTION_LOCK:
+                        mRKEManager.performLockWithCryptoTimeout(false, true);
+                        break;
+                    case PREDICTION_START:
+                    case PREDICTION_TRUNK:
+                        if (!mProtocolManager.isStartRequested()) {
+                            mProtocolManager.setIsStartRequested(true);
+                        }
+                        break;
+                    case PREDICTION_BACK:
+                    case PREDICTION_RIGHT:
+                    case PREDICTION_LEFT:
+                    case PREDICTION_FRONT:
+                        mProtocolManager.setThatcham(true);
+                        mRKEManager.performLockWithCryptoTimeout(false, false);
+                        break;
+                    case PREDICTION_WELCOME:
+                        if (!mProtocolManager.isWelcomeRequested()) {
+                            mProtocolManager.setIsWelcomeRequested(true);
+                        }
+                        SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
+                        bleRangingListener.doWelcome();
+                        break;
+                    case PREDICTION_UNKNOWN:
+                    default:
+                        PSALogs.d("prediction", "NOOO rangingPredictionInt !");
+                        break;
+                }
+                return predictionSd;
             }
-            return predictionSd;
         }
         return PREDICTION_UNKNOWN;
     }

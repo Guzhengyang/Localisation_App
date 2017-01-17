@@ -17,6 +17,7 @@ public class ConnectedCarFactory {
     public final static String TYPE_8_A = "eightFlFrLMRTRlRr";
     public final static String ALGO_STANDARD = "ALGO_STANDARD";
     public final static String MACHINE_LEARNING = "MACHINE_LEARNING";
+    public final static String DOUBLE_ALGO = "DOUBLE_ALGO";
     public final static String MODEL_RF = "RANDOM_FOREST";
     public final static String MODEL_LOGISTIC = "LOGISTIC";
 

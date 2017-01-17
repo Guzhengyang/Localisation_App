@@ -1183,6 +1183,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             selected_algo.setText(R.string.algo_standard);
         } else if (SdkPreferencesHelper.getInstance().getSelectedAlgo().equalsIgnoreCase(ConnectedCarFactory.MACHINE_LEARNING)) {
             selected_algo.setText(R.string.algo_machine_learning);
+        } else if (SdkPreferencesHelper.getInstance().getSelectedAlgo().equalsIgnoreCase(ConnectedCarFactory.DOUBLE_ALGO)) {
+            selected_algo.setText(R.string.algo_double);
         } else {
             selected_algo.setText(R.string.algo_unknown);
         }

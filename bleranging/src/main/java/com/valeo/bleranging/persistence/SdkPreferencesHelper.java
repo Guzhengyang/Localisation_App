@@ -111,11 +111,8 @@ public final class SdkPreferencesHelper {
     /**
      * Preferences file name.
      */
-    private static final String SAVED_LIGHT_CAPTOR = "savedLightCaptor";
     private static final String SAVED_LOGIN_INFO = "savedLoginInfo";
     private static final String SAVED_LOGGER_INFO = "savedLoggerInfo";
-    private static final String LIGHT_CAPTOR_PREFERENCES_NAME = "com.inblue.PREFERENCE_LIGHT_CAPTOR";
-    //    private static final String SELECTED_LOCATION_PREFERENCES_NAME = "com.inblue.PREFERENCE_SELECTED_LOCATION";
     private static final String USER_MAIL_PREFERENCES_NAME = "com.inblue.PREFERENCE_USER_MAIL";
     private static final String PASSWORD_PREFERENCES_NAME = "com.inblue.PREFERENCE_PASSWORD";
     private static final String LOG_FILE_NAME_PREFERENCES_NAME = "com.inblue.PREFERENCE_LOG_FILE_NAME";
@@ -403,10 +400,6 @@ public final class SdkPreferencesHelper {
 
     public int getTrxRssiEqualizerBack(final String fileName) {
         return readInt(fileName, mApplicationContext.getString(R.string.equalizer_back_pref_name), EQUALIZER_BACK);
-    }
-
-    public boolean isLightCaptorEnabled() {
-        return readBoolean(SAVED_LIGHT_CAPTOR, LIGHT_CAPTOR_PREFERENCES_NAME, false);
     }
 
     public String getConnectedCarType() {

@@ -36,10 +36,12 @@
     <string-array name="algo_list_preference">
         <item>Algo standard</item>
         <item>Machine Learning</item>
+        <item>Double algo</item>
     </string-array>
     <string-array name="algo_entryvalues_list_preference">
         <item>ALGO_STANDARD</item>
         <item>MACHINE_LEARNING</item>
+        <item>DOUBLE_ALGO</item>
     </string-array>
     <string-array name="model_list_preference">
         <item>Random Forest</item>
