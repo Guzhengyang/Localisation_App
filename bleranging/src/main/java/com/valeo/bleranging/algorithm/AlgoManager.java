@@ -99,7 +99,7 @@ public class AlgoManager {
     }
 
     /**
-     * Try both strategies at once
+     * Try a strategy or both strategies at once
      * @param newLockStatus the car lock status, true if locked, false if open
      * @param isFullyConnected true if connected in ble, false otherwise
      * @param isIndoor true if indoor, false otherwise
@@ -107,8 +107,8 @@ public class AlgoManager {
      * @param totalAverage the trxs total average
      * @return the double prediction of both strategy
      */
-    public String tryDoubleStrategies(boolean newLockStatus, boolean isFullyConnected,
-                                      boolean isIndoor, ConnectedCar connectedCar, int totalAverage) {
+    public String getPrediction(boolean newLockStatus, boolean isFullyConnected,
+                                boolean isIndoor, ConnectedCar connectedCar, int totalAverage) {
         //cancel previous action
         mProtocolManager.setIsWelcomeRequested(false);
         mProtocolManager.setIsStartRequested(false);
@@ -125,40 +125,43 @@ public class AlgoManager {
                     isIndoor, connectedCar, totalAverage);
             predictionMl = ranging.tryMachineLearningStrategies(mProtocolManager, connectedCar, newLockStatus);
             if (predictionSd.equalsIgnoreCase(predictionMl)) {
-                mProtocolManager.setThatcham(false);
-                switch (predictionSd) {
-                    case PREDICTION_LOCK:
-                        mRKEManager.performLockWithCryptoTimeout(false, true);
-                        break;
-                    case PREDICTION_START:
-                    case PREDICTION_TRUNK:
-                        if (!mProtocolManager.isStartRequested()) {
-                            mProtocolManager.setIsStartRequested(true);
-                        }
-                        break;
-                    case PREDICTION_BACK:
-                    case PREDICTION_RIGHT:
-                    case PREDICTION_LEFT:
-                    case PREDICTION_FRONT:
-                        mProtocolManager.setThatcham(true);
-                        mRKEManager.performLockWithCryptoTimeout(false, false);
-                        break;
-                    case PREDICTION_WELCOME:
-                        if (!mProtocolManager.isWelcomeRequested()) {
-                            mProtocolManager.setIsWelcomeRequested(true);
-                        }
-                        SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
-                        bleRangingListener.doWelcome();
-                        break;
-                    case PREDICTION_UNKNOWN:
-                    default:
-                        PSALogs.d("prediction", "NOOO rangingPredictionInt !");
-                        break;
-                }
                 return predictionSd;
             }
         }
         return PREDICTION_UNKNOWN;
+    }
+
+    public void doActionKnowingPrediction(String prediction) {
+        mProtocolManager.setThatcham(false);
+        switch (prediction) {
+            case PREDICTION_LOCK:
+                mRKEManager.performLockWithCryptoTimeout(false, true);
+                break;
+            case PREDICTION_START:
+            case PREDICTION_TRUNK:
+                if (!mProtocolManager.isStartRequested()) {
+                    mProtocolManager.setIsStartRequested(true);
+                }
+                break;
+            case PREDICTION_BACK:
+            case PREDICTION_RIGHT:
+            case PREDICTION_LEFT:
+            case PREDICTION_FRONT:
+                mProtocolManager.setThatcham(true);
+                mRKEManager.performLockWithCryptoTimeout(false, false);
+                break;
+            case PREDICTION_WELCOME:
+                if (!mProtocolManager.isWelcomeRequested()) {
+                    mProtocolManager.setIsWelcomeRequested(true);
+                }
+                SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
+                bleRangingListener.doWelcome();
+                break;
+            case PREDICTION_UNKNOWN:
+            default:
+                PSALogs.d("prediction", "NOOO rangingPredictionInt !");
+                break;
+        }
     }
 
     public void createRangingObject(double[] rssi) {
