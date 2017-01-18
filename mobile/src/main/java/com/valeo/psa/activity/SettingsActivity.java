@@ -201,17 +201,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             ViewPager pager = (ViewPager) result.findViewById(R.id.pager);
             pager.setAdapter(buildAdapter());
             switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
-                case ConnectedCarFactory.TYPE_4_A:
+                case ConnectedCarFactory.TYPE_3_A:
                     pager.setCurrentItem(0);
                     break;
-                case ConnectedCarFactory.TYPE_5_A:
+                case ConnectedCarFactory.TYPE_4_A:
                     pager.setCurrentItem(1);
                     break;
-                case ConnectedCarFactory.TYPE_7_A:
+                case ConnectedCarFactory.TYPE_5_A:
                     pager.setCurrentItem(2);
                     break;
-                case ConnectedCarFactory.TYPE_8_A:
+                case ConnectedCarFactory.TYPE_7_A:
                     pager.setCurrentItem(3);
+                    break;
+                case ConnectedCarFactory.TYPE_8_A:
+                    pager.setCurrentItem(4);
                     break;
                 default:
                     pager.setCurrentItem(0);
@@ -242,12 +245,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return SpecificPreferenceFragment.newInstance(ConnectedCarFactory.TYPE_4_A);
+                    return SpecificPreferenceFragment.newInstance(ConnectedCarFactory.TYPE_3_A);
                 case 1:
-                    return SpecificPreferenceFragment.newInstance(ConnectedCarFactory.TYPE_5_A);
+                    return SpecificPreferenceFragment.newInstance(ConnectedCarFactory.TYPE_4_A);
                 case 2:
-                    return SpecificPreferenceFragment.newInstance(ConnectedCarFactory.TYPE_7_A);
+                    return SpecificPreferenceFragment.newInstance(ConnectedCarFactory.TYPE_5_A);
                 case 3:
+                    return SpecificPreferenceFragment.newInstance(ConnectedCarFactory.TYPE_7_A);
+                case 4:
                     return SpecificPreferenceFragment.newInstance(ConnectedCarFactory.TYPE_8_A);
                 default:
                     return SpecificPreferenceFragment.newInstance(SdkPreferencesHelper.getInstance().getConnectedCarType());
@@ -259,24 +264,30 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             String currentConfigType = "Current Config: ";
             switch (position) {
                 case 0:
+                    if (SdkPreferencesHelper.getInstance().getConnectedCarType().equals(ConnectedCarFactory.TYPE_3_A)) {
+                        return SpecificPreferenceFragment.getTitle(currentConfigType + "3 beacons");
+                    } else {
+                        return SpecificPreferenceFragment.getTitle("3 beacons");
+                    }
+                case 1:
                     if (SdkPreferencesHelper.getInstance().getConnectedCarType().equals(ConnectedCarFactory.TYPE_4_A)) {
                         return SpecificPreferenceFragment.getTitle(currentConfigType + "4 beacons");
                     } else {
                         return SpecificPreferenceFragment.getTitle("4 beacons");
                     }
-                case 1:
+                case 2:
                     if (SdkPreferencesHelper.getInstance().getConnectedCarType().equals(ConnectedCarFactory.TYPE_5_A)) {
                         return SpecificPreferenceFragment.getTitle(currentConfigType + "5 beacons");
                     } else {
                         return SpecificPreferenceFragment.getTitle("5 beacons");
                     }
-                case 2:
+                case 3:
                     if (SdkPreferencesHelper.getInstance().getConnectedCarType().equals(ConnectedCarFactory.TYPE_7_A)) {
                         return SpecificPreferenceFragment.getTitle(currentConfigType + "7 beacons");
                     } else {
                         return SpecificPreferenceFragment.getTitle("7 beacons");
                     }
-                case 3:
+                case 4:
                     if (SdkPreferencesHelper.getInstance().getConnectedCarType().equals(ConnectedCarFactory.TYPE_8_A)) {
                         return SpecificPreferenceFragment.getTitle(currentConfigType + "8 beacons");
                     } else {

@@ -977,6 +977,14 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     public void updateCarDrawable() {
         layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization);
         switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
+            case ConnectedCarFactory.TYPE_3_A:
+                if (carDoorStatus == CarDoorStatus.LOCKED) {
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_3_a_close));
+                } else {
+                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_3_a_open));
+                }
+                trunk_area = null;
+                break;
             case ConnectedCarFactory.TYPE_4_A:
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
                     layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_a_close));

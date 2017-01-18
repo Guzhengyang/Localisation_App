@@ -10,6 +10,7 @@ public class ConnectedCarFactory {
     public final static String BASE_2 = "Base_2";
     public final static String BASE_3 = "Base_3";
     public final static String BASE_4 = "Base_4";
+    public final static String TYPE_3_A = "threeLMR";
     public final static String TYPE_4_A = "fourLMRB";
     public final static String TYPE_4_B = "fourLMRT";
     public final static String TYPE_5_A = "fiveLMRTB";
@@ -28,7 +29,9 @@ public class ConnectedCarFactory {
      * @return a connected car with the specified number of connection
      */
     public static ConnectedCar getConnectedCar(Context mContext, String carName, boolean isIndoor) {
-        if (carName.equalsIgnoreCase(TYPE_4_A)) {
+        if (carName.equalsIgnoreCase(TYPE_3_A)) {
+            return new CCThreeLMR(mContext, isIndoor);
+        } else if (carName.equalsIgnoreCase(TYPE_4_A)) {
             return new CCFourLMRB(mContext, isIndoor);
         } else if (carName.equalsIgnoreCase(TYPE_4_B)) {
             return new CCFourLMRT(mContext, isIndoor);
