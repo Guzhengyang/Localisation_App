@@ -108,6 +108,29 @@ public abstract class ConnectedCar {
         }
     }
 
+    public String getCurrentBLEChannelString(int trxNumber) {
+        String result;
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            switch (trxLinkedHMap.get(trxNumber).getCurrentBLEChannel()) {
+                case BLE_CHANNEL_37:
+                    result = " 37";
+                    break;
+                case BLE_CHANNEL_38:
+                    result = " 38";
+                    break;
+                case BLE_CHANNEL_39:
+                    result = " 39";
+                    break;
+                default:
+                    result = "   ";
+                    break;
+            }
+        } else {
+            result = "   ";
+        }
+        return result;
+    }
+
     public int getCurrentOriginalRssi(int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getCurrentOriginalRssi();
@@ -206,6 +229,14 @@ public abstract class ConnectedCar {
                     .append(space2);
         }
         spannableStringBuilder.append('\n');
+        for (Trx trx : trxLinkedHMap.values()) {
+            spannableStringBuilder
+                    .append(space2)
+                    .append(String.format(Locale.FRANCE, "%1$s",
+                            getCurrentBLEChannelString(trx.getTrxNumber())))
+                    .append(space2);
+        }
+        spannableStringBuilder.append('\n');
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
         return spannableStringBuilder;
     }
@@ -244,33 +275,43 @@ public abstract class ConnectedCar {
 
     public double[] getRssiForRangingPrediction() {
         double[] rssi;
-        if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_4_B)) {
-            rssi = new double[4];
-            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
-            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
-            rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
-            rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
-        } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_8_A)) {
-            rssi = new double[8];
-            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
-            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
-            rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
-            rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
-            rssi[4] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT);
-            rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
-            rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
-            rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
-        } else {
-            rssi = new double[8];
-            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
-            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
-            rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
-            rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
-            rssi[4] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT);
-            rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
-            rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
-            rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
-        }
+//        if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_4_B)) {
+//            rssi = new double[4];
+//            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
+//            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
+//            rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
+//            rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
+//        } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_8_A)) {
+//            rssi = new double[8];
+//            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
+//            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
+//            rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
+//            rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
+//            rssi[4] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT);
+//            rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
+//            rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
+//            rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
+//        } else {
+//            rssi = new double[8];
+//            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
+//            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
+//            rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
+//            rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
+//            rssi[4] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT);
+//            rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
+//            rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
+//            rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
+//        }
+
+        rssi = new double[3];
+        rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
+        rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
+        rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
+//        rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
+//        rssi[4] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT);
+//        rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
+//        rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
+//        rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
         for (Double elem : rssi) {
             if (elem == 0) {
                 return null;

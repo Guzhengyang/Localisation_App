@@ -338,9 +338,9 @@ public class AlgoManager implements SensorEventListener {
     }
 
     public String getPredictionProximity() {
-        if (ranging != null) {
-            return ranging.getPredictionNearFar();
-        }
+//        if (ranging != null) {
+//            return ranging.getPredictionNearFar();
+//        }
         return PREDICTION_UNKNOWN;
     }
 
