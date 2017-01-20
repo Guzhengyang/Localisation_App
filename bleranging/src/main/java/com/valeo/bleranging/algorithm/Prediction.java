@@ -2,7 +2,6 @@ package com.valeo.bleranging.algorithm;
 
 import android.content.Context;
 
-import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.util.ArrayList;
@@ -17,6 +16,10 @@ import weka.core.Instances;
 import weka.core.SerializationHelper;
 import weka.core.converters.ConverterUtils;
 
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 
 /**
@@ -26,7 +29,9 @@ class Prediction {
     private static final double f = 2.45 * Math.pow(10, 9);
     private static final double c = 3 * Math.pow(10, 8);
     private static final double P = -30;
-    private static final double THRESHOLD_RSSI_AWAY = 1;
+    private static final double THRESHOLD_PROB_NO_PSU = 0.6;
+    private static final double THRESHOLD_PROB_PSU = 0.8;
+    private static final double THRESHOLD_PROB_START = 0.8;
     private List<Integer> predictions = new ArrayList<>();
     private double[] distribution;
     private double[] distance;
@@ -36,7 +41,7 @@ class Prediction {
     private RandomForest rf;
     private String[] classes;
 
-    public Prediction(Context mContext, int classesId, int rfId, int sampleId) {
+    Prediction(Context mContext, int classesId, int rfId, int sampleId) {
         try {
             classes = (String[]) SerializationHelper.read(mContext.getResources().openRawResource(classesId));
             rf = (RandomForest) SerializationHelper.read(mContext.getResources().openRawResource(rfId));
@@ -64,22 +69,16 @@ class Prediction {
         if (prediction_old != -1) {
             // trx order : l, m, r, t, fl, fr, rl, rr
             // Add hysteresis to all the trx
-            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
+            if (this.classes[prediction_old].equals(PREDICTION_LOCK)) {
                 rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
             }
-
-//            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)
-//                    && (index == 0 | index == 2 | index == 3 |index == 4 | index == 5)) {
-//                rssiModified[index] -= 2;
-//            }
-
             // Add hysteresis to all left sided trx
-            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT)
+            if (this.classes[prediction_old].equals(PREDICTION_LEFT)
                     && (index == 0 | index == 4 | index == 6)) {
                 rssiModified[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
             }
             // Add hysteresis to all right sided trx
-            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)
+            if (this.classes[prediction_old].equals(PREDICTION_RIGHT)
                     && (index == 2 | index == 5 | index == 7)) {
                 rssiModified[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
             }
@@ -105,6 +104,9 @@ class Prediction {
                 predictions.remove(0);
             }
             predictions.add(result);
+            if (prediction_old == -1) {
+                prediction_old = result;
+            }
         }
     }
 
@@ -122,17 +124,6 @@ class Prediction {
         return dist_correted;
     }
 
-
-    private double correctRssiUnilateral(double rssi_old, double rssi_new) {
-        double rssi_correted;
-        if (rssi_new < rssi_old) {
-            rssi_correted = rssi_new;
-        } else {
-            rssi_correted = Math.min(rssi_new - rssi_old, THRESHOLD_RSSI_AWAY) + rssi_old;
-        }
-        return rssi_correted;
-    }
-
     void calculatePredictionStandard(double threshold_prob) {
         if (prediction_old == -1) {
             prediction_old = most(predictions);
@@ -144,13 +135,32 @@ class Prediction {
         }
     }
 
+    void calculatePredictionStandard2() {
+        if (prediction_old == -1) {
+            prediction_old = most(predictions);
+            return;
+        }
+        int temp_prediction = most(predictions);
+        if (classes[temp_prediction].equals(PREDICTION_LOCK) &&
+                distribution[temp_prediction] > THRESHOLD_PROB_NO_PSU) {
+            prediction_old = temp_prediction;
+        } else if ((classes[temp_prediction].equals(PREDICTION_LEFT) ||
+                (classes[temp_prediction].equals(PREDICTION_RIGHT))) &&
+                distribution[temp_prediction] > THRESHOLD_PROB_PSU) {
+            prediction_old = temp_prediction;
+        } else if (classes[temp_prediction].equals(PREDICTION_START) &&
+                distribution[temp_prediction] > THRESHOLD_PROB_START) {
+            prediction_old = temp_prediction;
+        }
+    }
+
     void calculatePredictionEar(double threshold_prob) {
         if (prediction_old == -1) {
             prediction_old = most(predictions);
             return;
         }
         int temp_prediction = most(predictions);
-        if (classes[temp_prediction].equals(BleRangingHelper.PREDICTION_LOCK)) {
+        if (classes[temp_prediction].equals(PREDICTION_LOCK)) {
             prediction_old = temp_prediction;
             return;
         }
