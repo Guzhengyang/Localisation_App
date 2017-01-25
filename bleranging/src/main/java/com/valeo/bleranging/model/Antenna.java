@@ -16,7 +16,12 @@ public class Antenna {
     private BLEChannel bleChannel;
     private int lastOriginalRssi;
     private int currentOriginalRssi;
+    private int currentmodifiedRssi;
+
     private boolean hasBeenInitialized = false;
+    private int offsetBleChannel38;
+    private int offsetBleChannel39;
+    private BLEChannel lastBleChannel;
 
     Antenna(int numberTrx) {
         this.numberTrx = numberTrx;
@@ -54,6 +59,7 @@ public class Antenna {
     public synchronized void saveRssi(int rssi, boolean isRssiReceived) {
         if (!hasBeenInitialized) {
             this.lastOriginalRssi = rssi;
+            this.lastBleChannel = bleChannel;
             this.currentOriginalRssi = rssi;
             this.hasBeenInitialized = true;
         }
@@ -64,7 +70,9 @@ public class Antenna {
         } else if (rssi > -30) {
             rssi = -29;
         }
+        currentmodifiedRssi = dynamicOffsetCompensation(rssi, bleChannel);
         lastOriginalRssi = currentOriginalRssi;
+        lastBleChannel = bleChannel;
         currentOriginalRssi = rssi;
         hasReceivedRssi.set(isRssiReceived);
     }
@@ -81,6 +89,65 @@ public class Antenna {
 
     public int getCurrentOriginalRssi() {
         return currentOriginalRssi;
+    }
+
+    public int getCurrentModifiedRssi() {
+        return currentmodifiedRssi;
+    }
+
+    /**
+     * Compensation dynamic d'offset
+     *
+     * @param rssi       the origin rssi
+     * @param bleChannel the current ble channel
+     * @return the compensated rssi
+     */
+    private synchronized int dynamicOffsetCompensation(int rssi, BLEChannel bleChannel) {
+        switch (bleChannel) {
+            case BLE_CHANNEL_37:
+                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
+                    offsetBleChannel38 = 0;
+                    offsetBleChannel39 = 0;
+                }
+                break;
+            case BLE_CHANNEL_38:
+                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
+                    offsetBleChannel38 = calculateOffsetChannel(rssi);
+                }
+                rssi += offsetBleChannel38;
+                break;
+            case BLE_CHANNEL_39:
+                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
+                    offsetBleChannel39 = offsetBleChannel38 + calculateOffsetChannel(rssi);
+                }
+                rssi += offsetBleChannel39;
+                break;
+            case UNKNOWN:
+                if (!this.lastBleChannel.equals(bleChannel)) { // different channel, calculate offset
+                    offsetBleChannel38 = 0;
+                    offsetBleChannel39 = 0;
+                }
+                break;
+            default:
+                break;
+        }
+        return rssi;
+    }
+
+    /**
+     * Calculate an offset for this channel
+     *
+     * @param rssi the rssi just received from the new channel
+     * @return the offset of the new channel
+     */
+    private int calculateOffsetChannel(int rssi) {
+        int offsetBleChannel = lastOriginalRssi - rssi;
+        if (offsetBleChannel > 10) {
+            offsetBleChannel = 10;
+        } else if (offsetBleChannel < -10) {
+            offsetBleChannel = -10;
+        }
+        return offsetBleChannel;
     }
 
     public enum BLEChannel {

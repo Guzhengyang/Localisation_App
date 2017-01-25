@@ -135,7 +135,7 @@ public class AlgoManager implements SensorEventListener {
                         lastThatchamChanged = true; // because when thatcham changed, maybe not in lock area yet
                     }
                 }
-                if (lastThatchamChanged && getPredictionPosition().equalsIgnoreCase(PREDICTION_LOCK)) { // when thatcham has changed, and get into lock area
+                if (lastThatchamChanged && getPredictionPosition().equalsIgnoreCase(PREDICTION_LOCK) && SdkPreferencesHelper.getInstance().getSecurityWALEnabled()) { // when thatcham has changed, and get into lock area
                     if (!mProtocolManager.isLockedFromTrx()) { // if the vehicle is unlocked, lock it
                         new CountDownTimer(600, 90) { // Send safety close command several times in case it got lost
                             public void onTick(long millisUntilFinished) {
@@ -242,7 +242,7 @@ public class AlgoManager implements SensorEventListener {
         switch (getPredictionPosition()) {
             case PREDICTION_LOCK:
                 isInLockArea = true;
-                if (areLockActionsAvailable.get() && rearmLock.get()) {
+                if (areLockActionsAvailable.get() && rearmLock.get() && SdkPreferencesHelper.getInstance().getSecurityWALEnabled()) {
                     performLockWithCryptoTimeout(false, true);
                 }
                 break;

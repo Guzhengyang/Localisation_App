@@ -15,6 +15,10 @@ public class Trx {
         this.antenna = new Antenna(trxNumber);
     }
 
+    public Antenna getAntenna() {
+        return antenna;
+    }
+
     public void init(int historicDefaultValue) {
         antenna.init(historicDefaultValue);
     }
@@ -35,6 +39,11 @@ public class Trx {
     public int getCurrentOriginalRssi() {
         return antenna.getCurrentOriginalRssi();
     }
+
+    public int getCurrentModifiedRssi() {
+        return antenna.getCurrentModifiedRssi();
+    }
+
 
     public Antenna.BLEChannel getCurrentBLEChannel() {
         return antenna.getCurrentBLEChannel();

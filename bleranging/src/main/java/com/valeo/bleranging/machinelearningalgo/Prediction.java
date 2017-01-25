@@ -44,7 +44,6 @@ public class Prediction {
     private RandomForest rf;
     private String[] classes;
     private Context mContext;
-    private int OFFSET_ANGLE = 5;
 
     public Prediction(Context context, int classesId, int rfId, int sampleId) {
         this.mContext = context;
@@ -99,6 +98,7 @@ public class Prediction {
         sample.setValue(index, distance[index]);
     }
 
+
     public void predict(int nVote) {
         int result = 0;
         try {
@@ -116,6 +116,7 @@ public class Prediction {
             }
         }
     }
+
 
     private double rssi2dist(double rssi) {
         return c / f / 4 / Math.PI * Math.pow(10, -(rssi - P) / 20);
@@ -142,18 +143,24 @@ public class Prediction {
         return rssi_correted;
     }
 
+
     public void calculatePredictionStandard(double threshold_prob) {
         if (prediction_old == -1) {
             prediction_old = most(predictions);
             return;
         }
         int temp_prediction = most(predictions);
+        if (classes[temp_prediction].equals(BleRangingHelper.PREDICTION_LOCK)) {
+            prediction_old = temp_prediction;
+            return;
+        }
         if (distribution[temp_prediction] > threshold_prob) {
             prediction_old = temp_prediction;
         }
     }
 
-    public void calculatePredictionStandard2() {
+
+    public void calculatePredictionSimple() {
         if (prediction_old == -1) {
             prediction_old = most(predictions);
             return;
@@ -172,6 +179,7 @@ public class Prediction {
         }
     }
 
+
     public void calculatePredictionEar(double threshold_prob) {
         if (prediction_old == -1) {
             prediction_old = most(predictions);
@@ -186,6 +194,7 @@ public class Prediction {
             prediction_old = temp_prediction;
         }
     }
+
 
     public String getPrediction() {
         if (prediction_old != -1) {

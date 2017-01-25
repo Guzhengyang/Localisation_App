@@ -170,7 +170,7 @@ public class BleRangingHelper {
             spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder,
                     bytesToSend, bytesReceived, mBluetoothManager.isFullyConnected());
             lock.readLock().unlock();
-            spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
+//            spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
 
             spannableStringBuilder = mAlgoManager.createDebugData(spannableStringBuilder);
 

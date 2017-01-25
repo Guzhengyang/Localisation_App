@@ -139,6 +139,16 @@ public abstract class ConnectedCar {
         }
     }
 
+
+    public int getCurrentModifiedRssi(int trxNumber) {
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            return trxLinkedHMap.get(trxNumber).getCurrentModifiedRssi();
+        } else {
+            return 0;
+        }
+    }
+
+
     /**
      * Calculate all the trx average
      * @return the average of all active trx or 0 if there is none
@@ -221,6 +231,7 @@ public abstract class ConnectedCar {
                     .append(space1);
         }
         spannableStringBuilder.append("\n");
+
         for (Trx trx : trxLinkedHMap.values()) {
             spannableStringBuilder
                     .append(space2)
@@ -229,6 +240,16 @@ public abstract class ConnectedCar {
                     .append(space2);
         }
         spannableStringBuilder.append('\n');
+
+        for (Trx trx : trxLinkedHMap.values()) {
+            spannableStringBuilder
+                    .append(space2)
+                    .append(String.format(Locale.FRANCE, "%1$03d",
+                            getCurrentModifiedRssi(trx.getTrxNumber())))
+                    .append(space2);
+        }
+        spannableStringBuilder.append('\n');
+
         for (Trx trx : trxLinkedHMap.values()) {
             spannableStringBuilder
                     .append(space2)
@@ -303,11 +324,11 @@ public abstract class ConnectedCar {
 //            rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
 //        }
 
-        rssi = new double[3];
+        rssi = new double[4];
         rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
         rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
         rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
-//        rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
+        rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
 //        rssi[4] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT);
 //        rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
 //        rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
