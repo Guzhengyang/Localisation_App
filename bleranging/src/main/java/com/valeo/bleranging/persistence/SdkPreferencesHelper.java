@@ -14,6 +14,8 @@ public final class SdkPreferencesHelper {
     public final static int OFFSET_SMARTPHONE = 5;
     public final static int OFFSET_HYSTERESIS_LOCK = 2;
     public final static int OFFSET_HYSTERESIS_UNLOCK = 3;
+    public final static float BACK_TIMEOUT = 3.0f;
+    public final static float THATCHAM_TIMEOUT = 3.0f;
     public final static float CRYPTO_PRE_AUTH_TIMEOUT = 1.3f;
     public final static float CRYPTO_ACTION_TIMEOUT = 0.02f;
     public final static int RSSI_LOG_NUMBER = 0;
@@ -99,6 +101,14 @@ public final class SdkPreferencesHelper {
 
     public int getOffsetHysteresisUnlock() {
         return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.offset_hysteresis_unlock_pref_name), OFFSET_HYSTERESIS_UNLOCK);
+    }
+
+    public float getThatchamTimeout() {
+        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.thatcham_timeout_pref_name), THATCHAM_TIMEOUT);
+    }
+
+    public float getBackTimeout() {
+        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.back_timeout_pref_name), BACK_TIMEOUT);
     }
 
     public float getCryptoPreAuthTimeout() {

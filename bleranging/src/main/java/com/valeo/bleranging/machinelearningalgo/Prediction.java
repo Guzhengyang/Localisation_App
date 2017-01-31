@@ -33,7 +33,7 @@ public class Prediction {
     private static final double P = -30;
     private static final double THRESHOLD_RSSI_AWAY = 1;
     private static final double THRESHOLD_PROB_NO_PSU = 0.6;
-    private static final double THRESHOLD_PROB_PSU = 0.8;
+    private static final double THRESHOLD_PROB_UIR = 0.9;
     private static final double THRESHOLD_PROB_START = 0.8;
     private List<Integer> predictions = new ArrayList<>();
     private double[] distribution;
@@ -98,6 +98,12 @@ public class Prediction {
         sample.setValue(index, distance[index]);
     }
 
+    public void clearPredictions() {
+        for (int i = 0; i < predictions.size(); i++) {
+            predictions.remove(i);
+        }
+    }
+
 
     public void predict(int nVote) {
         int result = 0;
@@ -150,13 +156,41 @@ public class Prediction {
             return;
         }
         int temp_prediction = most(predictions);
-        if (classes[temp_prediction].equals(BleRangingHelper.PREDICTION_LOCK)) {
+
+        if (classes[temp_prediction].equals(BleRangingHelper.PREDICTION_LEFT)
+                | classes[temp_prediction].equals(BleRangingHelper.PREDICTION_RIGHT)
+                | classes[temp_prediction].equals(BleRangingHelper.PREDICTION_BACK)) {
+            if (classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
+                if (distribution[temp_prediction] > THRESHOLD_PROB_UIR) {
+                    prediction_old = temp_prediction;
+                    return;
+                }
+            } else if (classes[prediction_old].equals(BleRangingHelper.PREDICTION_TRUNK)) {
+                prediction_old = temp_prediction;
+                return;
+            }
+        }
+
+        if (distribution[temp_prediction] > threshold_prob) {
+            prediction_old = temp_prediction;
+            return;
+        }
+    }
+
+    public void calculatePredictionRP(double threshold_prob) {
+        if (prediction_old == -1) {
+            prediction_old = most(predictions);
+            return;
+        }
+        int temp_prediction = most(predictions);
+        if (classes[temp_prediction].equals(BleRangingHelper.PREDICTION_FAR)) {
             prediction_old = temp_prediction;
             return;
         }
         if (distribution[temp_prediction] > threshold_prob) {
             prediction_old = temp_prediction;
         }
+
     }
 
 
@@ -171,7 +205,7 @@ public class Prediction {
             prediction_old = temp_prediction;
         } else if ((classes[temp_prediction].equals(PREDICTION_LEFT) ||
                 (classes[temp_prediction].equals(PREDICTION_RIGHT))) &&
-                distribution[temp_prediction] > THRESHOLD_PROB_PSU) {
+                distribution[temp_prediction] > THRESHOLD_PROB_UIR) {
             prediction_old = temp_prediction;
         } else if (classes[temp_prediction].equals(PREDICTION_START) &&
                 distribution[temp_prediction] > THRESHOLD_PROB_START) {
@@ -232,7 +266,7 @@ public class Prediction {
         } else {
             sb.append(title).append(" ").append(getPrediction()).append(" ").append(distribution[prediction_old]).append("\n");
             for (double aDistance : distance) {
-                sb.append(String.format(Locale.FRANCE, "%.2f", aDistance)).append(" ");
+                sb.append(String.format(Locale.FRANCE, "%.2f", aDistance)).append("   ");
             }
             sb.append("\n");
 

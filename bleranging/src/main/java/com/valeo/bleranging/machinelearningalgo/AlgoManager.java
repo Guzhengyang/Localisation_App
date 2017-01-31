@@ -14,6 +14,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.text.SpannableStringBuilder;
 
+import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
@@ -50,7 +51,22 @@ public class AlgoManager implements SensorEventListener {
     private final Handler mMainHandler;
     private final Handler mHandlerLockTimeOut;
     private final Handler mHandlerCryptoTimeOut;
+    private final Handler mHandlerThatchamTimeOut;
     private final Handler mLockStatusChangedHandler;
+    private final AtomicBoolean thatchamIsChanging = new AtomicBoolean(false);
+    private final Runnable mHasThatchamChanged = new Runnable() {
+        @Override
+        public void run() {
+            thatchamIsChanging.set(false);
+        }
+    };
+    private final AtomicBoolean backIsChanging = new AtomicBoolean(false);
+    private final Runnable mHasBackChanged = new Runnable() {
+        @Override
+        public void run() {
+            backIsChanging.set(false);
+        }
+    };
     /* Avoid multiple click on rke buttons */
     private final AtomicBoolean isRKEAvailable = new AtomicBoolean(true);
     /* Avoid concurrent lock action from rke and strategy loop */
@@ -135,22 +151,24 @@ public class AlgoManager implements SensorEventListener {
                         lastThatchamChanged = true; // because when thatcham changed, maybe not in lock area yet
                     }
                 }
-                if (lastThatchamChanged && getPredictionPosition().equalsIgnoreCase(PREDICTION_LOCK) && SdkPreferencesHelper.getInstance().getSecurityWALEnabled()) { // when thatcham has changed, and get into lock area
-                    if (!mProtocolManager.isLockedFromTrx()) { // if the vehicle is unlocked, lock it
-                        new CountDownTimer(600, 90) { // Send safety close command several times in case it got lost
-                            public void onTick(long millisUntilFinished) {
-                                performLockWithCryptoTimeout(true, true);
-                            }
-
-                            public void onFinish() {
-//                                Toast.makeText(mContext, "All safety close command are sent !", Toast.LENGTH_SHORT).show();
-                            }
-                        }.start();
-                    }
-                    // if not in thatcham area and in lock area, rearm unlock
+                if (lastThatchamChanged && getPredictionPosition().equalsIgnoreCase(PREDICTION_LOCK)) { // when thatcham has changed, and get into lock area
                     rearmUnlock.set(true);
-                    makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 100);
                     lastThatchamChanged = false;
+                    if (SdkPreferencesHelper.getInstance().getSecurityWALEnabled()) {
+                        if (!mProtocolManager.isLockedFromTrx()) { // if the vehicle is unlocked, lock it
+                            new CountDownTimer(600, 90) { // Send safety close command several times in case it got lost
+                                public void onTick(long millisUntilFinished) {
+                                    performLockWithCryptoTimeout(true, true);
+                                }
+
+                                public void onFinish() {
+//                                Toast.makeText(mContext, "All safety close command are sent !", Toast.LENGTH_SHORT).show();
+                                }
+                            }.start();
+                        }
+                        // if not in thatcham area and in lock area, rearm unlock
+                        makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 100);
+                    }
                 }
             }
         }
@@ -164,6 +182,7 @@ public class AlgoManager implements SensorEventListener {
         this.mMainHandler = mMainHandler;
         this.mHandlerLockTimeOut = new Handler();
         this.mHandlerCryptoTimeOut = new Handler();
+        this.mHandlerThatchamTimeOut = new Handler();
         this.mLockStatusChangedHandler = new Handler();
 //        this.faceDetectorUtils = new FaceDetectorUtils(mContext);
         SensorManager senSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
@@ -269,8 +288,7 @@ public class AlgoManager implements SensorEventListener {
                 PSALogs.d("prediction", "NOOO rangingPredictionInt !");
                 break;
         }
-        boolean isWelcomeStrategyValid = connectedCar.welcomeStrategy(connectedCar.getAllTrxAverage(), newLockStatus);
-        isInWelcomeArea = rearmWelcome.get() && isWelcomeStrategyValid;
+        isInWelcomeArea = rearmWelcome.get() && getPredictionProximity().equals(BleRangingHelper.PREDICTION_FAR);
         if (isInWelcomeArea) {
             isWelcomeAllowed = true;
             rearmWelcome.set(false);
@@ -288,11 +306,25 @@ public class AlgoManager implements SensorEventListener {
         }
     }
 
+    private void launchThatchamValidityTimeOut() {
+        mProtocolManager.setThatcham(true);
+        if (thatchamIsChanging.get()) {
+            mHandlerThatchamTimeOut.removeCallbacks(mHasThatchamChanged);
+            mHandlerThatchamTimeOut.removeCallbacks(null);
+        } else {
+            thatchamIsChanging.set(true);
+        }
+        mHandlerThatchamTimeOut.postDelayed(mHasThatchamChanged,
+                (long) (SdkPreferencesHelper.getInstance().getThatchamTimeout() * 1000));
+    }
+
     private void setIsThatcham(boolean isInLockArea, boolean isInUnlockArea, boolean isInStartArea) {
         if (isInLockArea || isInStartArea || !isInUnlockArea) {
-            mProtocolManager.setThatcham(false);
-        } else { // if is in unlock area
-            mProtocolManager.setThatcham(true);
+            if (!thatchamIsChanging.get()) { // if thatcham is not changing
+                mProtocolManager.setThatcham(false);
+            }
+        } else if (isInUnlockArea) {
+            launchThatchamValidityTimeOut();
         }
     }
 
@@ -338,9 +370,9 @@ public class AlgoManager implements SensorEventListener {
     }
 
     public String getPredictionProximity() {
-//        if (ranging != null) {
-//            return ranging.getPredictionNearFar();
-//        }
+        if (ranging != null) {
+            return ranging.getPredictionRP();
+        }
         return PREDICTION_UNKNOWN;
     }
 

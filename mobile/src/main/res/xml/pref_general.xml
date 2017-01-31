@@ -87,7 +87,7 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_offset">
         <EditTextPreference
-            android:inputType="number"
+            android:inputType="numberSigned"
             android:key="@string/offset_smartphone_pref_name"
             android:title="@string/pref_offset_smartphone" />
         <EditTextPreference
@@ -100,6 +100,14 @@
             android:title="@string/pref_offset_hysteresis_unlock" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_timeout">
+        <EditTextPreference
+            android:inputType="number|numberDecimal"
+            android:key="@string/back_timeout_pref_name"
+            android:title="@string/pref_back_timeout" />
+        <EditTextPreference
+            android:inputType="number|numberDecimal"
+            android:key="@string/thatcham_timeout_pref_name"
+            android:title="@string/pref_thatcham_timeout" />
         <EditTextPreference
             android:inputType="number|numberDecimal"
             android:key="@string/crypto_pre_auth_timeout_pref_name"

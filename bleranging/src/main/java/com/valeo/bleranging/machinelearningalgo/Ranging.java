@@ -1,7 +1,9 @@
 package com.valeo.bleranging.machinelearningalgo;
 
 import android.content.Context;
+import android.os.Handler;
 
+import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.R;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
@@ -12,7 +14,7 @@ public class Ranging {
     private static final int N_VOTE_SIMPLE = 5;
     private static final double THRESHOLD_DIST_AWAY_SIMPLE = 0.07;
     private static final String SIMPLE_LOC = "Simple Localisation:";
-    private static final double THRESHOLD_PROB_STANDARD = 0.7;
+    private static final double THRESHOLD_PROB_STANDARD = 0.8;
     private static final int N_VOTE_STANDARD = 3;
     private static final double THRESHOLD_DIST_AWAY_STANDARD = 0.10;
     private static final String STANDARD_LOC = "Standard Localisation:";
@@ -20,15 +22,14 @@ public class Ranging {
     private static final int N_VOTE_EAR = 5;
     private static final double THRESHOLD_DIST_AWAY_EAR = 0.4;
     private static final String EAR_HELD_LOC = "Ear held Localisation:";
+    private static final String RP_LOC = "RP Localisation:";
+    private final Handler mHandlerComValidTimeOut = new Handler();
     private Prediction simplePrediction;
     private Prediction standardPrediction;
     private Prediction earPrediction;
-    private int OFFSET_EAR = 0;
-
-
+    private Prediction rpPrediction;
     private String lastModelUsed = STANDARD_LOC;
     private boolean comValid = false;
-
 
     Ranging(Context context, double[] rssi) {
 //        this.simplePrediction = new Prediction(context, R.raw.classes_simple,
@@ -41,10 +42,16 @@ public class Ranging {
         standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
         standardPrediction.predict(N_VOTE_STANDARD);
 
-        this.earPrediction = new Prediction(context, R.raw.classes_ear,
-                R.raw.rf_ear, R.raw.sample_ear);
-        earPrediction.init(rssi, OFFSET_EAR); //TODO create other offsets
-        earPrediction.predict(N_VOTE_EAR);
+//        this.earPrediction = new Prediction(context, R.raw.classes_ear,
+//                R.raw.rf_ear, R.raw.sample_ear);
+//        earPrediction.init(rssi, 0); //TODO create other offsets
+//        earPrediction.predict(N_VOTE_EAR);
+
+        this.rpPrediction = new Prediction(context, R.raw.classes_rp,
+                R.raw.rf_rp, R.raw.sample_rp);
+        rpPrediction.init(rssi, 0); //TODO create other offsets
+        rpPrediction.predict(N_VOTE_STANDARD);
+
     }
 
     public void setRssi(double[] rssi) {
@@ -52,22 +59,22 @@ public class Ranging {
 //            simplePrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), THRESHOLD_DIST_AWAY_SIMPLE, comValid);
 
             standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), THRESHOLD_DIST_AWAY_STANDARD, comValid);
-            earPrediction.setRssi(i, rssi[i], OFFSET_EAR, THRESHOLD_DIST_AWAY_EAR, comValid);
-        }
-        if (comValid) {
-            comValid = false;
+//            earPrediction.setRssi(i, rssi[i], 0, THRESHOLD_DIST_AWAY_EAR, comValid);
+            rpPrediction.setRssi(i, rssi[i], 0, THRESHOLD_DIST_AWAY_EAR, comValid);
         }
 //        simplePrediction.predict(N_VOTE_SIMPLE);
 
         standardPrediction.predict(N_VOTE_STANDARD);
-        earPrediction.predict(N_VOTE_EAR);
+//        earPrediction.predict(N_VOTE_EAR);
+        rpPrediction.predict(N_VOTE_STANDARD);
     }
 
     void calculatePrediction() {
 //        simplePrediction.calculatePredictionSimple();
 
         standardPrediction.calculatePredictionStandard(THRESHOLD_PROB_STANDARD);
-        earPrediction.calculatePredictionEar(THRESHOLD_PROB_EAR);
+//        earPrediction.calculatePredictionEar(THRESHOLD_PROB_EAR);
+        rpPrediction.calculatePredictionRP(THRESHOLD_PROB_STANDARD);
 
     }
 
@@ -81,7 +88,7 @@ public class Ranging {
         } else {
             result = standardPrediction.printDebug(STANDARD_LOC);
         }
-        return result;
+        return result + rpPrediction.printDebug(RP_LOC);
     }
 
     public String getPredictionPosition(boolean smartphoneIsInPocket) {
@@ -91,6 +98,15 @@ public class Ranging {
         if (SdkPreferencesHelper.getInstance().getComSimulationEnabled() && smartphoneIsInPocket) { // if smartphone com activated and near ear
             if (lastModelUsed.equals(STANDARD_LOC)) {
                 comValid = true;
+                mHandlerComValidTimeOut.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        comValid = false;
+                        lastModelUsed = EAR_HELD_LOC;
+                    }
+                }, 2000);
+//                earPrediction.clearPredictions();
+                return BleRangingHelper.PREDICTION_UNKNOWN;
             }
             lastModelUsed = EAR_HELD_LOC;
             return earPrediction.getPrediction();
@@ -100,5 +116,7 @@ public class Ranging {
         }
     }
 
-
+    public String getPredictionRP() {
+        return rpPrediction.getPrediction();
+    }
 }
