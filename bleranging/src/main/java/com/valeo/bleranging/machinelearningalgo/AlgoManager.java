@@ -154,7 +154,12 @@ public class AlgoManager implements SensorEventListener {
                     }
                 }
                 if (lastThatchamChanged && getPredictionPosition().equalsIgnoreCase(PREDICTION_LOCK)) { // when thatcham has changed, and get into lock area
-                    rearmUnlock.set(true);
+                    mMainHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            rearmUnlock.set(true);
+                        }
+                    }, (long) SdkPreferencesHelper.getInstance().getUnlockTimeout());
                     lastThatchamChanged = false;
                     if (SdkPreferencesHelper.getInstance().getSecurityWALEnabled()) {
                         if (!mProtocolManager.isLockedFromTrx()) { // if the vehicle is unlocked, lock it

@@ -67,6 +67,7 @@
     <string name="outside_average_delta_unlock_threshold_pref_name">"com.inblue.PREFERENCE_OUTSIDE_AVERAGE_DELTA_UNLOCK_THRESHOLD"</string>
     <string name="unlock_valid_nb_pref_name">"com.inblue.PREFERENCE_UNLOCK_VALID_NB_ELEMENT"</string>
     <string name="back_timeout_pref_name">"com.inblue.PREFERENCE_BACK_TIMEOUT"</string>
+    <string name="unlock_timeout_pref_name">"com.inblue.PREFERENCE_UNLOCK_TIMEOUT"</string>
     <string name="thatcham_timeout_pref_name">"com.inblue.PREFERENCE_THATCHAM_TIMEOUT"</string>
     <string name="crypto_pre_auth_timeout_pref_name">"com.inblue.PREFERENCE_CRYPTO_PRE_AUTH_TIMEOUT"</string>
     <string name="crypto_action_timeout_pref_name">"com.inblue.PREFERENCE_CRYPTO_ACTION_TIMEOUT"</string>

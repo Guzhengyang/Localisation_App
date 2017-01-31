@@ -15,7 +15,8 @@ public final class SdkPreferencesHelper {
     public final static int OFFSET_SMARTPHONE = 5;
     public final static int OFFSET_HYSTERESIS_LOCK = 2;
     public final static int OFFSET_HYSTERESIS_UNLOCK = 3;
-    public final static float BACK_TIMEOUT = 3.0f;
+    //    public final static float BACK_TIMEOUT = 3.0f;
+    public final static float UNLOCK_TIMEOUT = 3.0f;
     public final static float THATCHAM_TIMEOUT = 3.0f;
     public final static float CRYPTO_PRE_AUTH_TIMEOUT = 1.3f;
     public final static float CRYPTO_ACTION_TIMEOUT = 0.02f;
@@ -108,13 +109,17 @@ public final class SdkPreferencesHelper {
         return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.offset_hysteresis_unlock_pref_name), OFFSET_HYSTERESIS_UNLOCK);
     }
 
+    public float getUnlockTimeout() {
+        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.unlock_timeout_pref_name), UNLOCK_TIMEOUT);
+    }
+
     public float getThatchamTimeout() {
         return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.thatcham_timeout_pref_name), THATCHAM_TIMEOUT);
     }
 
-    public float getBackTimeout() {
-        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.back_timeout_pref_name), BACK_TIMEOUT);
-    }
+//    public float getBackTimeout() {
+//        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.back_timeout_pref_name), BACK_TIMEOUT);
+//    }
 
     public float getCryptoPreAuthTimeout() {
         return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.crypto_pre_auth_timeout_pref_name), CRYPTO_PRE_AUTH_TIMEOUT);

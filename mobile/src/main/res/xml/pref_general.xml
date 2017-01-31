@@ -106,10 +106,14 @@
             android:title="@string/pref_offset_hysteresis_unlock" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_timeout">
+        <!--<EditTextPreference-->
+        <!--android:inputType="number|numberDecimal"-->
+        <!--android:key="@string/back_timeout_pref_name"-->
+        <!--android:title="@string/pref_back_timeout" />-->
         <EditTextPreference
             android:inputType="number|numberDecimal"
-            android:key="@string/back_timeout_pref_name"
-            android:title="@string/pref_back_timeout" />
+            android:key="@string/unlock_timeout_pref_name"
+            android:title="@string/pref_unlock_timeout" />
         <EditTextPreference
             android:inputType="number|numberDecimal"
             android:key="@string/thatcham_timeout_pref_name"

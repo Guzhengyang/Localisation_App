@@ -201,8 +201,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference offset_smartphone;
         private EditTextPreference offset_hysteresis_lock;
         private EditTextPreference offset_hysteresis_unlock;
-        private EditTextPreference back_timeout;
+        //        private EditTextPreference back_timeout;
         private EditTextPreference thatcham_timeout;
+        private EditTextPreference unlock_timeout;
         private EditTextPreference crypto_pre_auth_timeout;
         private EditTextPreference crypto_action_timeout;
         private EditTextPreference rssi_log_number;
@@ -403,8 +404,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             offset_smartphone = ((EditTextPreference) findPreference(getString(R.string.offset_smartphone_pref_name)));
             offset_hysteresis_lock = ((EditTextPreference) findPreference(getString(R.string.offset_hysteresis_lock_pref_name)));
             offset_hysteresis_unlock = ((EditTextPreference) findPreference(getString(R.string.offset_hysteresis_unlock_pref_name)));
-            back_timeout = ((EditTextPreference) findPreference(getString(R.string.back_timeout_pref_name)));
+//            back_timeout = ((EditTextPreference) findPreference(getString(R.string.back_timeout_pref_name)));
             thatcham_timeout = ((EditTextPreference) findPreference(getString(R.string.thatcham_timeout_pref_name)));
+            unlock_timeout = ((EditTextPreference) findPreference(getString(R.string.unlock_timeout_pref_name)));
             crypto_pre_auth_timeout = ((EditTextPreference) findPreference(getString(R.string.crypto_pre_auth_timeout_pref_name)));
             crypto_action_timeout = ((EditTextPreference) findPreference(getString(R.string.crypto_action_timeout_pref_name)));
             rssi_log_number = ((EditTextPreference) findPreference(getString(R.string.rssi_log_number_pref_name)));
@@ -435,8 +437,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             offset_smartphone.setText(offset_smartphone.getSummary().toString());
             offset_hysteresis_lock.setText(offset_hysteresis_lock.getSummary().toString());
             offset_hysteresis_unlock.setText(offset_hysteresis_unlock.getSummary().toString());
-            back_timeout.setText(back_timeout.getSummary().toString());
+//            back_timeout.setText(back_timeout.getSummary().toString());
             thatcham_timeout.setText(thatcham_timeout.getSummary().toString());
+            unlock_timeout.setText(unlock_timeout.getSummary().toString());
             crypto_pre_auth_timeout.setText(crypto_pre_auth_timeout.getSummary().toString());
             crypto_action_timeout.setText(crypto_action_timeout.getSummary().toString());
             rssi_log_number.setText(rssi_log_number.getSummary().toString());
@@ -470,8 +473,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(offset_smartphone, String.valueOf(SdkPreferencesHelper.OFFSET_SMARTPHONE));
             bindPreferenceSummaryToValue(offset_hysteresis_lock, String.valueOf(SdkPreferencesHelper.OFFSET_HYSTERESIS_LOCK));
             bindPreferenceSummaryToValue(offset_hysteresis_unlock, String.valueOf(SdkPreferencesHelper.OFFSET_HYSTERESIS_UNLOCK));
-            bindPreferenceSummaryToValue(back_timeout, String.valueOf(SdkPreferencesHelper.BACK_TIMEOUT));
+//            bindPreferenceSummaryToValue(back_timeout, String.valueOf(SdkPreferencesHelper.BACK_TIMEOUT));
             bindPreferenceSummaryToValue(thatcham_timeout, String.valueOf(SdkPreferencesHelper.THATCHAM_TIMEOUT));
+            bindPreferenceSummaryToValue(unlock_timeout, String.valueOf(SdkPreferencesHelper.UNLOCK_TIMEOUT));
             bindPreferenceSummaryToValue(crypto_pre_auth_timeout, String.valueOf(SdkPreferencesHelper.CRYPTO_PRE_AUTH_TIMEOUT));
             bindPreferenceSummaryToValue(crypto_action_timeout, String.valueOf(SdkPreferencesHelper.CRYPTO_ACTION_TIMEOUT));
             bindPreferenceSummaryToValue(rssi_log_number, String.valueOf(SdkPreferencesHelper.RSSI_LOG_NUMBER));
