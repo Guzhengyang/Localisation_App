@@ -30,7 +30,7 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 public class Prediction {
     private static final double f = 2.45 * Math.pow(10, 9);
     private static final double c = 3 * Math.pow(10, 8);
-    private static final double P = -30;
+    private static final double P = -25;
     private static final double THRESHOLD_RSSI_AWAY = 1;
     private static final double THRESHOLD_PROB_NO_PSU = 0.6;
     private static final double THRESHOLD_PROB_UIR = 0.9;

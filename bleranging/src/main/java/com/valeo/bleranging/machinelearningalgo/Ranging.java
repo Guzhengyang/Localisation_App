@@ -37,14 +37,17 @@ public class Ranging {
 //        simplePrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
 //        simplePrediction.predict(N_VOTE_SIMPLE);
         if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(AlgoManager.THATCHAM_ORIENTED)) {
-            // todo add action if thatcham oriented
+            standardPrediction = new Prediction(context, R.raw.classes_standard_thatcham,
+                    R.raw.rf_standard_thatcham, R.raw.sample_standard_thatcham);
         } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(AlgoManager.PASSIVE_ENTRY_ORIENTED)) {
-            // todo add action if entry oriented
+            standardPrediction = new Prediction(context, R.raw.classes_standard_entry,
+                    R.raw.rf_standard_entry, R.raw.sample_standard_entry);
         }
-        this.standardPrediction = new Prediction(context, R.raw.classes_standard,
-                R.raw.rf_standard, R.raw.sample_standard);
-        standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-        standardPrediction.predict(N_VOTE_STANDARD);
+
+//        this.standardPrediction = new Prediction(context, R.raw.classes_standard,
+//                R.raw.rf_standard, R.raw.sample_standard);
+//        standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+//        standardPrediction.predict(N_VOTE_STANDARD);
 
 //        this.earPrediction = new Prediction(context, R.raw.classes_ear,
 //                R.raw.rf_ear, R.raw.sample_ear);
