@@ -43,6 +43,8 @@ import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
  * Created by l-avaratha on 25/11/2016
  */
 public class AlgoManager implements SensorEventListener {
+    public final static String THATCHAM_ORIENTED = "thatcham_oriented";
+    public final static String PASSIVE_ENTRY_ORIENTED = "passive_entry_oriented";
     private final static int LOCK_STATUS_CHANGED_TIMEOUT = 5000;
     private final InblueProtocolManager mProtocolManager;
     private final BleRangingListener bleRangingListener;

@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
@@ -194,6 +195,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private static final int PICK_IMPORT_GENERAL_FILE_RESULT_CODE = 92164;
         private ListPreference connected_car_type;
         private ListPreference connected_car_base;
+        private ListPreference opening_orientation_type;
         private CheckBoxPreference com_simulation_enabled;
         private CheckBoxPreference security_wal_enabled;
         private EditTextPreference offset_smartphone;
@@ -395,6 +397,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void setViews() {
             connected_car_type = ((ListPreference) findPreference(getString(R.string.connected_car_type_pref_name)));
             connected_car_base = ((ListPreference) findPreference(getString(R.string.connected_car_base_pref_name)));
+            opening_orientation_type = ((ListPreference) findPreference(getString(R.string.opening_orientation_type_pref_name)));
             com_simulation_enabled = ((CheckBoxPreference) findPreference(getString(R.string.com_simulation_enabled_pref_name)));
             security_wal_enabled = ((CheckBoxPreference) findPreference(getString(R.string.security_wal_enabled_pref_name)));
             offset_smartphone = ((EditTextPreference) findPreference(getString(R.string.offset_smartphone_pref_name)));
@@ -461,6 +464,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void bindSummaries() {
             bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_A);
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
+            bindPreferenceSummaryToValue(opening_orientation_type, AlgoManager.THATCHAM_ORIENTED);
             com_simulation_enabled.setSummary(R.string.pref_com_simulation_enabled);
             security_wal_enabled.setSummary(R.string.pref_security_wal_enabled);
             bindPreferenceSummaryToValue(offset_smartphone, String.valueOf(SdkPreferencesHelper.OFFSET_SMARTPHONE));

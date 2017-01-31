@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.valeo.bleranging.R;
+import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 
 /**
@@ -81,6 +82,10 @@ public final class SdkPreferencesHelper {
 
     public String getConnectedCarBase() {
         return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_base_pref_name), ConnectedCarFactory.BASE_3);
+    }
+
+    public String getOpeningOrientation() {
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.opening_orientation_type_pref_name), AlgoManager.THATCHAM_ORIENTED);
     }
 
     public Boolean getComSimulationEnabled() {

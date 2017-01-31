@@ -21,11 +21,19 @@
         <item>car_7</item>
         <item>car_8</item>
     </string-array>
+    <string-array name="opening_orientation_list_preference">
+        <item>Thatcham oriented</item>
+        <item>Passive Entry oriented</item>
+    </string-array>
     <string-array name="base_list_preference">
         <item>Lock: PSU &amp; Unlock: PSU</item>
         <item>Lock: WAL &amp; Unlock: PSU</item>
         <item>Lock: WAL &amp; Unlock: UIR</item>
         <item>Lock: PSU &amp; Unlock: UIR</item>
+    </string-array>
+    <string-array name="opening_orientation_entryvalues_list_preference">
+        <item>thatcham_oriented</item>
+        <item>passive_entry_oriented</item>
     </string-array>
     <string-array name="base_entryvalues_list_preference">
         <item>Base_1</item>

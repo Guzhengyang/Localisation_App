@@ -16,6 +16,12 @@
             android:entryValues="@array/base_entryvalues_list_preference"
             android:key="@string/connected_car_base_pref_name"
             android:title="@string/pref_car_base_title" />
+        <ListPreference
+            android:dialogTitle="@string/opening_orientation_title_list_preference"
+            android:entries="@array/opening_orientation_list_preference"
+            android:entryValues="@array/opening_orientation_entryvalues_list_preference"
+            android:key="@string/opening_orientation_type_pref_name"
+            android:title="@string/pref_opening_orientation_title" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/com_simulation_enabled_pref_name"
