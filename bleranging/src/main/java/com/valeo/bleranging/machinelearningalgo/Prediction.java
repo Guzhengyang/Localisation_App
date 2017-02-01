@@ -30,7 +30,7 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 public class Prediction {
     private static final double f = 2.45 * Math.pow(10, 9);
     private static final double c = 3 * Math.pow(10, 8);
-    private static final double P = -25;
+    private static final double P = -30;
     private static final double THRESHOLD_RSSI_AWAY = 1;
     private static final double THRESHOLD_PROB_NO_PSU = 0.6;
     private static final double THRESHOLD_PROB_UIR = 0.9;
@@ -98,12 +98,6 @@ public class Prediction {
         sample.setValue(index, distance[index]);
     }
 
-    public void clearPredictions() {
-        for (int i = 0; i < predictions.size(); i++) {
-            predictions.remove(i);
-        }
-    }
-
 
     public void predict(int nVote) {
         int result = 0;
@@ -150,30 +144,38 @@ public class Prediction {
     }
 
 
-    public void calculatePredictionStandard(double threshold_prob) {
+    public void calculatePredictionStandard(double threshold_prob, String orientation) {
         if (prediction_old == -1) {
             prediction_old = most(predictions);
             return;
         }
         int temp_prediction = most(predictions);
 
-        if (classes[temp_prediction].equals(BleRangingHelper.PREDICTION_LEFT)
-                | classes[temp_prediction].equals(BleRangingHelper.PREDICTION_RIGHT)
-                | classes[temp_prediction].equals(BleRangingHelper.PREDICTION_BACK)) {
-            if (classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
-                if (distribution[temp_prediction] > THRESHOLD_PROB_UIR) {
+
+        if (orientation.equals(Ranging.THATCHAM_ORIENTED)) {
+            if (classes[temp_prediction].equals(BleRangingHelper.PREDICTION_LEFT)
+                    | classes[temp_prediction].equals(BleRangingHelper.PREDICTION_RIGHT)
+                    | classes[temp_prediction].equals(BleRangingHelper.PREDICTION_BACK)) {
+                if (classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
+                    if (distribution[temp_prediction] > THRESHOLD_PROB_UIR) {
+                        prediction_old = temp_prediction;
+                        return;
+                    }
+                } else if (classes[prediction_old].equals(BleRangingHelper.PREDICTION_TRUNK)) {
                     prediction_old = temp_prediction;
                     return;
                 }
-            } else if (classes[prediction_old].equals(BleRangingHelper.PREDICTION_TRUNK)) {
+            }
+            if (distribution[temp_prediction] > threshold_prob) {
                 prediction_old = temp_prediction;
                 return;
             }
-        }
 
-        if (distribution[temp_prediction] > threshold_prob) {
-            prediction_old = temp_prediction;
-            return;
+        } else if (orientation.equals(Ranging.ENTRY_ORIENTED)) {
+            if (distribution[temp_prediction] > threshold_prob) {
+                prediction_old = temp_prediction;
+                return;
+            }
         }
     }
 
