@@ -415,7 +415,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             wanted_speed = ((EditTextPreference) findPreference(getString(R.string.wanted_speed_pref_name)));
             one_step_size = ((EditTextPreference) findPreference(getString(R.string.one_step_size_pref_name)));
             address_connectable = ((EditTextPreference) findPreference(getString(R.string.address_connectable_pref_name)));
-            address_connectable_pc = ((EditTextPreference) findPreference(getString(R.string.address_connectable_pref_name)));
+            address_connectable_pc = ((EditTextPreference) findPreference(getString(R.string.address_connectable_pc_pref_name)));
             address_connectable_remote_control = ((EditTextPreference) findPreference(getString(R.string.address_connectable_remote_control_pref_name)));
             address_front_left = ((EditTextPreference) findPreference(getString(R.string.address_front_left_pref_name)));
             address_front_right = ((EditTextPreference) findPreference(getString(R.string.address_front_right_pref_name)));
