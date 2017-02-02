@@ -447,7 +447,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             wanted_speed.setText(wanted_speed.getSummary().toString());
             one_step_size.setText(one_step_size.getSummary().toString());
             address_connectable.setText(address_connectable.getSummary().toString());
-            address_connectable_pc.setText(address_connectable_pc.getSummary().toString());
+            if (address_connectable_pc != null && address_connectable_pc.getSummary() != null) {
+                address_connectable_pc.setText(address_connectable_pc.getSummary().toString());
+            }
             address_connectable_remote_control.setText(address_connectable_remote_control.getSummary().toString());
             address_front_left.setText(address_front_left.getSummary().toString());
             address_front_right.setText(address_front_right.getSummary().toString());
