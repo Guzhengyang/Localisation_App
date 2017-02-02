@@ -113,17 +113,26 @@ public class InblueProtocolManager {
     private byte getPayloadThirdByte() {
         byte payloadThree = (byte) 0;
         switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
+            case ConnectedCarFactory.TYPE_2_A:
+                payloadThree |= 0x07;
+                break;
+            case ConnectedCarFactory.TYPE_2_B:
+                payloadThree |= 0x06;
+                break;
+            case ConnectedCarFactory.TYPE_3_A:
+                payloadThree |= 0x05;
+                break;
             case ConnectedCarFactory.TYPE_4_A:
-                payloadThree |= 0x01;
+                payloadThree |= 0x04;
                 break;
             case ConnectedCarFactory.TYPE_5_A:
-                payloadThree |= 0x02;
-                break;
-            case ConnectedCarFactory.TYPE_7_A:
                 payloadThree |= 0x03;
                 break;
+            case ConnectedCarFactory.TYPE_7_A:
+                payloadThree |= 0x02;
+                break;
             case ConnectedCarFactory.TYPE_8_A:
-                payloadThree |= 0x04;
+                payloadThree |= 0x01;
                 break;
             default:
                 payloadThree |= 0x00;
