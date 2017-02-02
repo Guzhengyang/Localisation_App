@@ -318,12 +318,17 @@ public abstract class ConnectedCar {
             rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
             rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
             rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
-            rssi[4] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT);
-            rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
-            rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
-            rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
         }
 
+//        rssi = new double[4];
+//        rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
+//        rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
+//        rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
+//        rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
+//        rssi[4] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT);
+//        rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
+//        rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
+//        rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
         for (Double elem : rssi) {
             if (elem == 0) {
                 return null;

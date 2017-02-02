@@ -179,6 +179,33 @@ public class Prediction {
         }
     }
 
+    public void calculatePredictionStandard(double threshold_prob) {
+        if (prediction_old == -1) {
+            prediction_old = most(predictions);
+            return;
+        }
+        int temp_prediction = most(predictions);
+
+        if (classes[temp_prediction].equals(BleRangingHelper.PREDICTION_LEFT)
+                | classes[temp_prediction].equals(BleRangingHelper.PREDICTION_RIGHT)
+                | classes[temp_prediction].equals(BleRangingHelper.PREDICTION_BACK)) {
+            if (classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
+                if (distribution[temp_prediction] > THRESHOLD_PROB_UIR) {
+                    prediction_old = temp_prediction;
+                    return;
+                }
+            } else if (classes[prediction_old].equals(BleRangingHelper.PREDICTION_TRUNK)) {
+                prediction_old = temp_prediction;
+                return;
+            }
+        }
+        if (distribution[temp_prediction] > threshold_prob) {
+            prediction_old = temp_prediction;
+            return;
+        }
+
+    }
+
     public void calculatePredictionRP(double threshold_prob) {
         if (prediction_old == -1) {
             prediction_old = most(predictions);
@@ -192,9 +219,7 @@ public class Prediction {
         if (distribution[temp_prediction] > threshold_prob) {
             prediction_old = temp_prediction;
         }
-
     }
-
 
     public void calculatePredictionSimple() {
         if (prediction_old == -1) {

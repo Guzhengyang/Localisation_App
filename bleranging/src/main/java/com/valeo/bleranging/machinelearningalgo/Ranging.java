@@ -16,7 +16,7 @@ public class Ranging {
     private static final int N_VOTE_SIMPLE = 5;
     private static final double THRESHOLD_DIST_AWAY_SIMPLE = 0.07;
     private static final String SIMPLE_LOC = "Simple Localisation:";
-    private static final double THRESHOLD_PROB_STANDARD = 0.7;
+    private static final double THRESHOLD_PROB_STANDARD = 0.8;
     private static final int N_VOTE_STANDARD = 3;
     private static final double THRESHOLD_DIST_AWAY_STANDARD = 0.10;
     private static final String STANDARD_LOC = "Standard Localisation:";
@@ -38,6 +38,7 @@ public class Ranging {
 //                R.raw.rf_simple, R.raw.sample_simple);
 //        simplePrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
 //        simplePrediction.predict(N_VOTE_SIMPLE);
+
         if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(AlgoManager.THATCHAM_ORIENTED)) {
             standardPrediction = new Prediction(context, R.raw.classes_standard_thatcham,
                     R.raw.rf_standard_thatcham, R.raw.sample_standard_thatcham);
@@ -84,6 +85,7 @@ public class Ranging {
             standardPrediction.calculatePredictionStandard(THRESHOLD_PROB_STANDARD, ENTRY_ORIENTED);
         }
 
+//        standardPrediction.calculatePredictionStandard(THRESHOLD_PROB_STANDARD);
 //        simplePrediction.calculatePredictionSimple();
 //        earPrediction.calculatePredictionEar(THRESHOLD_PROB_EAR);
         rpPrediction.calculatePredictionRP(THRESHOLD_PROB_STANDARD);
