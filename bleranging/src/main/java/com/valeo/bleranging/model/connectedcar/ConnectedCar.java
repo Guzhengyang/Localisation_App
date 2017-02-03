@@ -68,6 +68,7 @@ public abstract class ConnectedCar {
 
     /**
      * Initialize trx and antenna and their rssi historic with default value periph and central
+     *
      * @param newLockStatus the lock status that determines which values to set
      */
     public void initializeTrx(boolean newLockStatus) {
@@ -80,8 +81,9 @@ public abstract class ConnectedCar {
 
     /**
      * Save the current ble channel
-     * @param trxNumber                the trx that sent the signal
-     * @param bleChannel               the ble channel used to sent
+     *
+     * @param trxNumber  the trx that sent the signal
+     * @param bleChannel the ble channel used to sent
      */
     public void saveBleChannel(int trxNumber, Antenna.BLEChannel bleChannel) {
         if (trxLinkedHMap.get(trxNumber) != null) {
@@ -91,8 +93,9 @@ public abstract class ConnectedCar {
 
     /**
      * Save an incoming rssi
-     * @param trxNumber                the trx that sent the signal
-     * @param rssi                     the rssi value to save
+     *
+     * @param trxNumber the trx that sent the signal
+     * @param rssi      the rssi value to save
      */
     public void saveRssi(int trxNumber, int rssi) {
         if (trxLinkedHMap.get(trxNumber) != null) {
@@ -151,6 +154,7 @@ public abstract class ConnectedCar {
 
     /**
      * Calculate all the trx average
+     *
      * @return the average of all active trx or 0 if there is none
      */
     public int getAllTrxAverage() {
@@ -177,6 +181,7 @@ public abstract class ConnectedCar {
 
     /**
      * Condition to enable welcome action
+     *
      * @param totalAverage  the total average of all antenna rssi
      * @param newlockStatus the lock status
      * @return true if the strategy is verified, false otherwise
@@ -185,10 +190,11 @@ public abstract class ConnectedCar {
 
     /**
      * Create a string of header debug
+     *
      * @param spannableStringBuilder the spannable string builder to fill
-     * @param bytesToSend              the bytes to send
-     * @param bytesReceived            the bytes received
-     * @param isFullyConnected         the boolean that determine if the smartphone is connected or not
+     * @param bytesToSend            the bytes to send
+     * @param bytesReceived          the bytes received
+     * @param isFullyConnected       the boolean that determine if the smartphone is connected or not
      * @return the spannable string builder filled with the header
      */
     public SpannableStringBuilder createHeaderDebugData(

@@ -869,7 +869,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 start_area.setColor(Color.CYAN);
                 break;
             case PREDICTION_TRUNK:
-                trunk_area.setColor(Color.MAGENTA);
+                if (trunk_area != null) {
+                    trunk_area.setColor(Color.MAGENTA);
+                }
                 break;
             case PREDICTION_THATCHAM:
                 thatcham_area.setColor(Color.YELLOW);
@@ -882,7 +884,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 break;
             case PREDICTION_INSIDE:
                 start_area.setColor(Color.CYAN);
-                trunk_area.setColor(Color.CYAN);
+                if (trunk_area != null) {
+                    trunk_area.setColor(Color.CYAN);
+                }
                 break;
             case PREDICTION_OUTSIDE:
                 lock_area.setColor(Color.RED);
@@ -921,7 +925,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 start_area.setColor(Color.BLACK);
                 break;
             case PREDICTION_TRUNK:
-                trunk_area.setColor(Color.BLACK);
+                if (trunk_area != null) {
+                    trunk_area.setColor(Color.BLACK);
+                }
                 break;
             case PREDICTION_THATCHAM:
                 thatcham_area.setColor(Color.BLACK);
