@@ -32,9 +32,6 @@ public class Prediction {
     private static final double c = 3 * Math.pow(10, 8);
     private static final double P = -30;
     private static final double THRESHOLD_RSSI_AWAY = 1;
-    private static final double THRESHOLD_PROB_NO_PSU = 0.6;
-    private static final double THRESHOLD_PROB_UIR = 0.9;
-    private static final double THRESHOLD_PROB_START = 0.8;
     private List<Integer> predictions = new ArrayList<>();
     private double[] distribution;
     private double[] distance;
@@ -78,16 +75,6 @@ public class Prediction {
                 rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
             }
 
-            // Add hysteresis to all left sided trx
-            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT)
-                    && (index == 0 | index == 4 | index == 6)) {
-                rssiModified[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
-            }
-            // Add hysteresis to all right sided trx
-            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)
-                    && (index == 2 | index == 5 | index == 7)) {
-                rssiModified[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
-            }
         }
         double dist_new = rssi2dist(rssiModified[index]);
         if (comValid) {
@@ -95,6 +82,21 @@ public class Prediction {
         } else {
             distance[index] = correctDistUnilateral(distance[index], dist_new, threshold);
         }
+        sample.setValue(index, distance[index]);
+    }
+
+    public void setRssi(int index, double rssi, int offset, double threshold) {
+        this.rssiModified[index] = rssi - offset;
+        if (prediction_old != -1) {
+            // trx order : l, m, r, t, fl, fr, rl, rr
+            // Add hysteresis to all the trx
+            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
+                rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
+            }
+
+        }
+        double dist_new = rssi2dist(rssiModified[index]);
+        distance[index] = correctDistUnilateral(distance[index], dist_new, threshold);
         sample.setValue(index, distance[index]);
     }
 
@@ -144,7 +146,7 @@ public class Prediction {
     }
 
 
-    public void calculatePredictionStandard(double threshold_prob, String orientation) {
+    public void calculatePredictionStandard(double threshold_prob, double threshold_prob_unlock, String orientation) {
         if (prediction_old == -1) {
             prediction_old = most(predictions);
             return;
@@ -157,7 +159,7 @@ public class Prediction {
                     | classes[temp_prediction].equals(BleRangingHelper.PREDICTION_RIGHT)
                     | classes[temp_prediction].equals(BleRangingHelper.PREDICTION_BACK)) {
                 if (classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
-                    if (distribution[temp_prediction] > THRESHOLD_PROB_UIR) {
+                    if (distribution[temp_prediction] > threshold_prob_unlock) {
                         prediction_old = temp_prediction;
                         return;
                     }
@@ -179,7 +181,7 @@ public class Prediction {
         }
     }
 
-    public void calculatePredictionStandard(double threshold_prob) {
+    public void calculatePredictionStandard(double threshold_prob, double threshold_prob_unlock) {
         if (prediction_old == -1) {
             prediction_old = most(predictions);
             return;
@@ -190,7 +192,7 @@ public class Prediction {
                 | classes[temp_prediction].equals(BleRangingHelper.PREDICTION_RIGHT)
                 | classes[temp_prediction].equals(BleRangingHelper.PREDICTION_BACK)) {
             if (classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
-                if (distribution[temp_prediction] > THRESHOLD_PROB_UIR) {
+                if (distribution[temp_prediction] > threshold_prob_unlock) {
                     prediction_old = temp_prediction;
                     return;
                 }
@@ -221,21 +223,21 @@ public class Prediction {
         }
     }
 
-    public void calculatePredictionSimple() {
+    public void calculatePredictionSimple(double threshold_prob, double threshold_prob_unlock, double threshold_prob_lock) {
         if (prediction_old == -1) {
             prediction_old = most(predictions);
             return;
         }
         int temp_prediction = most(predictions);
         if (classes[temp_prediction].equals(PREDICTION_LOCK) &&
-                distribution[temp_prediction] > THRESHOLD_PROB_NO_PSU) {
+                distribution[temp_prediction] > threshold_prob_lock) {
             prediction_old = temp_prediction;
         } else if ((classes[temp_prediction].equals(PREDICTION_LEFT) ||
                 (classes[temp_prediction].equals(PREDICTION_RIGHT))) &&
-                distribution[temp_prediction] > THRESHOLD_PROB_UIR) {
+                distribution[temp_prediction] > threshold_prob_unlock) {
             prediction_old = temp_prediction;
         } else if (classes[temp_prediction].equals(PREDICTION_START) &&
-                distribution[temp_prediction] > THRESHOLD_PROB_START) {
+                distribution[temp_prediction] > threshold_prob) {
             prediction_old = temp_prediction;
         }
     }
@@ -256,6 +258,22 @@ public class Prediction {
         }
     }
 
+    public void calculatePredictionStart(double threshold_prob) {
+        if (prediction_old == -1) {
+            prediction_old = most(predictions);
+            return;
+        }
+        int temp_prediction = most(predictions);
+
+        if (classes[temp_prediction].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
+            prediction_old = temp_prediction;
+            return;
+        }
+
+        if (distribution[temp_prediction] > threshold_prob) {
+            prediction_old = temp_prediction;
+        }
+    }
 
     public String getPrediction() {
         if (prediction_old != -1) {

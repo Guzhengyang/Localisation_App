@@ -63,6 +63,8 @@ public class BleRangingHelper {
     public static final String PREDICTION_THATCHAM = "thatcham";
     public static final String PREDICTION_NEAR = "near";
     public static final String PREDICTION_FAR = "far";
+    public static final String PREDICTION_INSIDE = "inside";
+    public static final String PREDICTION_OUTSIDE = "outside";
     public static final String PREDICTION_UNKNOWN = "unknown";
     public final static int RKE_USE_TIMEOUT = 5000;
     public final static int REQUEST_PERMISSION_ALL = 25110;
@@ -76,6 +78,8 @@ public class BleRangingHelper {
             PREDICTION_FRONT,
             PREDICTION_OUTDOOR,
             PREDICTION_INDOOR,
+            PREDICTION_INSIDE,
+            PREDICTION_OUTSIDE,
             PREDICTION_WELCOME,
             PREDICTION_THATCHAM,
             PREDICTION_NEAR,
@@ -170,7 +174,7 @@ public class BleRangingHelper {
             spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder,
                     bytesToSend, bytesReceived, mBluetoothManager.isFullyConnected());
             lock.readLock().unlock();
-//            spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
+            spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
 
             spannableStringBuilder = mAlgoManager.createDebugData(spannableStringBuilder);
 

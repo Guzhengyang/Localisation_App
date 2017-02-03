@@ -82,9 +82,11 @@ import java.util.Locale;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FAR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INSIDE;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_NEAR;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_THATCHAM;
@@ -877,6 +879,19 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 break;
             case PREDICTION_FAR:
                 remote_parking_area.setColor(Color.RED);
+                break;
+            case PREDICTION_INSIDE:
+                start_area.setColor(Color.CYAN);
+                trunk_area.setColor(Color.CYAN);
+                break;
+            case PREDICTION_OUTSIDE:
+                lock_area.setColor(Color.RED);
+                remote_parking_area.setColor(Color.RED);
+                thatcham_area.setColor(Color.RED);
+                unlock_area_left.setColor(Color.RED);
+                unlock_area_back.setColor(Color.RED);
+                unlock_area_right.setColor(Color.RED);
+                unlock_area_front.setColor(Color.RED);
                 break;
         }
     }

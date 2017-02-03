@@ -1,7 +1,6 @@
 package com.valeo.bleranging.model.connectedcar;
 
 import android.content.Context;
-import android.text.SpannableStringBuilder;
 
 import com.valeo.bleranging.model.Trx;
 
@@ -9,8 +8,7 @@ import com.valeo.bleranging.model.Trx;
  * Created by l-avaratha on 07/09/2016
  */
 public class CCThreeLMR extends ConnectedCar {
-    private static final String SPACE_ONE = "        ";
-    private static final String SPACE_TWO = "        ";
+
 
     public CCThreeLMR(Context mContext) {
         super(mContext, ConnectionNumber.THREE_CONNECTION);
@@ -39,9 +37,5 @@ public class CCThreeLMR extends ConnectedCar {
         return (totalAverage >= -100) && newLockStatus;
     }
 
-    @Override
-    public SpannableStringBuilder createFirstFooterDebugData(SpannableStringBuilder spannableStringBuilder) {
-        return createFirstFooterDebugData(spannableStringBuilder, SPACE_ONE, SPACE_TWO);
-    }
 
 }

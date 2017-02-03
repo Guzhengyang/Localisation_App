@@ -28,9 +28,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INSIDE;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_NEAR;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_THATCHAM;
@@ -266,6 +268,14 @@ public class AlgoManager implements SensorEventListener {
         ranging.calculatePrediction();
         //TODO Replace SdkPreferencesHelper.getInstance().getComSimulationEnabled() by CallReceiver.smartphoneComIsActivated after demo
         switch (getPredictionPosition()) {
+            case PREDICTION_INSIDE:
+                isInStartArea = true;
+                if (!mProtocolManager.isStartRequested()) {
+                    mProtocolManager.setIsStartRequested(true);
+                }
+                break;
+            case PREDICTION_OUTSIDE:
+                break;
             case PREDICTION_LOCK:
                 isInLockArea = true;
                 if (areLockActionsAvailable.get() && rearmLock.get() && SdkPreferencesHelper.getInstance().getSecurityWALEnabled()) {

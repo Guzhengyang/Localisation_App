@@ -215,48 +215,25 @@ public abstract class ConnectedCar {
      * @param spannableStringBuilder the spannable string builder to fill
      * @return the spannable string builder filled with the first footer
      */
-    public abstract SpannableStringBuilder createFirstFooterDebugData(SpannableStringBuilder spannableStringBuilder);
-
-    /**
-     * Create a string of footer debug
-     *
-     * @param spannableStringBuilder the spannable string builder to fill
-     * @return the spannable string builder filled with the first footer
-     */
-    SpannableStringBuilder createFirstFooterDebugData(SpannableStringBuilder spannableStringBuilder, String space1, String space2) {
+    public SpannableStringBuilder createFirstFooterDebugData(SpannableStringBuilder spannableStringBuilder) {
         for (Trx trx : trxLinkedHMap.values()) {
-            spannableStringBuilder
-                    .append(space1)
-                    .append(TextUtils.colorText(isActive(trx.getTrxNumber()), trx.getTrxName(), Color.WHITE, Color.DKGRAY))
-                    .append(space1);
+            spannableStringBuilder.append(String.format(Locale.FRANCE, "%8s",
+                    TextUtils.colorText(isActive(trx.getTrxNumber()), trx.getTrxName(), Color.WHITE, Color.DKGRAY)));
+
         }
         spannableStringBuilder.append("\n");
 
         for (Trx trx : trxLinkedHMap.values()) {
-            spannableStringBuilder
-                    .append(space2)
-                    .append(String.format(Locale.FRANCE, "%1$03d",
-                            getCurrentOriginalRssi(trx.getTrxNumber())))
-                    .append(space2);
+            spannableStringBuilder.append(String.format(Locale.FRANCE, "%11d",
+                    getCurrentOriginalRssi(trx.getTrxNumber())));
         }
         spannableStringBuilder.append('\n');
 
         for (Trx trx : trxLinkedHMap.values()) {
-            spannableStringBuilder
-                    .append(space2)
-                    .append(String.format(Locale.FRANCE, "%1$03d",
-                            getCurrentModifiedRssi(trx.getTrxNumber())))
-                    .append(space2);
+            spannableStringBuilder.append(String.format(Locale.FRANCE, "%11s",
+                    getCurrentBLEChannelString(trx.getTrxNumber())));
         }
-        spannableStringBuilder.append('\n');
 
-        for (Trx trx : trxLinkedHMap.values()) {
-            spannableStringBuilder
-                    .append(space2)
-                    .append(String.format(Locale.FRANCE, "%1$s",
-                            getCurrentBLEChannelString(trx.getTrxNumber())))
-                    .append(space2);
-        }
         spannableStringBuilder.append('\n');
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
         return spannableStringBuilder;
@@ -312,23 +289,28 @@ public abstract class ConnectedCar {
             rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
             rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
             rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
+        } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_3_A)) {
+            rssi = new double[3];
+            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
+            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
+            rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
+
+        } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_2_A)) {
+            rssi = new double[2];
+            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
+            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
+        } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_2_B)) {
+            rssi = new double[2];
+            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
+            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
         } else {
-            rssi = new double[8];
+            rssi = new double[4];
             rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
             rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
             rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
             rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
         }
 
-//        rssi = new double[4];
-//        rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
-//        rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
-//        rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
-//        rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
-//        rssi[4] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT);
-//        rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
-//        rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
-//        rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
         for (Double elem : rssi) {
             if (elem == 0) {
                 return null;
