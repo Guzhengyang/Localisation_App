@@ -21,6 +21,7 @@ public class Ranging {
     private static final String EAR_HELD_LOC = "Ear held Localisation:";
     private static final String RP_LOC = "RP Localisation:";
     private static final String START_LOC = "Start Localisation:";
+    private static final String FULL_LOC = "Full Localisation:";
     private static final int N_VOTE_LONG = 5;
     private static final int N_VOTE_SHORT = 3;
 
@@ -38,6 +39,7 @@ public class Ranging {
     private Prediction earPrediction;
     private Prediction rpPrediction;
     private Prediction startPrediction;
+    private Prediction fullPrediction;
     private String lastModelUsed = STANDARD_LOC;
     private boolean comValid = false;
 
@@ -63,6 +65,12 @@ public class Ranging {
                     R.raw.rf_ear, R.raw.sample_ear);
             earPrediction.init(rssi, 0); //TODO create other offsets
             earPrediction.predict(N_VOTE_LONG);
+
+        } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_8_A)) {
+            this.fullPrediction = new Prediction(context, R.raw.classes_full,
+                    R.raw.rf_full, R.raw.sample_full);
+            fullPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            fullPrediction.predict(N_VOTE_SHORT);
 
         } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_3_A)) {
             this.simplePrediction = new Prediction(context, R.raw.classes_simple,
@@ -111,6 +119,12 @@ public class Ranging {
             earPrediction.predict(N_VOTE_LONG);
             rpPrediction.predict(N_VOTE_LONG);
 
+        } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_8_A)) {
+            for (int i = 0; i < rssi.length; i++) {
+                fullPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), THRESHOLD_DIST_AWAY_STANDARD);
+            }
+            fullPrediction.predict(N_VOTE_SHORT);
+
         } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_3_A)) {
             for (int i = 0; i < rssi.length; i++) {
                 simplePrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), THRESHOLD_DIST_AWAY_SLOW);
@@ -146,6 +160,9 @@ public class Ranging {
             earPrediction.calculatePredictionEar(THRESHOLD_PROB);
             rpPrediction.calculatePredictionRP(THRESHOLD_PROB);
 
+        } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_8_A)) {
+            fullPrediction.calculatePredictionFull(THRESHOLD_PROB);
+
         } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_3_A)) {
             simplePrediction.calculatePredictionSimple(THRESHOLD_PROB, THRESHOLD_PROB_UNLOCK, THRESHOLD_PROB_LOCK);
 
@@ -174,6 +191,9 @@ public class Ranging {
                 result = standardPrediction.printDebug(STANDARD_LOC);
             }
             result += rpPrediction.printDebug(RP_LOC);
+
+        } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_8_A)) {
+            result = fullPrediction.printDebug(FULL_LOC);
 
         } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_3_A)) {
 
@@ -213,6 +233,9 @@ public class Ranging {
                 lastModelUsed = STANDARD_LOC;
                 return standardPrediction.getPrediction();
             }
+
+        } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_8_A)) {
+            return fullPrediction.getPrediction();
 
         } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_3_A)) {
             return simplePrediction.getPrediction();

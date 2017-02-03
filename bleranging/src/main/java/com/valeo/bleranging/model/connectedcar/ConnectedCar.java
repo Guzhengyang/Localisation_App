@@ -223,20 +223,20 @@ public abstract class ConnectedCar {
      */
     public SpannableStringBuilder createFirstFooterDebugData(SpannableStringBuilder spannableStringBuilder) {
         for (Trx trx : trxLinkedHMap.values()) {
-            spannableStringBuilder.append(String.format(Locale.FRANCE, "%8s",
+            spannableStringBuilder.append(String.format(Locale.FRANCE, "%7s",
                     TextUtils.colorText(isActive(trx.getTrxNumber()), trx.getTrxName(), Color.WHITE, Color.DKGRAY)));
 
         }
         spannableStringBuilder.append("\n");
 
         for (Trx trx : trxLinkedHMap.values()) {
-            spannableStringBuilder.append(String.format(Locale.FRANCE, "%11d",
+            spannableStringBuilder.append(String.format(Locale.FRANCE, "%10d",
                     getCurrentOriginalRssi(trx.getTrxNumber())));
         }
         spannableStringBuilder.append('\n');
 
         for (Trx trx : trxLinkedHMap.values()) {
-            spannableStringBuilder.append(String.format(Locale.FRANCE, "%11s",
+            spannableStringBuilder.append(String.format(Locale.FRANCE, "%10s",
                     getCurrentBLEChannelString(trx.getTrxNumber())));
         }
 
@@ -305,10 +305,6 @@ public abstract class ConnectedCar {
             rssi = new double[2];
             rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
             rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
-        } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_2_B)) {
-            rssi = new double[2];
-            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
-            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
         } else {
             rssi = new double[4];
             rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);

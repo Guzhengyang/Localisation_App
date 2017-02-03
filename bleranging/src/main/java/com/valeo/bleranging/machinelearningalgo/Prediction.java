@@ -153,7 +153,6 @@ public class Prediction {
         }
         int temp_prediction = most(predictions);
 
-
         if (orientation.equals(Ranging.THATCHAM_ORIENTED)) {
             if (classes[temp_prediction].equals(BleRangingHelper.PREDICTION_LEFT)
                     | classes[temp_prediction].equals(BleRangingHelper.PREDICTION_RIGHT)
@@ -270,6 +269,17 @@ public class Prediction {
             return;
         }
 
+        if (distribution[temp_prediction] > threshold_prob) {
+            prediction_old = temp_prediction;
+        }
+    }
+
+    public void calculatePredictionFull(double threshold_prob) {
+        if (prediction_old == -1) {
+            prediction_old = most(predictions);
+            return;
+        }
+        int temp_prediction = most(predictions);
         if (distribution[temp_prediction] > threshold_prob) {
             prediction_old = temp_prediction;
         }
