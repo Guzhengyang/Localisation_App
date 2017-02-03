@@ -6,8 +6,10 @@ import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INSIDE;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
@@ -173,6 +175,12 @@ public class InblueProtocolManager {
                 break;
             case PREDICTION_FRONT:
                 payloadFour |= 0x09;
+                break;
+            case PREDICTION_INSIDE:
+                payloadFour |= 0x10;
+                break;
+            case PREDICTION_OUTSIDE:
+                payloadFour |= 0x11;
                 break;
             default:
                 break;
