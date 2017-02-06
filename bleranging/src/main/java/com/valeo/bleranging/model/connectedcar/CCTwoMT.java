@@ -2,6 +2,7 @@ package com.valeo.bleranging.model.connectedcar;
 
 import android.content.Context;
 
+import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.R;
 import com.valeo.bleranging.machinelearningalgo.Prediction;
 import com.valeo.bleranging.model.Trx;
@@ -11,7 +12,6 @@ import com.valeo.bleranging.persistence.SdkPreferencesHelper;
  * Created by l-avaratha on 07/09/2016
  */
 public class CCTwoMT extends ConnectedCar {
-
 
     public CCTwoMT(Context mContext) {
         super(mContext, ConnectionNumber.TWO_CONNECTION);
@@ -40,30 +40,49 @@ public class CCTwoMT extends ConnectedCar {
     }
 
     @Override
+    public boolean isInitialized() {
+        return standardPrediction != null;
+    }
+
+    @Override
     public double[] getRssiForRangingPrediction() {
-        return new double[0];
+        rssi = new double[2];
+        rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
+        rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
+        return checkForRssiNonNull(rssi);
     }
 
     @Override
     public void setRssi(double[] rssi) {
-        for (int i = 0; i < rssi.length; i++) {
-            standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone() + START_OFFSET, THRESHOLD_DIST_AWAY_SLOW);
+        if (isInitialized()) {
+            for (int i = 0; i < rssi.length; i++) {
+                standardPrediction.setRssi(i, rssi[i],
+                        SdkPreferencesHelper.getInstance().getOffsetSmartphone() + START_OFFSET, THRESHOLD_DIST_AWAY_SLOW);
+            }
+            standardPrediction.predict(N_VOTE_LONG);
         }
-        standardPrediction.predict(N_VOTE_LONG);
     }
 
     @Override
     public void calculatePrediction() {
-        standardPrediction.calculatePredictionStart(THRESHOLD_PROB);
+        if (isInitialized()) {
+            standardPrediction.calculatePredictionStart(THRESHOLD_PROB);
+        }
     }
 
     @Override
     public String printDebug(boolean smartphoneIsInPocket) {
-        return standardPrediction.printDebug(START_LOC);
+        if (isInitialized()) {
+            return standardPrediction.printDebug(START_LOC);
+        }
+        return "";
     }
 
     @Override
     public String getPredictionPosition(boolean smartphoneIsInPocket) {
-        return standardPrediction.getPrediction();
+        if (isInitialized()) {
+            return standardPrediction.getPrediction();
+        }
+        return BleRangingHelper.PREDICTION_UNKNOWN;
     }
 }

@@ -282,18 +282,54 @@ public abstract class ConnectedCar {
      */
     protected abstract void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral);
 
+    /**
+     * Initialize predictions
+     */
     public abstract void initPredictions();
 
+    /**
+     * Check if predictions has been initialized
+     *
+     * @return true if prediction were initialized, false otherwise
+     */
+    public abstract boolean isInitialized();
+
+    /**
+     * Get rssi from beacon to make a prediction
+     *
+     * @return an array with a rssi from each beacon
+     */
     public abstract double[] getRssiForRangingPrediction();
 
+    /**
+     * Set the rssi into the machine learning algorithm
+     * @param rssi the array containing rssi from beacons
+     */
     public abstract void setRssi(double[] rssi);
 
+    /**
+     * Calculate a prediction using machine learning
+     */
     public abstract void calculatePrediction();
 
+    /**
+     * Print debug info
+     * @param smartphoneIsInPocket true if the smartphone is supposedly in the pocket, false otherwise
+     * @return the debug information
+     */
     public abstract String printDebug(boolean smartphoneIsInPocket);
 
+    /**
+     * Get a prediction of position regarding the car
+     * @param smartphoneIsInPocket true if the smartphone is supposedly in the pocket, false otherwise
+     * @return the position prediction
+     */
     public abstract String getPredictionPosition(boolean smartphoneIsInPocket);
 
+    /**
+     * Get a prediction of proximity with the car
+     * @return the proximity prediction
+     */
     public String getPredictionProximity() {
         if (rpPrediction != null) {
             return rpPrediction.getPrediction();
@@ -301,6 +337,11 @@ public abstract class ConnectedCar {
         return PREDICTION_UNKNOWN;
     }
 
+    /**
+     * Check if the array of rssi contains only non null value
+     * @param mRssi the array of rssi to check
+     * @return null if a value is equal to 0, the entire array otherwise
+     */
     protected double[] checkForRssiNonNull(double[] mRssi) {
         for (Double elem : mRssi) {
             if (elem == 0) {

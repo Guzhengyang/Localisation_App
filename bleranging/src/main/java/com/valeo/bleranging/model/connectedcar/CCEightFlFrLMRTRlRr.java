@@ -2,6 +2,7 @@ package com.valeo.bleranging.model.connectedcar;
 
 import android.content.Context;
 
+import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.R;
 import com.valeo.bleranging.machinelearningalgo.Prediction;
 import com.valeo.bleranging.model.Trx;
@@ -63,6 +64,11 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     }
 
     @Override
+    public boolean isInitialized() {
+        return standardPrediction != null;
+    }
+
+    @Override
     public double[] getRssiForRangingPrediction() {
         rssi = new double[8];
         rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
@@ -78,24 +84,34 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     @Override
     public void setRssi(double[] rssi) {
-        for (int i = 0; i < rssi.length; i++) {
-            standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), THRESHOLD_DIST_AWAY_STANDARD);
+        if (isInitialized()) {
+            for (int i = 0; i < rssi.length; i++) {
+                standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), THRESHOLD_DIST_AWAY_STANDARD);
+            }
+            standardPrediction.predict(N_VOTE_SHORT);
         }
-        standardPrediction.predict(N_VOTE_SHORT);
     }
 
     @Override
     public void calculatePrediction() {
-        standardPrediction.calculatePredictionFull(THRESHOLD_PROB);
+        if (isInitialized()) {
+            standardPrediction.calculatePredictionFull(THRESHOLD_PROB);
+        }
     }
 
     @Override
     public String printDebug(boolean smartphoneIsInPocket) {
-        return standardPrediction.printDebug(FULL_LOC);
+        if (isInitialized()) {
+            return standardPrediction.printDebug(FULL_LOC);
+        }
+        return "";
     }
 
     @Override
     public String getPredictionPosition(boolean smartphoneIsInPocket) {
-        return standardPrediction.getPrediction();
+        if (isInitialized()) {
+            return standardPrediction.getPrediction();
+        }
+        return BleRangingHelper.PREDICTION_UNKNOWN;
     }
 }

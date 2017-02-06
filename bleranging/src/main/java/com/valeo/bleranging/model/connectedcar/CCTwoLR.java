@@ -33,6 +33,11 @@ public class CCTwoLR extends ConnectedCar {
     }
 
     @Override
+    public boolean isInitialized() {
+        return false;
+    }
+
+    @Override
     public double[] getRssiForRangingPrediction() {
         return new double[0];
     }
