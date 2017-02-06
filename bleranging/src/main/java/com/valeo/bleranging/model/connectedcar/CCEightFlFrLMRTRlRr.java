@@ -2,7 +2,10 @@ package com.valeo.bleranging.model.connectedcar;
 
 import android.content.Context;
 
+import com.valeo.bleranging.R;
+import com.valeo.bleranging.machinelearningalgo.Prediction;
 import com.valeo.bleranging.model.Trx;
+import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 /**
  * Created by l-avaratha on 07/09/2016
@@ -52,7 +55,47 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     }
 
     @Override
-    public boolean welcomeStrategy(int totalAverage, boolean newLockStatus) {
-        return (totalAverage >= -100) && newLockStatus;
+    public void initPredictions() {
+        standardPrediction = new Prediction(mContext, R.raw.classes_full,
+                R.raw.rf_full, R.raw.sample_full);
+        standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+        standardPrediction.predict(N_VOTE_SHORT);
+    }
+
+    @Override
+    public double[] getRssiForRangingPrediction() {
+        rssi = new double[8];
+        rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
+        rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
+        rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
+        rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
+        rssi[4] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT);
+        rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
+        rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
+        rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
+        return checkForRssiNonNull(rssi);
+    }
+
+    @Override
+    public void setRssi(double[] rssi) {
+        for (int i = 0; i < rssi.length; i++) {
+            standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), THRESHOLD_DIST_AWAY_STANDARD);
+        }
+        standardPrediction.predict(N_VOTE_SHORT);
+    }
+
+    @Override
+    public void calculatePrediction() {
+        standardPrediction.calculatePredictionFull(THRESHOLD_PROB);
+    }
+
+    @Override
+    public String printDebug(boolean smartphoneIsInPocket) {
+        return standardPrediction.printDebug(FULL_LOC);
+    }
+
+    @Override
+    public String getPredictionPosition(boolean smartphoneIsInPocket) {
+        return standardPrediction.getPrediction();
     }
 }

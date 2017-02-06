@@ -2,10 +2,12 @@ package com.valeo.bleranging.model.connectedcar;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Handler;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
+import com.valeo.bleranging.machinelearningalgo.Prediction;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
@@ -13,6 +15,8 @@ import com.valeo.bleranging.utils.TextUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
+
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 
 /**
  * Created by l-avaratha on 05/09/2016
@@ -27,6 +31,23 @@ public abstract class ConnectedCar {
     public final static int NUMBER_TRX_REAR_LEFT = 7;
     public final static int NUMBER_TRX_BACK = 8;
     public final static int NUMBER_TRX_REAR_RIGHT = 9;
+    protected static final String THATCHAM_ORIENTED = "Thatcham oriented";
+    protected static final String ENTRY_ORIENTED = "Entry oriented";
+    protected static final String SIMPLE_LOC = "Simple Localisation:";
+    protected static final String STANDARD_LOC = "Standard Localisation:";
+    protected static final String EAR_HELD_LOC = "Ear held Localisation:";
+    protected static final String RP_LOC = "RP Localisation:";
+    protected static final String START_LOC = "Start Localisation:";
+    protected static final String FULL_LOC = "Full Localisation:";
+    protected static final int N_VOTE_LONG = 5;
+    protected static final int N_VOTE_SHORT = 3;
+    protected static final double THRESHOLD_PROB = 0.8;
+    protected static final double THRESHOLD_PROB_LOCK = 0.6;
+    protected static final double THRESHOLD_PROB_UNLOCK = 0.9;
+    protected static final double THRESHOLD_DIST_AWAY_SLOW = 0.07;
+    protected static final double THRESHOLD_DIST_AWAY_STANDARD = 0.10;
+    protected static final double THRESHOLD_DIST_AWAY_EAR = 0.25;
+    protected static final int START_OFFSET = 2;
     final static String TRX_FRONT_LEFT_NAME = "FLeft";
     final static String TRX_FRONT_RIGHT_NAME = "FRight";
     final static String TRX_LEFT_NAME = "Left";
@@ -48,8 +69,16 @@ public abstract class ConnectedCar {
     private final static String trxAddressRearLeft = SdkPreferencesHelper.getInstance().getTrxAddressRearLeft();
     private final static String trxAddressBack = SdkPreferencesHelper.getInstance().getTrxAddressBack();
     private final static String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
+    protected final Handler mHandlerComValidTimeOut = new Handler();
     final LinkedHashMap<Integer, Trx> trxLinkedHMap;
     private final ConnectionNumber connectionNumber;
+    protected Context mContext;
+    protected Prediction standardPrediction;
+    protected Prediction earPrediction;
+    protected Prediction rpPrediction;
+    protected double[] rssi;
+    protected boolean comValid = false;
+    protected String lastModelUsed = STANDARD_LOC;
     Trx trxFrontLeft;
     Trx trxFrontRight;
     Trx trxLeft;
@@ -61,7 +90,7 @@ public abstract class ConnectedCar {
     Trx trxRearRight;
 
     ConnectedCar(Context context, ConnectionNumber connectionNumber) {
-        Context mContext = context;
+        this.mContext = context;
         this.connectionNumber = connectionNumber;
         this.trxLinkedHMap = new LinkedHashMap<>();
     }
@@ -78,6 +107,8 @@ public abstract class ConnectedCar {
             initializeTrx(RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE);
         }
     }
+
+    // COMPARE UTILS
 
     /**
      * Save the current ble channel
@@ -142,7 +173,6 @@ public abstract class ConnectedCar {
         }
     }
 
-
     public int getCurrentModifiedRssi(int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getCurrentModifiedRssi();
@@ -150,7 +180,6 @@ public abstract class ConnectedCar {
             return 0;
         }
     }
-
 
     /**
      * Calculate all the trx average
@@ -173,8 +202,6 @@ public abstract class ConnectedCar {
         return totalAverage;
     }
 
-    // COMPARE UTILS
-
     public boolean isActive(int trxNumber) {
         return trxLinkedHMap.get(trxNumber) != null && trxLinkedHMap.get(trxNumber).isActive();
     }
@@ -183,10 +210,12 @@ public abstract class ConnectedCar {
      * Condition to enable welcome action
      *
      * @param totalAverage  the total average of all antenna rssi
-     * @param newlockStatus the lock status
+     * @param newLockStatus the lock status
      * @return true if the strategy is verified, false otherwise
      */
-    public abstract boolean welcomeStrategy(int totalAverage, boolean newlockStatus);
+    public boolean welcomeStrategy(int totalAverage, boolean newLockStatus) {
+        return (totalAverage >= -100) && newLockStatus;
+    }
 
     /**
      * Create a string of header debug
@@ -253,6 +282,34 @@ public abstract class ConnectedCar {
      */
     protected abstract void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral);
 
+    public abstract void initPredictions();
+
+    public abstract double[] getRssiForRangingPrediction();
+
+    public abstract void setRssi(double[] rssi);
+
+    public abstract void calculatePrediction();
+
+    public abstract String printDebug(boolean smartphoneIsInPocket);
+
+    public abstract String getPredictionPosition(boolean smartphoneIsInPocket);
+
+    public String getPredictionProximity() {
+        if (rpPrediction != null) {
+            return rpPrediction.getPrediction();
+        }
+        return PREDICTION_UNKNOWN;
+    }
+
+    protected double[] checkForRssiNonNull(double[] mRssi) {
+        for (Double elem : mRssi) {
+            if (elem == 0) {
+                return null;
+            }
+        }
+        return mRssi;
+    }
+
     public int getTrxNumber(String address) {
         if (address.equals(trxAddressFrontLeft)) {
             return ConnectedCar.NUMBER_TRX_FRONT_LEFT;
@@ -275,50 +332,6 @@ public abstract class ConnectedCar {
         } else {
             return -1;
         }
-    }
-
-    public double[] getRssiForRangingPrediction() {
-        double[] rssi;
-        if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_4_B)) {
-            rssi = new double[4];
-            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
-            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
-            rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
-            rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
-        } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_8_A)) {
-            rssi = new double[8];
-            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
-            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
-            rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
-            rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
-            rssi[4] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT);
-            rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
-            rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
-            rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
-        } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_3_A)) {
-            rssi = new double[3];
-            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
-            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
-            rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
-
-        } else if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_2_A)) {
-            rssi = new double[2];
-            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
-            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
-        } else {
-            rssi = new double[4];
-            rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
-            rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
-            rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
-            rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
-        }
-
-        for (Double elem : rssi) {
-            if (elem == 0) {
-                return null;
-            }
-        }
-        return rssi;
     }
 
     protected enum ConnectionNumber {

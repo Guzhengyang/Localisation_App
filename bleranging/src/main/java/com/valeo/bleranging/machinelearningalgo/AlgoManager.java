@@ -110,7 +110,6 @@ public class AlgoManager implements SensorEventListener {
             }
         }
     };
-    private Ranging ranging;
     private boolean isAbortRunning = false;
     private final Runnable abortCommandRunner = new Runnable() {
         @Override
@@ -128,6 +127,7 @@ public class AlgoManager implements SensorEventListener {
     private boolean smartphoneIsInPocket = false;
     private boolean lastCommandFromTrx;
     private boolean lastThatchamChanged = false;
+    private String lastPrediction = PREDICTION_UNKNOWN;
     private final BroadcastReceiver mDataReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -155,7 +155,7 @@ public class AlgoManager implements SensorEventListener {
                         lastThatchamChanged = true; // because when thatcham changed, maybe not in lock area yet
                     }
                 }
-                if (lastThatchamChanged && getPredictionPosition().equalsIgnoreCase(PREDICTION_LOCK)) { // when thatcham has changed, and get into lock area
+                if (lastThatchamChanged && lastPrediction.equalsIgnoreCase(PREDICTION_LOCK)) { // when thatcham has changed, and get into lock area
                     mMainHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -204,9 +204,9 @@ public class AlgoManager implements SensorEventListener {
         mContext.registerReceiver(mDataReceiver, new IntentFilter(BluetoothLeService.ACTION_DATA_AVAILABLE2));
     }
 
-    public SpannableStringBuilder createDebugData(SpannableStringBuilder spannableStringBuilder) {
-        if (ranging != null) {
-            spannableStringBuilder.append(ranging.printDebug(smartphoneIsInPocket));
+    public SpannableStringBuilder createDebugData(final ConnectedCar connectedCar, SpannableStringBuilder spannableStringBuilder) {
+        if (connectedCar != null) {
+            spannableStringBuilder.append(connectedCar.printDebug(smartphoneIsInPocket));
         }
         return spannableStringBuilder;
     }
@@ -257,7 +257,7 @@ public class AlgoManager implements SensorEventListener {
     /**
      * Try all strategy based on machine learning
      */
-    public void tryMachineLearningStrategies(boolean newLockStatus, ConnectedCar connectedCar) {
+    public void tryMachineLearningStrategies(ConnectedCar connectedCar) {
         boolean isWelcomeAllowed = false;
         // Cancel previous requested actions
         boolean isInStartArea = false;
@@ -265,9 +265,10 @@ public class AlgoManager implements SensorEventListener {
         boolean isInLockArea = false;
         mProtocolManager.setIsStartRequested(false);
         mProtocolManager.setIsWelcomeRequested(false);
-        ranging.calculatePrediction();
+        connectedCar.calculatePrediction();
         //TODO Replace SdkPreferencesHelper.getInstance().getComSimulationEnabled() by CallReceiver.smartphoneComIsActivated after demo
-        switch (getPredictionPosition()) {
+        lastPrediction = getPredictionPosition(connectedCar);
+        switch (lastPrediction) {
             case PREDICTION_INSIDE:
                 isInStartArea = true;
                 if (!mProtocolManager.isStartRequested()) {
@@ -305,7 +306,7 @@ public class AlgoManager implements SensorEventListener {
                 PSALogs.d("prediction", "NOOO rangingPredictionInt !");
                 break;
         }
-        isInWelcomeArea = rearmWelcome.get() && getPredictionProximity().equals(BleRangingHelper.PREDICTION_FAR);
+        isInWelcomeArea = rearmWelcome.get() && getPredictionProximity(connectedCar).equals(BleRangingHelper.PREDICTION_FAR);
         if (isInWelcomeArea) {
             isWelcomeAllowed = true;
             rearmWelcome.set(false);
@@ -316,7 +317,7 @@ public class AlgoManager implements SensorEventListener {
             mProtocolManager.setIsWelcomeRequested(isWelcomeAllowed);
         }
         setIsThatcham(isInLockArea, isInUnlockArea, isInStartArea);
-        if (getPredictionProximity().equalsIgnoreCase(PREDICTION_NEAR)) {
+        if (getPredictionProximity(connectedCar).equalsIgnoreCase(PREDICTION_NEAR)) {
             mProtocolManager.setInRemoteParkingArea(true);
         } else {
             mProtocolManager.setInRemoteParkingArea(false);
@@ -343,10 +344,6 @@ public class AlgoManager implements SensorEventListener {
         } else if (isInUnlockArea) {
             launchThatchamValidityTimeOut();
         }
-    }
-
-    public void createRangingObject(double[] rssi) {
-        this.ranging = new Ranging(mContext, rssi);
     }
 
     private void manageRearms(final boolean newVehicleLockStatus) {
@@ -379,16 +376,16 @@ public class AlgoManager implements SensorEventListener {
         }
     }
 
-    public String getPredictionPosition() {
-        if (ranging != null) {
-            return ranging.getPredictionPosition(smartphoneIsInPocket);
+    public String getPredictionPosition(final ConnectedCar connectedCar) {
+        if (connectedCar != null) {
+            return connectedCar.getPredictionPosition(smartphoneIsInPocket);
         }
         return PREDICTION_UNKNOWN;
     }
 
-    public String getPredictionProximity() {
-        if (ranging != null) {
-            return ranging.getPredictionRP();
+    public String getPredictionProximity(final ConnectedCar connectedCar) {
+        if (connectedCar != null) {
+            return connectedCar.getPredictionProximity();
         }
         return PREDICTION_UNKNOWN;
     }
@@ -439,10 +436,6 @@ public class AlgoManager implements SensorEventListener {
 
     public void setIsRKEAvailable(boolean enableRKE) {
         isRKEAvailable.set(enableRKE);
-    }
-
-    public Ranging getRanging() {
-        return ranging;
     }
 
     public boolean getIsRKE() {

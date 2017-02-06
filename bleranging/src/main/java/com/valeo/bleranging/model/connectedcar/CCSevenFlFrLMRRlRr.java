@@ -9,7 +9,6 @@ import com.valeo.bleranging.model.Trx;
  */
 public class CCSevenFlFrLMRRlRr extends ConnectedCar {
 
-
     public CCSevenFlFrLMRRlRr(Context mContext) {
         super(mContext, ConnectionNumber.SEVEN_CONNECTION);
         trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME);
@@ -49,9 +48,32 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
     }
 
     @Override
-    public boolean welcomeStrategy(int totalAverage, boolean newLockStatus) {
-        return (totalAverage >= -100) && newLockStatus;
+    public void initPredictions() {
+
     }
 
+    @Override
+    public double[] getRssiForRangingPrediction() {
+        return new double[0];
+    }
 
+    @Override
+    public void setRssi(double[] rssi) {
+
+    }
+
+    @Override
+    public void calculatePrediction() {
+
+    }
+
+    @Override
+    public String printDebug(boolean smartphoneIsInPocket) {
+        return null;
+    }
+
+    @Override
+    public String getPredictionPosition(boolean smartphoneIsInPocket) {
+        return null;
+    }
 }
