@@ -25,7 +25,7 @@ public class Ranging {
     private static final int N_VOTE_LONG = 5;
     private static final int N_VOTE_SHORT = 3;
 
-    private static final double THRESHOLD_PROB = 0.8;
+    private static final double THRESHOLD_PROB = 0.7;
     private static final double THRESHOLD_PROB_LOCK = 0.6;
     private static final double THRESHOLD_PROB_UNLOCK = 0.9;
 

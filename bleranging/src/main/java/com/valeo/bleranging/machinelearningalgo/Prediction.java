@@ -70,9 +70,16 @@ public class Prediction {
         this.rssiModified[index] = rssi - offset;
         if (prediction_old != -1) {
             // trx order : l, m, r, t, fl, fr, rl, rr
-            // Add hysteresis to all the trx
-            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
+            // Add lock and outside hysteresis to all the trx
+            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
+                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
                 rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
+            }
+
+            // Add unlock hysteresis to all the trx
+            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
+                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
+                rssiModified[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
             }
 
         }
