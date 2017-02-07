@@ -8,6 +8,8 @@ import com.valeo.bleranging.machinelearningalgo.Prediction;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
+
 /**
  * Created by l-avaratha on 07/09/2016
  */
@@ -61,11 +63,17 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 R.raw.rf_full, R.raw.sample_full);
         standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
         standardPrediction.predict(N_VOTE_SHORT);
+        insidePrediction = new Prediction(mContext, R.raw.classes_full,
+                R.raw.rf_full, R.raw.sample_full);
+//        insidePrediction = new Prediction(mContext, R.raw.classes_inside,
+//                R.raw.rf_inside, R.raw.sample_inside);
+        insidePrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+        insidePrediction.predict(N_VOTE_SHORT);
     }
 
     @Override
     public boolean isInitialized() {
-        return standardPrediction != null;
+        return standardPrediction != null && insidePrediction != null;
     }
 
     @Override
@@ -110,7 +118,18 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public String getPredictionPosition(boolean smartphoneIsInPocket) {
         if (isInitialized()) {
-            return standardPrediction.getPrediction();
+            String result = standardPrediction.getPrediction();
+            if (result.equalsIgnoreCase(PREDICTION_START)) {
+                return getInsidePrediction();
+            }
+            return result;
+        }
+        return BleRangingHelper.PREDICTION_UNKNOWN;
+    }
+
+    private String getInsidePrediction() {
+        if (isInitialized()) {
+            return insidePrediction.getPrediction();
         }
         return BleRangingHelper.PREDICTION_UNKNOWN;
     }

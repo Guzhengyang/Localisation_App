@@ -13,6 +13,10 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FL;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FR;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RL;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.BASE_1;
 
@@ -182,6 +186,18 @@ public class InblueProtocolManager {
                 break;
             case PREDICTION_OUTSIDE:
                 payloadFour |= 0x11;
+                break;
+            case PREDICTION_START_FL:
+                payloadFour |= 0x12;
+                break;
+            case PREDICTION_START_FR:
+                payloadFour |= 0x13;
+                break;
+            case PREDICTION_START_RL:
+                payloadFour |= 0x14;
+                break;
+            case PREDICTION_START_RR:
+                payloadFour |= 0x15;
                 break;
             default:
                 break;

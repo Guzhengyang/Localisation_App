@@ -76,6 +76,7 @@ public abstract class ConnectedCar {
     protected Prediction standardPrediction;
     protected Prediction earPrediction;
     protected Prediction rpPrediction;
+    protected Prediction insidePrediction;
     protected double[] rssi;
     protected boolean comValid = false;
     protected String lastModelUsed = STANDARD_LOC;

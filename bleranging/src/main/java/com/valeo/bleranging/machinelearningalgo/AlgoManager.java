@@ -35,6 +35,10 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_NEAR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FL;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FR;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RL;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_THATCHAM;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
@@ -282,6 +286,10 @@ public class AlgoManager implements SensorEventListener {
                 }
                 break;
             case PREDICTION_START:
+            case PREDICTION_START_FL:
+            case PREDICTION_START_FR:
+            case PREDICTION_START_RL:
+            case PREDICTION_START_RR:
             case PREDICTION_TRUNK:
                 isInStartArea = true;
                 if (!mProtocolManager.isStartRequested()) {

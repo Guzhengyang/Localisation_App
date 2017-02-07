@@ -89,6 +89,10 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_NEAR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FL;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FR;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RL;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_THATCHAM;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_WELCOME;
@@ -136,7 +140,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private ImageView start_button_second_wave;
     private LayerDrawable layerDrawable;
     private GradientDrawable welcome_area;
-    private GradientDrawable start_area;
+    private GradientDrawable start_area_fl;
+    private GradientDrawable start_area_fr;
+    private GradientDrawable start_area_rl;
+    private GradientDrawable start_area_rr;
     private GradientDrawable trunk_area;
     private GradientDrawable lock_area;
     private GradientDrawable unlock_area_left;
@@ -866,7 +873,22 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 unlock_area_back.setColor(Color.GREEN);
                 break;
             case PREDICTION_START:
-                start_area.setColor(Color.CYAN);
+                start_area_fl.setColor(Color.CYAN);
+                start_area_fr.setColor(Color.CYAN);
+                start_area_rl.setColor(Color.CYAN);
+                start_area_rr.setColor(Color.CYAN);
+                break;
+            case PREDICTION_START_FL:
+                start_area_fl.setColor(Color.CYAN);
+                break;
+            case PREDICTION_START_FR:
+                start_area_fr.setColor(Color.CYAN);
+                break;
+            case PREDICTION_START_RL:
+                start_area_rl.setColor(Color.CYAN);
+                break;
+            case PREDICTION_START_RR:
+                start_area_rr.setColor(Color.CYAN);
                 break;
             case PREDICTION_TRUNK:
                 if (trunk_area != null) {
@@ -883,7 +905,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 remote_parking_area.setColor(Color.RED);
                 break;
             case PREDICTION_INSIDE:
-                start_area.setColor(Color.CYAN);
+                start_area_fl.setColor(Color.CYAN);
+                start_area_fr.setColor(Color.CYAN);
+                start_area_rl.setColor(Color.CYAN);
+                start_area_rr.setColor(Color.CYAN);
                 if (trunk_area != null) {
                     trunk_area.setColor(Color.CYAN);
                 }
@@ -922,7 +947,22 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 unlock_area_back.setColor(Color.BLACK);
                 break;
             case PREDICTION_START:
-                start_area.setColor(Color.BLACK);
+                start_area_fl.setColor(Color.BLACK);
+                start_area_fr.setColor(Color.BLACK);
+                start_area_rl.setColor(Color.BLACK);
+                start_area_rr.setColor(Color.BLACK);
+                break;
+            case PREDICTION_START_FL:
+                start_area_fl.setColor(Color.BLACK);
+                break;
+            case PREDICTION_START_FR:
+                start_area_fr.setColor(Color.BLACK);
+                break;
+            case PREDICTION_START_RL:
+                start_area_rl.setColor(Color.BLACK);
+                break;
+            case PREDICTION_START_RR:
+                start_area_rr.setColor(Color.BLACK);
                 break;
             case PREDICTION_TRUNK:
                 if (trunk_area != null) {
@@ -1068,7 +1108,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 break;
         }
         welcome_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.welcome_area);
-        start_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area);
+        start_area_fl = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_fl);
+        start_area_fr = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_fr);
+        start_area_rl = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_rl);
+        start_area_rr = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_rr);
         lock_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.lock_area);
         unlock_area_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_left);
         unlock_area_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_right);

@@ -21,6 +21,10 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FL;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FR;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RL;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.PASSIVE_ENTRY_ORIENTED;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
@@ -249,7 +253,11 @@ public class Prediction {
                     (comparePrediction(temp_prediction, PREDICTION_RIGHT))) &&
                     compareDistribution(temp_prediction, threshold_prob_unlock)) {
                 prediction_old = temp_prediction;
-            } else if (comparePrediction(temp_prediction, PREDICTION_START) &&
+            } else if ((comparePrediction(temp_prediction, PREDICTION_START) ||
+                    comparePrediction(temp_prediction, PREDICTION_START_FL) ||
+                    comparePrediction(temp_prediction, PREDICTION_START_FR) ||
+                    comparePrediction(temp_prediction, PREDICTION_START_RL) ||
+                    comparePrediction(temp_prediction, PREDICTION_START_RR)) &&
                     compareDistribution(temp_prediction, threshold_prob)) {
                 prediction_old = temp_prediction;
             }
