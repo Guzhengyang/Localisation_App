@@ -31,8 +31,8 @@ public abstract class ConnectedCar {
     public final static int NUMBER_TRX_REAR_LEFT = 7;
     public final static int NUMBER_TRX_BACK = 8;
     public final static int NUMBER_TRX_REAR_RIGHT = 9;
-    protected static final String THATCHAM_ORIENTED = "Thatcham oriented";
-    protected static final String ENTRY_ORIENTED = "Entry oriented";
+    public final static String THATCHAM_ORIENTED = "thatcham_oriented";
+    public final static String PASSIVE_ENTRY_ORIENTED = "passive_entry_oriented";
     protected static final String SIMPLE_LOC = "Simple Localisation:";
     protected static final String STANDARD_LOC = "Standard Localisation:";
     protected static final String EAR_HELD_LOC = "Ear held Localisation:";

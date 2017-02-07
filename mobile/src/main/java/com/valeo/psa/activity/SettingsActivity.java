@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
@@ -34,6 +33,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Map;
+
+import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -469,7 +470,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void bindSummaries() {
             bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_A);
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
-            bindPreferenceSummaryToValue(opening_orientation_type, AlgoManager.THATCHAM_ORIENTED);
+            bindPreferenceSummaryToValue(opening_orientation_type, THATCHAM_ORIENTED);
             com_simulation_enabled.setSummary(R.string.pref_com_simulation_enabled);
             security_wal_enabled.setSummary(R.string.pref_security_wal_enabled);
             bindPreferenceSummaryToValue(offset_smartphone, String.valueOf(SdkPreferencesHelper.OFFSET_SMARTPHONE));

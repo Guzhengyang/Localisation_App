@@ -22,8 +22,8 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
-import static com.valeo.bleranging.machinelearningalgo.AlgoManager.PASSIVE_ENTRY_ORIENTED;
-import static com.valeo.bleranging.machinelearningalgo.AlgoManager.THATCHAM_ORIENTED;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCar.PASSIVE_ENTRY_ORIENTED;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
 
 /**
  * Created by l-avaratha on 12/01/2017

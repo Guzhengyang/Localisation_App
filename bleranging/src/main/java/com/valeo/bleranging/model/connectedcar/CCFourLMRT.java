@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.R;
-import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.machinelearningalgo.Prediction;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
@@ -42,10 +41,10 @@ public class CCFourLMRT extends ConnectedCar {
 
     @Override
     public void initPredictions() {
-        if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(AlgoManager.THATCHAM_ORIENTED)) {
+        if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
             standardPrediction = new Prediction(mContext, R.raw.classes_standard_thatcham,
                     R.raw.rf_standard_thatcham, R.raw.sample_standard_thatcham);
-        } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(AlgoManager.PASSIVE_ENTRY_ORIENTED)) {
+        } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
             standardPrediction = new Prediction(mContext, R.raw.classes_standard_entry,
                     R.raw.rf_standard_entry, R.raw.sample_standard_entry);
         }
@@ -97,8 +96,8 @@ public class CCFourLMRT extends ConnectedCar {
         if (isInitialized()) {
             if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
                 standardPrediction.calculatePredictionStandard(THRESHOLD_PROB, THRESHOLD_PROB_UNLOCK, THATCHAM_ORIENTED);
-            } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(AlgoManager.PASSIVE_ENTRY_ORIENTED)) {
-                standardPrediction.calculatePredictionStandard(THRESHOLD_PROB, THRESHOLD_PROB_UNLOCK, ENTRY_ORIENTED);
+            } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
+                standardPrediction.calculatePredictionStandard(THRESHOLD_PROB, THRESHOLD_PROB_UNLOCK, PASSIVE_ENTRY_ORIENTED);
             }
             earPrediction.calculatePredictionEar(THRESHOLD_PROB);
             rpPrediction.calculatePredictionRP(THRESHOLD_PROB);

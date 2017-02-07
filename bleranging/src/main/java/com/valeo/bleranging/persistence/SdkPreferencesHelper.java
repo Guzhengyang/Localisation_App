@@ -5,16 +5,17 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.valeo.bleranging.R;
-import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
+
+import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
 
 /**
  * Constants file for SharedPrefs
  */
 public final class SdkPreferencesHelper {
-    public final static int OFFSET_SMARTPHONE = 5;
-    public final static int OFFSET_HYSTERESIS_LOCK = 2;
-    public final static int OFFSET_HYSTERESIS_UNLOCK = 3;
+    public final static int OFFSET_SMARTPHONE = 0;
+    public final static int OFFSET_HYSTERESIS_LOCK = 3;
+    public final static int OFFSET_HYSTERESIS_UNLOCK = 0;
     //    public final static float BACK_TIMEOUT = 3.0f;
     public final static float UNLOCK_TIMEOUT = 3.0f;
     public final static float THATCHAM_TIMEOUT = 3.0f;
@@ -86,7 +87,7 @@ public final class SdkPreferencesHelper {
     }
 
     public String getOpeningOrientation() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.opening_orientation_type_pref_name), AlgoManager.THATCHAM_ORIENTED);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.opening_orientation_type_pref_name), THATCHAM_ORIENTED);
     }
 
     public Boolean getComSimulationEnabled() {
