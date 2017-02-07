@@ -24,15 +24,11 @@ import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
+import com.valeo.psa.utils.PreferenceUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.List;
-import java.util.Map;
 
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
 
@@ -253,7 +249,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if (!exportedPrefs.exists()) {
                         try {
                             if (exportedPrefs.createNewFile()) {
-                                saveSharedPreferencesToFile(exportedPrefs);
+                                PreferenceUtils.saveSharedPreferencesToFile(getActivity(), exportedPrefs, sharedPreferencesName);
                                 Toast.makeText(getActivity(), "Preference exported to " + filePath, Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(getActivity(), "Cannot create file.", Toast.LENGTH_SHORT).show();
@@ -262,7 +258,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                             e.printStackTrace();
                         }
                     } else {
-                        saveSharedPreferencesToFile(exportedPrefs);
+                        PreferenceUtils.saveSharedPreferencesToFile(getActivity(), exportedPrefs, sharedPreferencesName);
                         Toast.makeText(getActivity(), "Preference exported to " + filePath, Toast.LENGTH_SHORT).show();
                     }
                     return false;
@@ -298,86 +294,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
         }
 
-        private boolean saveSharedPreferencesToFile(File dst) {
-            boolean res = false;
-            ObjectOutputStream output = null;
-            try {
-                output = new ObjectOutputStream(new FileOutputStream(dst));
-                manager.setSharedPreferencesName(sharedPreferencesName);
-                sharedPreferences = manager.getSharedPreferences();
-                PSALogs.d("map save", manager.getSharedPreferencesName() + " =? " + sharedPreferencesName);
-                for (Map.Entry<String, ?> entry : sharedPreferences.getAll().entrySet()) {
-                    PSALogs.d("map save", entry.getKey() + " " + entry.getValue());
-                }
-                output.writeObject(sharedPreferences.getAll());
-                res = true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (output != null) {
-                        output.flush();
-                        output.close();
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            return res;
-        }
-
-        private boolean loadSharedPreferencesFromFile(File src) {
-            boolean res = false;
-            ObjectInputStream input = null;
-            try {
-                input = new ObjectInputStream(new FileInputStream(src));
-                manager.setSharedPreferencesName(sharedPreferencesName);
-                sharedPreferences = manager.getSharedPreferences();
-                PSALogs.d("map save", manager.getSharedPreferencesName() + " =? " + sharedPreferencesName);
-                SharedPreferences.Editor prefEdit = sharedPreferences.edit();
-                prefEdit.clear();
-                Map<String, ?> entries = (Map<String, ?>) input.readObject();
-                for (Map.Entry<String, ?> entry : entries.entrySet()) {
-                    Object v = entry.getValue();
-                    String key = entry.getKey();
-                    if (v instanceof Boolean) {
-                        prefEdit.putBoolean(key, (Boolean) v);
-                        PSALogs.d("map load", key + " " + v.toString() + " bool");
-                    } else if (v instanceof Float) {
-                        prefEdit.putFloat(key, (Float) v);
-                        PSALogs.d("map load", key + " " + v.toString() + " float");
-                    } else if (v instanceof Integer) {
-                        prefEdit.putInt(key, (Integer) v);
-                        PSALogs.d("map load", key + " " + v.toString() + " int");
-                    } else if (v instanceof Long) {
-                        prefEdit.putLong(key, (Long) v);
-                        PSALogs.d("map load", key + " " + v.toString() + " long");
-                    } else if (v instanceof String) {
-                        prefEdit.putString(key, ((String) v));
-                        PSALogs.d("map load", key + " " + v.toString() + " string");
-                        if (findPreference(key) != null) {
-                            PSALogs.d("map change", findPreference(key).getSummary() + " to " + v.toString());
-                            findPreference(key).setSummary(v.toString());
-                        }
-                    }
-                }
-                prefEdit.apply();
-                prefEdit.commit();
-                Toast.makeText(getActivity(), "Preference imported from " + src.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-                res = true;
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (input != null) {
-                        input.close();
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            return res;
-        }
 
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -385,7 +301,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 case PICK_IMPORT_GENERAL_FILE_RESULT_CODE:
                     if (resultCode == RESULT_OK) {
                         String filePath = data.getData().getPath();
-                        loadSharedPreferencesFromFile(new File(filePath));
+                        File file = new File(filePath);
+                        PreferenceUtils.loadSharedPreferencesFromFile(getActivity(), file, sharedPreferencesName);
+                        Toast.makeText(getActivity(), "Preference imported from " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
                     }
                     break;
             }
