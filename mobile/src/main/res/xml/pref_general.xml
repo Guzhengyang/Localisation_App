@@ -104,6 +104,14 @@
             android:inputType="number"
             android:key="@string/offset_hysteresis_unlock_pref_name"
             android:title="@string/pref_offset_hysteresis_unlock" />
+        <EditTextPreference
+            android:inputType="numberDecimal"
+            android:key="@string/threshold_prob_standard_pref_name"
+            android:title="@string/pref_prob_standard" />
+        <EditTextPreference
+            android:inputType="numberDecimal"
+            android:key="@string/threshold_dist_away_standard_pref_name"
+            android:title="@string/pref_dist_away_standard" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_timeout">
         <!--<EditTextPreference-->

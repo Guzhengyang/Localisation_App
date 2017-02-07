@@ -70,7 +70,7 @@ public class CCThreeLMR extends ConnectedCar {
     @Override
     public void calculatePrediction() {
         if (isInitialized()) {
-            standardPrediction.calculatePredictionSimple(THRESHOLD_PROB, THRESHOLD_PROB_UNLOCK, THRESHOLD_PROB_LOCK);
+            standardPrediction.calculatePredictionSimple(SdkPreferencesHelper.getInstance().getThresholdProbStandard(), THRESHOLD_PROB_UNLOCK, THRESHOLD_PROB_LOCK);
         }
     }
 

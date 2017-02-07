@@ -41,11 +41,9 @@ public abstract class ConnectedCar {
     protected static final String FULL_LOC = "Full Localisation:";
     protected static final int N_VOTE_LONG = 5;
     protected static final int N_VOTE_SHORT = 3;
-    protected static final double THRESHOLD_PROB = 0.8;
     protected static final double THRESHOLD_PROB_LOCK = 0.6;
     protected static final double THRESHOLD_PROB_UNLOCK = 0.9;
     protected static final double THRESHOLD_DIST_AWAY_SLOW = 0.07;
-    protected static final double THRESHOLD_DIST_AWAY_STANDARD = 0.10;
     protected static final double THRESHOLD_DIST_AWAY_EAR = 0.25;
     protected static final int START_OFFSET = 2;
     final static String TRX_FRONT_LEFT_NAME = "FLeft";

@@ -94,7 +94,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     public void setRssi(double[] rssi) {
         if (isInitialized()) {
             for (int i = 0; i < rssi.length; i++) {
-                standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), THRESHOLD_DIST_AWAY_STANDARD);
+                standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard());
             }
             standardPrediction.predict(N_VOTE_SHORT);
         }
@@ -103,7 +103,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public void calculatePrediction() {
         if (isInitialized()) {
-            standardPrediction.calculatePredictionFull(THRESHOLD_PROB);
+            standardPrediction.calculatePredictionFull(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
 

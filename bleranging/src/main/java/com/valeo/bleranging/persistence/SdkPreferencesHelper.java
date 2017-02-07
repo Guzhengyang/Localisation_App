@@ -16,6 +16,8 @@ public final class SdkPreferencesHelper {
     public final static int OFFSET_SMARTPHONE = 0;
     public final static int OFFSET_HYSTERESIS_LOCK = 3;
     public final static int OFFSET_HYSTERESIS_UNLOCK = 0;
+    public final static float THRESHOLD_PROB_STANDARD = 0.8f;
+    public final static float THRESHOLD_DIST_AWAY_STANDARD = 0.10f;
     //    public final static float BACK_TIMEOUT = 3.0f;
     public final static float UNLOCK_TIMEOUT = 3.0f;
     public final static float THATCHAM_TIMEOUT = 3.0f;
@@ -108,6 +110,14 @@ public final class SdkPreferencesHelper {
 
     public int getOffsetHysteresisUnlock() {
         return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.offset_hysteresis_unlock_pref_name), OFFSET_HYSTERESIS_UNLOCK);
+    }
+
+    public float getThresholdProbStandard() {
+        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.threshold_prob_standard_pref_name), THRESHOLD_PROB_STANDARD);
+    }
+
+    public float getThresholdDistAwayStandard() {
+        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.threshold_dist_away_standard_pref_name), THRESHOLD_DIST_AWAY_STANDARD);
     }
 
     public float getUnlockTimeout() {

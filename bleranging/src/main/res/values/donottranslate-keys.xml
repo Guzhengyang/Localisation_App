@@ -25,6 +25,8 @@
     <string name="offset_smartphone_pref_name">"com.inblue.PREFERENCE_OFFSET_SMARTPHONE"</string>
     <string name="offset_hysteresis_lock_pref_name">"com.inblue.PREFERENCE_OFFSET_HYSTERESIS_LOCK"</string>
     <string name="offset_hysteresis_unlock_pref_name">"com.inblue.PREFERENCE_OFFSET_HYSTERESIS_UNLOCK"</string>
+    <string name="threshold_prob_standard_pref_name">"com.inblue.PREFERENCE_THRESHOLD_PROB_STANDARD"</string>
+    <string name="threshold_dist_away_standard_pref_name">"com.inblue.PREFERENCE_THRESHOLD_DIST_AWAY_STANDARD"</string>
     <string name="offset_ear_for_start_pref_name">"com.inblue.PREFERENCE_OFFSET_EAR_FOR_START"</string>
     <string name="offset_ear_for_lock_pref_name">"com.inblue.PREFERENCE_OFFSET_EAR_FOR_LOCK"</string>
     <string name="offset_ear_for_unlock_pref_name">"com.inblue.PREFERENCE_OFFSET_EAR_FOR_UNLOCK"</string>

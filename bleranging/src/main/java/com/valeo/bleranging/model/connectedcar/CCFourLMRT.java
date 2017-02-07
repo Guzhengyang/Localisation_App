@@ -81,9 +81,9 @@ public class CCFourLMRT extends ConnectedCar {
     public void setRssi(double[] rssi) {
         if (isInitialized()) {
             for (int i = 0; i < rssi.length; i++) {
-                standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), THRESHOLD_DIST_AWAY_STANDARD);
+                standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard());
                 earPrediction.setRssi(i, rssi[i], 0, THRESHOLD_DIST_AWAY_EAR, comValid);
-                rpPrediction.setRssi(i, rssi[i], 0, THRESHOLD_DIST_AWAY_STANDARD);
+                rpPrediction.setRssi(i, rssi[i], 0, SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard());
             }
             standardPrediction.predict(N_VOTE_SHORT);
             earPrediction.predict(N_VOTE_LONG);
@@ -95,12 +95,12 @@ public class CCFourLMRT extends ConnectedCar {
     public void calculatePrediction() {
         if (isInitialized()) {
             if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
-                standardPrediction.calculatePredictionStandard(THRESHOLD_PROB, THRESHOLD_PROB_UNLOCK, THATCHAM_ORIENTED);
+                standardPrediction.calculatePredictionStandard(SdkPreferencesHelper.getInstance().getThresholdProbStandard(), THRESHOLD_PROB_UNLOCK, THATCHAM_ORIENTED);
             } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
-                standardPrediction.calculatePredictionStandard(THRESHOLD_PROB, THRESHOLD_PROB_UNLOCK, PASSIVE_ENTRY_ORIENTED);
+                standardPrediction.calculatePredictionStandard(SdkPreferencesHelper.getInstance().getThresholdProbStandard(), THRESHOLD_PROB_UNLOCK, PASSIVE_ENTRY_ORIENTED);
             }
-            earPrediction.calculatePredictionEar(THRESHOLD_PROB);
-            rpPrediction.calculatePredictionRP(THRESHOLD_PROB);
+            earPrediction.calculatePredictionEar(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
+            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
 

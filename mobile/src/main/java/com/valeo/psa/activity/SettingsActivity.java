@@ -202,6 +202,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference offset_smartphone;
         private EditTextPreference offset_hysteresis_lock;
         private EditTextPreference offset_hysteresis_unlock;
+        private EditTextPreference threshold_prob_standard;
+        private EditTextPreference threshold_dist_away_standard;
         //        private EditTextPreference back_timeout;
         private EditTextPreference thatcham_timeout;
         private EditTextPreference unlock_timeout;
@@ -405,6 +407,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             offset_smartphone = ((EditTextPreference) findPreference(getString(R.string.offset_smartphone_pref_name)));
             offset_hysteresis_lock = ((EditTextPreference) findPreference(getString(R.string.offset_hysteresis_lock_pref_name)));
             offset_hysteresis_unlock = ((EditTextPreference) findPreference(getString(R.string.offset_hysteresis_unlock_pref_name)));
+            threshold_prob_standard = ((EditTextPreference) findPreference(getString(R.string.threshold_prob_standard_pref_name)));
+            threshold_dist_away_standard = ((EditTextPreference) findPreference(getString(R.string.threshold_dist_away_standard_pref_name)));
 //            back_timeout = ((EditTextPreference) findPreference(getString(R.string.back_timeout_pref_name)));
             thatcham_timeout = ((EditTextPreference) findPreference(getString(R.string.thatcham_timeout_pref_name)));
             unlock_timeout = ((EditTextPreference) findPreference(getString(R.string.unlock_timeout_pref_name)));
@@ -438,6 +442,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             offset_smartphone.setText(offset_smartphone.getSummary().toString());
             offset_hysteresis_lock.setText(offset_hysteresis_lock.getSummary().toString());
             offset_hysteresis_unlock.setText(offset_hysteresis_unlock.getSummary().toString());
+            threshold_prob_standard.setText(threshold_prob_standard.getSummary().toString());
+            threshold_dist_away_standard.setText(threshold_dist_away_standard.getSummary().toString());
 //            back_timeout.setText(back_timeout.getSummary().toString());
             thatcham_timeout.setText(thatcham_timeout.getSummary().toString());
             unlock_timeout.setText(unlock_timeout.getSummary().toString());
@@ -476,6 +482,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(offset_smartphone, String.valueOf(SdkPreferencesHelper.OFFSET_SMARTPHONE));
             bindPreferenceSummaryToValue(offset_hysteresis_lock, String.valueOf(SdkPreferencesHelper.OFFSET_HYSTERESIS_LOCK));
             bindPreferenceSummaryToValue(offset_hysteresis_unlock, String.valueOf(SdkPreferencesHelper.OFFSET_HYSTERESIS_UNLOCK));
+            bindPreferenceSummaryToValue(threshold_prob_standard, String.valueOf(SdkPreferencesHelper.THRESHOLD_PROB_STANDARD));
+            bindPreferenceSummaryToValue(threshold_dist_away_standard, String.valueOf(SdkPreferencesHelper.THRESHOLD_DIST_AWAY_STANDARD));
 //            bindPreferenceSummaryToValue(back_timeout, String.valueOf(SdkPreferencesHelper.BACK_TIMEOUT));
             bindPreferenceSummaryToValue(thatcham_timeout, String.valueOf(SdkPreferencesHelper.THATCHAM_TIMEOUT));
             bindPreferenceSummaryToValue(unlock_timeout, String.valueOf(SdkPreferencesHelper.UNLOCK_TIMEOUT));

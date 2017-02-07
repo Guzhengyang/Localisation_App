@@ -85,6 +85,8 @@
     <string name="pref_offset_smartphone">Smartphone Offset</string>
     <string name="pref_offset_hysteresis_lock">Hysteresis Lock Offset</string>
     <string name="pref_offset_hysteresis_unlock">Hysteresis Unlock Offset</string>
+    <string name="pref_prob_standard">Standard Probability Threshold</string>
+    <string name="pref_dist_away_standard">Standard Dist Away Threshold</string>
     <string name="pref_offset_ear_start">Start Offset Ear</string>
     <string name="pref_offset_ear_lock">Lock Offset Ear</string>
     <string name="pref_offset_ear_unlock">Unlock Offset Ear</string>

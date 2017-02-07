@@ -66,7 +66,7 @@ public class CCTwoMT extends ConnectedCar {
     @Override
     public void calculatePrediction() {
         if (isInitialized()) {
-            standardPrediction.calculatePredictionStart(THRESHOLD_PROB);
+            standardPrediction.calculatePredictionStart(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
 
