@@ -77,9 +77,11 @@ public class Prediction {
         if (prediction_old != -1) {
             // trx order : l, m, r, t, fl, fr, rl, rr
             // Add lock and outside hysteresis to all the trx
-            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
-                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
-                rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
+            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equals(THATCHAM_ORIENTED)) {
+                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
+                        this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
+                    rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
+                }
             }
 
             // Add unlock hysteresis to all the trx
@@ -291,6 +293,15 @@ public class Prediction {
     }
 
     public void calculatePredictionFull(double threshold_prob) {
+        if (checkOldPrediction()) {
+            int temp_prediction = most(predictions);
+            if (compareDistribution(temp_prediction, threshold_prob)) {
+                prediction_old = temp_prediction;
+            }
+        }
+    }
+
+    public void calculatePredictionInside(double threshold_prob) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
             if (compareDistribution(temp_prediction, threshold_prob)) {

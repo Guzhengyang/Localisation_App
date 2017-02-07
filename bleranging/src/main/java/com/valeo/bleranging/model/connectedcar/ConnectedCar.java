@@ -39,6 +39,7 @@ public abstract class ConnectedCar {
     protected static final String RP_LOC = "RP Localisation:";
     protected static final String START_LOC = "Start Localisation:";
     protected static final String FULL_LOC = "Full Localisation:";
+    protected static final String INSIDE_LOC = "Inside Localisation:";
     protected static final int N_VOTE_LONG = 5;
     protected static final int N_VOTE_SHORT = 3;
     protected static final double THRESHOLD_PROB_LOCK = 0.6;

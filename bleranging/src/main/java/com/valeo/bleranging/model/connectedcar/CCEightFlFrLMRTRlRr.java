@@ -63,12 +63,11 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 R.raw.rf_full, R.raw.sample_full);
         standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
         standardPrediction.predict(N_VOTE_SHORT);
-        insidePrediction = new Prediction(mContext, R.raw.classes_full,
-                R.raw.rf_full, R.raw.sample_full);
-//        insidePrediction = new Prediction(mContext, R.raw.classes_inside,
-//                R.raw.rf_inside, R.raw.sample_inside);
+
+        insidePrediction = new Prediction(mContext, R.raw.classes_inside,
+                R.raw.rf_inside, R.raw.sample_inside);
         insidePrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-        insidePrediction.predict(N_VOTE_SHORT);
+        insidePrediction.predict(N_VOTE_LONG);
     }
 
     @Override
@@ -95,8 +94,10 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         if (isInitialized()) {
             for (int i = 0; i < rssi.length; i++) {
                 standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard());
+                insidePrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard());
             }
             standardPrediction.predict(N_VOTE_SHORT);
+            insidePrediction.predict(N_VOTE_LONG);
         }
     }
 
@@ -104,13 +105,18 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     public void calculatePrediction() {
         if (isInitialized()) {
             standardPrediction.calculatePredictionFull(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
+            insidePrediction.calculatePredictionInside(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
 
     @Override
     public String printDebug(boolean smartphoneIsInPocket) {
         if (isInitialized()) {
-            return standardPrediction.printDebug(FULL_LOC);
+            String result = standardPrediction.printDebug(FULL_LOC);
+            if (standardPrediction.getPrediction().equals(PREDICTION_START)) {
+                result += insidePrediction.printDebug(INSIDE_LOC);
+            }
+            return result;
         }
         return "";
     }
