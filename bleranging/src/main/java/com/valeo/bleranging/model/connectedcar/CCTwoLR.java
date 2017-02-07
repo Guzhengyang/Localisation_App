@@ -54,7 +54,7 @@ public class CCTwoLR extends ConnectedCar {
 
     @Override
     public String printDebug(boolean smartphoneIsInPocket) {
-        return null;
+        return "";
     }
 
     @Override

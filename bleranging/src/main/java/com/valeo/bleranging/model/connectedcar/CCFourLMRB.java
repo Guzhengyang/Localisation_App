@@ -63,7 +63,7 @@ public class CCFourLMRB extends ConnectedCar {
 
     @Override
     public String printDebug(boolean smartphoneIsInPocket) {
-        return null;
+        return "";
     }
 
     @Override
