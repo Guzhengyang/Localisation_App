@@ -27,6 +27,8 @@ import com.valeo.psa.R;
 import com.valeo.psa.utils.PreferenceUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -282,8 +284,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 case PICK_IMPORT_GENERAL_FILE_RESULT_CODE:
                     if (resultCode == RESULT_OK) {
                         String filePath = data.getData().getPath();
-                        PreferenceUtils.loadSharedPreferencesFromFileName(getActivity(), filePath, sharedPreferencesName);
                         File file = new File(filePath);
+                        try {
+                            PreferenceUtils.loadSharedPreferencesFromInputStream(getActivity(),
+                                    new FileInputStream(file), sharedPreferencesName);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
                         Toast.makeText(getActivity(), "Preference imported from " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
                     }
                     break;
@@ -457,7 +464,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if (resultCode == RESULT_OK) {
                         String filePath = data.getData().getPath();
                         File file = new File(filePath);
-                        PreferenceUtils.loadSharedPreferencesFromFileName(getActivity(), filePath, sharedPreferencesName);
+                        try {
+                            PreferenceUtils.loadSharedPreferencesFromInputStream(getActivity(),
+                                    new FileInputStream(file), sharedPreferencesName);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
                         Toast.makeText(getActivity(), "Preference imported from " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
                     }
                     break;

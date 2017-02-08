@@ -6,9 +6,9 @@ import android.content.SharedPreferences;
 import com.valeo.bleranging.utils.PSALogs;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
@@ -47,12 +47,12 @@ public class PreferenceUtils {
         return res;
     }
 
-    public static boolean loadSharedPreferencesFromFileName(Context context, String filename, String sharedPreferencesName) {
+    public static boolean loadSharedPreferencesFromInputStream(Context context, InputStream inputStream, String sharedPreferencesName) {
         boolean res = false;
         SharedPreferences sharedPreferences = context.getSharedPreferences(sharedPreferencesName, MODE_PRIVATE);
         ObjectInputStream input = null;
         try {
-            input = new ObjectInputStream(new FileInputStream(new File(filename)));
+            input = new ObjectInputStream(inputStream);
             SharedPreferences.Editor prefEdit = sharedPreferences.edit();
             prefEdit.clear();
             Map<String, ?> entries = (Map<String, ?>) input.readObject();

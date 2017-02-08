@@ -553,14 +553,20 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             public void onCarSelection(int position) {
                 selectedCar = mCarListAdapter.getCars().get(position);
                 mCarListAdapter.setSelectedCarRegistrationPlate(selectedCar.getRegPlate());
-                PreferenceUtils.loadSharedPreferencesFromFileName(MainActivity.this, selectedCar.getCarConfigFileName(), SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION);
+                PreferenceUtils.loadSharedPreferencesFromInputStream(MainActivity.this,
+                        getResources().openRawResource(
+                                getResources().getIdentifier(selectedCar.getCarConfigFileName(),
+                                        "raw", getPackageName())),
+                        SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION);
             }
         };
         mCarListAdapter = new CarListAdapter(mCarSelectionListener);
         car_model_recyclerView.setAdapter(mCarListAdapter);
         mCarListAdapter.setCars(createCarList());
         // load car_one connection pref, when the app is launched
-        PreferenceUtils.loadSharedPreferencesFromFileName(MainActivity.this, "/sdcard/InBlueConfig/car_one", SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION);
+        PreferenceUtils.loadSharedPreferencesFromInputStream(MainActivity.this,
+                getResources().openRawResource(R.raw.car_one),
+                SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION);
         car_model_recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -569,8 +575,16 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     int position = llm.findFirstCompletelyVisibleItemPosition();
                     if (position != -1) {
                         selectedCar = ((CarListAdapter) recyclerView.getAdapter()).getCars().get(position);
-                        PreferenceUtils.loadSharedPreferencesFromFileName(MainActivity.this, selectedCar.getCarConfigFileName(), SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION);
-                        mBleRangingHelper.restartConnection(true);
+                        if (PreferenceUtils.loadSharedPreferencesFromInputStream(MainActivity.this,
+                                getResources().openRawResource(
+                                        getResources().getIdentifier(
+                                                selectedCar.getCarConfigFileName(),
+                                                "raw", getPackageName())),
+                                SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION)) {
+                            mBleRangingHelper.restartConnection(true);
+                        } else {
+                            Snackbar.make(recyclerView, "pref file not found", Snackbar.LENGTH_SHORT).show();
+                        }
                     }
                     CarListAdapter.ViewHolder vh = (CarListAdapter.ViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
                     if(vh != null) {
@@ -588,8 +602,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      */
     private List<Car> createCarList() {
         List<Car> resultList = new ArrayList<>(3);
-        resultList.add(new Car(R.mipmap.car_model_ds5, "1", getString(R.string.ds5), getString(R.string.VIN), "/sdcard/InBlueConfig/car_one"));
-        resultList.add(new Car(R.drawable.car_model_ds5_2, "2", getString(R.string.ds5_2), getString(R.string.VIN2), "/sdcard/InBlueConfig/car_two"));
+        resultList.add(new Car(R.mipmap.car_model_ds5, "1", getString(R.string.ds5), getString(R.string.VIN), "car_one"));
+        resultList.add(new Car(R.drawable.car_model_ds5_2, "2", getString(R.string.ds5_2), getString(R.string.VIN2), "car_two"));
         return resultList;
     }
 
