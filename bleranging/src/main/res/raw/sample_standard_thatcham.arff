@@ -4,8 +4,8 @@
 @attribute 'RSSI MIDDLE_ORIGIN' numeric
 @attribute 'RSSI RIGHT_ORIGIN' numeric
 @attribute 'RSSI TRUNK_ORIGIN' numeric
-@attribute class {lock,right,left,start,trunk,back}
+@attribute class {trunk,start,left,lock,back,right}
 
 @data
-1.22672,4.34422,8.998162,3.907366,lock
+0.587923,0.345737,0.488366,0.048837,trunk
 
