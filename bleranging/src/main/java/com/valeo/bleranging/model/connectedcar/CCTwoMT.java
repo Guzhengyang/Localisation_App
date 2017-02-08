@@ -35,8 +35,10 @@ public class CCTwoMT extends ConnectedCar {
     public void initPredictions() {
         standardPrediction = new Prediction(mContext, R.raw.classes_start,
                 R.raw.rf_start, R.raw.sample_start);
-        standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone() + START_OFFSET);
-        standardPrediction.predict(N_VOTE_LONG);
+        if (isInitialized()) {
+            standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone() + START_OFFSET);
+            standardPrediction.predict(N_VOTE_LONG);
+        }
     }
 
     @Override

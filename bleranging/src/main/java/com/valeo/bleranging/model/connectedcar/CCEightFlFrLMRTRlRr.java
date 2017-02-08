@@ -62,19 +62,18 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
             standardPrediction = new Prediction(mContext, R.raw.classes_full_thatcham,
                     R.raw.rf_full_thatcham, R.raw.sample_full_thatcham);
-            standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-            standardPrediction.predict(N_VOTE_SHORT);
         } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
             standardPrediction = new Prediction(mContext, R.raw.classes_full_entry,
                     R.raw.rf_full_entry, R.raw.sample_full_entry);
-            standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-            standardPrediction.predict(N_VOTE_SHORT);
         }
-
         insidePrediction = new Prediction(mContext, R.raw.classes_inside,
                 R.raw.rf_inside, R.raw.sample_inside);
-        insidePrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-        insidePrediction.predict(N_VOTE_LONG);
+        if (isInitialized()) {
+            standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            standardPrediction.predict(N_VOTE_SHORT);
+            insidePrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            insidePrediction.predict(N_VOTE_LONG);
+        }
     }
 
     @Override

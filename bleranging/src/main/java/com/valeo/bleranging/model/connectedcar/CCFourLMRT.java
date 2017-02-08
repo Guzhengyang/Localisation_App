@@ -48,18 +48,18 @@ public class CCFourLMRT extends ConnectedCar {
             standardPrediction = new Prediction(mContext, R.raw.classes_standard_entry,
                     R.raw.rf_standard_entry, R.raw.sample_standard_entry);
         }
-        standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-        standardPrediction.predict(N_VOTE_SHORT);
-
         this.rpPrediction = new Prediction(mContext, R.raw.classes_rp,
                 R.raw.rf_rp, R.raw.sample_rp);
-        rpPrediction.init(rssi, 0); //TODO create other offsets
-        rpPrediction.predict(N_VOTE_LONG);
-
         this.earPrediction = new Prediction(mContext, R.raw.classes_ear,
                 R.raw.rf_ear, R.raw.sample_ear);
-        earPrediction.init(rssi, 0); //TODO create other offsets
-        earPrediction.predict(N_VOTE_LONG);
+        if (isInitialized()) {
+            standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            rpPrediction.init(rssi, 0);
+            earPrediction.init(rssi, 0);
+            standardPrediction.predict(N_VOTE_SHORT);
+            rpPrediction.predict(N_VOTE_LONG);
+            earPrediction.predict(N_VOTE_LONG);
+        }
     }
 
     @Override
