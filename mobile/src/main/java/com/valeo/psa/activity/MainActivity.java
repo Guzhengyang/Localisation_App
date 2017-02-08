@@ -553,18 +553,25 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             public void onCarSelection(int position) {
                 selectedCar = mCarListAdapter.getCars().get(position);
                 mCarListAdapter.setSelectedCarRegistrationPlate(selectedCar.getRegPlate());
-                PreferenceUtils.loadSharedPreferencesFromFileDesciptor(MainActivity.this, selectedCar.getCarConfigFileId());
+                PreferenceUtils.loadSharedPreferencesFromFileName(MainActivity.this, selectedCar.getCarConfigFileName(), SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION);
             }
         };
         mCarListAdapter = new CarListAdapter(mCarSelectionListener);
         car_model_recyclerView.setAdapter(mCarListAdapter);
         mCarListAdapter.setCars(createCarList());
+        // load car_one connection pref, when the app is launched
+        PreferenceUtils.loadSharedPreferencesFromFileName(MainActivity.this, "/sdcard/InBlueConfig/car_one", SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION);
         car_model_recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    CarListAdapter.ViewHolder vh = (CarListAdapter.ViewHolder) recyclerView.findViewHolderForAdapterPosition(llm.findFirstCompletelyVisibleItemPosition());
+                    int position = llm.findFirstCompletelyVisibleItemPosition();
+                    if (position != -1) {
+                        selectedCar = ((CarListAdapter) recyclerView.getAdapter()).getCars().get(position);
+                        PreferenceUtils.loadSharedPreferencesFromFileName(MainActivity.this, selectedCar.getCarConfigFileName(), SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION);
+                    }
+                    CarListAdapter.ViewHolder vh = (CarListAdapter.ViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
                     if(vh != null) {
                         selected_car_model_pinned.setText(vh.getBrandCar().getText().toString());
                     }

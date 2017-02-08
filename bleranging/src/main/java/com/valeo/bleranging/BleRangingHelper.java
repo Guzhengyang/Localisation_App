@@ -127,6 +127,7 @@ public class BleRangingHelper {
     private byte[] bytesToSend;
     private byte[] bytesReceived;
     private String lastConnectedCarType = "";
+    private String lastOpeningOrientation = "";
     private boolean isCloseAppCalled = false;
     private boolean newLockStatus;
     private boolean isFirstConnection = true;
@@ -492,9 +493,10 @@ public class BleRangingHelper {
      */
     public void initializeConnectedCar() {
         // on first run, create a new car
-        if (lastConnectedCarType.equals("")) {
+        if (lastConnectedCarType.isEmpty() || lastOpeningOrientation.isEmpty()) {
             createConnectedCar();
-        } else if (!lastConnectedCarType.equalsIgnoreCase(SdkPreferencesHelper.getInstance().getConnectedCarType())) {
+        } else if (!lastConnectedCarType.equalsIgnoreCase(SdkPreferencesHelper.getInstance().getConnectedCarType())
+                || !lastOpeningOrientation.equalsIgnoreCase(SdkPreferencesHelper.getInstance().getOpeningOrientation())) {
             // if car type has changed,
             if (isFullyConnected()) {
                 PSALogs.w("NIH", "INITIALIZED_NEW_CAR");
@@ -841,6 +843,7 @@ public class BleRangingHelper {
     private void createConnectedCar() {
         connectedCar = null;
         lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
+        lastOpeningOrientation = SdkPreferencesHelper.getInstance().getOpeningOrientation();
         connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
         String connectedCarBase = SdkPreferencesHelper.getInstance().getConnectedCarBase();
         mProtocolManager.setCarBase(connectedCarBase);

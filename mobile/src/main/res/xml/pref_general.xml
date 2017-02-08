@@ -31,56 +31,6 @@
             android:key="@string/security_wal_enabled_pref_name"
             android:title="@string/pref_security_wal_enabled" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_ble_address">
-        <EditTextPreference
-            android:inputType="textCapCharacters"
-            android:key="@string/address_connectable_pref_name"
-            android:title="@string/pref_ble_address_connectable" />
-        <EditTextPreference
-            android:inputType="textCapCharacters"
-            android:key="@string/address_connectable_pc_pref_name"
-            android:title="@string/pref_ble_address_connectable_pc" />
-        <EditTextPreference
-            android:inputType="textCapCharacters"
-            android:key="@string/address_connectable_remote_control_pref_name"
-            android:title="@string/pref_ble_address_connectable_remote_control" />
-        <EditTextPreference
-            android:inputType="textCapCharacters"
-            android:key="@string/address_front_left_pref_name"
-            android:title="@string/pref_ble_address_front_left" />
-        <EditTextPreference
-            android:inputType="textCapCharacters"
-            android:key="@string/address_front_right_pref_name"
-            android:title="@string/pref_ble_address_front_right" />
-        <EditTextPreference
-            android:inputType="textCapCharacters"
-            android:key="@string/address_left_pref_name"
-            android:title="@string/pref_ble_address_left" />
-        <EditTextPreference
-            android:inputType="textCapCharacters"
-            android:key="@string/address_middle_pref_name"
-            android:title="@string/pref_ble_address_middle" />
-        <EditTextPreference
-            android:inputType="textCapCharacters"
-            android:key="@string/address_right_pref_name"
-            android:title="@string/pref_ble_address_right" />
-        <EditTextPreference
-            android:inputType="textCapCharacters"
-            android:key="@string/address_trunk_pref_name"
-            android:title="@string/pref_ble_address_trunk" />
-        <EditTextPreference
-            android:inputType="textCapCharacters"
-            android:key="@string/address_rear_left_pref_name"
-            android:title="@string/pref_ble_address_rear_left" />
-        <EditTextPreference
-            android:inputType="textCapCharacters"
-            android:key="@string/address_back_pref_name"
-            android:title="@string/pref_ble_address_back" />
-        <EditTextPreference
-            android:inputType="textCapCharacters"
-            android:key="@string/address_rear_right_pref_name"
-            android:title="@string/pref_ble_address_rear_right" />
-    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_nb_element">
         <EditTextPreference
             android:inputType="number"

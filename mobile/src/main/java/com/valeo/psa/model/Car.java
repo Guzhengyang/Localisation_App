@@ -10,7 +10,7 @@ public class Car {
     private final String mRegPlate;
     private final String mBrandCar;
     private final String mVin;
-    private final String mCarConfigFileId;
+    private final String mCarConfigFileName;
 
     /**
      * Class constructor
@@ -20,12 +20,12 @@ public class Car {
      * @param brandCar the car brand
      * @param vin the car vin
      */
-    public Car(int imgCarId, String regPlate, String brandCar, String vin, String carConfigFileId) {
+    public Car(int imgCarId, String regPlate, String brandCar, String vin, String carConfigFileName) {
         mImgCarId = imgCarId;
         mRegPlate = regPlate;
         mBrandCar = brandCar;
         mVin = vin;
-        mCarConfigFileId = carConfigFileId;
+        mCarConfigFileName = carConfigFileName;
     }
 
     /**
@@ -36,7 +36,7 @@ public class Car {
         mRegPlate = "";
         mBrandCar = "";
         mVin = "";
-        mCarConfigFileId = "";
+        mCarConfigFileName = "";
     }
 
     //GETTER AND SETTERS
@@ -56,8 +56,8 @@ public class Car {
         return mVin;
     }
 
-    public String getCarConfigFileId() {
-        return mCarConfigFileId;
+    public String getCarConfigFileName() {
+        return mCarConfigFileName;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class Car {
                 ", mRegPlate='" + mRegPlate + '\'' +
                 ", mBrandCar='" + mBrandCar + '\'' +
                 ", mVin='" + mVin + '\'' +
-                ", mCarConfigFileId='" + mCarConfigFileId + '\'' +
+                ", mCarConfigFileName='" + mCarConfigFileName + '\'' +
                 '}';
     }
 }

@@ -40,6 +40,7 @@ public final class SdkPreferencesHelper {
     public final static String BLE_ADDRESS_BACK = "78:A5:04:81:5A:21";
     public final static String BLE_ADDRESS_REAR_RIGHT = "24:71:89:1D:4E:61";
     public static final String SAVED_CC_GENERIC_OPTION = "savedConnectedCarGenericOption";
+    public static final String SAVED_CC_CONNECTION_OPTION = "savedConnectedCarConnectionOption";
     private final static String LOG_FILE_NAME = "sdcard/InBlueRssi/allRssi_0_0000.csv";
     private static final String SAVED_LOGIN_INFO = "savedLoginInfo";
     private static final String SAVED_LOGGER_INFO = "savedLoggerInfo";

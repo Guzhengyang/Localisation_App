@@ -3,12 +3,10 @@ package com.valeo.psa.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -49,30 +47,12 @@ public class PreferenceUtils {
         return res;
     }
 
-    public static boolean loadSharedPreferencesFromFileDesciptor(Context context, String filename) {
-        try {
-            return loadSharedPreferencesFromInputStream(context, new FileInputStream(new File(filename)), SdkPreferencesHelper.SAVED_CC_GENERIC_OPTION);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public static boolean loadSharedPreferencesFromFile(Context context, File src, String sharedPreferencesName) {
-        try {
-            return loadSharedPreferencesFromInputStream(context, new FileInputStream(src), sharedPreferencesName);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private static boolean loadSharedPreferencesFromInputStream(Context context, FileInputStream src, String sharedPreferencesName) {
+    public static boolean loadSharedPreferencesFromFileName(Context context, String filename, String sharedPreferencesName) {
         boolean res = false;
         SharedPreferences sharedPreferences = context.getSharedPreferences(sharedPreferencesName, MODE_PRIVATE);
         ObjectInputStream input = null;
         try {
-            input = new ObjectInputStream(src);
+            input = new ObjectInputStream(new FileInputStream(new File(filename)));
             SharedPreferences.Editor prefEdit = sharedPreferences.edit();
             prefEdit.clear();
             Map<String, ?> entries = (Map<String, ?>) input.readObject();
