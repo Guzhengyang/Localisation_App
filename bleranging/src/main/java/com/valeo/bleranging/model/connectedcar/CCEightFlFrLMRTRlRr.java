@@ -59,10 +59,17 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     @Override
     public void initPredictions() {
-        standardPrediction = new Prediction(mContext, R.raw.classes_full,
-                R.raw.rf_full, R.raw.sample_full);
-        standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-        standardPrediction.predict(N_VOTE_SHORT);
+        if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
+            standardPrediction = new Prediction(mContext, R.raw.classes_full_thatcham,
+                    R.raw.rf_full_thatcham, R.raw.sample_full_thatcham);
+            standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            standardPrediction.predict(N_VOTE_SHORT);
+        } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
+            standardPrediction = new Prediction(mContext, R.raw.classes_full_entry,
+                    R.raw.rf_full_entry, R.raw.sample_full_entry);
+            standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            standardPrediction.predict(N_VOTE_SHORT);
+        }
 
         insidePrediction = new Prediction(mContext, R.raw.classes_inside,
                 R.raw.rf_inside, R.raw.sample_inside);
@@ -104,7 +111,11 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public void calculatePrediction() {
         if (isInitialized()) {
-            standardPrediction.calculatePredictionFull(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
+            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
+                standardPrediction.calculatePredictionFull(SdkPreferencesHelper.getInstance().getThresholdProbStandard(), THRESHOLD_PROB_UNLOCK, THATCHAM_ORIENTED);
+            } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
+                standardPrediction.calculatePredictionFull(SdkPreferencesHelper.getInstance().getThresholdProbStandard(), THRESHOLD_PROB_UNLOCK, PASSIVE_ENTRY_ORIENTED);
+            }
             insidePrediction.calculatePredictionInside(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
@@ -112,7 +123,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public String printDebug(boolean smartphoneIsInPocket) {
         if (isInitialized()) {
-            String result = standardPrediction.printDebug(FULL_LOC);
+            String result = SdkPreferencesHelper.getInstance().getOpeningOrientation() + "\n";
+            result += standardPrediction.printDebug(FULL_LOC);
             if (standardPrediction.getPrediction().equals(PREDICTION_START)) {
                 result += insidePrediction.printDebug(INSIDE_LOC);
             }

@@ -106,7 +106,7 @@ public class CCFourLMRT extends ConnectedCar {
 
     @Override
     public String printDebug(boolean smartphoneIsInPocket) {
-        String result = "";
+        String result = SdkPreferencesHelper.getInstance().getOpeningOrientation() + "\n";
         if (isInitialized()) {
             if (SdkPreferencesHelper.getInstance().getComSimulationEnabled() && smartphoneIsInPocket) {
                 result = earPrediction.printDebug(EAR_HELD_LOC);
