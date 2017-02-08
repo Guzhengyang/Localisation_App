@@ -40,6 +40,7 @@ public final class SdkPreferencesHelper {
     public final static String BLE_ADDRESS_BACK = "78:A5:04:81:5A:21";
     public final static String BLE_ADDRESS_REAR_RIGHT = "24:71:89:1D:4E:61";
     public static final String SAVED_CC_GENERIC_OPTION = "savedConnectedCarGenericOption";
+    public static final String SAVED_CC_CONNECTION_OPTION = "savedConnectedCarConnectionOption";
     private final static String LOG_FILE_NAME = "sdcard/InBlueRssi/allRssi_0_0000.csv";
     private static final String SAVED_LOGIN_INFO = "savedLoginInfo";
     private static final String SAVED_LOGGER_INFO = "savedLoggerInfo";
@@ -153,55 +154,55 @@ public final class SdkPreferencesHelper {
     }
 
     public String getTrxAddressConnectable() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_connectable_pref_name), BLE_ADDRESS_CONNECTABLE);
+        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_connectable_pref_name), BLE_ADDRESS_CONNECTABLE);
     }
 
     public String getTrxAddressConnectablePC() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_connectable_pc_pref_name), BLE_ADDRESS_CONNECTABLE_PC);
+        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_connectable_pc_pref_name), BLE_ADDRESS_CONNECTABLE_PC);
     }
 
     public String getTrxAddressConnectableRemoteControl() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_connectable_remote_control_pref_name), BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL);
+        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_connectable_remote_control_pref_name), BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL);
     }
 
     public void setTrxAddressConnectableRemoteControl(String address) {
-        saveString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_connectable_remote_control_pref_name), address);
+        saveString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_connectable_remote_control_pref_name), address);
     }
 
     public String getTrxAddressLeft() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_left_pref_name), BLE_ADDRESS_LEFT);
+        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_left_pref_name), BLE_ADDRESS_LEFT);
     }
 
     public String getTrxAddressMiddle() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_middle_pref_name), BLE_ADDRESS_MIDDLE);
+        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_middle_pref_name), BLE_ADDRESS_MIDDLE);
     }
 
     public String getTrxAddressRight() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_right_pref_name), BLE_ADDRESS_RIGHT);
+        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_right_pref_name), BLE_ADDRESS_RIGHT);
     }
 
     public String getTrxAddressTrunk() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_trunk_pref_name), BLE_ADDRESS_TRUNK);
+        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_trunk_pref_name), BLE_ADDRESS_TRUNK);
     }
 
     public String getTrxAddressBack() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_back_pref_name), BLE_ADDRESS_BACK);
+        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_back_pref_name), BLE_ADDRESS_BACK);
     }
 
     public String getTrxAddressFrontLeft() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_front_left_pref_name), BLE_ADDRESS_FRONT_LEFT);
+        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_front_left_pref_name), BLE_ADDRESS_FRONT_LEFT);
     }
 
     public String getTrxAddressRearLeft() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_rear_left_pref_name), BLE_ADDRESS_REAR_LEFT);
+        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_rear_left_pref_name), BLE_ADDRESS_REAR_LEFT);
     }
 
     public String getTrxAddressFrontRight() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_front_right_pref_name), BLE_ADDRESS_FRONT_RIGHT);
+        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_front_right_pref_name), BLE_ADDRESS_FRONT_RIGHT);
     }
 
     public String getTrxAddressRearRight() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.address_rear_right_pref_name), BLE_ADDRESS_REAR_RIGHT);
+        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_rear_right_pref_name), BLE_ADDRESS_REAR_RIGHT);
     }
 
     public Boolean getUserSpeedEnabled() {

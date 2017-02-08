@@ -27,6 +27,8 @@ import com.valeo.psa.R;
 import com.valeo.psa.utils.PreferenceUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -130,6 +132,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     protected boolean isValidFragment(String fragmentName) {
         return GeneralPreferenceFragment.class.getName().equals(fragmentName)
+                || ConnectionPreferenceFragment.class.getName().equals(fragmentName)
                 || PSASettingsFragment.class.getName().equals(fragmentName);
     }
 
@@ -184,6 +187,178 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     /**
+     * This fragment shows connection preferences only. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class ConnectionPreferenceFragment extends PreferenceFragment {
+        private static final int PICK_IMPORT_GENERAL_FILE_RESULT_CODE = 92141;
+        private EditTextPreference address_connectable;
+        private EditTextPreference address_connectable_pc;
+        private EditTextPreference address_connectable_remote_control;
+        private EditTextPreference address_front_left;
+        private EditTextPreference address_front_right;
+        private EditTextPreference address_left;
+        private EditTextPreference address_middle;
+        private EditTextPreference address_right;
+        private EditTextPreference address_trunk;
+        private EditTextPreference address_rear_left;
+        private EditTextPreference address_back;
+        private EditTextPreference address_rear_right;
+        private Preference export_preferences;
+        private Preference import_preferences;
+        private String sharedPreferencesName;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            manager = getPreferenceManager();
+            sharedPreferencesName = SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION;
+            manager.setSharedPreferencesName(sharedPreferencesName);
+            sharedPreferences = manager.getSharedPreferences();
+            addPreferencesFromResource(R.xml.pref_connection);
+            setHasOptionsMenu(true);
+            setViews();
+            bindSummaries();
+            setOnClickListeners();
+        }
+
+        private void setOnClickListeners() {
+            export_preferences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    String filePath = "sdcard/inBlueConfig/" + SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION;
+                    File exportedPrefs = new File(filePath);
+                    if (!exportedPrefs.exists()) {
+                        try {
+                            if (exportedPrefs.createNewFile()) {
+                                PreferenceUtils.saveSharedPreferencesToFile(getActivity(), exportedPrefs, sharedPreferencesName);
+                                Toast.makeText(getActivity(), "Preference exported to " + filePath, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActivity(), "Cannot create file.", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        PreferenceUtils.saveSharedPreferencesToFile(getActivity(), exportedPrefs, sharedPreferencesName);
+                        Toast.makeText(getActivity(), "Preference exported to " + filePath, Toast.LENGTH_SHORT).show();
+                    }
+                    return false;
+                }
+            });
+
+            import_preferences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    selectFile(PICK_IMPORT_GENERAL_FILE_RESULT_CODE);
+                    return false;
+                }
+            });
+        }
+
+        private void selectFile(int code) {
+            String manufacturer = android.os.Build.MANUFACTURER;
+            if (manufacturer.equalsIgnoreCase("SAMSUNG")) {
+                Intent intent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
+                intent.putExtra("CONTENT_TYPE", "*/*");
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                startActivityForResult(intent, code);
+            } else {
+                Intent intent;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                } else {
+                    intent = new Intent(Intent.ACTION_GET_CONTENT);
+                }
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("file/*");
+                startActivityForResult(intent, code);
+            }
+        }
+
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            switch (requestCode) {
+                case PICK_IMPORT_GENERAL_FILE_RESULT_CODE:
+                    if (resultCode == RESULT_OK) {
+                        String filePath = data.getData().getPath();
+                        File file = new File(filePath);
+                        try {
+                            PreferenceUtils.loadSharedPreferencesFromInputStream(getActivity(),
+                                    new FileInputStream(file), sharedPreferencesName);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        Toast.makeText(getActivity(), "Preference imported from " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            setDefaultValues();
+        }
+
+        private void setViews() {
+            address_connectable = ((EditTextPreference) findPreference(getString(R.string.address_connectable_pref_name)));
+            address_connectable_pc = ((EditTextPreference) findPreference(getString(R.string.address_connectable_pc_pref_name)));
+            address_connectable_remote_control = ((EditTextPreference) findPreference(getString(R.string.address_connectable_remote_control_pref_name)));
+            address_front_left = ((EditTextPreference) findPreference(getString(R.string.address_front_left_pref_name)));
+            address_front_right = ((EditTextPreference) findPreference(getString(R.string.address_front_right_pref_name)));
+            address_left = ((EditTextPreference) findPreference(getString(R.string.address_left_pref_name)));
+            address_middle = ((EditTextPreference) findPreference(getString(R.string.address_middle_pref_name)));
+            address_right = ((EditTextPreference) findPreference(getString(R.string.address_right_pref_name)));
+            address_trunk = ((EditTextPreference) findPreference(getString(R.string.address_trunk_pref_name)));
+            address_rear_left = ((EditTextPreference) findPreference(getString(R.string.address_rear_left_pref_name)));
+            address_back = ((EditTextPreference) findPreference(getString(R.string.address_back_pref_name)));
+            address_rear_right = ((EditTextPreference) findPreference(getString(R.string.address_rear_right_pref_name)));
+            export_preferences = findPreference(getString(R.string.export_pref_name));
+            import_preferences = findPreference(getString(R.string.import_pref_name));
+        }
+
+        private void setDefaultValues() {
+            address_connectable.setText(address_connectable.getSummary().toString());
+            if (address_connectable_pc != null && address_connectable_pc.getSummary() != null) {
+                address_connectable_pc.setText(address_connectable_pc.getSummary().toString());
+            }
+            address_connectable_remote_control.setText(address_connectable_remote_control.getSummary().toString());
+            address_front_left.setText(address_front_left.getSummary().toString());
+            address_front_right.setText(address_front_right.getSummary().toString());
+            address_left.setText(address_left.getSummary().toString());
+            address_middle.setText(address_middle.getSummary().toString());
+            address_right.setText(address_right.getSummary().toString());
+            address_trunk.setText(address_trunk.getSummary().toString());
+            address_rear_left.setText(address_rear_left.getSummary().toString());
+            address_back.setText(address_back.getSummary().toString());
+            address_rear_right.setText(address_rear_right.getSummary().toString());
+        }
+
+        // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+        // to their values. When their values change, their summaries are
+        // updated to reflect the new value, per the Android Design
+        // guidelines.
+        private void bindSummaries() {
+            bindPreferenceSummaryToValue(address_connectable, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE);
+            bindPreferenceSummaryToValue(address_connectable_pc, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE_PC);
+            bindPreferenceSummaryToValue(address_connectable_remote_control, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL);
+            bindPreferenceSummaryToValue(address_front_left, SdkPreferencesHelper.BLE_ADDRESS_FRONT_LEFT);
+            bindPreferenceSummaryToValue(address_front_right, SdkPreferencesHelper.BLE_ADDRESS_FRONT_RIGHT);
+            bindPreferenceSummaryToValue(address_left, SdkPreferencesHelper.BLE_ADDRESS_LEFT);
+            bindPreferenceSummaryToValue(address_middle, SdkPreferencesHelper.BLE_ADDRESS_MIDDLE);
+            bindPreferenceSummaryToValue(address_right, SdkPreferencesHelper.BLE_ADDRESS_RIGHT);
+            bindPreferenceSummaryToValue(address_trunk, SdkPreferencesHelper.BLE_ADDRESS_TRUNK);
+            bindPreferenceSummaryToValue(address_rear_left, SdkPreferencesHelper.BLE_ADDRESS_REAR_LEFT);
+            bindPreferenceSummaryToValue(address_back, SdkPreferencesHelper.BLE_ADDRESS_BACK);
+            bindPreferenceSummaryToValue(address_rear_right, SdkPreferencesHelper.BLE_ADDRESS_REAR_RIGHT);
+        }
+    }
+
+    /**
      * This fragment shows general preferences only. It is used when the
      * activity is showing a two-pane settings UI.
      */
@@ -200,7 +375,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference offset_hysteresis_unlock;
         private EditTextPreference threshold_prob_standard;
         private EditTextPreference threshold_dist_away_standard;
-        //        private EditTextPreference back_timeout;
         private EditTextPreference thatcham_timeout;
         private EditTextPreference unlock_timeout;
         private EditTextPreference crypto_pre_auth_timeout;
@@ -210,18 +384,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private CheckBoxPreference user_speed_enabled;
         private EditTextPreference wanted_speed;
         private EditTextPreference one_step_size;
-        private EditTextPreference address_connectable;
-        private EditTextPreference address_connectable_pc;
-        private EditTextPreference address_connectable_remote_control;
-        private EditTextPreference address_front_left;
-        private EditTextPreference address_front_right;
-        private EditTextPreference address_left;
-        private EditTextPreference address_middle;
-        private EditTextPreference address_right;
-        private EditTextPreference address_trunk;
-        private EditTextPreference address_rear_left;
-        private EditTextPreference address_back;
-        private EditTextPreference address_rear_right;
         private Preference export_preferences;
         private Preference import_preferences;
         private String sharedPreferencesName;
@@ -302,7 +464,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if (resultCode == RESULT_OK) {
                         String filePath = data.getData().getPath();
                         File file = new File(filePath);
-                        PreferenceUtils.loadSharedPreferencesFromFile(getActivity(), file, sharedPreferencesName);
+                        try {
+                            PreferenceUtils.loadSharedPreferencesFromInputStream(getActivity(),
+                                    new FileInputStream(file), sharedPreferencesName);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
                         Toast.makeText(getActivity(), "Preference imported from " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
                     }
                     break;
@@ -337,18 +504,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             user_speed_enabled = ((CheckBoxPreference) findPreference(getString(R.string.user_speed_enabled_pref_name)));
             wanted_speed = ((EditTextPreference) findPreference(getString(R.string.wanted_speed_pref_name)));
             one_step_size = ((EditTextPreference) findPreference(getString(R.string.one_step_size_pref_name)));
-            address_connectable = ((EditTextPreference) findPreference(getString(R.string.address_connectable_pref_name)));
-            address_connectable_pc = ((EditTextPreference) findPreference(getString(R.string.address_connectable_pc_pref_name)));
-            address_connectable_remote_control = ((EditTextPreference) findPreference(getString(R.string.address_connectable_remote_control_pref_name)));
-            address_front_left = ((EditTextPreference) findPreference(getString(R.string.address_front_left_pref_name)));
-            address_front_right = ((EditTextPreference) findPreference(getString(R.string.address_front_right_pref_name)));
-            address_left = ((EditTextPreference) findPreference(getString(R.string.address_left_pref_name)));
-            address_middle = ((EditTextPreference) findPreference(getString(R.string.address_middle_pref_name)));
-            address_right = ((EditTextPreference) findPreference(getString(R.string.address_right_pref_name)));
-            address_trunk = ((EditTextPreference) findPreference(getString(R.string.address_trunk_pref_name)));
-            address_rear_left = ((EditTextPreference) findPreference(getString(R.string.address_rear_left_pref_name)));
-            address_back = ((EditTextPreference) findPreference(getString(R.string.address_back_pref_name)));
-            address_rear_right = ((EditTextPreference) findPreference(getString(R.string.address_rear_right_pref_name)));
             export_preferences = findPreference(getString(R.string.export_pref_name));
             import_preferences = findPreference(getString(R.string.import_pref_name));
         }
@@ -371,20 +526,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             rolling_av_element.setText(rolling_av_element.getSummary().toString());
             wanted_speed.setText(wanted_speed.getSummary().toString());
             one_step_size.setText(one_step_size.getSummary().toString());
-            address_connectable.setText(address_connectable.getSummary().toString());
-            if (address_connectable_pc != null && address_connectable_pc.getSummary() != null) {
-                address_connectable_pc.setText(address_connectable_pc.getSummary().toString());
-            }
-            address_connectable_remote_control.setText(address_connectable_remote_control.getSummary().toString());
-            address_front_left.setText(address_front_left.getSummary().toString());
-            address_front_right.setText(address_front_right.getSummary().toString());
-            address_left.setText(address_left.getSummary().toString());
-            address_middle.setText(address_middle.getSummary().toString());
-            address_right.setText(address_right.getSummary().toString());
-            address_trunk.setText(address_trunk.getSummary().toString());
-            address_rear_left.setText(address_rear_left.getSummary().toString());
-            address_back.setText(address_back.getSummary().toString());
-            address_rear_right.setText(address_rear_right.getSummary().toString());
         }
 
         // Bind the summaries of EditText/List/Dialog/Ringtone preferences
@@ -412,18 +553,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             user_speed_enabled.setSummary(R.string.pref_user_speed_enabled_summary);
             bindPreferenceSummaryToValue(wanted_speed, String.valueOf(SdkPreferencesHelper.WANTED_SPEED));
             bindPreferenceSummaryToValue(one_step_size, String.valueOf(SdkPreferencesHelper.ONE_STEP_SIZE));
-            bindPreferenceSummaryToValue(address_connectable, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE);
-            bindPreferenceSummaryToValue(address_connectable_pc, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE_PC);
-            bindPreferenceSummaryToValue(address_connectable_remote_control, SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL);
-            bindPreferenceSummaryToValue(address_front_left, SdkPreferencesHelper.BLE_ADDRESS_FRONT_LEFT);
-            bindPreferenceSummaryToValue(address_front_right, SdkPreferencesHelper.BLE_ADDRESS_FRONT_RIGHT);
-            bindPreferenceSummaryToValue(address_left, SdkPreferencesHelper.BLE_ADDRESS_LEFT);
-            bindPreferenceSummaryToValue(address_middle, SdkPreferencesHelper.BLE_ADDRESS_MIDDLE);
-            bindPreferenceSummaryToValue(address_right, SdkPreferencesHelper.BLE_ADDRESS_RIGHT);
-            bindPreferenceSummaryToValue(address_trunk, SdkPreferencesHelper.BLE_ADDRESS_TRUNK);
-            bindPreferenceSummaryToValue(address_rear_left, SdkPreferencesHelper.BLE_ADDRESS_REAR_LEFT);
-            bindPreferenceSummaryToValue(address_back, SdkPreferencesHelper.BLE_ADDRESS_BACK);
-            bindPreferenceSummaryToValue(address_rear_right, SdkPreferencesHelper.BLE_ADDRESS_REAR_RIGHT);
         }
 
         @Override

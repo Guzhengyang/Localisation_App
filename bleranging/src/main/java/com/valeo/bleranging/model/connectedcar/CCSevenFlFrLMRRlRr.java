@@ -2,6 +2,7 @@ package com.valeo.bleranging.model.connectedcar;
 
 import android.content.Context;
 
+import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.model.Trx;
 
 /**
@@ -79,6 +80,6 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
 
     @Override
     public String getPredictionPosition(boolean smartphoneIsInPocket) {
-        return null;
+        return BleRangingHelper.PREDICTION_UNKNOWN;
     }
 }

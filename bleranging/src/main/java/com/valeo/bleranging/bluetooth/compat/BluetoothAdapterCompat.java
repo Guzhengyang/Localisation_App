@@ -214,6 +214,7 @@ public final class BluetoothAdapterCompat {
                     scanTask.setScanPeriods(1000 * 1000, 1000);
                     mRunningDetections.put(scanCallbackCompat, scanTask);
                     scanTask.start();
+                    PSALogs.w(TAG, "Scanning task started");
                 }
                 result = ScanTask.StartLeScanResult.SUCCESS;
             }
