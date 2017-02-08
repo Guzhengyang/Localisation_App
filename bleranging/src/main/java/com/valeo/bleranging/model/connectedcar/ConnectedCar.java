@@ -59,15 +59,6 @@ public abstract class ConnectedCar {
     private final static int RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE = -60;
     private final static int RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE = -55;
     private final static int RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE = -75;
-    private final static String trxAddressFrontLeft = SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft();
-    private final static String trxAddressFrontRight = SdkPreferencesHelper.getInstance().getTrxAddressFrontRight();
-    private final static String trxAddressLeft = SdkPreferencesHelper.getInstance().getTrxAddressLeft();
-    private final static String trxAddressMiddle = SdkPreferencesHelper.getInstance().getTrxAddressMiddle();
-    private final static String trxAddressRight = SdkPreferencesHelper.getInstance().getTrxAddressRight();
-    private final static String trxAddressTrunk = SdkPreferencesHelper.getInstance().getTrxAddressTrunk();
-    private final static String trxAddressRearLeft = SdkPreferencesHelper.getInstance().getTrxAddressRearLeft();
-    private final static String trxAddressBack = SdkPreferencesHelper.getInstance().getTrxAddressBack();
-    private final static String trxAddressRearRight = SdkPreferencesHelper.getInstance().getTrxAddressRearRight();
     protected final Handler mHandlerComValidTimeOut = new Handler();
     final LinkedHashMap<Integer, Trx> trxLinkedHMap;
     private final ConnectionNumber connectionNumber;
@@ -352,23 +343,23 @@ public abstract class ConnectedCar {
     }
 
     public int getTrxNumber(String address) {
-        if (address.equals(trxAddressFrontLeft)) {
+        if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft())) {
             return ConnectedCar.NUMBER_TRX_FRONT_LEFT;
-        } else if (address.equals(trxAddressFrontRight)) {
+        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressFrontRight())) {
             return ConnectedCar.NUMBER_TRX_FRONT_RIGHT;
-        } else if (address.equals(trxAddressLeft)) {
+        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressLeft())) {
             return ConnectedCar.NUMBER_TRX_LEFT;
-        } else if (address.equals(trxAddressMiddle)) {
+        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressMiddle())) {
             return ConnectedCar.NUMBER_TRX_MIDDLE;
-        } else if (address.equals(trxAddressRight)) {
+        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressRight())) {
             return ConnectedCar.NUMBER_TRX_RIGHT;
-        } else if (address.equals(trxAddressTrunk)) {
+        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressTrunk())) {
             return ConnectedCar.NUMBER_TRX_TRUNK;
-        } else if (address.equals(trxAddressRearLeft)) {
+        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressRearLeft())) {
             return ConnectedCar.NUMBER_TRX_REAR_LEFT;
-        } else if (address.equals(trxAddressBack)) {
+        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressBack())) {
             return ConnectedCar.NUMBER_TRX_BACK;
-        } else if (address.equals(trxAddressRearRight)) {
+        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressRearRight())) {
             return ConnectedCar.NUMBER_TRX_REAR_RIGHT;
         } else {
             return -1;

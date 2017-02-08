@@ -14,7 +14,7 @@ import java.util.Locale;
  * Created by l-avaratha on 08/06/2016
  */
 public class TrxUtils {
-    private static File logFile = new File("");
+    private static File logFile = null;
 
     /**
      * Convert a boolean to a string value
@@ -210,10 +210,12 @@ public class TrxUtils {
             SimpleDateFormat s = new SimpleDateFormat("HH:mm:ss:SSS", Locale.FRANCE);
             String timestamp = s.format(new Date());
             //BufferedWriter for performance, true to set append to file flag
-            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
-            buf.append(timestamp).append(";").append(text);
-            buf.newLine();
-            buf.close();
+            if (logFile != null) {
+                BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+                buf.append(timestamp).append(";").append(text);
+                buf.newLine();
+                buf.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -272,10 +274,12 @@ public class TrxUtils {
                 + "logNumber;rollAvElement;"
                 + "preAuthTimeout;actionTimeout;wantedSpeed;stepSize;";
         try {
-            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
-            buf.append(ColNames);
-            buf.newLine();
-            buf.close();
+            if (logFile != null) {
+                BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+                buf.append(ColNames);
+                buf.newLine();
+                buf.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -304,10 +308,12 @@ public class TrxUtils {
                 + "BLE CHANNEL FRONTLEFT;BLE CHANNEL FRONTRIGHT;"
                 + "BLE CHANNEL REARLEFT;BLE CHANNEL REARRIGHT;BLE CHANNEL BACK;BEEPINT;";
         try {
-            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
-            buf.append(ColNames);
-            buf.newLine();
-            buf.close();
+            if (logFile != null) {
+                BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+                buf.append(ColNames);
+                buf.newLine();
+                buf.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

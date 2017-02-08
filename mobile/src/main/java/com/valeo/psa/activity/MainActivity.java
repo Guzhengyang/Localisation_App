@@ -570,6 +570,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     if (position != -1) {
                         selectedCar = ((CarListAdapter) recyclerView.getAdapter()).getCars().get(position);
                         PreferenceUtils.loadSharedPreferencesFromFileName(MainActivity.this, selectedCar.getCarConfigFileName(), SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION);
+                        mBleRangingHelper.restartConnection(true);
                     }
                     CarListAdapter.ViewHolder vh = (CarListAdapter.ViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
                     if(vh != null) {

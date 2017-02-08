@@ -326,12 +326,11 @@ public class BluetoothManagement {
      */
     private void onScanRecordsGet(BluetoothDevice device, int rssi, byte[] scanRecord, byte[] advertisedData) {
         if (scanRecord != null) {
-            if (device.getAddress().equalsIgnoreCase(SdkPreferencesHelper.BLE_ADDRESS_CONNECTABLE)) {
+            PSALogs.d("catch_address", device.getAddress() + " " + SdkPreferencesHelper.getInstance().getTrxAddressConnectable());
+            if (device.getAddress().equalsIgnoreCase(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())) {
                 fireCentralScanResponseCatch(device, ScanResponseParser.parseCentralScanResponse(scanRecord));
             } else {
                 BeaconScanResponse beaconScanResponse = ScanResponseParser.parseBeaconScanResponse(scanRecord);
-                PSALogs.d("catch", TextUtils.printBleBytes(scanRecord));
-                PSALogs.d("catch", beaconScanResponse.toString());
                 fireBeaconScanResponseCatch(device, rssi, beaconScanResponse, advertisedData);
             }
         }
