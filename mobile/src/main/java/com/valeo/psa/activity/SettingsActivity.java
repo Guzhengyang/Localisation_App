@@ -220,15 +220,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             setHasOptionsMenu(true);
             setViews();
             bindSummaries();
-            setOnClickListeners();
+            setOnClickListeners(getActivity());
         }
 
-        private void setOnClickListeners() {
+        private void setOnClickListeners(final Context mContext) {
             export_preferences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    String filePath = "sdcard/inBlueConfig/" + SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION;
-                    File exportedPrefs = new File(filePath);
+                    String filePath = "/inBlueConfig/" + SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION;
+                    File exportedPrefs = new File(mContext.getExternalCacheDir(), filePath);
                     if (!exportedPrefs.exists()) {
                         try {
                             if (exportedPrefs.createNewFile()) {
@@ -399,15 +399,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             setHasOptionsMenu(true);
             setViews();
             bindSummaries();
-            setOnClickListeners();
+            setOnClickListeners(getActivity());
         }
 
-        private void setOnClickListeners() {
+        private void setOnClickListeners(final Context mContext) {
             export_preferences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    String filePath = "sdcard/inBlueConfig/" + SdkPreferencesHelper.SAVED_CC_GENERIC_OPTION;
-                    File exportedPrefs = new File(filePath);
+                    String filePath = "/inBlueConfig/" + SdkPreferencesHelper.SAVED_CC_GENERIC_OPTION;
+                    File exportedPrefs = new File(mContext.getExternalCacheDir(), filePath);
                     if (!exportedPrefs.exists()) {
                         try {
                             if (exportedPrefs.createNewFile()) {

@@ -1,5 +1,7 @@
 package com.valeo.bleranging.utils;
 
+import android.content.Context;
+
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.io.BufferedWriter;
@@ -224,21 +226,21 @@ public class TrxUtils {
     /**
      * Create two directories to register the settings and all rssi values
      */
-    public static boolean createDirectories() {
-        return createLogsDir() && createConfigDir();
+    public static boolean createDirectories(Context mContext) {
+        return createLogsDir(mContext) && createConfigDir(mContext);
     }
 
     /**
      * Create a log file to register the settings and all rssi values
      * @return true if the file exist or is succesfully created, false otherwise
      */
-    public static boolean createLogFile() {
-        if (createDirectories()) {
+    public static boolean createLogFile(Context mContext) {
+        if (createDirectories(mContext)) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_kk", Locale.FRANCE);
             String timestampLog = sdf.format(new Date());
-            SdkPreferencesHelper.getInstance().setLogFileName("sdcard/InBlueRssi/allRssi_"
+            SdkPreferencesHelper.getInstance().setLogFileName("/InBlueRssi/allRssi_"
                     + SdkPreferencesHelper.getInstance().getRssiLogNumber() + "_" + timestampLog + ".csv");
-            logFile = new File(SdkPreferencesHelper.getInstance().getLogFileName());
+            logFile = new File(mContext.getExternalCacheDir(), SdkPreferencesHelper.getInstance().getLogFileName());
             PSALogs.d("LogFileName", SdkPreferencesHelper.getInstance().getLogFileName());
             if (!logFile.exists()) {
                 try {
@@ -319,8 +321,8 @@ public class TrxUtils {
         }
     }
 
-    private static boolean createLogsDir() {
-        File dir = new File("sdcard/InBlueRssi/");
+    private static boolean createLogsDir(Context mContext) {
+        File dir = new File(mContext.getExternalCacheDir(), "/InBlueRssi/");
         //if the folder doesn't exist
         if (!dir.exists()) {
             if (dir.mkdir()) {
@@ -334,8 +336,8 @@ public class TrxUtils {
         return true;
     }
 
-    private static boolean createConfigDir() {
-        File dir = new File("sdcard/InBlueConfig/");
+    private static boolean createConfigDir(Context mContext) {
+        File dir = new File(mContext.getExternalCacheDir(), "/InBlueConfig/");
         //if the folder doesn't exist
         if (!dir.exists()) {
             if (dir.mkdir()) {
