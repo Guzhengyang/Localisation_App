@@ -378,6 +378,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference crypto_action_timeout;
         private EditTextPreference rssi_log_number;
         private EditTextPreference rolling_av_element;
+        private CheckBoxPreference print_inside_enabled;
         private CheckBoxPreference user_speed_enabled;
         private EditTextPreference wanted_speed;
         private EditTextPreference one_step_size;
@@ -495,6 +496,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             crypto_action_timeout = ((EditTextPreference) findPreference(getString(R.string.crypto_action_timeout_pref_name)));
             rssi_log_number = ((EditTextPreference) findPreference(getString(R.string.rssi_log_number_pref_name)));
             rolling_av_element = ((EditTextPreference) findPreference(getString(R.string.rolling_av_element_pref_name)));
+            print_inside_enabled = ((CheckBoxPreference) findPreference(getString(R.string.print_inside_enabled_pref_name)));
             user_speed_enabled = ((CheckBoxPreference) findPreference(getString(R.string.user_speed_enabled_pref_name)));
             wanted_speed = ((EditTextPreference) findPreference(getString(R.string.wanted_speed_pref_name)));
             one_step_size = ((EditTextPreference) findPreference(getString(R.string.one_step_size_pref_name)));
@@ -505,6 +507,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void setDefaultValues() {
             com_simulation_enabled.setChecked(SdkPreferencesHelper.getInstance().getComSimulationEnabled());
             security_wal_enabled.setChecked(SdkPreferencesHelper.getInstance().getSecurityWALEnabled());
+            print_inside_enabled.setChecked(SdkPreferencesHelper.getInstance().isPrintInsideEnabled());
             user_speed_enabled.setChecked(SdkPreferencesHelper.getInstance().getUserSpeedEnabled());
             offset_smartphone.setText(offset_smartphone.getSummary().toString());
             offset_hysteresis_lock.setText(offset_hysteresis_lock.getSummary().toString());
@@ -544,6 +547,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(crypto_action_timeout, String.valueOf(SdkPreferencesHelper.CRYPTO_ACTION_TIMEOUT));
             bindPreferenceSummaryToValue(rssi_log_number, String.valueOf(SdkPreferencesHelper.RSSI_LOG_NUMBER));
             bindPreferenceSummaryToValue(rolling_av_element, String.valueOf(SdkPreferencesHelper.ROLLING_AVERAGE_ELEMENTS));
+            print_inside_enabled.setSummary(R.string.pref_print_inside_enabled_summary);
             user_speed_enabled.setSummary(R.string.pref_user_speed_enabled_summary);
             bindPreferenceSummaryToValue(wanted_speed, String.valueOf(SdkPreferencesHelper.WANTED_SPEED));
             bindPreferenceSummaryToValue(one_step_size, String.valueOf(SdkPreferencesHelper.ONE_STEP_SIZE));

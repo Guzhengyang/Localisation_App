@@ -30,6 +30,10 @@
             android:defaultValue="false"
             android:key="@string/security_wal_enabled_pref_name"
             android:title="@string/pref_security_wal_enabled" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/print_inside_enabled_pref_name"
+            android:title="@string/pref_print_inside_enabled" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_nb_element">
         <EditTextPreference
@@ -64,10 +68,6 @@
             android:title="@string/pref_dist_away_standard" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_timeout">
-        <!--<EditTextPreference-->
-        <!--android:inputType="number|numberDecimal"-->
-        <!--android:key="@string/back_timeout_pref_name"-->
-        <!--android:title="@string/pref_back_timeout" />-->
         <EditTextPreference
             android:inputType="number|numberDecimal"
             android:key="@string/unlock_timeout_pref_name"

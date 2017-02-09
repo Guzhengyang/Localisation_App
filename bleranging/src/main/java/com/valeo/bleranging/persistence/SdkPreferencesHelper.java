@@ -205,6 +205,10 @@ public final class SdkPreferencesHelper {
         return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_rear_right_pref_name), BLE_ADDRESS_REAR_RIGHT);
     }
 
+    public Boolean isPrintInsideEnabled() {
+        return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.print_inside_enabled_pref_name), false);
+    }
+
     public Boolean getUserSpeedEnabled() {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.user_speed_enabled_pref_name), false);
     }

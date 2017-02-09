@@ -74,6 +74,8 @@
     <string name="pref_car_forced_trame">Car forced trame</string>
     <string name="pref_com_simulation_enabled">Enable communication simulation</string>
     <string name="pref_security_wal_enabled">Enable security WAL</string>
+    <string name="pref_print_inside_enabled">Enable print inside</string>
+    <string name="pref_print_inside_enabled_summary">Enable the four start zones print</string>
     <string name="dialog_title_list_preference">Number of active beacon</string>
     <string name="base_title_list_preference">Available base type</string>
     <string name="opening_orientation_title_list_preference">Opening orientation type</string>

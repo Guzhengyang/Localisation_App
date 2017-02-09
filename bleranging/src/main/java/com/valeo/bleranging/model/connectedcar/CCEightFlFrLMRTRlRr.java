@@ -144,7 +144,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     public String getPredictionPosition(boolean smartphoneIsInPocket) {
         if (isInitialized()) {
             String result = standardPrediction.getPrediction();
-            if (result.equalsIgnoreCase(PREDICTION_START)) {
+            if (SdkPreferencesHelper.getInstance().isPrintInsideEnabled()
+                    && result.equalsIgnoreCase(PREDICTION_START)) {
                 return getInsidePrediction();
             }
             return result;
