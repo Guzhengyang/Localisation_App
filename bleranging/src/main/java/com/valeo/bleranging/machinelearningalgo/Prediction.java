@@ -34,6 +34,7 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIE
  */
 
 public class Prediction {
+    protected static final int OFFSET_FAR_HYSTERESIS = 2;
     private static final double f = 2.45 * Math.pow(10, 9);
     private static final double c = 3 * Math.pow(10, 8);
     private static final double P = -30;
@@ -107,12 +108,13 @@ public class Prediction {
             // Add hysteresis to all the trx
 
             if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
-                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
-                        this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
+                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
                     rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
                 }
             }
-
+            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_FAR)) {
+                rssiModified[index] -= OFFSET_FAR_HYSTERESIS;
+            }
             // Add unlock hysteresis to all the trx
             if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
                     this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {

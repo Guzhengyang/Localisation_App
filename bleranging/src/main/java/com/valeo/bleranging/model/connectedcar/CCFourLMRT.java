@@ -48,16 +48,16 @@ public class CCFourLMRT extends ConnectedCar {
             standardPrediction = new Prediction(mContext, R.raw.classes_standard_entry,
                     R.raw.rf_standard_entry, R.raw.sample_standard_entry);
         }
-        this.rpPrediction = new Prediction(mContext, R.raw.classes_rp,
-                R.raw.rf_rp, R.raw.sample_rp);
-        this.earPrediction = new Prediction(mContext, R.raw.classes_ear,
-                R.raw.rf_ear, R.raw.sample_ear);
+        this.rpPrediction = new Prediction(mContext, R.raw.classes_standard_rp,
+                R.raw.rf_standard_rp, R.raw.sample_standard_rp);
+        this.earPrediction = new Prediction(mContext, R.raw.classes_standard_ear,
+                R.raw.rf_standard_ear, R.raw.sample_standard_ear);
         if (isInitialized()) {
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             rpPrediction.init(rssi, 0);
             earPrediction.init(rssi, 0);
             standardPrediction.predict(N_VOTE_SHORT);
-            rpPrediction.predict(N_VOTE_LONG);
+            rpPrediction.predict(N_VOTE_VERY_LONG);
             earPrediction.predict(N_VOTE_LONG);
         }
     }
@@ -87,7 +87,7 @@ public class CCFourLMRT extends ConnectedCar {
             }
             standardPrediction.predict(N_VOTE_SHORT);
             earPrediction.predict(N_VOTE_LONG);
-            rpPrediction.predict(N_VOTE_LONG);
+            rpPrediction.predict(N_VOTE_VERY_LONG);
         }
     }
 

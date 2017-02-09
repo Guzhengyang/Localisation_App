@@ -68,17 +68,22 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         }
         insidePrediction = new Prediction(mContext, R.raw.classes_inside,
                 R.raw.rf_inside, R.raw.sample_inside);
+        rpPrediction = new Prediction(mContext, R.raw.classes_full_rp,
+                R.raw.rf_full_rp, R.raw.sample_full_rp);
+
         if (isInitialized()) {
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             standardPrediction.predict(N_VOTE_SHORT);
             insidePrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-            insidePrediction.predict(N_VOTE_LONG);
+            insidePrediction.predict(N_VOTE_VERY_LONG);
+            rpPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            rpPrediction.predict(N_VOTE_VERY_LONG);
         }
     }
 
     @Override
     public boolean isInitialized() {
-        return standardPrediction != null && insidePrediction != null;
+        return standardPrediction != null && insidePrediction != null && rpPrediction != null;
     }
 
     @Override
@@ -100,10 +105,12 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         if (isInitialized()) {
             for (int i = 0; i < rssi.length; i++) {
                 standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard());
-                insidePrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard());
+                insidePrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), THRESHOLD_DIST_AWAY_SLOW);
+                rpPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard());
             }
             standardPrediction.predict(N_VOTE_SHORT);
-            insidePrediction.predict(N_VOTE_LONG);
+            insidePrediction.predict(N_VOTE_VERY_LONG);
+            rpPrediction.predict(N_VOTE_VERY_LONG);
         }
     }
 
@@ -116,6 +123,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 standardPrediction.calculatePredictionFull(SdkPreferencesHelper.getInstance().getThresholdProbStandard(), THRESHOLD_PROB_UNLOCK, PASSIVE_ENTRY_ORIENTED);
             }
             insidePrediction.calculatePredictionInside(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
+            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
 
@@ -127,7 +135,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             if (standardPrediction.getPrediction().equals(PREDICTION_START)) {
                 result += insidePrediction.printDebug(INSIDE_LOC);
             }
-            return result;
+            return result + rpPrediction.printDebug(RP_LOC);
         }
         return "";
     }
