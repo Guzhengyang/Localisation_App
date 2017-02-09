@@ -85,7 +85,7 @@ public class IconPickerPreference extends ListPreference {
     protected void onBindView(View view) {
         super.onBindView(view);
         String selectedIconId = sharedPreferences.getString(context.
-                getString(R.string.connected_car_type_pref_name), ConnectedCarFactory.TYPE_4_A);
+                getString(R.string.connected_car_type_pref_name), ConnectedCarFactory.TYPE_4_B);
         selectedIconFile = getIconFileFromId(selectedIconId, defaultIconFile);
         icon = (ImageView) view.findViewById(R.id.iconSelected);
         updateIcon();

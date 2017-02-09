@@ -178,7 +178,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // updated to reflect the new value, per the Android Design
         // guidelines.
         private void bindSummaries() {
-            bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_A);
+            bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_B);
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
             user_speed_enabled.setSummary(R.string.pref_user_speed_enabled_summary);
             bindPreferenceSummaryToValue(wanted_speed, String.valueOf(SdkPreferencesHelper.WANTED_SPEED));
@@ -231,20 +231,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     File exportedPrefs = new File(mContext.getExternalCacheDir(), filePath);
                     if (!exportedPrefs.exists()) {
                         try {
-                            if (exportedPrefs.createNewFile()) {
-                                PreferenceUtils.saveSharedPreferencesToFile(getActivity(), exportedPrefs, sharedPreferencesName);
-                                Toast.makeText(getActivity(), "Preference exported to " + filePath, Toast.LENGTH_SHORT).show();
-                            } else {
+                            if (!exportedPrefs.createNewFile()) {
                                 Toast.makeText(getActivity(), "Cannot create file.", Toast.LENGTH_SHORT).show();
+                                return false;
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
+                            return false;
                         }
-                    } else {
-                        PreferenceUtils.saveSharedPreferencesToFile(getActivity(), exportedPrefs, sharedPreferencesName);
-                        Toast.makeText(getActivity(), "Preference exported to " + filePath, Toast.LENGTH_SHORT).show();
                     }
-                    return false;
+                    Toast.makeText(getActivity(), "Preference exported to " + filePath, Toast.LENGTH_SHORT).show();
+                    return PreferenceUtils.saveSharedPreferencesToFile(getActivity(), exportedPrefs, sharedPreferencesName);
                 }
             });
 
@@ -410,20 +407,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     File exportedPrefs = new File(mContext.getExternalCacheDir(), filePath);
                     if (!exportedPrefs.exists()) {
                         try {
-                            if (exportedPrefs.createNewFile()) {
-                                PreferenceUtils.saveSharedPreferencesToFile(getActivity(), exportedPrefs, sharedPreferencesName);
-                                Toast.makeText(getActivity(), "Preference exported to " + filePath, Toast.LENGTH_SHORT).show();
-                            } else {
+                            if (!exportedPrefs.createNewFile()) {
                                 Toast.makeText(getActivity(), "Cannot create file.", Toast.LENGTH_SHORT).show();
+                                return false;
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
+                            return false;
                         }
-                    } else {
-                        PreferenceUtils.saveSharedPreferencesToFile(getActivity(), exportedPrefs, sharedPreferencesName);
-                        Toast.makeText(getActivity(), "Preference exported to " + filePath, Toast.LENGTH_SHORT).show();
                     }
-                    return false;
+                    Toast.makeText(getActivity(), "Preference exported to " + filePath, Toast.LENGTH_SHORT).show();
+                    return PreferenceUtils.saveSharedPreferencesToFile(getActivity(), exportedPrefs, sharedPreferencesName);
                 }
             });
 
@@ -533,7 +527,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // updated to reflect the new value, per the Android Design
         // guidelines.
         private void bindSummaries() {
-            bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_A);
+            bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_B);
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
             bindPreferenceSummaryToValue(opening_orientation_type, THATCHAM_ORIENTED);
             com_simulation_enabled.setSummary(R.string.pref_com_simulation_enabled);

@@ -2,32 +2,32 @@
 <resources>
     <string-array name="iconName">
         <item>2 beacons Start</item>
-        <item>2 beacons Entry</item>
+        <!--<item>2 beacons Entry</item>-->
         <item>3 beacons</item>
-        <item>4 beacons</item>
+        <!--<item>4 beacons</item>-->
         <item>4 beacons ML</item>
-        <item>5 beacons (4+trunk)</item>
-        <item>7 beacons</item>
+        <!--<item>5 beacons (4+trunk)</item>-->
+        <!--<item>7 beacons</item>-->
         <item>8 beacons (7+trunk)</item>
     </string-array>
     <string-array name="entry_values_list_preference">
         <item>"twoMT"        </item>
-        <item>"twoLR"        </item>
+        <!--<item>"twoLR"        </item>-->
         <item>"threeLMR"        </item>
-        <item>"fourLMRB"        </item>
+        <!--<item>"fourLMRB"        </item>-->
         <item>"fourLMRT"        </item>
-        <item>"fiveLMRTB"     </item>
-        <item>"sevenFlFrLMRRlRr"</item>
+        <!--<item>"fiveLMRTB"     </item>-->
+        <!--<item>"sevenFlFrLMRRlRr"</item>-->
         <item>"eightFlFrLMRTRlRr"</item>
     </string-array>
     <string-array name="iconFile">
         <item>car_2_a</item>
-        <item>car_2_b</item>
+        <!--<item>car_2_b</item>-->
         <item>car_3_a</item>
-        <item>car_4_a</item>
+        <!--<item>car_4_a</item>-->
         <item>car_4_b</item>
-        <item>car_5</item>
-        <item>car_7</item>
+        <!--<item>car_5</item>-->
+        <!--<item>car_7</item>-->
         <item>car_8</item>
     </string-array>
     <string-array name="opening_orientation_list_preference">
