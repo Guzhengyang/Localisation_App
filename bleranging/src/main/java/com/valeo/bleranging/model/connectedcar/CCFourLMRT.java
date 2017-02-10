@@ -41,17 +41,23 @@ public class CCFourLMRT extends ConnectedCar {
 
     @Override
     public void initPredictions() {
-        if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
-            standardPrediction = new Prediction(mContext, R.raw.classes_standard_thatcham,
-                    R.raw.rf_standard_thatcham, R.raw.sample_standard_thatcham);
-        } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
-            standardPrediction = new Prediction(mContext, R.raw.classes_standard_entry,
-                    R.raw.rf_standard_entry, R.raw.sample_standard_entry);
+        try {
+            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
+                standardPrediction = new Prediction(mContext, R.raw.classes_standard_thatcham,
+                        R.raw.rf_standard_thatcham, R.raw.sample_standard_thatcham);
+            } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
+                standardPrediction = new Prediction(mContext, R.raw.classes_standard_entry,
+                        R.raw.rf_standard_entry, R.raw.sample_standard_entry);
+            }
+            this.rpPrediction = new Prediction(mContext, R.raw.classes_standard_rp,
+                    R.raw.rf_standard_rp, R.raw.sample_standard_rp);
+            this.earPrediction = new Prediction(mContext, R.raw.classes_standard_ear,
+                    R.raw.rf_standard_ear, R.raw.sample_standard_ear);
+        } catch (Exception e) {
+            e.printStackTrace();
+            standardPrediction = null;
+            rpPrediction = null;
         }
-        this.rpPrediction = new Prediction(mContext, R.raw.classes_standard_rp,
-                R.raw.rf_standard_rp, R.raw.sample_standard_rp);
-        this.earPrediction = new Prediction(mContext, R.raw.classes_standard_ear,
-                R.raw.rf_standard_ear, R.raw.sample_standard_ear);
         if (isInitialized()) {
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             rpPrediction.init(rssi, 0);

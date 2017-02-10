@@ -49,17 +49,14 @@ public class Prediction {
     private String[] classes;
     private Context mContext;
 
-    public Prediction(Context context, int classesId, int rfId, int sampleId) {
+    public Prediction(Context context, int classesId, int rfId, int sampleId) throws Exception {
         this.mContext = context;
-        try {
-            classes = (String[]) SerializationHelper.read(mContext.getResources().openRawResource(classesId));
-            rf = (RandomForest) SerializationHelper.read(mContext.getResources().openRawResource(rfId));
-            Instances instances = ConverterUtils.DataSource.read(mContext.getResources().openRawResource(sampleId));
-            instances.setClassIndex(instances.numAttributes() - 1);
-            sample = instances.instance(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        classes = (String[]) SerializationHelper.read(mContext.getResources().openRawResource(classesId));
+        rf = (RandomForest) SerializationHelper.read(mContext.getResources().openRawResource(rfId));
+        Instances instances = ConverterUtils.DataSource.read(mContext.getResources().openRawResource(sampleId));
+        instances.setClassIndex(instances.numAttributes() - 1);
+        sample = instances.instance(0);
+
     }
 
     public void init(double[] rssi, int offset) {

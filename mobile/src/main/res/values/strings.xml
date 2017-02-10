@@ -18,11 +18,13 @@
     <string name="car_model_type">Car Model Type</string>
     <string name="ds5">DS 5 DC-917-NY</string>
     <string name="ds5_2">DS 5 EB-967-AK</string>
+    <string name="ds5_3">DS 5 EB-967-AK interior</string>
     <string name="door_status_bg">door status bg</string>
     <string name="vehicle_locked">Vehicle locked</string>
     <string name="driver_s_door_unlocked">Driver\'s door unlocked</string>
     <string name="vehicle_unlocked">Vehicle unlocked</string>
     <string name="start_button">Start button</string>
+    <string name="chessboard">Chessboard</string>
     <string name="rssi_localization">Rssi localization</string>
     <string name="unlock_trunk">Unlock trunk</string>
     <string name="lock_trunk">Lock trunk</string>
@@ -39,6 +41,7 @@
     <string name="dummy_space_view">dummy space view</string>
     <string name="VIN">VF3ATTENTDS180704</string>
     <string name="VIN2">VF3ATTENTDS180705</string>
+    <string name="VIN3">VF3ATTENTDS180706</string>
     <string name="permision_available">permission granted</string>
     <string name="permissions_not_granted">permissions not granted</string>
     <string name="mail">Email address</string>

@@ -59,18 +59,25 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     @Override
     public void initPredictions() {
-        if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
-            standardPrediction = new Prediction(mContext, R.raw.classes_full_thatcham,
-                    R.raw.rf_full_thatcham, R.raw.sample_full_thatcham);
-        } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
-            standardPrediction = new Prediction(mContext, R.raw.classes_full_entry,
-                    R.raw.rf_full_entry, R.raw.sample_full_entry);
-        }
-        insidePrediction = new Prediction(mContext, R.raw.classes_inside,
-                R.raw.rf_inside, R.raw.sample_inside);
-        rpPrediction = new Prediction(mContext, R.raw.classes_full_rp,
-                R.raw.rf_full_rp, R.raw.sample_full_rp);
+        try {
+            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
+                standardPrediction = new Prediction(mContext, R.raw.classes_full_thatcham,
+                        R.raw.rf_full_thatcham, R.raw.sample_full_thatcham);
+            } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
+                standardPrediction = new Prediction(mContext, R.raw.classes_full_entry,
+                        R.raw.rf_full_entry, R.raw.sample_full_entry);
+            }
+            insidePrediction = new Prediction(mContext, R.raw.classes_inside,
+                    R.raw.rf_inside, R.raw.sample_inside);
 
+            rpPrediction = new Prediction(mContext, R.raw.classes_full_rp,
+                    R.raw.rf_full_rp, R.raw.sample_full_rp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            standardPrediction = null;
+            insidePrediction = null;
+            rpPrediction = null;
+        }
         if (isInitialized()) {
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             standardPrediction.predict(N_VOTE_SHORT);
