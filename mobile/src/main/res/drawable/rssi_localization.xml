@@ -76,14 +76,6 @@
                 android:color="#FF000000" />
         </shape>
     </item>
-    <item
-        android:id="@+id/car_drawable"
-        android:bottom="10dp"
-        android:drawable="@drawable/car_8"
-        android:gravity="center"
-        android:left="10dp"
-        android:right="10dp"
-        android:top="10dp" />
     <!-- left entry -->
     <item
         android:id="@+id/unlock_area_left"
@@ -168,4 +160,12 @@
                 android:color="#FF000000" />
         </shape>
     </item>
+    <item
+        android:id="@+id/car_drawable"
+        android:bottom="10dp"
+        android:drawable="@drawable/car_8"
+        android:gravity="center"
+        android:left="10dp"
+        android:right="10dp"
+        android:top="10dp" />
 </layer-list>

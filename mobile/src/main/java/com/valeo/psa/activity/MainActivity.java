@@ -11,7 +11,9 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
@@ -111,6 +113,11 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
     private static final int NOTIFICATION_ID_1 = 1;
     private final Handler mHandler = new Handler();
+    private final Paint paintOne = new Paint();
+    private final Paint paintTwo = new Paint();
+    private final Paint paintCar = new Paint();
+    private final Paint paintUnlock = new Paint();
+    private final Paint paintLock = new Paint();
     private Toolbar toolbar;
     private FrameLayout main_frame;
     private NestedScrollView content_main;
@@ -134,12 +141,14 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private ImageButton driver_s_door_unlocked;
     private ImageButton vehicle_unlocked;
     private ImageButton start_button;
+    private ImageView chessboard;
     private ImageView signalReceived;
     private Animation pulseAnimation;
     private Animation pulseAnimation2;
     private ImageView start_button_first_wave;
     private ImageView start_button_second_wave;
     private LayerDrawable layerDrawable;
+    private LayerDrawable chessLayerDrawable;
     private GradientDrawable welcome_area;
     private GradientDrawable start_area_fl;
     private GradientDrawable start_area_fr;
@@ -174,6 +183,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private KeyguardManager mKeyguardManager;
     private Car selectedCar = null;
     private NotificationManagerCompat notificationManager;
+    private boolean switchColor = true;
+    private boolean predictionColor[][] = new boolean[10][10];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -494,6 +505,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         start_button = (ImageButton) findViewById(R.id.start_button);
         start_button_first_wave = (ImageView) findViewById(R.id.start_button_first_wave);
         start_button_second_wave = (ImageView) findViewById(R.id.start_button_second_wave);
+        chessboard = (ImageView) findViewById(R.id.chessboard);
         signalReceived = (ImageView) findViewById(R.id.signalReceived);
         updateCarDrawable();
         applyNewDrawable();
@@ -568,12 +580,16 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 getResources().openRawResource(R.raw.car_one),
                 SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION);
         car_model_recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            private int lastPos = -1;
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     int position = llm.findFirstCompletelyVisibleItemPosition();
-                    if (position != -1) {
+                    if (position == -1) {
+                        position = ((recyclerView.computeHorizontalScrollOffset() + 1) / recyclerView.computeHorizontalScrollExtent()); // +1 to avoid 0 division
+                    }
+                    if (position != -1 && position != lastPos) {
                         selectedCar = ((CarListAdapter) recyclerView.getAdapter()).getCars().get(position);
                         if (PreferenceUtils.loadSharedPreferencesFromInputStream(MainActivity.this,
                                 getResources().openRawResource(
@@ -582,6 +598,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                                                 "raw", getPackageName())),
                                 SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION)) {
                             mBleRangingHelper.restartConnection(true);
+                            lastPos = position;
                         } else {
                             Snackbar.make(recyclerView, "pref file not found", Snackbar.LENGTH_SHORT).show();
                         }
@@ -601,9 +618,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      * @return a list of Car
      */
     private List<Car> createCarList() {
-        List<Car> resultList = new ArrayList<>(3);
+        List<Car> resultList = new ArrayList<>(4);
         resultList.add(new Car(R.mipmap.car_model_ds5, "1", getString(R.string.ds5), getString(R.string.VIN), "car_one"));
-        resultList.add(new Car(R.drawable.car_model_ds5_2, "2", getString(R.string.ds5_2), getString(R.string.VIN2), "car_two"));
+        resultList.add(new Car(R.mipmap.car_model_ds5_2, "2", getString(R.string.ds5_2), getString(R.string.VIN2), "car_two"));
+        resultList.add(new Car(R.mipmap.car_model_ds5_3, "3", getString(R.string.ds5_3), getString(R.string.VIN3), "car_three"));
         return resultList;
     }
 
@@ -1143,6 +1161,57 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         unlock_area_front = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front);
         thatcham_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.thatcham_area);
         remote_parking_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.remote_parking_area);
+
+        chessLayerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_chessboard);
+        chessLayerDrawable.setDrawableByLayerId(R.id.car_drawable_chess, layerDrawable.findDrawableByLayerId(R.id.car_drawable));
+//        chessLayerDrawable.setDrawableByLayerId(R.id.background_chess, new BitmapDrawable(getResources(), drawChessBoard()));
+        chessboard.setImageDrawable(chessLayerDrawable);
+        chessboard.setBackground(new BitmapDrawable(getResources(), drawChessBoard()));
+//        signalReceived.setBackground(new BitmapDrawable(getResources(), drawChessBoard()));
+    }
+
+    private Bitmap drawChessBoard() {
+        paintOne.setColor(Color.DKGRAY);
+        paintTwo.setColor(Color.LTGRAY);
+        paintCar.setColor(Color.BLACK);
+        paintUnlock.setColor(Color.GREEN);
+        paintLock.setColor(Color.RED);
+        for (boolean[] predictTab : predictionColor) {
+            for (boolean b : predictTab) {
+                b = true;
+            }
+        }
+        int measuredWidth = chessLayerDrawable.getIntrinsicWidth();
+        int measuredHeight = chessLayerDrawable.getIntrinsicHeight();
+        Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        int stepX = measuredWidth / 10;
+        int stepY = measuredHeight / 10;
+        PSALogs.e("chess", "stepX " + stepX + " measuredWidth " + measuredWidth);
+        PSALogs.e("chess", "stepY " + stepY + " measuredHeight " + measuredHeight);
+        for (int width = 0, x = 0; width < measuredWidth && x < 10; width += stepX, x++) {
+            for (int height = 0, y = 0; height < measuredHeight && y < 10; height += stepY, y++) {
+                if ((y == 4 || y == 5) && (x == 3 || x == 4 || x == 5 || x == 6)) {
+                    canvas.drawRect(width, height, width + stepX, height + stepY, paintCar);
+                } else if (predictionColor[x][y]) {
+                    if (((y == 3 || y == 6) && (x == 2 || x == 3 || x == 4 || x == 5 || x == 6 || x == 7))
+                            || ((y == 4 || y == 5) && (x == 2 || x == 7))) {
+                        canvas.drawRect(width, height, width + stepX, height + stepY, paintUnlock);
+                    } else {
+                        canvas.drawRect(width, height, width + stepX, height + stepY, paintLock);
+                    }
+                } else {
+                    if (switchColor) {
+                        canvas.drawRect(width, height, width + stepX, height + stepY, paintOne);
+                    } else {
+                        canvas.drawRect(width, height, width + stepX, height + stepY, paintTwo);
+                    }
+                    switchColor = !switchColor;
+                }
+            }
+            switchColor = !switchColor;
+        }
+        return bitmap;
     }
 
     @Override
