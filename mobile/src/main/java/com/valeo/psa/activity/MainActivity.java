@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.nfc.NfcAdapter;
@@ -78,6 +79,7 @@ import com.valeo.psa.view.MyRecyclerAdapter;
 import com.valeo.psa.view.ReverseProgressBar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -112,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private static final int REQUEST_ENABLE_BT = 25117;
     private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
     private static final int NOTIFICATION_ID_1 = 1;
+    private static final int MAX_ROWS = 12;
+    private static final int MAX_COLUMNS = 10;
     private final Handler mHandler = new Handler();
     private final Paint paintOne = new Paint();
     private final Paint paintTwo = new Paint();
@@ -148,7 +152,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private ImageView start_button_first_wave;
     private ImageView start_button_second_wave;
     private LayerDrawable layerDrawable;
-    private LayerDrawable chessLayerDrawable;
     private GradientDrawable welcome_area;
     private GradientDrawable start_area_fl;
     private GradientDrawable start_area_fr;
@@ -183,8 +186,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private KeyguardManager mKeyguardManager;
     private Car selectedCar = null;
     private NotificationManagerCompat notificationManager;
-    private boolean switchColor = true;
-    private boolean predictionColor[][] = new boolean[10][10];
+    private boolean predictionColor[][] = new boolean[MAX_ROWS][MAX_COLUMNS];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -478,6 +480,15 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         nfc_disclaimer.setTypeface(lightTypeFace, Typeface.NORMAL);
     }
 
+    private void setPaint() {
+        paintOne.setColor(Color.LTGRAY);
+        paintTwo.setColor(Color.BLACK);
+        paintTwo.setStyle(Paint.Style.STROKE); // print border
+        paintCar.setColor(Color.DKGRAY);
+        paintUnlock.setColor(Color.GREEN);
+        paintLock.setColor(Color.RED);
+    }
+
     /**
      * Find all view by their id
      */
@@ -507,6 +518,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         start_button_second_wave = (ImageView) findViewById(R.id.start_button_second_wave);
         chessboard = (ImageView) findViewById(R.id.chessboard);
         signalReceived = (ImageView) findViewById(R.id.signalReceived);
+        setPaint();
         updateCarDrawable();
         applyNewDrawable();
         little_round_progressBar = (DottedProgressBar) findViewById(R.id.little_round_progressBar);
@@ -1024,6 +1036,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     @Override
     public void applyNewDrawable() {
         signalReceived.setImageDrawable(layerDrawable);
+        chessboard.setBackground(drawChessBoard(1080, 1080));
     }
 
     @Override
@@ -1075,76 +1088,77 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     @Override
     public void updateCarDrawable() {
         layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization);
+        Drawable carDrawable;
         switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
             case ConnectedCarFactory.TYPE_2_A:
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_2_a_close));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_2_a_close);
                 } else {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_2_a_open));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_2_a_open);
                 }
                 trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                 break;
             case ConnectedCarFactory.TYPE_2_B:
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_2_b_close));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_2_b_close);
                 } else {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_2_b_open));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_2_b_open);
                 }
                 trunk_area = null;
                 break;
             case ConnectedCarFactory.TYPE_3_A:
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_3_a_close));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_3_a_close);
                 } else {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_3_a_open));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_3_a_open);
                 }
                 trunk_area = null;
                 break;
             case ConnectedCarFactory.TYPE_4_A:
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_a_close));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_4_a_close);
                 } else {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_a_open));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_4_a_open);
                 }
                 trunk_area = null;
                 break;
             case ConnectedCarFactory.TYPE_4_B:
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_b_close));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_4_b_close);
                 } else {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_4_b_open));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_4_b_open);
                 }
                 trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                 break;
             case ConnectedCarFactory.TYPE_5_A:
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_5_close));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_5_close);
                 } else {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_5_open));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_5_open);
                 }
                 trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                 break;
             case ConnectedCarFactory.TYPE_7_A:
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_7_close));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_7_close);
                 } else {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_7_open));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_7_open);
                 }
                 trunk_area = null;
                 break;
             case ConnectedCarFactory.TYPE_8_A:
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_8_close));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_8_close);
                 } else {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_8_open));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_8_open);
                 }
                 trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                 break;
             default:
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_8_close));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_8_close);
                 } else {
-                    layerDrawable.setDrawableByLayerId(R.id.car_drawable, ContextCompat.getDrawable(this, R.drawable.car_8_open));
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_8_open);
                 }
                 trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                 break;
@@ -1161,57 +1175,39 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         unlock_area_front = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front);
         thatcham_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.thatcham_area);
         remote_parking_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.remote_parking_area);
-
-        chessLayerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_chessboard);
-        chessLayerDrawable.setDrawableByLayerId(R.id.car_drawable_chess, layerDrawable.findDrawableByLayerId(R.id.car_drawable));
-//        chessLayerDrawable.setDrawableByLayerId(R.id.background_chess, new BitmapDrawable(getResources(), drawChessBoard()));
-        chessboard.setImageDrawable(chessLayerDrawable);
-        chessboard.setBackground(new BitmapDrawable(getResources(), drawChessBoard()));
-//        signalReceived.setBackground(new BitmapDrawable(getResources(), drawChessBoard()));
+        layerDrawable.setDrawableByLayerId(R.id.car_drawable, carDrawable);
     }
 
-    private Bitmap drawChessBoard() {
-        paintOne.setColor(Color.DKGRAY);
-        paintTwo.setColor(Color.LTGRAY);
-        paintCar.setColor(Color.BLACK);
-        paintUnlock.setColor(Color.GREEN);
-        paintLock.setColor(Color.RED);
+    private BitmapDrawable drawChessBoard(final int measuredWidth, final int measuredHeight) {
         for (boolean[] predictTab : predictionColor) {
-            for (boolean b : predictTab) {
-                b = true;
-            }
+            Arrays.fill(predictTab, true);
         }
-        int measuredWidth = chessLayerDrawable.getIntrinsicWidth();
-        int measuredHeight = chessLayerDrawable.getIntrinsicHeight();
         Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
-        int stepX = measuredWidth / 10;
-        int stepY = measuredHeight / 10;
+        int stepX = measuredWidth / MAX_ROWS;
+        int stepY = measuredHeight / MAX_COLUMNS;
         PSALogs.e("chess", "stepX " + stepX + " measuredWidth " + measuredWidth);
         PSALogs.e("chess", "stepY " + stepY + " measuredHeight " + measuredHeight);
-        for (int width = 0, x = 0; width < measuredWidth && x < 10; width += stepX, x++) {
-            for (int height = 0, y = 0; height < measuredHeight && y < 10; height += stepY, y++) {
-                if ((y == 4 || y == 5) && (x == 3 || x == 4 || x == 5 || x == 6)) {
+        for (int width = 0, x = 0; width < measuredWidth && x < MAX_ROWS; width += stepX, x++) {
+            for (int height = 0, y = 0; height < measuredHeight && y < MAX_COLUMNS; height += stepY, y++) {
+                if ((y == 4 || y == 5) && (x == 4 || x == 5 || x == 6 || x == 7)) { // paint Car tiles
                     canvas.drawRect(width, height, width + stepX, height + stepY, paintCar);
-                } else if (predictionColor[x][y]) {
-                    if (((y == 3 || y == 6) && (x == 2 || x == 3 || x == 4 || x == 5 || x == 6 || x == 7))
-                            || ((y == 4 || y == 5) && (x == 2 || x == 7))) {
+                } else if (predictionColor[x][y]) { // paint phone position tiles in unlock or lock zone
+                    if (((y == 2 || y == 3 || y == 6 || y == 7) && (x == 2 || x == 3 || x == 4 || x == 5 || x == 6 || x == 7 || x == 8 || x == 9))
+                            || ((y == 4 || y == 5) && (x == 2 || x == 3 || x == 8 || x == 9))) {
                         canvas.drawRect(width, height, width + stepX, height + stepY, paintUnlock);
+                        canvas.drawRect(width, height, width + stepX, height + stepY, paintTwo);
                     } else {
                         canvas.drawRect(width, height, width + stepX, height + stepY, paintLock);
-                    }
-                } else {
-                    if (switchColor) {
-                        canvas.drawRect(width, height, width + stepX, height + stepY, paintOne);
-                    } else {
                         canvas.drawRect(width, height, width + stepX, height + stepY, paintTwo);
                     }
-                    switchColor = !switchColor;
+                } else { // paint unoccupied zones tiles
+                    canvas.drawRect(width, height, width + stepX, height + stepY, paintOne);
+                    canvas.drawRect(width, height, width + stepX, height + stepY, paintTwo);
                 }
             }
-            switchColor = !switchColor;
         }
-        return bitmap;
+        return new BitmapDrawable(getResources(), bitmap);
     }
 
     @Override

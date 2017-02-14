@@ -1,6 +1,7 @@
 package com.valeo.bleranging.model.connectedcar;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.R;
@@ -57,6 +58,7 @@ public class CCFourLMRT extends ConnectedCar {
             e.printStackTrace();
             standardPrediction = null;
             rpPrediction = null;
+            Toast.makeText(mContext, "Init failed", Toast.LENGTH_SHORT).show();
         }
         if (isInitialized()) {
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
