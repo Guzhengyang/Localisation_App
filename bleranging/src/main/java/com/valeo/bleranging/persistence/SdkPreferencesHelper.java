@@ -105,6 +105,10 @@ public final class SdkPreferencesHelper {
         return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.offset_smartphone_pref_name), OFFSET_SMARTPHONE);
     }
 
+    public void setOffsetSmartphone(int value) {
+        saveInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.offset_smartphone_pref_name), value);
+    }
+
     public int getOffsetHysteresisLock() {
         return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.offset_hysteresis_lock_pref_name), OFFSET_HYSTERESIS_LOCK);
     }
