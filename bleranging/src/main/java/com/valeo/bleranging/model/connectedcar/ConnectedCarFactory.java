@@ -16,9 +16,9 @@ public class ConnectedCarFactory {
     public final static String TYPE_4_A = "fourLMRB";
     public final static String TYPE_4_B = "fourLMRT";
     public final static String TYPE_5_A = "fiveLMRTB";
+    public final static String TYPE_6_A = "sixFlFrMTRlRr";
     public final static String TYPE_7_A = "sevenFlFrLMRRlRr";
     public final static String TYPE_8_A = "eightFlFrLMRTRlRr";
-    public final static String MODEL_RF = "RANDOM_FOREST";
 
     /**
      * Return a connected car
@@ -39,6 +39,8 @@ public class ConnectedCarFactory {
             return new CCFourLMRT(mContext);
         } else if (carName.equalsIgnoreCase(TYPE_5_A)) {
             return new CCFiveLMRTB(mContext);
+        } else if (carName.equalsIgnoreCase(TYPE_6_A)) {
+            return new CCSixFlFrMTRlRr(mContext);
         } else if (carName.equalsIgnoreCase(TYPE_7_A)) {
             return new CCSevenFlFrLMRRlRr(mContext);
         } else if (carName.equalsIgnoreCase(TYPE_8_A)) {

@@ -1136,6 +1136,14 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 }
                 trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                 break;
+            case ConnectedCarFactory.TYPE_6_A:
+                if (carDoorStatus == CarDoorStatus.LOCKED) {
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_6_close);
+                } else {
+                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_6_open);
+                }
+                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
+                break;
             case ConnectedCarFactory.TYPE_7_A:
                 if (carDoorStatus == CarDoorStatus.LOCKED) {
                     carDrawable = ContextCompat.getDrawable(this, R.drawable.car_7_close);

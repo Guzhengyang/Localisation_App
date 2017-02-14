@@ -8,6 +8,7 @@
         <item>4 beacons ML</item>
         <!--<item>5 beacons (4+trunk)</item>-->
         <!--<item>7 beacons</item>-->
+        <item>6 beacons</item>
         <item>8 beacons (7+trunk)</item>
     </string-array>
     <string-array name="entry_values_list_preference">
@@ -18,6 +19,7 @@
         <item>"fourLMRT"        </item>
         <!--<item>"fiveLMRTB"     </item>-->
         <!--<item>"sevenFlFrLMRRlRr"</item>-->
+        <item>"sixFlFrMTRlRr"</item>
         <item>"eightFlFrLMRTRlRr"</item>
     </string-array>
     <string-array name="iconFile">
@@ -28,6 +30,7 @@
         <item>car_4_b</item>
         <!--<item>car_5</item>-->
         <!--<item>car_7</item>-->
+        <item>car_6</item>
         <item>car_8</item>
     </string-array>
     <string-array name="opening_orientation_list_preference">
