@@ -12,7 +12,7 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentTop="true"
         android:background="@mipmap/header_backgrd"
-        app:popupTheme="@style/AppTheme.PopupOverlay">
+        app:popupTheme="@style/myAppTheme.PopupOverlay">
 
         <TextView
             android:id="@+id/activity_title"

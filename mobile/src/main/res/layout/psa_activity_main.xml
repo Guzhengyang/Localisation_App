@@ -94,7 +94,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@mipmap/header_backgrd"
-        app:popupTheme="@style/AppTheme.PopupOverlay">
+        app:popupTheme="@style/myAppTheme.PopupOverlay">
 
         <include layout="@layout/psa_main_toolbar" />
 
