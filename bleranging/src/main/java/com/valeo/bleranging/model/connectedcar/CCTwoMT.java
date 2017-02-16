@@ -35,8 +35,8 @@ public class CCTwoMT extends ConnectedCar {
     @Override
     public void initPredictions() {
         try {
-            standardPrediction = new Prediction(mContext, R.raw.classes_start,
-                    R.raw.rf_start, R.raw.sample_start);
+            standardPrediction = new Prediction(mContext, R.raw.classes_two_start,
+                    R.raw.rf_two_start, R.raw.sample_two_start);
         } catch (Exception e) {
             e.printStackTrace();
             standardPrediction = null;

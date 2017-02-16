@@ -54,36 +54,26 @@ public class CCSixFlFrMTRlRr extends ConnectedCar {
     public void initPredictions() {
         try {
             if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
-                standardPrediction = new Prediction(mContext, R.raw.classes_full_thatcham,
-                        R.raw.rf_full_thatcham, R.raw.sample_full_thatcham);
+                standardPrediction = new Prediction(mContext, R.raw.classes_eight_thatcham,
+                        R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
             } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
-                standardPrediction = new Prediction(mContext, R.raw.classes_full_entry,
-                        R.raw.rf_full_entry, R.raw.sample_full_entry);
+                standardPrediction = new Prediction(mContext, R.raw.classes_eight_entry,
+                        R.raw.rf_eight_entry, R.raw.sample_eight_entry);
             }
-            insidePrediction = new Prediction(mContext, R.raw.classes_inside,
-                    R.raw.rf_inside, R.raw.sample_inside);
-            rpPrediction = new Prediction(mContext, R.raw.classes_full_rp,
-                    R.raw.rf_full_rp, R.raw.sample_full_rp);
         } catch (Exception e) {
             e.printStackTrace();
             standardPrediction = null;
-            insidePrediction = null;
-            rpPrediction = null;
             Toast.makeText(mContext, "Init failed", Toast.LENGTH_SHORT).show();
         }
         if (isInitialized()) {
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             standardPrediction.predict(N_VOTE_SHORT);
-            insidePrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-            insidePrediction.predict(N_VOTE_VERY_LONG);
-            rpPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-            rpPrediction.predict(N_VOTE_VERY_LONG);
         }
     }
 
     @Override
     public boolean isInitialized() {
-        return standardPrediction != null && insidePrediction != null && rpPrediction != null;
+        return standardPrediction != null;
     }
 
     @Override
@@ -107,8 +97,6 @@ public class CCSixFlFrMTRlRr extends ConnectedCar {
                 rpPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard());
             }
             standardPrediction.predict(N_VOTE_SHORT);
-            insidePrediction.predict(N_VOTE_VERY_LONG);
-            rpPrediction.predict(N_VOTE_VERY_LONG);
         }
     }
 
@@ -120,8 +108,6 @@ public class CCSixFlFrMTRlRr extends ConnectedCar {
             } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
                 standardPrediction.calculatePredictionFull(SdkPreferencesHelper.getInstance().getThresholdProbStandard(), THRESHOLD_PROB_UNLOCK, PASSIVE_ENTRY_ORIENTED);
             }
-            insidePrediction.calculatePredictionInside(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
-            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
 
@@ -130,10 +116,7 @@ public class CCSixFlFrMTRlRr extends ConnectedCar {
         if (isInitialized()) {
             String result = SdkPreferencesHelper.getInstance().getOpeningOrientation() + "\n";
             result += standardPrediction.printDebug(FULL_LOC);
-            if (standardPrediction.getPrediction().equals(PREDICTION_START)) {
-                result += insidePrediction.printDebug(INSIDE_LOC);
-            }
-            return result + rpPrediction.printDebug(RP_LOC);
+            return result;
         }
         return "";
     }

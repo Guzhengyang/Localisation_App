@@ -14,13 +14,13 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIE
  */
 public final class SdkPreferencesHelper {
     public final static int OFFSET_SMARTPHONE = 0;
-    public final static int OFFSET_HYSTERESIS_LOCK = 3;
+    public final static int OFFSET_HYSTERESIS_LOCK = 4;
     public final static int OFFSET_HYSTERESIS_UNLOCK = 0;
     public final static float THRESHOLD_PROB_STANDARD = 0.8f;
     public final static float THRESHOLD_DIST_AWAY_STANDARD = 0.10f;
     //    public final static float BACK_TIMEOUT = 3.0f;
-    public final static float UNLOCK_TIMEOUT = 3.0f;
-    public final static float THATCHAM_TIMEOUT = 3.0f;
+    public final static float UNLOCK_TIMEOUT = 0f;
+    public final static float THATCHAM_TIMEOUT = 0f;
     public final static float CRYPTO_PRE_AUTH_TIMEOUT = 1.3f;
     public final static float CRYPTO_ACTION_TIMEOUT = 0.02f;
     public final static int RSSI_LOG_NUMBER = 0;

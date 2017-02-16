@@ -62,16 +62,16 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     public void initPredictions() {
         try {
             if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
-                standardPrediction = new Prediction(mContext, R.raw.classes_full_thatcham,
-                        R.raw.rf_full_thatcham, R.raw.sample_full_thatcham);
+                standardPrediction = new Prediction(mContext, R.raw.classes_eight_thatcham,
+                        R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
             } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
-                standardPrediction = new Prediction(mContext, R.raw.classes_full_entry,
-                        R.raw.rf_full_entry, R.raw.sample_full_entry);
+                standardPrediction = new Prediction(mContext, R.raw.classes_eight_entry,
+                        R.raw.rf_eight_entry, R.raw.sample_eight_entry);
             }
-            insidePrediction = new Prediction(mContext, R.raw.classes_inside,
-                    R.raw.rf_inside, R.raw.sample_inside);
-            rpPrediction = new Prediction(mContext, R.raw.classes_full_rp,
-                    R.raw.rf_full_rp, R.raw.sample_full_rp);
+            insidePrediction = new Prediction(mContext, R.raw.classes_eight_inside,
+                    R.raw.rf_eight_inside, R.raw.sample_eight_inside);
+            rpPrediction = new Prediction(mContext, R.raw.classes_eight_rp,
+                    R.raw.rf_eight_rp, R.raw.sample_eight_rp);
         } catch (Exception e) {
             e.printStackTrace();
             standardPrediction = null;

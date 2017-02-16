@@ -34,7 +34,7 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIE
  */
 
 public class Prediction {
-    protected static final int OFFSET_FAR_HYSTERESIS = 2;
+    protected static final int OFFSET_FAR_HYSTERESIS = 0;
     private static final double f = 2.45 * Math.pow(10, 9);
     private static final double c = 3 * Math.pow(10, 8);
     private static final double P = -30;
@@ -56,7 +56,6 @@ public class Prediction {
         Instances instances = ConverterUtils.DataSource.read(mContext.getResources().openRawResource(sampleId));
         instances.setClassIndex(instances.numAttributes() - 1);
         sample = instances.instance(0);
-
     }
 
     public void init(double[] rssi, int offset) {

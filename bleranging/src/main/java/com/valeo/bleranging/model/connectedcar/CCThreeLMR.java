@@ -39,8 +39,8 @@ public class CCThreeLMR extends ConnectedCar {
     @Override
     public void initPredictions() {
         try {
-            standardPrediction = new Prediction(mContext, R.raw.classes_simple,
-                    R.raw.rf_simple, R.raw.sample_simple);
+            standardPrediction = new Prediction(mContext, R.raw.classes_three,
+                    R.raw.rf_three, R.raw.sample_three);
         } catch (Exception e) {
             e.printStackTrace();
             standardPrediction = null;

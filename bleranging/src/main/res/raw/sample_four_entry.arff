@@ -1,0 +1,11 @@
+@relation data
+
+@attribute 'RSSI LEFT_ORIGIN' numeric
+@attribute 'RSSI MIDDLE_ORIGIN' numeric
+@attribute 'RSSI RIGHT_ORIGIN' numeric
+@attribute 'RSSI TRUNK_ORIGIN' numeric
+@attribute class {trunk,start,left,lock,back,right}
+
+@data
+0.587923,0.345737,0.488366,0.048837,trunk
+

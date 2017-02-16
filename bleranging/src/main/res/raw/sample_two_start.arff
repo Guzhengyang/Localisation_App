@@ -1,0 +1,9 @@
+@relation data
+
+@attribute 'RSSI MIDDLE_ORIGIN' numeric
+@attribute 'RSSI TRUNK_ORIGIN' numeric
+@attribute class {outside,inside}
+
+@data
+1.093315,0.774008,outside
+
