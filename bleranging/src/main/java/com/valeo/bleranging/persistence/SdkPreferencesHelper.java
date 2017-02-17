@@ -27,6 +27,8 @@ public final class SdkPreferencesHelper {
     public final static int ROLLING_AVERAGE_ELEMENTS = 20;
     public final static float WANTED_SPEED = 5.1f;
     public final static int ONE_STEP_SIZE = 70;
+    public final static int DEFAULT_ACTIVE_SCAN_PERIOD = 3000;
+    public final static int DEFAULT_INACTIVE_SCAN_PERIOD = 200;
     public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:2A:B8";
     public final static String BLE_ADDRESS_CONNECTABLE_PC = "B0:B4:48:BD:56:85";
     public final static String BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL = "5C:E0:C5:34:4D:32";
@@ -223,6 +225,14 @@ public final class SdkPreferencesHelper {
 
     public int getOneStepSize() {
         return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.one_step_size_pref_name), ONE_STEP_SIZE);
+    }
+
+    public int getActiveScanningPeriod() {
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.active_scanning_period_pref_name), DEFAULT_ACTIVE_SCAN_PERIOD);
+    }
+
+    public int getInactiveScanningPeriod() {
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.inactive_scanning_period_pref_name), DEFAULT_INACTIVE_SCAN_PERIOD);
     }
 
     public void setUserMail(String userMail) {

@@ -103,8 +103,11 @@ class PreLollipopScanTask implements ScanTask {
 
     @Override
     public void setScanPeriods(final int activeScanPeriod, final int inactiveScanPeriod) {
-        mActiveScanningPeriod = activeScanPeriod;
-        mInactiveScanningPeriod = inactiveScanPeriod;
+        if ((activeScanPeriod >= inactiveScanPeriod)
+                && (activeScanPeriod > 650) && (activeScanPeriod < 10240)) {
+            mActiveScanningPeriod = activeScanPeriod;
+            mInactiveScanningPeriod = inactiveScanPeriod;
+        }
     }
 
     /**

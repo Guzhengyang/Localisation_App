@@ -382,6 +382,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private CheckBoxPreference user_speed_enabled;
         private EditTextPreference wanted_speed;
         private EditTextPreference one_step_size;
+        private EditTextPreference active_scanning_period;
+        private EditTextPreference inactive_scanning_period;
         private Preference export_preferences;
         private Preference import_preferences;
         private String sharedPreferencesName;
@@ -500,6 +502,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             user_speed_enabled = ((CheckBoxPreference) findPreference(getString(R.string.user_speed_enabled_pref_name)));
             wanted_speed = ((EditTextPreference) findPreference(getString(R.string.wanted_speed_pref_name)));
             one_step_size = ((EditTextPreference) findPreference(getString(R.string.one_step_size_pref_name)));
+            active_scanning_period = ((EditTextPreference) findPreference(getString(R.string.active_scanning_period_pref_name)));
+            inactive_scanning_period = ((EditTextPreference) findPreference(getString(R.string.inactive_scanning_period_pref_name)));
             export_preferences = findPreference(getString(R.string.export_pref_name));
             import_preferences = findPreference(getString(R.string.import_pref_name));
         }
@@ -523,6 +527,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             rolling_av_element.setText(rolling_av_element.getSummary().toString());
             wanted_speed.setText(wanted_speed.getSummary().toString());
             one_step_size.setText(one_step_size.getSummary().toString());
+            active_scanning_period.setText(active_scanning_period.getSummary().toString());
+            inactive_scanning_period.setText(inactive_scanning_period.getSummary().toString());
         }
 
         // Bind the summaries of EditText/List/Dialog/Ringtone preferences
@@ -551,6 +557,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             user_speed_enabled.setSummary(R.string.pref_user_speed_enabled_summary);
             bindPreferenceSummaryToValue(wanted_speed, String.valueOf(SdkPreferencesHelper.WANTED_SPEED));
             bindPreferenceSummaryToValue(one_step_size, String.valueOf(SdkPreferencesHelper.ONE_STEP_SIZE));
+            bindPreferenceSummaryToValue(active_scanning_period, String.valueOf(SdkPreferencesHelper.DEFAULT_ACTIVE_SCAN_PERIOD));
+            bindPreferenceSummaryToValue(inactive_scanning_period, String.valueOf(SdkPreferencesHelper.DEFAULT_INACTIVE_SCAN_PERIOD));
         }
 
         @Override
