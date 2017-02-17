@@ -1,6 +1,8 @@
 package com.valeo.bleranging.machinelearningalgo;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.widget.Toast;
 
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
@@ -48,14 +50,15 @@ public class Prediction {
     private RandomForest rf;
     private String[] classes;
     private Context mContext;
+    private boolean arePredictRawFileRead = false;
 
-    public Prediction(Context context, int classesId, int rfId, int sampleId) throws Exception {
+    public Prediction(Context context, int classesId, int rfId, int sampleId) {
         this.mContext = context;
-        classes = (String[]) SerializationHelper.read(mContext.getResources().openRawResource(classesId));
-        rf = (RandomForest) SerializationHelper.read(mContext.getResources().openRawResource(rfId));
-        Instances instances = ConverterUtils.DataSource.read(mContext.getResources().openRawResource(sampleId));
-        instances.setClassIndex(instances.numAttributes() - 1);
-        sample = instances.instance(0);
+        new AsyncPredictionInit().execute(classesId, rfId, sampleId);
+    }
+
+    public boolean isPredictRawFileRead() {
+        return arePredictRawFileRead;
     }
 
     public void init(double[] rssi, int offset) {
@@ -153,7 +156,6 @@ public class Prediction {
         }
         return dist_correted;
     }
-
 
     private double correctRssiUnilateral(double rssi_old, double rssi_new) {
         double rssi_correted;
@@ -299,7 +301,6 @@ public class Prediction {
         }
     }
 
-
     public void calculatePredictionInside(double threshold_prob) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
@@ -354,6 +355,33 @@ public class Prediction {
             }
             sb.append("\n");
             return sb.toString();
+        }
+    }
+
+    private class AsyncPredictionInit extends AsyncTask<Integer, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Integer... elements) {
+            try {
+                classes = (String[]) SerializationHelper.read(mContext.getResources().openRawResource(elements[0]));
+                rf = (RandomForest) SerializationHelper.read(mContext.getResources().openRawResource(elements[1]));
+                Instances instances = ConverterUtils.DataSource.read(mContext.getResources().openRawResource(elements[2]));
+                instances.setClassIndex(instances.numAttributes() - 1);
+                sample = instances.instance(0);
+                arePredictRawFileRead = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                arePredictRawFileRead = false;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (!arePredictRawFileRead) {
+                Toast.makeText(mContext, "Init failed", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

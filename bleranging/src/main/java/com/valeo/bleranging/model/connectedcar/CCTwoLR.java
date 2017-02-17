@@ -29,6 +29,11 @@ public class CCTwoLR extends ConnectedCar {
     }
 
     @Override
+    public void readPredictionsRawFiles() {
+
+    }
+
+    @Override
     public void initPredictions() {
 
     }

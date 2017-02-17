@@ -275,6 +275,11 @@ public abstract class ConnectedCar {
     protected abstract void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral);
 
     /**
+     * Create predictions
+     */
+    public abstract void readPredictionsRawFiles();
+
+    /**
      * Initialize predictions
      */
     public abstract void initPredictions();

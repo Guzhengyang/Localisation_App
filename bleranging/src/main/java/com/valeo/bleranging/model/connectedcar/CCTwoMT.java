@@ -1,7 +1,6 @@
 package com.valeo.bleranging.model.connectedcar;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.R;
@@ -33,15 +32,13 @@ public class CCTwoMT extends ConnectedCar {
     }
 
     @Override
+    public void readPredictionsRawFiles() {
+        standardPrediction = new Prediction(mContext, R.raw.classes_two_start,
+                R.raw.rf_two_start, R.raw.sample_two_start);
+    }
+
+    @Override
     public void initPredictions() {
-        try {
-            standardPrediction = new Prediction(mContext, R.raw.classes_two_start,
-                    R.raw.rf_two_start, R.raw.sample_two_start);
-        } catch (Exception e) {
-            e.printStackTrace();
-            standardPrediction = null;
-            Toast.makeText(mContext, "Init failed", Toast.LENGTH_SHORT).show();
-        }
         if (isInitialized()) {
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone() + START_OFFSET);
             standardPrediction.predict(N_VOTE_LONG);
@@ -50,7 +47,9 @@ public class CCTwoMT extends ConnectedCar {
 
     @Override
     public boolean isInitialized() {
-        return standardPrediction != null;
+        return standardPrediction != null
+                && standardPrediction.isPredictRawFileRead()
+                && (checkForRssiNonNull(rssi) != null);
     }
 
     @Override

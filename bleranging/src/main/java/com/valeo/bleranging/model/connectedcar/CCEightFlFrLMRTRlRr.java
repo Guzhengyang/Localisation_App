@@ -1,7 +1,6 @@
 package com.valeo.bleranging.model.connectedcar;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.R;
@@ -59,26 +58,22 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     }
 
     @Override
-    public void initPredictions() {
-        try {
-            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
-                standardPrediction = new Prediction(mContext, R.raw.classes_eight_thatcham,
-                        R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
-            } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
-                standardPrediction = new Prediction(mContext, R.raw.classes_eight_entry,
-                        R.raw.rf_eight_entry, R.raw.sample_eight_entry);
-            }
-            insidePrediction = new Prediction(mContext, R.raw.classes_eight_inside,
-                    R.raw.rf_eight_inside, R.raw.sample_eight_inside);
-            rpPrediction = new Prediction(mContext, R.raw.classes_eight_rp,
-                    R.raw.rf_eight_rp, R.raw.sample_eight_rp);
-        } catch (Exception e) {
-            e.printStackTrace();
-            standardPrediction = null;
-            insidePrediction = null;
-            rpPrediction = null;
-            Toast.makeText(mContext, "Init failed", Toast.LENGTH_SHORT).show();
+    public void readPredictionsRawFiles() {
+        if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
+            standardPrediction = new Prediction(mContext, R.raw.classes_eight_thatcham,
+                    R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
+        } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
+            standardPrediction = new Prediction(mContext, R.raw.classes_eight_entry,
+                    R.raw.rf_eight_entry, R.raw.sample_eight_entry);
         }
+        insidePrediction = new Prediction(mContext, R.raw.classes_eight_inside,
+                R.raw.rf_eight_inside, R.raw.sample_eight_inside);
+        rpPrediction = new Prediction(mContext, R.raw.classes_eight_rp,
+                R.raw.rf_eight_rp, R.raw.sample_eight_rp);
+    }
+
+    @Override
+    public void initPredictions() {
         if (isInitialized()) {
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             standardPrediction.predict(N_VOTE_SHORT);
@@ -91,7 +86,11 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     @Override
     public boolean isInitialized() {
-        return standardPrediction != null && insidePrediction != null && rpPrediction != null;
+        return (standardPrediction != null && insidePrediction != null && rpPrediction != null
+                && standardPrediction.isPredictRawFileRead()
+                && insidePrediction.isPredictRawFileRead()
+                && rpPrediction.isPredictRawFileRead()
+                && (checkForRssiNonNull(rssi) != null));
     }
 
     @Override

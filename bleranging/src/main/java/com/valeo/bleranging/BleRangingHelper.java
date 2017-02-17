@@ -867,7 +867,14 @@ public class BleRangingHelper {
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (connectedCar != null && connectedCar.getRssiForRangingPrediction() != null) {
+                    if (connectedCar != null) connectedCar.readPredictionsRawFiles();
+                }
+            });
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (connectedCar != null && connectedCar.getRssiForRangingPrediction() != null
+                            && connectedCar.isInitialized()) {
                         connectedCar.initPredictions();
                         mMainHandler.post(logRunner);
                         mMainHandler.post(setRssiForRangingPrediction);

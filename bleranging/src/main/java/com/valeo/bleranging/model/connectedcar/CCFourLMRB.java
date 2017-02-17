@@ -38,6 +38,11 @@ public class CCFourLMRB extends ConnectedCar {
     }
 
     @Override
+    public void readPredictionsRawFiles() {
+
+    }
+
+    @Override
     public void initPredictions() {
 
     }

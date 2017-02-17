@@ -1,7 +1,6 @@
 package com.valeo.bleranging.model.connectedcar;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.R;
@@ -41,25 +40,22 @@ public class CCFourLMRT extends ConnectedCar {
     }
 
     @Override
-    public void initPredictions() {
-        try {
-            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
-                standardPrediction = new Prediction(mContext, R.raw.classes_four_thatcham,
-                        R.raw.rf_four_thatcham, R.raw.sample_four_thatcham);
-            } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
-                standardPrediction = new Prediction(mContext, R.raw.classes_four_entry,
-                        R.raw.rf_four_entry, R.raw.sample_four_entry);
-            }
-            this.rpPrediction = new Prediction(mContext, R.raw.classes_four_rp,
-                    R.raw.rf_four_rp, R.raw.sample_four_rp);
-            this.earPrediction = new Prediction(mContext, R.raw.classes_four_ear,
-                    R.raw.rf_four_ear, R.raw.sample_four_ear);
-        } catch (Exception e) {
-            e.printStackTrace();
-            standardPrediction = null;
-            rpPrediction = null;
-            Toast.makeText(mContext, "Init failed", Toast.LENGTH_SHORT).show();
+    public void readPredictionsRawFiles() {
+        if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
+            standardPrediction = new Prediction(mContext, R.raw.classes_four_thatcham,
+                    R.raw.rf_four_thatcham, R.raw.sample_four_thatcham);
+        } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
+            standardPrediction = new Prediction(mContext, R.raw.classes_four_entry,
+                    R.raw.rf_four_entry, R.raw.sample_four_entry);
         }
+        this.rpPrediction = new Prediction(mContext, R.raw.classes_four_rp,
+                R.raw.rf_four_rp, R.raw.sample_four_rp);
+        this.earPrediction = new Prediction(mContext, R.raw.classes_four_ear,
+                R.raw.rf_four_ear, R.raw.sample_four_ear);
+    }
+
+    @Override
+    public void initPredictions() {
         if (isInitialized()) {
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             rpPrediction.init(rssi, 0);
@@ -72,7 +68,11 @@ public class CCFourLMRT extends ConnectedCar {
 
     @Override
     public boolean isInitialized() {
-        return standardPrediction != null && earPrediction != null && rpPrediction != null;
+        return standardPrediction != null && earPrediction != null && rpPrediction != null
+                && standardPrediction.isPredictRawFileRead()
+                && insidePrediction.isPredictRawFileRead()
+                && rpPrediction.isPredictRawFileRead()
+                && (checkForRssiNonNull(rssi) != null);
     }
 
     @Override
