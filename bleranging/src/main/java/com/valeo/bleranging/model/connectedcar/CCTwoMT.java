@@ -3,8 +3,7 @@ package com.valeo.bleranging.model.connectedcar;
 import android.content.Context;
 
 import com.valeo.bleranging.BleRangingHelper;
-import com.valeo.bleranging.R;
-import com.valeo.bleranging.machinelearningalgo.Prediction;
+import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
@@ -33,8 +32,7 @@ public class CCTwoMT extends ConnectedCar {
 
     @Override
     public void readPredictionsRawFiles() {
-        standardPrediction = new Prediction(mContext, R.raw.classes_two_start,
-                R.raw.rf_two_start, R.raw.sample_two_start);
+        standardPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_STANDARD);
     }
 
     @Override

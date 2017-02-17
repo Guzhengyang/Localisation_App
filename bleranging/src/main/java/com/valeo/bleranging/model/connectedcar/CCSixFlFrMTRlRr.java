@@ -3,8 +3,7 @@ package com.valeo.bleranging.model.connectedcar;
 import android.content.Context;
 
 import com.valeo.bleranging.BleRangingHelper;
-import com.valeo.bleranging.R;
-import com.valeo.bleranging.machinelearningalgo.Prediction;
+import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
@@ -51,13 +50,7 @@ public class CCSixFlFrMTRlRr extends ConnectedCar {
 
     @Override
     public void readPredictionsRawFiles() {
-        if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
-            standardPrediction = new Prediction(mContext, R.raw.classes_eight_thatcham,
-                    R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
-        } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
-            standardPrediction = new Prediction(mContext, R.raw.classes_eight_entry,
-                    R.raw.rf_eight_entry, R.raw.sample_eight_entry);
-        }
+        standardPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_STANDARD);
     }
 
     @Override

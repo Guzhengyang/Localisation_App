@@ -367,6 +367,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private ListPreference opening_orientation_type;
         private CheckBoxPreference com_simulation_enabled;
         private CheckBoxPreference security_wal_enabled;
+        private CheckBoxPreference are_beacons_inside;
         private EditTextPreference offset_smartphone;
         private EditTextPreference offset_hysteresis_lock;
         private EditTextPreference offset_hysteresis_unlock;
@@ -486,6 +487,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             opening_orientation_type = ((ListPreference) findPreference(getString(R.string.opening_orientation_type_pref_name)));
             com_simulation_enabled = ((CheckBoxPreference) findPreference(getString(R.string.com_simulation_enabled_pref_name)));
             security_wal_enabled = ((CheckBoxPreference) findPreference(getString(R.string.security_wal_enabled_pref_name)));
+            are_beacons_inside = ((CheckBoxPreference) findPreference(getString(R.string.are_beacons_inside_pref_name)));
             offset_smartphone = ((EditTextPreference) findPreference(getString(R.string.offset_smartphone_pref_name)));
             offset_hysteresis_lock = ((EditTextPreference) findPreference(getString(R.string.offset_hysteresis_lock_pref_name)));
             offset_hysteresis_unlock = ((EditTextPreference) findPreference(getString(R.string.offset_hysteresis_unlock_pref_name)));
@@ -511,6 +513,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void setDefaultValues() {
             com_simulation_enabled.setChecked(SdkPreferencesHelper.getInstance().getComSimulationEnabled());
             security_wal_enabled.setChecked(SdkPreferencesHelper.getInstance().getSecurityWALEnabled());
+            are_beacons_inside.setChecked(SdkPreferencesHelper.getInstance().getAreBeaconsInside());
             print_inside_enabled.setChecked(SdkPreferencesHelper.getInstance().isPrintInsideEnabled());
             user_speed_enabled.setChecked(SdkPreferencesHelper.getInstance().getUserSpeedEnabled());
             offset_smartphone.setText(offset_smartphone.getSummary().toString());
@@ -541,6 +544,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(opening_orientation_type, THATCHAM_ORIENTED);
             com_simulation_enabled.setSummary(R.string.pref_com_simulation_enabled);
             security_wal_enabled.setSummary(R.string.pref_security_wal_enabled);
+            are_beacons_inside.setSummary(R.string.pref_are_beacons_inside);
             bindPreferenceSummaryToValue(offset_smartphone, String.valueOf(SdkPreferencesHelper.OFFSET_SMARTPHONE));
             bindPreferenceSummaryToValue(offset_hysteresis_lock, String.valueOf(SdkPreferencesHelper.OFFSET_HYSTERESIS_LOCK));
             bindPreferenceSummaryToValue(offset_hysteresis_unlock, String.valueOf(SdkPreferencesHelper.OFFSET_HYSTERESIS_UNLOCK));

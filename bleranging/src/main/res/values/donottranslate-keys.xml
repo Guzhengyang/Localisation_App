@@ -22,6 +22,7 @@
     <string name="connected_car_trame_pref_name">"com.inblue.PREFERENCE_CONNECTED_CAR_TRAME"</string>
     <string name="com_simulation_enabled_pref_name">"com.inblue.PREFERENCE_COMMUNICATION_SIMULATION_ENABLED"</string>
     <string name="security_wal_enabled_pref_name">"com.inblue.PREFERENCE_SECURITY_WAL_ENABLED"</string>
+    <string name="are_beacons_inside_pref_name">"com.inblue.PREFERENCE_ARE_BEACONS_INSIDE"</string>
     <string name="offset_smartphone_pref_name">"com.inblue.PREFERENCE_OFFSET_SMARTPHONE"</string>
     <string name="offset_hysteresis_lock_pref_name">"com.inblue.PREFERENCE_OFFSET_HYSTERESIS_LOCK"</string>
     <string name="offset_hysteresis_unlock_pref_name">"com.inblue.PREFERENCE_OFFSET_HYSTERESIS_UNLOCK"</string>

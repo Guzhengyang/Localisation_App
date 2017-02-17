@@ -7,7 +7,7 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
-import com.valeo.bleranging.machinelearningalgo.Prediction;
+import com.valeo.bleranging.machinelearningalgo.prediction.Prediction;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
@@ -372,7 +372,7 @@ public abstract class ConnectedCar {
         }
     }
 
-    protected enum ConnectionNumber {
+    public enum ConnectionNumber {
         TWO_CONNECTION, THREE_CONNECTION,
         FOUR_CONNECTION, FIVE_CONNECTION,
         SIX_CONNECTION, SEVEN_CONNECTION,

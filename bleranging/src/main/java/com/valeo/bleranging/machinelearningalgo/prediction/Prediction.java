@@ -1,4 +1,4 @@
-package com.valeo.bleranging.machinelearningalgo;
+package com.valeo.bleranging.machinelearningalgo.prediction;
 
 import android.content.Context;
 import android.os.AsyncTask;

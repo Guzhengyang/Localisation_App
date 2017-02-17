@@ -32,6 +32,10 @@
             android:title="@string/pref_security_wal_enabled" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:key="@string/are_beacons_inside_pref_name"
+            android:title="@string/pref_are_beacons_inside" />
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="@string/print_inside_enabled_pref_name"
             android:title="@string/pref_print_inside_enabled" />
     </PreferenceCategory>

@@ -3,8 +3,7 @@ package com.valeo.bleranging.model.connectedcar;
 import android.content.Context;
 
 import com.valeo.bleranging.BleRangingHelper;
-import com.valeo.bleranging.R;
-import com.valeo.bleranging.machinelearningalgo.Prediction;
+import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
@@ -41,17 +40,9 @@ public class CCFourLMRT extends ConnectedCar {
 
     @Override
     public void readPredictionsRawFiles() {
-        if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
-            standardPrediction = new Prediction(mContext, R.raw.classes_four_thatcham,
-                    R.raw.rf_four_thatcham, R.raw.sample_four_thatcham);
-        } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
-            standardPrediction = new Prediction(mContext, R.raw.classes_four_entry,
-                    R.raw.rf_four_entry, R.raw.sample_four_entry);
-        }
-        this.rpPrediction = new Prediction(mContext, R.raw.classes_four_rp,
-                R.raw.rf_four_rp, R.raw.sample_four_rp);
-        this.earPrediction = new Prediction(mContext, R.raw.classes_four_ear,
-                R.raw.rf_four_ear, R.raw.sample_four_ear);
+        standardPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_STANDARD);
+        rpPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_RP);
+        earPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_EAR);
     }
 
     @Override

@@ -149,7 +149,8 @@
             android:layout_below="@id/door_status_switcher"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:background="@color/black"
-            android:contentDescription="@string/chessboard" />
+            android:contentDescription="@string/chessboard"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/signalReceived"
