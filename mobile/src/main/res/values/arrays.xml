@@ -2,7 +2,7 @@
 <resources>
     <string-array name="iconName">
         <item>2 beacons Start</item>
-        <!--<item>2 beacons Entry</item>-->
+        <item>2 beacons Start bis</item>
         <item>3 beacons</item>
         <!--<item>4 beacons</item>-->
         <item>4 beacons ML</item>
@@ -13,7 +13,7 @@
     </string-array>
     <string-array name="entry_values_list_preference">
         <item>"twoMT"        </item>
-        <!--<item>"twoLR"        </item>-->
+        <item>"twoLR"        </item>
         <item>"threeLMR"        </item>
         <!--<item>"fourLMRB"        </item>-->
         <item>"fourLMRT"        </item>
@@ -24,7 +24,7 @@
     </string-array>
     <string-array name="iconFile">
         <item>car_2_a</item>
-        <!--<item>car_2_b</item>-->
+        <item>car_2_b</item>
         <item>car_3_a</item>
         <!--<item>car_4_a</item>-->
         <item>car_4_b</item>
