@@ -255,6 +255,7 @@ public class BleRangingHelper {
             }
         }
     };
+    private boolean alreadyStopped = false;
     private boolean isLoggable = true;
     private final Runnable logRunner = new Runnable() {
         @Override
@@ -740,7 +741,26 @@ public class BleRangingHelper {
             if (isFullyConnected()) {
                 int trxNumber = connectedCar.getTrxNumber(device.getAddress());
                 if (trxNumber != -1) {
-                    connectedCar.saveBleChannel(trxNumber, getCurrentChannel(beaconScanResponse));
+                    if (alreadyStopped) {
+                        PSALogs.d("bleChannel2 ", "not 37, do not parse scanResponse");
+                        return;
+                    }
+                    Antenna.BLEChannel receivedBleChannel = getCurrentChannel(beaconScanResponse);
+                    if (!receivedBleChannel.equals(Antenna.BLEChannel.BLE_CHANNEL_37)) { // if ble channel equals to 38, 39, unknown channel
+                        alreadyStopped = true;
+                        mBluetoothManager.suspendLeScan();
+                        PSALogs.d("bleChannel2 ", "not 37, stop scan");
+                        mMainHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                alreadyStopped = false;
+                                mBluetoothManager.resumeLeScan();
+                                PSALogs.d("bleChannel2 ", "resume scan after not 37 stopped");
+                            }
+                        }, 200);
+                        return;
+                    }
+                    connectedCar.saveBleChannel(trxNumber, receivedBleChannel);
                     PSALogs.d("bleChannel " + trxNumber, "channel " + connectedCar.getCurrentBLEChannel(trxNumber) + " " + beaconScanResponse.advertisingChannel);
                     connectedCar.saveRssi(trxNumber, rssi);
                 } else {
