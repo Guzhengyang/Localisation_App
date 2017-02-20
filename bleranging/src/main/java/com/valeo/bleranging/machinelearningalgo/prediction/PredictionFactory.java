@@ -117,13 +117,15 @@ public class PredictionFactory {
                 case TYPE_4_B:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
-                                return new Prediction(mContext, R.raw.classes_four_thatcham,
-                                        R.raw.rf_four_thatcham, R.raw.sample_four_thatcham);
-                            } else {
-                                return new Prediction(mContext, R.raw.classes_four_entry,
-                                        R.raw.rf_four_entry, R.raw.sample_four_entry);
-                            }
+//                            if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
+//                                return new Prediction(mContext, R.raw.classes_four_thatcham,
+//                                        R.raw.rf_four_thatcham, R.raw.sample_four_thatcham);
+//                            } else {
+//                                return new Prediction(mContext, R.raw.classes_four_entry,
+//                                        R.raw.rf_four_entry, R.raw.sample_four_entry);
+//                            }
+                            return new Prediction(mContext, R.raw.classes_four_entry_out,
+                                    R.raw.rf_four_entry_out, R.raw.sample_four_entry_out);
                         case PREDICTION_RP:
                             return new Prediction(mContext, R.raw.classes_four_rp,
                                     R.raw.rf_four_rp, R.raw.sample_four_rp);

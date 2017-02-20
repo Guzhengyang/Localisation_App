@@ -28,10 +28,10 @@ public class CCSixFlFrMTRlRr extends ConnectedCar {
         trxTrunk.setEnabled(true);
         trxRearLeft.setEnabled(true);
         trxRearRight.setEnabled(true);
-        trxLinkedHMap.put(NUMBER_TRX_FRONT_LEFT, trxFrontLeft);
-        trxLinkedHMap.put(NUMBER_TRX_FRONT_RIGHT, trxFrontRight);
         trxLinkedHMap.put(NUMBER_TRX_MIDDLE, trxMiddle);
         trxLinkedHMap.put(NUMBER_TRX_TRUNK, trxTrunk);
+        trxLinkedHMap.put(NUMBER_TRX_FRONT_LEFT, trxFrontLeft);
+        trxLinkedHMap.put(NUMBER_TRX_FRONT_RIGHT, trxFrontRight);
         trxLinkedHMap.put(NUMBER_TRX_REAR_LEFT, trxRearLeft);
         trxLinkedHMap.put(NUMBER_TRX_REAR_RIGHT, trxRearRight);
     }
