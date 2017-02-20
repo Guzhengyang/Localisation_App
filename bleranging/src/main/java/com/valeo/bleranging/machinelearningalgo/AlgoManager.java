@@ -24,6 +24,8 @@ import com.valeo.bleranging.utils.CallReceiver;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.SoundUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
@@ -59,6 +61,11 @@ public class AlgoManager implements SensorEventListener {
     private final Handler mHandlerCryptoTimeOut;
     private final Handler mHandlerThatchamTimeOut;
     private final Handler mLockStatusChangedHandler;
+    private final Handler mIsFrozenTimeOutHandler;
+    private final ArrayList<Double> lAccHistoric = new ArrayList<>(SdkPreferencesHelper.getInstance().getLinAccSize());
+    private final float R[] = new float[9];
+    private final float I[] = new float[9];
+    private final float orientation[] = new float[3];
     private final AtomicBoolean thatchamIsChanging = new AtomicBoolean(false);
     private final Runnable mHasThatchamChanged = new Runnable() {
         @Override
@@ -112,6 +119,18 @@ public class AlgoManager implements SensorEventListener {
             }
         }
     };
+    private double deltaLinAcc = 0;
+    private boolean smartphoneIsFrozen = false;
+    private final Runnable isFrozenRunnable = new Runnable() {
+        @Override
+        public void run() {
+            smartphoneIsFrozen = true; // smartphone is staying still
+            mIsFrozenTimeOutHandler.removeCallbacks(this);
+        }
+    };
+    private boolean isFrozenRunnableAlreadyLaunched = false;
+    private float[] mGravity;
+    private float[] mGeomagnetic;
     private boolean isAbortRunning = false;
     private final Runnable abortCommandRunner = new Runnable() {
         @Override
@@ -195,11 +214,14 @@ public class AlgoManager implements SensorEventListener {
         this.mHandlerCryptoTimeOut = new Handler();
         this.mHandlerThatchamTimeOut = new Handler();
         this.mLockStatusChangedHandler = new Handler();
+        this.mIsFrozenTimeOutHandler = new Handler();
 //        this.faceDetectorUtils = new FaceDetectorUtils(mContext);
         SensorManager senSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         Sensor senProximity = senSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         Sensor magnetometer = senSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        Sensor senLinAcceleration = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senSensorManager.registerListener(this, senProximity, SensorManager.SENSOR_DELAY_NORMAL);
+        senSensorManager.registerListener(this, senLinAcceleration, SensorManager.SENSOR_DELAY_UI);
         senSensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
         mContext.registerReceiver(callReceiver, new IntentFilter());
         mContext.registerReceiver(bleStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
@@ -396,11 +418,71 @@ public class AlgoManager implements SensorEventListener {
         return PREDICTION_UNKNOWN;
     }
 
+    /**
+     * Calculate acceleration rolling average
+     *
+     * @param lAccHistoric all acceleration values
+     * @return the rolling average of acceleration
+     */
+    private float getRollingAverageLAcc(ArrayList<Double> lAccHistoric) {
+        float average = 0;
+        if (lAccHistoric.size() > 0) {
+            for (Double element : lAccHistoric) {
+                average += element;
+            }
+            average /= lAccHistoric.size();
+        }
+        return average;
+    }
+
+    /**
+     * Calculate the quadratic sum
+     *
+     * @param x the first axe value
+     * @param y the second axe value
+     * @param z the third axe value
+     * @return the quadratic sum of the three axes
+     */
+    private double getQuadratiqueSum(float x, float y, float z) {
+        return Math.sqrt(x * x + y * y + z * z);
+    }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
             //near
             smartphoneIsInPocket = (event.values[0] == 0);
+        }
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            mGravity = event.values;
+            if (lAccHistoric.size() == SdkPreferencesHelper.getInstance().getLinAccSize()) {
+                lAccHistoric.remove(0);
+            }
+            double currentLinAcc = getQuadratiqueSum(event.values[0], event.values[1], event.values[2]);
+            lAccHistoric.add(currentLinAcc);
+            double averageLinAcc = getRollingAverageLAcc(lAccHistoric);
+            deltaLinAcc = Math.abs(currentLinAcc - averageLinAcc);
+            if (deltaLinAcc < SdkPreferencesHelper.getInstance().getFrozenThreshold()) {
+                if (!isFrozenRunnableAlreadyLaunched) {
+                    mIsFrozenTimeOutHandler.postDelayed(isFrozenRunnable, 3000); // wait before apply stillness
+                    isFrozenRunnableAlreadyLaunched = true;
+                }
+            } else {
+                smartphoneIsFrozen = false; // smartphone is moving
+                mIsFrozenTimeOutHandler.removeCallbacks(isFrozenRunnable);
+                isFrozenRunnableAlreadyLaunched = false;
+            }
+        }
+        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            mGeomagnetic = event.values;
+        }
+        if (mGravity != null && mGeomagnetic != null) {
+            Arrays.fill(R, 0);
+            Arrays.fill(I, 0);
+            boolean success = SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
+            if (success) {
+                SensorManager.getOrientation(R, orientation); // orientation contains: azimut, pitch and roll
+            }
         }
     }
 

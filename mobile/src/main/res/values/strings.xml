@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Fingerprinting</string>
+    <string name="app_name">Fingerprint</string>
     <string name="title_activity_main">Lock: %1$s &amp; Unlock: %2$s</string>
     <string name="title_activity_login">Connect to My Peugeot</string>
     <string name="title_activity_security_questions">Security Questions</string>

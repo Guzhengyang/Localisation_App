@@ -97,6 +97,16 @@
             android:key="@string/crypto_action_timeout_pref_name"
             android:title="@string/pref_crypto_action_timeout" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_acc">
+        <EditTextPreference
+            android:inputType="number"
+            android:key="@string/lin_acc_size_pref_name"
+            android:title="@string/pref_acc_size" />
+        <EditTextPreference
+            android:inputType="number|numberDecimal"
+            android:key="@string/frozen_threshold_pref_name"
+            android:title="@string/pref_frozen_threshold" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_user_speed">
         <CheckBoxPreference
             android:defaultValue="false"

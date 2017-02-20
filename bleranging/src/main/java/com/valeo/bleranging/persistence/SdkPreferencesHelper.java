@@ -27,6 +27,9 @@ public final class SdkPreferencesHelper {
     public final static int ROLLING_AVERAGE_ELEMENTS = 20;
     public final static float WANTED_SPEED = 5.1f;
     public final static int ONE_STEP_SIZE = 70;
+    public final static int LIN_ACC_SIZE = 10;
+    public final static float CORRECTION_LIN_ACC = 0.0f;
+    public final static float FROZEN_THRESHOLD = 0.0f;
     public final static int DEFAULT_ACTIVE_SCAN_PERIOD = 3000;
     public final static int DEFAULT_INACTIVE_SCAN_PERIOD = 200;
     public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:2A:B8";
@@ -249,6 +252,14 @@ public final class SdkPreferencesHelper {
 
     public int getInactiveScanningPeriod() {
         return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.inactive_scanning_period_pref_name), DEFAULT_INACTIVE_SCAN_PERIOD);
+    }
+
+    public int getLinAccSize() {
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.lin_acc_size_pref_name), LIN_ACC_SIZE);
+    }
+
+    public float getFrozenThreshold() {
+        return readFloat(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.frozen_threshold_pref_name), FROZEN_THRESHOLD);
     }
 
     public void setUserMail(String userMail) {
