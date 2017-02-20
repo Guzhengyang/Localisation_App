@@ -114,6 +114,10 @@ public final class SdkPreferencesHelper {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.are_beacons_inside_pref_name), false);
     }
 
+    public void setAreBeaconsInside(boolean value) {
+        saveBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.are_beacons_inside_pref_name), value);
+    }
+
     public int getAdapterLastPosition() {
         return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.adapter_last_position_pref_name), -1);
     }

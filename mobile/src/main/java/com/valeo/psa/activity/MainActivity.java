@@ -610,6 +610,11 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                         } else {
                             Snackbar.make(recyclerView, "pref file not found", Snackbar.LENGTH_SHORT).show();
                         }
+                        if (selectedCar.getBrandCar().equalsIgnoreCase(getString(R.string.ds5))) {
+                            SdkPreferencesHelper.getInstance().setAreBeaconsInside(false);
+                        } else if (selectedCar.getBrandCar().equalsIgnoreCase(getString(R.string.ds5_2))) {
+                            SdkPreferencesHelper.getInstance().setAreBeaconsInside(true);
+                        }
                     }
                     CarListAdapter.ViewHolder vh = (CarListAdapter.ViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
                     if(vh != null) {
