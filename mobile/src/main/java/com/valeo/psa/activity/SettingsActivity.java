@@ -542,9 +542,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_B);
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
             bindPreferenceSummaryToValue(opening_orientation_type, THATCHAM_ORIENTED);
-            com_simulation_enabled.setSummary(R.string.pref_com_simulation_enabled);
-            security_wal_enabled.setSummary(R.string.pref_security_wal_enabled);
-            are_beacons_inside.setSummary(R.string.pref_are_beacons_inside);
+            com_simulation_enabled.setSummary(R.string.pref_com_simulation_enabled_summary);
+            security_wal_enabled.setSummary(R.string.pref_security_wal_enabled_summary);
+            are_beacons_inside.setSummary(R.string.pref_are_beacons_inside_summary);
             bindPreferenceSummaryToValue(offset_smartphone, String.valueOf(SdkPreferencesHelper.OFFSET_SMARTPHONE));
             bindPreferenceSummaryToValue(offset_hysteresis_lock, String.valueOf(SdkPreferencesHelper.OFFSET_HYSTERESIS_LOCK));
             bindPreferenceSummaryToValue(offset_hysteresis_unlock, String.valueOf(SdkPreferencesHelper.OFFSET_HYSTERESIS_UNLOCK));

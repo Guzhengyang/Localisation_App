@@ -103,6 +103,10 @@ public final class SdkPreferencesHelper {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.security_wal_enabled_pref_name), false);
     }
 
+    public void setSecurityWALEnabled(boolean value) {
+        saveBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.security_wal_enabled_pref_name), value);
+    }
+
     public Boolean getAreBeaconsInside() {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.are_beacons_inside_pref_name), false);
     }
@@ -316,7 +320,7 @@ public final class SdkPreferencesHelper {
     private void saveBoolean(final String fileName, final String keyName, final boolean value) {
         SharedPreferences sharedPref = mApplicationContext.getSharedPreferences(fileName, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(keyName, String.valueOf(value));
+        editor.putBoolean(keyName, value);
         editor.apply();
         editor.commit();
     }

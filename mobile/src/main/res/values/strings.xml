@@ -76,8 +76,11 @@
     <string name="pref_car_forced_trame_enabled_summary">Enable the car forced trame</string>
     <string name="pref_car_forced_trame">Car forced trame</string>
     <string name="pref_com_simulation_enabled">Enable communication simulation</string>
+    <string name="pref_com_simulation_enabled_summary">Simulate phone communication</string>
     <string name="pref_security_wal_enabled">Enable security WAL</string>
+    <string name="pref_security_wal_enabled_summary">Activate walk away locking</string>
     <string name="pref_are_beacons_inside">Are beacons inside</string>
+    <string name="pref_are_beacons_inside_summary">Are the lateral beacons of the car inside it</string>
     <string name="pref_print_inside_enabled">Enable print inside</string>
     <string name="pref_print_inside_enabled_summary">Enable the four start zones print</string>
     <string name="dialog_title_list_preference">Number of active beacon</string>

@@ -246,22 +246,22 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 }
                 startActivityForResult(settingIntent, RESULT_SETTINGS);
                 break;
-            case R.id.menu_login:
-                Intent loginIntent = new Intent(this, LoginActivity.class);
-                startActivityForResult(loginIntent, RESULT_SETTINGS);
-                break;
-            case R.id.menu_reconnect_ble:
-                mBleRangingHelper.connect();
-                break;
-            case R.id.menu_reconnect_ble_pc:
-                mBleRangingHelper.connectToPC();
-                break;
-            case R.id.menu_reconnect_ble_remote_control:
-                mBleRangingHelper.connectToRemoteControl();
-                break;
-            case R.id.menu_relaunch_ble_scan:
-                mBleRangingHelper.relaunchScan();
-                break;
+//            case R.id.menu_login:
+//                Intent loginIntent = new Intent(this, LoginActivity.class);
+//                startActivityForResult(loginIntent, RESULT_SETTINGS);
+//                break;
+//            case R.id.menu_reconnect_ble:
+//                mBleRangingHelper.connect();
+//                break;
+//            case R.id.menu_reconnect_ble_pc:
+//                mBleRangingHelper.connectToPC();
+//                break;
+//            case R.id.menu_reconnect_ble_remote_control:
+//                mBleRangingHelper.connectToRemoteControl();
+//                break;
+//            case R.id.menu_relaunch_ble_scan:
+//                mBleRangingHelper.relaunchScan();
+//                break;
         }
         return true;
     }
