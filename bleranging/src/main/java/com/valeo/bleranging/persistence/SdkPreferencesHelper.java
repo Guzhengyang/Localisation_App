@@ -107,6 +107,14 @@ public final class SdkPreferencesHelper {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.are_beacons_inside_pref_name), false);
     }
 
+    public int getAdapterLastPosition() {
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.adapter_last_position_pref_name), -1);
+    }
+
+    public void setAdapterLastPosition(int lastPosition) {
+        saveInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.adapter_last_position_pref_name), lastPosition);
+    }
+
     public int getOffsetSmartphone() {
         return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.offset_smartphone_pref_name), OFFSET_SMARTPHONE);
     }

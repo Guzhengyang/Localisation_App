@@ -186,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private Car selectedCar = null;
     private NotificationManagerCompat notificationManager;
     private boolean predictionColor[][] = new boolean[MAX_ROWS][MAX_COLUMNS];
+    private int lastPos = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -585,12 +586,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         mCarListAdapter = new CarListAdapter(mCarSelectionListener);
         car_model_recyclerView.setAdapter(mCarListAdapter);
         mCarListAdapter.setCars(createCarList());
-        // load car_one connection pref, when the app is launched
-        PreferenceUtils.loadSharedPreferencesFromInputStream(MainActivity.this,
-                getResources().openRawResource(R.raw.car_one),
-                SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION);
+        // load "last adapter_position car" connection pref, when the app is launched
+        lastPos = SdkPreferencesHelper.getInstance().getAdapterLastPosition();
         car_model_recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            private int lastPos = -1;
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -620,6 +618,13 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 }
             }
         });
+        if (lastPos != -1) {
+            car_model_recyclerView.scrollToPosition(lastPos);
+            Car tempCar = mCarListAdapter.getCars().get(lastPos);
+            if (tempCar != null) {
+                selected_car_model_pinned.setText(tempCar.getBrandCar());
+            }
+        }
     }
 
     /**
@@ -1260,6 +1265,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        SdkPreferencesHelper.getInstance().setAdapterLastPosition(lastPos);
         mBleRangingHelper.closeApp();
     }
 
