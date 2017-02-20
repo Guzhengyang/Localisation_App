@@ -77,11 +77,16 @@ public class Prediction {
         if (prediction_old != -1) {
             // trx order : l, m, r, t, fl, fr, rl, rr
             // Add lock and outside hysteresis to all the trx
-            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
-                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
-                        this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
-                    rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
-                }
+//            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
+//                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
+//                        this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
+//                    rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
+//                }
+//            }
+
+            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
+                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
+                rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
             }
 
             // Add unlock hysteresis to all the trx
@@ -106,11 +111,17 @@ public class Prediction {
             // trx order : l, m, r, t, fl, fr, rl, rr
             // Add hysteresis to all the trx
 
-            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
-                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
-                    rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
-                }
+//            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
+//                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
+//                    rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
+//                }
+//            }
+
+            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
+                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
+                rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
             }
+
             if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_FAR)) {
                 rssiModified[index] -= OFFSET_FAR_HYSTERESIS;
             }

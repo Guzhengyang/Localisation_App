@@ -74,8 +74,8 @@ public class PredictionFactory {
                                 return new Prediction(mContext, R.raw.classes_eight_thatcham,
                                         R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
                             } else {
-                                return new Prediction(mContext, R.raw.classes_eight_entry,
-                                        R.raw.rf_eight_entry, R.raw.sample_eight_entry);
+                                return new Prediction(mContext, R.raw.classes_eight_entry_in,
+                                        R.raw.rf_eight_entry_in, R.raw.sample_eight_entry_in);
                             }
                     }
                     break;
@@ -84,13 +84,15 @@ public class PredictionFactory {
                 case TYPE_8_A:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
-                                return new Prediction(mContext, R.raw.classes_eight_thatcham,
-                                        R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
-                            } else {
-                                return new Prediction(mContext, R.raw.classes_eight_entry,
-                                        R.raw.rf_eight_entry, R.raw.sample_eight_entry);
-                            }
+//                            if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
+//                                return new Prediction(mContext, R.raw.classes_eight_thatcham,
+//                                        R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
+//                            } else {
+//                                return new Prediction(mContext, R.raw.classes_eight_entry,
+//                                        R.raw.rf_eight_entry, R.raw.sample_eight_entry);
+//                            }
+                            return new Prediction(mContext, R.raw.classes_eight_entry_in,
+                                    R.raw.rf_eight_entry_in, R.raw.sample_eight_entry_in);
                         case PREDICTION_INSIDE:
                             return new Prediction(mContext, R.raw.classes_eight_inside,
                                     R.raw.rf_eight_inside, R.raw.sample_eight_inside);
@@ -139,8 +141,8 @@ public class PredictionFactory {
                                 return new Prediction(mContext, R.raw.classes_eight_thatcham,
                                         R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
                             } else {
-                                return new Prediction(mContext, R.raw.classes_eight_entry,
-                                        R.raw.rf_eight_entry, R.raw.sample_eight_entry);
+                                return new Prediction(mContext, R.raw.classes_eight_entry_in,
+                                        R.raw.rf_eight_entry_in, R.raw.sample_eight_entry_in);
                             }
                     }
                     break;
@@ -149,13 +151,15 @@ public class PredictionFactory {
                 case TYPE_8_A:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
-                                return new Prediction(mContext, R.raw.classes_eight_thatcham,
-                                        R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
-                            } else {
-                                return new Prediction(mContext, R.raw.classes_eight_entry,
-                                        R.raw.rf_eight_entry, R.raw.sample_eight_entry);
-                            }
+//                            if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
+//                                return new Prediction(mContext, R.raw.classes_eight_thatcham,
+//                                        R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
+//                            } else {
+//                                return new Prediction(mContext, R.raw.classes_eight_entry,
+//                                        R.raw.rf_eight_entry, R.raw.sample_eight_entry);
+//                            }
+                            return new Prediction(mContext, R.raw.classes_eight_entry_out,
+                                    R.raw.rf_eight_entry_out, R.raw.sample_eight_entry_out);
                         case PREDICTION_INSIDE:
                             return new Prediction(mContext, R.raw.classes_eight_inside,
                                     R.raw.rf_eight_inside, R.raw.sample_eight_inside);
