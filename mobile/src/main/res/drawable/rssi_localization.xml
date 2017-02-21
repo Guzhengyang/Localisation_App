@@ -178,7 +178,7 @@
         <shape android:shape="rectangle">
             <solid android:color="@android:color/transparent" />
             <stroke
-                android:width="5dp"
+                android:width="7dp"
                 android:color="@android:color/transparent" />
         </shape>
     </item>

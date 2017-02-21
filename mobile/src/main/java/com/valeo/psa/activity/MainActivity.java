@@ -925,7 +925,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 lock_area.setColor(Color.RED);
                 break;
             case PREDICTION_ROOF:
-                rooftop.setStroke(5, Color.MAGENTA);
+                rooftop.setStroke(7, Color.RED);
                 break;
             case PREDICTION_LEFT:
                 unlock_area_left.setColor(Color.GREEN);
