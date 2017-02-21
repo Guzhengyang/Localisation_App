@@ -15,7 +15,13 @@ import java.util.Locale;
 /**
  * Created by l-avaratha on 08/06/2016
  */
-public class TrxUtils {
+public class LogFileUtils {
+    public final static String RSSI_DIR = "/InBlueRssi/";
+    public final static String CONFIG_DIR = "/InBlueConfig/";
+    private final static String FILENAME_TIMESTAMP_FORMAT = "yyyy-MM-dd_kk";
+    private final static String RSSI_TIMESTAMP_FORMAT = "HH:mm:ss:SSS";
+    private final static String LOG_FILE_PREFIX = "/InBlueRssi/allRssi_";
+    private final static String FILE_EXTENSION = ".csv";
     private static File logFile = null;
 
     /**
@@ -209,7 +215,7 @@ public class TrxUtils {
     private static void appendRssiLog(String text) {
 //        PSALogs.d("log", text);
         try {
-            SimpleDateFormat s = new SimpleDateFormat("HH:mm:ss:SSS", Locale.FRANCE);
+            SimpleDateFormat s = new SimpleDateFormat(RSSI_TIMESTAMP_FORMAT, Locale.FRANCE);
             String timestamp = s.format(new Date());
             //BufferedWriter for performance, true to set append to file flag
             if (logFile != null) {
@@ -236,10 +242,11 @@ public class TrxUtils {
      */
     public static boolean createLogFile(Context mContext) {
         if (createDirectories(mContext)) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_kk", Locale.FRANCE);
+            SimpleDateFormat sdf = new SimpleDateFormat(FILENAME_TIMESTAMP_FORMAT, Locale.FRANCE);
             String timestampLog = sdf.format(new Date());
-            SdkPreferencesHelper.getInstance().setLogFileName("/InBlueRssi/allRssi_"
-                    + SdkPreferencesHelper.getInstance().getRssiLogNumber() + "_" + timestampLog + ".csv");
+            SdkPreferencesHelper.getInstance().setLogFileName(LOG_FILE_PREFIX
+                    + SdkPreferencesHelper.getInstance().getRssiLogNumber()
+                    + "_" + timestampLog + FILE_EXTENSION);
             logFile = new File(mContext.getExternalCacheDir(), SdkPreferencesHelper.getInstance().getLogFileName());
             PSALogs.d("LogFileName", SdkPreferencesHelper.getInstance().getLogFileName());
             if (!logFile.exists()) {
@@ -337,10 +344,10 @@ public class TrxUtils {
     }
 
     private static boolean createLogsDir(Context mContext) {
-        return createDir(mContext.getExternalCacheDir(), "/InBlueRssi/");
+        return createDir(mContext.getExternalCacheDir(), RSSI_DIR);
     }
 
     private static boolean createConfigDir(Context mContext) {
-        return createDir(mContext.getExternalCacheDir(), "/InBlueConfig/");
+        return createDir(mContext.getExternalCacheDir(), CONFIG_DIR);
     }
 }

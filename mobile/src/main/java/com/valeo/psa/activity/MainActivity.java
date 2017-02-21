@@ -1,7 +1,5 @@
 package com.valeo.psa.activity;
 
-import android.annotation.TargetApi;
-import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
@@ -21,7 +19,6 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -64,8 +61,8 @@ import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
+import com.valeo.bleranging.utils.LogFileUtils;
 import com.valeo.bleranging.utils.PSALogs;
-import com.valeo.bleranging.utils.TrxUtils;
 import com.valeo.psa.R;
 import com.valeo.psa.model.Car;
 import com.valeo.psa.model.ViewModel;
@@ -112,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private final static float SCROLL_THRESHOLD = 10;
     private static final int RESULT_SETTINGS = 20;
     private static final int REQUEST_ENABLE_BT = 25117;
-    private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
+    //    private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
     private static final int NOTIFICATION_ID_1 = 1;
     private static final int MAX_ROWS = 12;
     private static final int MAX_COLUMNS = 10;
@@ -184,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private CarDoorStatus carDoorStatus;
     private BleRangingHelper mBleRangingHelper;
     private boolean showMenu = true;
-    private KeyguardManager mKeyguardManager;
+    //    private KeyguardManager mKeyguardManager;
     private Car selectedCar = null;
     private NotificationManagerCompat notificationManager;
     private boolean predictionColor[][] = new boolean[MAX_ROWS][MAX_COLUMNS];
@@ -212,24 +209,24 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             nfc_logo.setVisibility(View.VISIBLE);
         }
         notificationManager = NotificationManagerCompat.from(MainActivity.this);
-        mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-        if (!mKeyguardManager.isKeyguardSecure()) {
-            // Show a message that the user hasn't set up a lock screen.
-            Toast.makeText(this, getString(R.string.set_security_lock), Toast.LENGTH_LONG).show();
-        }
-        showAuthenticationScreen();
+//        mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+//        if (!mKeyguardManager.isKeyguardSecure()) {
+//            // Show a message that the user hasn't set up a lock screen.
+//            Toast.makeText(this, getString(R.string.set_security_lock), Toast.LENGTH_LONG).show();
+//        }
+//        showAuthenticationScreen();
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void showAuthenticationScreen() {
-        // Create the Confirm Credentials screen. You can customize the title and description. Or
-        // we will provide a generic one for you if you leave it null
-        Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(null, null);
-        if (intent != null) {
-            PSALogs.d(TAG, "showAuthenticationScreen " + REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS);
-//            startActivityForResult(intent, REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS); // TODO uncomment to activate
-        }
-    }
+//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+//    private void showAuthenticationScreen() {
+//        // Create the Confirm Credentials screen. You can customize the title and description. Or
+//        // we will provide a generic one for you if you leave it null
+//        Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(null, null);
+//        if (intent != null) {
+//            PSALogs.d(TAG, "showAuthenticationScreen " + REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS);
+////            startActivityForResult(intent, REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS); // TODO uncomment to activate
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -1296,10 +1293,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     protected void onResume() {
         super.onResume();
         if (mBleRangingHelper != null && !mBleRangingHelper.isCloseAppCalled()) {
-            if (TrxUtils.createLogFile(this)) {
-                TrxUtils.writeFirstColumnSettings();
+            if (LogFileUtils.createLogFile(this)) {
+                LogFileUtils.writeFirstColumnSettings();
                 String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-                TrxUtils.appendSettingLogs(connectedCarType,
+                LogFileUtils.appendSettingLogs(connectedCarType,
                         SdkPreferencesHelper.getInstance().getConnectedCarBase(),
                         SdkPreferencesHelper.getInstance().getTrxAddressConnectable(),
                         SdkPreferencesHelper.getInstance().getTrxAddressConnectableRemoteControl(),
@@ -1312,7 +1309,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                         SdkPreferencesHelper.getInstance().getCryptoPreAuthTimeout(),
                         SdkPreferencesHelper.getInstance().getCryptoActionTimeout(),
                         SdkPreferencesHelper.getInstance().getWantedSpeed(), SdkPreferencesHelper.getInstance().getOneStepSize());
-                TrxUtils.writeFirstColumnLogs();
+                LogFileUtils.writeFirstColumnLogs();
             }
             mBleRangingHelper.initializeConnectedCar();
         }

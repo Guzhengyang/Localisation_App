@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
+import static com.valeo.bleranging.utils.LogFileUtils.CONFIG_DIR;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -227,7 +228,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             export_preferences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    String filePath = "/inBlueConfig/" + SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION;
+                    String filePath = CONFIG_DIR + SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION;
                     File exportedPrefs = new File(mContext.getExternalCacheDir(), filePath);
                     if (!exportedPrefs.exists()) {
                         try {
@@ -410,7 +411,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             export_preferences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    String filePath = "/inBlueConfig/" + SdkPreferencesHelper.SAVED_CC_GENERIC_OPTION;
+                    String filePath = CONFIG_DIR + SdkPreferencesHelper.SAVED_CC_GENERIC_OPTION;
                     File exportedPrefs = new File(mContext.getExternalCacheDir(), filePath);
                     if (!exportedPrefs.exists()) {
                         try {
