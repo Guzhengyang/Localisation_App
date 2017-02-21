@@ -7,8 +7,6 @@ import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
-
 /**
  * Created by l-avaratha on 07/09/2016
  */
@@ -85,8 +83,6 @@ public class CCSixFlFrMTRlRr extends ConnectedCar {
         if (isInitialized()) {
             for (int i = 0; i < rssi.length; i++) {
                 standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard());
-                insidePrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), THRESHOLD_DIST_AWAY_SLOW);
-                rpPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard());
             }
             standardPrediction.predict(N_VOTE_SHORT);
         }
@@ -116,19 +112,7 @@ public class CCSixFlFrMTRlRr extends ConnectedCar {
     @Override
     public String getPredictionPosition(boolean smartphoneIsInPocket) {
         if (isInitialized()) {
-            String result = standardPrediction.getPrediction();
-            if (SdkPreferencesHelper.getInstance().isPrintInsideEnabled()
-                    && result.equalsIgnoreCase(PREDICTION_START)) {
-                return getInsidePrediction();
-            }
-            return result;
-        }
-        return BleRangingHelper.PREDICTION_UNKNOWN;
-    }
-
-    private String getInsidePrediction() {
-        if (isInitialized()) {
-            return insidePrediction.getPrediction();
+            return standardPrediction.getPrediction();
         }
         return BleRangingHelper.PREDICTION_UNKNOWN;
     }
