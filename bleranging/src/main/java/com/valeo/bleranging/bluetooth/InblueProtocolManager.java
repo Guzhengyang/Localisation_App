@@ -12,6 +12,7 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ROOF;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FL;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FR;
@@ -201,6 +202,9 @@ public class InblueProtocolManager {
                 break;
             case PREDICTION_START_RR:
                 payloadFour |= 0x15;
+                break;
+            case PREDICTION_ROOF:
+                payloadFour |= 0x16;
                 break;
             default:
                 break;

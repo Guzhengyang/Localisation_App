@@ -92,6 +92,7 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_NEAR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ROOF;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FL;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FR;
@@ -158,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private GradientDrawable start_area_rr;
     private GradientDrawable trunk_area;
     private GradientDrawable lock_area;
+    private GradientDrawable rooftop;
     private GradientDrawable unlock_area_left;
     private GradientDrawable unlock_area_right;
     private GradientDrawable unlock_area_back;
@@ -922,6 +924,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             case PREDICTION_LOCK:
                 lock_area.setColor(Color.RED);
                 break;
+            case PREDICTION_ROOF:
+                rooftop.setStroke(5, Color.MAGENTA);
+                break;
             case PREDICTION_LEFT:
                 unlock_area_left.setColor(Color.GREEN);
                 break;
@@ -995,6 +1000,9 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 break;
             case PREDICTION_LOCK:
                 lock_area.setColor(Color.BLACK);
+                break;
+            case PREDICTION_ROOF:
+                rooftop.setStroke(0, Color.TRANSPARENT);
                 break;
             case PREDICTION_LEFT:
                 unlock_area_left.setColor(Color.BLACK);
@@ -1185,6 +1193,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         start_area_rl = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_rl);
         start_area_rr = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_rr);
         lock_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.lock_area);
+        rooftop = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.rooftop);
         unlock_area_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_left);
         unlock_area_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_right);
         unlock_area_back = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_back);

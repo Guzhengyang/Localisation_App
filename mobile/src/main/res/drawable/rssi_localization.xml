@@ -168,4 +168,18 @@
         android:left="10dp"
         android:right="10dp"
         android:top="10dp" />
+    <!-- rooftop -->
+    <item
+        android:id="@+id/rooftop"
+        android:bottom="45dp"
+        android:left="90dp"
+        android:right="70dp"
+        android:top="45dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <stroke
+                android:width="5dp"
+                android:color="@android:color/transparent" />
+        </shape>
+    </item>
 </layer-list>

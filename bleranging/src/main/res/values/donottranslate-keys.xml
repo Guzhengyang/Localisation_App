@@ -98,6 +98,7 @@
     <string name="correction_lin_acc_pref_name">"com.inblue.PREFERENCE_CORRECTION_LIN_ACC"</string>
     <string name="frozen_threshold_pref_name">"com.inblue.PREFERENCE_FROZEN_THRESHOLD"</string>
     <string name="print_inside_enabled_pref_name">"com.inblue.PREFERENCE_PRINT_INSIDE_ENABLED"</string>
+    <string name="print_rooftop_enabled_pref_name">"com.inblue.PREFERENCE_PRINT_ROOFTOP_ENABLED"</string>
     <string name="user_speed_enabled_pref_name">"com.inblue.PREFERENCE_USER_SPEED_ENABLED"</string>
     <string name="wanted_speed_pref_name">"com.inblue.PREFERENCE_WANTED_SPEED"</string>
     <string name="one_step_size_pref_name">"com.inblue.PREFERENCE_ONE_STEP_SIZE"</string>

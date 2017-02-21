@@ -36,6 +36,7 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_NEAR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ROOF;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FL;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FR;
@@ -328,6 +329,7 @@ public class AlgoManager implements SensorEventListener {
                 }
                 break;
             case PREDICTION_UNKNOWN:
+            case PREDICTION_ROOF:
             case PREDICTION_WELCOME:
             case PREDICTION_THATCHAM:
             default:

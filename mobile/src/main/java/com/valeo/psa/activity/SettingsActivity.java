@@ -368,6 +368,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private CheckBoxPreference com_simulation_enabled;
         private CheckBoxPreference security_wal_enabled;
         private CheckBoxPreference are_beacons_inside;
+        private CheckBoxPreference print_inside_enabled;
+        private CheckBoxPreference print_rooftop_enabled;
         private EditTextPreference offset_smartphone;
         private EditTextPreference offset_hysteresis_lock;
         private EditTextPreference offset_hysteresis_unlock;
@@ -379,7 +381,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference crypto_action_timeout;
         private EditTextPreference rssi_log_number;
         private EditTextPreference rolling_av_element;
-        private CheckBoxPreference print_inside_enabled;
         private EditTextPreference lin_acc_size;
         private EditTextPreference frozen_threshold;
         private CheckBoxPreference user_speed_enabled;
@@ -503,6 +504,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             rssi_log_number = ((EditTextPreference) findPreference(getString(R.string.rssi_log_number_pref_name)));
             rolling_av_element = ((EditTextPreference) findPreference(getString(R.string.rolling_av_element_pref_name)));
             print_inside_enabled = ((CheckBoxPreference) findPreference(getString(R.string.print_inside_enabled_pref_name)));
+            print_rooftop_enabled = ((CheckBoxPreference) findPreference(getString(R.string.print_rooftop_enabled_pref_name)));
             lin_acc_size = ((EditTextPreference) findPreference(getString(R.string.lin_acc_size_pref_name)));
             frozen_threshold = ((EditTextPreference) findPreference(getString(R.string.frozen_threshold_pref_name)));
             user_speed_enabled = ((CheckBoxPreference) findPreference(getString(R.string.user_speed_enabled_pref_name)));
@@ -519,6 +521,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             security_wal_enabled.setChecked(SdkPreferencesHelper.getInstance().getSecurityWALEnabled());
             are_beacons_inside.setChecked(SdkPreferencesHelper.getInstance().getAreBeaconsInside());
             print_inside_enabled.setChecked(SdkPreferencesHelper.getInstance().isPrintInsideEnabled());
+            print_rooftop_enabled.setChecked(SdkPreferencesHelper.getInstance().isPrintRooftopEnabled());
             user_speed_enabled.setChecked(SdkPreferencesHelper.getInstance().getUserSpeedEnabled());
             offset_smartphone.setText(offset_smartphone.getSummary().toString());
             offset_hysteresis_lock.setText(offset_hysteresis_lock.getSummary().toString());
@@ -564,6 +567,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(rssi_log_number, String.valueOf(SdkPreferencesHelper.RSSI_LOG_NUMBER));
             bindPreferenceSummaryToValue(rolling_av_element, String.valueOf(SdkPreferencesHelper.ROLLING_AVERAGE_ELEMENTS));
             print_inside_enabled.setSummary(R.string.pref_print_inside_enabled_summary);
+            print_rooftop_enabled.setSummary(R.string.pref_print_rooftop_enabled_summary);
             bindPreferenceSummaryToValue(lin_acc_size, String.valueOf(SdkPreferencesHelper.LIN_ACC_SIZE));
             bindPreferenceSummaryToValue(frozen_threshold, String.valueOf(SdkPreferencesHelper.FROZEN_THRESHOLD));
             user_speed_enabled.setSummary(R.string.pref_user_speed_enabled_summary);

@@ -82,7 +82,9 @@
     <string name="pref_are_beacons_inside">Are beacons inside</string>
     <string name="pref_are_beacons_inside_summary">Are the lateral beacons of the car inside it</string>
     <string name="pref_print_inside_enabled">Enable print inside</string>
+    <string name="pref_print_rooftop_enabled">Enable print rooftop</string>
     <string name="pref_print_inside_enabled_summary">Enable the four start zones print</string>
+    <string name="pref_print_rooftop_enabled_summary">Enable the rooftop zone print</string>
     <string name="dialog_title_list_preference">Number of active beacon</string>
     <string name="base_title_list_preference">Available base type</string>
     <string name="opening_orientation_title_list_preference">Opening strategy</string>

@@ -238,6 +238,10 @@ public final class SdkPreferencesHelper {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.print_inside_enabled_pref_name), false);
     }
 
+    public Boolean isPrintRooftopEnabled() {
+        return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.print_rooftop_enabled_pref_name), false);
+    }
+
     public Boolean getUserSpeedEnabled() {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.user_speed_enabled_pref_name), false);
     }

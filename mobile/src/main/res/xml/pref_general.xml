@@ -24,6 +24,7 @@
             android:title="@string/pref_opening_orientation_title" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:enabled="false"
             android:key="@string/com_simulation_enabled_pref_name"
             android:title="@string/pref_com_simulation_enabled" />
         <CheckBoxPreference
@@ -39,6 +40,10 @@
             android:defaultValue="false"
             android:key="@string/print_inside_enabled_pref_name"
             android:title="@string/pref_print_inside_enabled" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/print_rooftop_enabled_pref_name"
+            android:title="@string/pref_print_rooftop_enabled" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_nb_element">
         <EditTextPreference
