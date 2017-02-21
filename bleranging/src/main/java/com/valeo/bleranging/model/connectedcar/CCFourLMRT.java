@@ -59,7 +59,7 @@ public class CCFourLMRT extends ConnectedCar {
 
     @Override
     public boolean isInitialized() {
-        return standardPrediction != null && earPrediction != null && rpPrediction != null
+        return standardPrediction != null && insidePrediction != null && rpPrediction != null
                 && standardPrediction.isPredictRawFileRead()
                 && insidePrediction.isPredictRawFileRead()
                 && rpPrediction.isPredictRawFileRead()
