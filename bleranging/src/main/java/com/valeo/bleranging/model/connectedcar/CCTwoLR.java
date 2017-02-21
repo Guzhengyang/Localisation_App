@@ -89,6 +89,9 @@ public class CCTwoLR extends ConnectedCar {
 
     @Override
     public String getPredictionPosition(boolean smartphoneIsInPocket) {
+        if (isInitialized()) {
+            return standardPrediction.getPrediction();
+        }
         return BleRangingHelper.PREDICTION_UNKNOWN;
     }
 }
