@@ -312,6 +312,16 @@ public class Prediction {
         }
     }
 
+    public void calculatePredictionDefault(double threshold_prob) {
+        if (checkOldPrediction()) {
+            int temp_prediction = most(predictions);
+            if (compareDistribution(temp_prediction, threshold_prob)) {
+                prediction_old = temp_prediction;
+            }
+        }
+
+    }
+
     public void calculatePredictionInside(double threshold_prob) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);

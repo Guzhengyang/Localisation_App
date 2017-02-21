@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="iconName">
-        <item>2 beacons Start</item>
-        <item>2 beacons Start bis</item>
+        <item>2 beacons (Middle and Trunk)</item>
+        <item>2 beacons (Left and Right)</item>
         <item>3 beacons</item>
         <!--<item>4 beacons</item>-->
         <item>4 beacons</item>
         <!--<item>5 beacons (4+trunk)</item>-->
         <!--<item>7 beacons</item>-->
         <item>6 beacons</item>
-        <item>8 beacons (7+trunk)</item>
+        <item>8 beacons</item>
     </string-array>
     <string-array name="entry_values_list_preference">
         <item>"twoMT"        </item>

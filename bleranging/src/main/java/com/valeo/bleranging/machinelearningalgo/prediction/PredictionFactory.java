@@ -34,6 +34,7 @@ public class PredictionFactory {
         boolean areInside = SdkPreferencesHelper.getInstance().getAreBeaconsInside();
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
         String strategy = SdkPreferencesHelper.getInstance().getOpeningOrientation();
+        boolean ifRoof = SdkPreferencesHelper.getInstance().isPrintRooftopEnabled();
         if (areInside) {
             switch (carType) {
                 case TYPE_2_A:
@@ -150,7 +151,6 @@ public class PredictionFactory {
 //                            } else {
 //                                return new Prediction(mContext, R.raw.classes_eight_entry_in,
 //                                        R.raw.rf_eight_entry_in, R.raw.sample_eight_entry_in);
-//                            }
                             return new Prediction(mContext, R.raw.classes_six_entry_out,
                                     R.raw.rf_six_entry_out, R.raw.sample_six_entry_out);
                     }
@@ -167,8 +167,13 @@ public class PredictionFactory {
 //                                return new Prediction(mContext, R.raw.classes_eight_entry,
 //                                        R.raw.rf_eight_entry, R.raw.sample_eight_entry);
 //                            }
-                            return new Prediction(mContext, R.raw.classes_eight_entry_out,
-                                    R.raw.rf_eight_entry_out, R.raw.sample_eight_entry_out);
+                            if (ifRoof) {
+                                return new Prediction(mContext, R.raw.classes_eight_entry_roof_out,
+                                        R.raw.rf_eight_entry_roof_out, R.raw.sample_eight_entry_roof_out);
+                            } else {
+                                return new Prediction(mContext, R.raw.classes_eight_entry_out,
+                                        R.raw.rf_eight_entry_out, R.raw.sample_eight_entry_out);
+                            }
                         case PREDICTION_INSIDE:
                             return new Prediction(mContext, R.raw.classes_eight_inside,
                                     R.raw.rf_eight_inside, R.raw.sample_eight_inside);
