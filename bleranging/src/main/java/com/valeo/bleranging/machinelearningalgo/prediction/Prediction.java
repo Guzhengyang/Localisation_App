@@ -349,11 +349,11 @@ public class Prediction {
     public String printDebug(String title) {
         StringBuilder sb = new StringBuilder();
         if (distance == null) {
-            return null;
+            return "";
         } else if (distribution == null) {
-            return null;
+            return "";
         } else if (prediction_old == -1) {
-            return null;
+            return "";
         } else {
             sb.append(title).append(" ").append(getPrediction()).append(" ").append(distribution[prediction_old]).append("\n");
             for (double aDistance : distance) {

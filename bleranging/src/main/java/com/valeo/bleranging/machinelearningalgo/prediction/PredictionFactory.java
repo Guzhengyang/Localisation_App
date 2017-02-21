@@ -5,7 +5,6 @@ import android.content.Context;
 import com.valeo.bleranging.R;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
-import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_2_A;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_2_B;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_3_A;
@@ -38,25 +37,28 @@ public class PredictionFactory {
         if (areInside) {
             switch (carType) {
                 case TYPE_2_A:
-                    return new Prediction(mContext, R.raw.classes_two_start,
-                            R.raw.rf_two_start, R.raw.sample_two_start);
+                    return new Prediction(mContext, R.raw.classes_two_start_a_out,
+                            R.raw.rf_two_start_a_out, R.raw.sample_two_start_a_out);
                 case TYPE_2_B:
-                    break;
+                    return new Prediction(mContext, R.raw.classes_two_start_b_out,
+                            R.raw.rf_two_start_b_out, R.raw.sample_two_start_b_out);
                 case TYPE_3_A:
-                    return new Prediction(mContext, R.raw.classes_three,
-                            R.raw.rf_three, R.raw.sample_three);
+                    return new Prediction(mContext, R.raw.classes_three_entry_out,
+                            R.raw.rf_three_entry_out, R.raw.sample_three_entry_out);
                 case TYPE_4_A:
                     break;
                 case TYPE_4_B:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
-                                return new Prediction(mContext, R.raw.classes_four_thatcham,
-                                        R.raw.rf_four_thatcham, R.raw.sample_four_thatcham);
-                            } else {
-                                return new Prediction(mContext, R.raw.classes_four_entry,
-                                        R.raw.rf_four_entry, R.raw.sample_four_entry);
-                            }
+//                            if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
+//                                return new Prediction(mContext, R.raw.classes_four_thatcham,
+//                                        R.raw.rf_four_thatcham, R.raw.sample_four_thatcham);
+//                            } else {
+//                                return new Prediction(mContext, R.raw.classes_four_entry,
+//                                        R.raw.rf_four_entry, R.raw.sample_four_entry);
+//                            }
+                            return new Prediction(mContext, R.raw.classes_four_entry_out,
+                                    R.raw.rf_four_entry_out, R.raw.sample_four_entry_out);
                         case PREDICTION_RP:
                             return new Prediction(mContext, R.raw.classes_four_rp,
                                     R.raw.rf_four_rp, R.raw.sample_four_rp);
@@ -70,13 +72,15 @@ public class PredictionFactory {
                 case TYPE_6_A:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
-                                return new Prediction(mContext, R.raw.classes_eight_thatcham,
-                                        R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
-                            } else {
-                                return new Prediction(mContext, R.raw.classes_eight_entry_in,
-                                        R.raw.rf_eight_entry_in, R.raw.sample_eight_entry_in);
-                            }
+//                            if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
+//                                return new Prediction(mContext, R.raw.classes_eight_thatcham,
+//                                        R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
+//                            } else {
+//                                return new Prediction(mContext, R.raw.classes_eight_entry_in,
+//                                        R.raw.rf_eight_entry_in, R.raw.sample_eight_entry_in);
+//                            }
+                            return new Prediction(mContext, R.raw.classes_six_entry_out,
+                                    R.raw.rf_six_entry_out, R.raw.sample_six_entry_out);
                     }
                     break;
                 case TYPE_7_A:
@@ -105,13 +109,14 @@ public class PredictionFactory {
         } else {
             switch (carType) {
                 case TYPE_2_A:
-                    return new Prediction(mContext, R.raw.classes_two_start,
-                            R.raw.rf_two_start, R.raw.sample_two_start);
+                    return new Prediction(mContext, R.raw.classes_two_start_a_out,
+                            R.raw.rf_two_start_a_out, R.raw.sample_two_start_a_out);
                 case TYPE_2_B:
-                    break;
+                    return new Prediction(mContext, R.raw.classes_two_start_b_out,
+                            R.raw.rf_two_start_b_out, R.raw.sample_two_start_b_out);
                 case TYPE_3_A:
-                    return new Prediction(mContext, R.raw.classes_three,
-                            R.raw.rf_three, R.raw.sample_three);
+                    return new Prediction(mContext, R.raw.classes_three_entry_out,
+                            R.raw.rf_three_entry_out, R.raw.sample_three_entry_out);
                 case TYPE_4_A:
                     break;
                 case TYPE_4_B:
@@ -139,13 +144,15 @@ public class PredictionFactory {
                 case TYPE_6_A:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
-                                return new Prediction(mContext, R.raw.classes_eight_thatcham,
-                                        R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
-                            } else {
-                                return new Prediction(mContext, R.raw.classes_eight_entry_in,
-                                        R.raw.rf_eight_entry_in, R.raw.sample_eight_entry_in);
-                            }
+//                            if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
+//                                return new Prediction(mContext, R.raw.classes_eight_thatcham,
+//                                        R.raw.rf_eight_thatcham, R.raw.sample_eight_thatcham);
+//                            } else {
+//                                return new Prediction(mContext, R.raw.classes_eight_entry_in,
+//                                        R.raw.rf_eight_entry_in, R.raw.sample_eight_entry_in);
+//                            }
+                            return new Prediction(mContext, R.raw.classes_six_entry_out,
+                                    R.raw.rf_six_entry_out, R.raw.sample_six_entry_out);
                     }
                     break;
                 case TYPE_7_A:
