@@ -226,7 +226,7 @@ public class TrxUtils {
     /**
      * Create two directories to register the settings and all rssi values
      */
-    public static boolean createDirectories(Context mContext) {
+    private static boolean createDirectories(Context mContext) {
         return createLogsDir(mContext) && createConfigDir(mContext);
     }
 
@@ -321,8 +321,8 @@ public class TrxUtils {
         }
     }
 
-    private static boolean createLogsDir(Context mContext) {
-        File dir = new File(mContext.getExternalCacheDir(), "/InBlueRssi/");
+    public static boolean createDir(File dirPath, String dirName) {
+        File dir = new File(dirPath, dirName);
         //if the folder doesn't exist
         if (!dir.exists()) {
             if (dir.mkdir()) {
@@ -336,18 +336,11 @@ public class TrxUtils {
         return true;
     }
 
+    private static boolean createLogsDir(Context mContext) {
+        return createDir(mContext.getExternalCacheDir(), "/InBlueRssi/");
+    }
+
     private static boolean createConfigDir(Context mContext) {
-        File dir = new File(mContext.getExternalCacheDir(), "/InBlueConfig/");
-        //if the folder doesn't exist
-        if (!dir.exists()) {
-            if (dir.mkdir()) {
-                PSALogs.d("make", "dir Success");
-                return true;
-            } else {
-                PSALogs.d("make", "dir Failed");
-                return false;
-            }
-        }
-        return true;
+        return createDir(mContext.getExternalCacheDir(), "/InBlueConfig/");
     }
 }

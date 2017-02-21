@@ -3,6 +3,11 @@ package com.valeo.bleranging.utils;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+
 /**
  * Created by l-avaratha on 20/07/2016
  */
@@ -40,5 +45,31 @@ public class TextUtils {
             spanString.setSpan(new ForegroundColorSpan(colorInactive), 0, text.length(), 0);
         }
         return spanString;
+    }
+
+    public static void copyFile(String src, String dst) throws IOException {
+        FileChannel inChannel = new FileInputStream(src).getChannel();
+        FileChannel outChannel = new FileOutputStream(dst).getChannel();
+        try {
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+        } finally {
+            closeQuietly(inChannel);
+            closeQuietly(outChannel);
+        }
+    }
+
+    /**
+     * Close file channel quietly
+     *
+     * @param fileChannel the file channel to close
+     */
+    private static void closeQuietly(FileChannel fileChannel) {
+        try {
+            if (fileChannel != null) {
+                fileChannel.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
