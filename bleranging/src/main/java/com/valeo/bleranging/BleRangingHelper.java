@@ -23,7 +23,7 @@ import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
 import com.valeo.bleranging.bluetooth.scanresponse.BeaconScanResponse;
 import com.valeo.bleranging.bluetooth.scanresponse.CentralScanResponse;
 import com.valeo.bleranging.machinelearningalgo.AlgoManager;
-import com.valeo.bleranging.model.Antenna;
+import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
@@ -698,15 +698,15 @@ public class BleRangingHelper {
      * @param scanResponse the beacon scan response
      * @return the received ble channel
      */
-    private Antenna.BLEChannel getCurrentChannel(BeaconScanResponse scanResponse) {
+    private Trx.BLEChannel getCurrentChannel(BeaconScanResponse scanResponse) {
         if (scanResponse.advertisingChannel == 0x01) {
-            return Antenna.BLEChannel.BLE_CHANNEL_37;
+            return Trx.BLEChannel.BLE_CHANNEL_37;
         } else if (scanResponse.advertisingChannel == 0x02) {
-            return Antenna.BLEChannel.BLE_CHANNEL_38;
+            return Trx.BLEChannel.BLE_CHANNEL_38;
         } else if (scanResponse.advertisingChannel == 0x03) {
-            return Antenna.BLEChannel.BLE_CHANNEL_39;
+            return Trx.BLEChannel.BLE_CHANNEL_39;
         } else {
-            return Antenna.BLEChannel.UNKNOWN;
+            return Trx.BLEChannel.UNKNOWN;
         }
     }
 
@@ -769,8 +769,8 @@ public class BleRangingHelper {
                         PSALogs.d("bleChannel2 ", "not 37, do not parse scanResponse");
                         return;
                     }
-                    Antenna.BLEChannel receivedBleChannel = getCurrentChannel(beaconScanResponse);
-                    if (!receivedBleChannel.equals(Antenna.BLEChannel.BLE_CHANNEL_37)) { // if ble channel equals to 38, 39, unknown channel
+                    Trx.BLEChannel receivedBleChannel = getCurrentChannel(beaconScanResponse);
+                    if (!receivedBleChannel.equals(Trx.BLEChannel.BLE_CHANNEL_37)) { // if ble channel equals to 38, 39, unknown channel
                         alreadyStopped = true;
                         mBluetoothManager.suspendLeScan();
                         PSALogs.d("bleChannel2 ", "not 37, stop scan");

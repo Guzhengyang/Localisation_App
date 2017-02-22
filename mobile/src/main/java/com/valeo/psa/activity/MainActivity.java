@@ -1340,7 +1340,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                         SdkPreferencesHelper.getInstance().getTrxAddressMiddle(), SdkPreferencesHelper.getInstance().getTrxAddressRight(),
                         SdkPreferencesHelper.getInstance().getTrxAddressTrunk(), SdkPreferencesHelper.getInstance().getTrxAddressRearLeft(),
                         SdkPreferencesHelper.getInstance().getTrxAddressBack(), SdkPreferencesHelper.getInstance().getTrxAddressRearRight(),
-                        SdkPreferencesHelper.getInstance().getRssiLogNumber(), SdkPreferencesHelper.getInstance().getRollingAvElement(),
+                        SdkPreferencesHelper.getInstance().getRssiLogNumber(),
                         SdkPreferencesHelper.getInstance().getCryptoPreAuthTimeout(),
                         SdkPreferencesHelper.getInstance().getCryptoActionTimeout(),
                         SdkPreferencesHelper.getInstance().getWantedSpeed(), SdkPreferencesHelper.getInstance().getOneStepSize());

@@ -8,7 +8,6 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
 import com.valeo.bleranging.machinelearningalgo.prediction.Prediction;
-import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.TextUtils;
@@ -108,7 +107,7 @@ public abstract class ConnectedCar {
      * @param trxNumber  the trx that sent the signal
      * @param bleChannel the ble channel used to sent
      */
-    public void saveBleChannel(int trxNumber, Antenna.BLEChannel bleChannel) {
+    public void saveBleChannel(int trxNumber, Trx.BLEChannel bleChannel) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             trxLinkedHMap.get(trxNumber).saveBleChannel(bleChannel);
         }
@@ -126,11 +125,11 @@ public abstract class ConnectedCar {
         }
     }
 
-    public Antenna.BLEChannel getCurrentBLEChannel(int trxNumber) {
+    public Trx.BLEChannel getCurrentBLEChannel(int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getCurrentBLEChannel();
         } else {
-            return Antenna.BLEChannel.UNKNOWN;
+            return Trx.BLEChannel.UNKNOWN;
         }
     }
 
@@ -165,48 +164,8 @@ public abstract class ConnectedCar {
         }
     }
 
-    public int getCurrentModifiedRssi(int trxNumber) {
-        if (trxLinkedHMap.get(trxNumber) != null) {
-            return trxLinkedHMap.get(trxNumber).getCurrentModifiedRssi();
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * Calculate all the trx average
-     *
-     * @return the average of all active trx or 0 if there is none
-     */
-    public int getAllTrxAverage() {
-        int totalAverage = 0;
-        int numberOfAntenna = 0;
-        for (Trx trx : trxLinkedHMap.values()) {
-            if (trx.isEnabled()) {
-                totalAverage += (trx.getCurrentOriginalRssi());
-                numberOfAntenna++;
-            }
-        }
-        if (numberOfAntenna == 0) {
-            return 0;
-        }
-        totalAverage /= numberOfAntenna;
-        return totalAverage;
-    }
-
     public boolean isActive(int trxNumber) {
         return trxLinkedHMap.get(trxNumber) != null && trxLinkedHMap.get(trxNumber).isActive();
-    }
-
-    /**
-     * Condition to enable welcome action
-     *
-     * @param totalAverage  the total average of all antenna rssi
-     * @param newLockStatus the lock status
-     * @return true if the strategy is verified, false otherwise
-     */
-    public boolean welcomeStrategy(int totalAverage, boolean newLockStatus) {
-        return (totalAverage >= -100) && newLockStatus;
     }
 
     /**

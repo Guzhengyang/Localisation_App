@@ -381,7 +381,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference crypto_pre_auth_timeout;
         private EditTextPreference crypto_action_timeout;
         private EditTextPreference rssi_log_number;
-        private EditTextPreference rolling_av_element;
         private EditTextPreference lin_acc_size;
         private EditTextPreference frozen_threshold;
         private CheckBoxPreference user_speed_enabled;
@@ -503,7 +502,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             crypto_pre_auth_timeout = ((EditTextPreference) findPreference(getString(R.string.crypto_pre_auth_timeout_pref_name)));
             crypto_action_timeout = ((EditTextPreference) findPreference(getString(R.string.crypto_action_timeout_pref_name)));
             rssi_log_number = ((EditTextPreference) findPreference(getString(R.string.rssi_log_number_pref_name)));
-            rolling_av_element = ((EditTextPreference) findPreference(getString(R.string.rolling_av_element_pref_name)));
             print_inside_enabled = ((CheckBoxPreference) findPreference(getString(R.string.print_inside_enabled_pref_name)));
             print_rooftop_enabled = ((CheckBoxPreference) findPreference(getString(R.string.print_rooftop_enabled_pref_name)));
             lin_acc_size = ((EditTextPreference) findPreference(getString(R.string.lin_acc_size_pref_name)));
@@ -535,7 +533,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             crypto_pre_auth_timeout.setText(crypto_pre_auth_timeout.getSummary().toString());
             crypto_action_timeout.setText(crypto_action_timeout.getSummary().toString());
             rssi_log_number.setText(rssi_log_number.getSummary().toString());
-            rolling_av_element.setText(rolling_av_element.getSummary().toString());
             lin_acc_size.setText(lin_acc_size.getSummary().toString());
             frozen_threshold.setText(frozen_threshold.getSummary().toString());
             wanted_speed.setText(wanted_speed.getSummary().toString());
@@ -566,7 +563,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(crypto_pre_auth_timeout, String.valueOf(SdkPreferencesHelper.CRYPTO_PRE_AUTH_TIMEOUT));
             bindPreferenceSummaryToValue(crypto_action_timeout, String.valueOf(SdkPreferencesHelper.CRYPTO_ACTION_TIMEOUT));
             bindPreferenceSummaryToValue(rssi_log_number, String.valueOf(SdkPreferencesHelper.RSSI_LOG_NUMBER));
-            bindPreferenceSummaryToValue(rolling_av_element, String.valueOf(SdkPreferencesHelper.ROLLING_AVERAGE_ELEMENTS));
             print_inside_enabled.setSummary(R.string.pref_print_inside_enabled_summary);
             print_rooftop_enabled.setSummary(R.string.pref_print_rooftop_enabled_summary);
             bindPreferenceSummaryToValue(lin_acc_size, String.valueOf(SdkPreferencesHelper.LIN_ACC_SIZE));

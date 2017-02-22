@@ -54,10 +54,6 @@
             android:title="@string/pref_nb_element_rssi_log_number" />
         <EditTextPreference
             android:inputType="number"
-            android:key="@string/rolling_av_element_pref_name"
-            android:title="@string/pref_nb_element_rolling_average" />
-        <EditTextPreference
-            android:inputType="number"
             android:key="@string/active_scanning_period_pref_name"
             android:title="@string/pref_active_scanning_period" />
         <EditTextPreference

@@ -182,7 +182,6 @@ public class LogFileUtils {
      * @param addressBack the back trx address
      * @param addressRearRight the rear right trx address
      * @param logNumber the next log file number
-     * @param rollAvElement the default rolling average size
      * @param preAuthTimeout the preAuth timeout duration
      * @param actionTimeout the action timeout duration
      * @param wantedSpeed the wanted speed for the test procedure
@@ -193,7 +192,7 @@ public class LogFileUtils {
                                          String addressFrontLeft, String addressFrontRight,
                                          String addressLeft, String addressMiddle, String addressRight, String addressTrunk,
                                          String addressRearLeft, String addressBack, String addressRearRight,
-                                         int logNumber, int rollAvElement,
+                                         int logNumber,
                                          float preAuthTimeout, float actionTimeout,
                                          float wantedSpeed, int stepSize) {
         final String comma = ";";
@@ -202,7 +201,7 @@ public class LogFileUtils {
                 + addressConnectablePC + comma + addressFrontLeft + comma + addressFrontRight + comma
                 + addressLeft + comma + addressMiddle + comma + addressRight + comma + addressTrunk + comma
                 + addressRearLeft + comma + addressBack + comma + addressRearRight + comma
-                + String.valueOf(logNumber) + comma + String.valueOf(rollAvElement) + comma
+                + String.valueOf(logNumber) + comma
                 + String.valueOf(preAuthTimeout) + comma
                 + String.valueOf(actionTimeout) + comma
                 + String.valueOf(wantedSpeed) + comma + String.valueOf(stepSize) + comma;
@@ -280,7 +279,7 @@ public class LogFileUtils {
                 + "addressConnectableRemote;addressConnectablePC;addressFrontLeft;addressFrontRight;"
                 + "addressLeft;addressMiddle;addressRight;addressTrunk;"
                 + "addressRearLeft;addressBack;addressRearRight;"
-                + "logNumber;rollAvElement;"
+                + "logNumber;"
                 + "preAuthTimeout;actionTimeout;wantedSpeed;stepSize;";
         try {
             if (logFile != null) {

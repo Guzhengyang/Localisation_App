@@ -24,7 +24,6 @@ public final class SdkPreferencesHelper {
     public final static float CRYPTO_PRE_AUTH_TIMEOUT = 1.3f;
     public final static float CRYPTO_ACTION_TIMEOUT = 0.02f;
     public final static int RSSI_LOG_NUMBER = 0;
-    public final static int ROLLING_AVERAGE_ELEMENTS = 20;
     public final static float WANTED_SPEED = 5.1f;
     public final static int ONE_STEP_SIZE = 70;
     public final static int LIN_ACC_SIZE = 10;
@@ -176,10 +175,6 @@ public final class SdkPreferencesHelper {
 
     public void setRssiLogNumber(int rssiLogNumber) {
         saveInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.rssi_log_number_pref_name), rssiLogNumber);
-    }
-
-    public int getRollingAvElement() {
-        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.rolling_av_element_pref_name), ROLLING_AVERAGE_ELEMENTS);
     }
 
     public String getTrxAddressConnectable() {
