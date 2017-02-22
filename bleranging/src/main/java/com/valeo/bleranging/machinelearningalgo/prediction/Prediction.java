@@ -23,10 +23,6 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.PASSIVE_ENTRY_ORIENTED;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
@@ -275,11 +271,7 @@ public class Prediction {
                     (comparePrediction(temp_prediction, PREDICTION_RIGHT))) &&
                     compareDistribution(temp_prediction, threshold_prob_unlock)) {
                 prediction_old = temp_prediction;
-            } else if ((comparePrediction(temp_prediction, PREDICTION_START) ||
-                    comparePrediction(temp_prediction, PREDICTION_START_FL) ||
-                    comparePrediction(temp_prediction, PREDICTION_START_FR) ||
-                    comparePrediction(temp_prediction, PREDICTION_START_RL) ||
-                    comparePrediction(temp_prediction, PREDICTION_START_RR)) &&
+            } else if (comparePrediction(temp_prediction, PREDICTION_START) &&
                     compareDistribution(temp_prediction, threshold_prob)) {
                 prediction_old = temp_prediction;
             }
@@ -302,7 +294,8 @@ public class Prediction {
     public void calculatePredictionStart(double threshold_prob) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
-            if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_OUTSIDE)) {
+//            cover internal space
+            if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_INSIDE)) {
                 prediction_old = temp_prediction;
                 return;
             }
@@ -315,6 +308,11 @@ public class Prediction {
     public void calculatePredictionDefault(double threshold_prob) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
+            if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_START) ||
+                    comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_LOCK)) {
+                prediction_old = temp_prediction;
+                return;
+            }
             if (compareDistribution(temp_prediction, threshold_prob)) {
                 prediction_old = temp_prediction;
             }

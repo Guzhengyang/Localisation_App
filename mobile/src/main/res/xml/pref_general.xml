@@ -18,6 +18,7 @@
             android:title="@string/pref_car_base_title" />
         <ListPreference
             android:dialogTitle="@string/opening_orientation_title_list_preference"
+            android:enabled="false"
             android:entries="@array/opening_orientation_list_preference"
             android:entryValues="@array/opening_orientation_entryvalues_list_preference"
             android:key="@string/opening_orientation_type_pref_name"
@@ -38,6 +39,7 @@
             android:title="@string/pref_are_beacons_inside" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:enabled="false"
             android:key="@string/print_inside_enabled_pref_name"
             android:title="@string/pref_print_inside_enabled" />
         <CheckBoxPreference

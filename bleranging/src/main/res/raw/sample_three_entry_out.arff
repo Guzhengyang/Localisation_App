@@ -3,8 +3,8 @@
 @attribute 'RSSI LEFT_ORIGIN' numeric
 @attribute 'RSSI MIDDLE_ORIGIN' numeric
 @attribute 'RSSI RIGHT_ORIGIN' numeric
-@attribute class {start,right,lock,left}
+@attribute class {lock,left,start,right}
 
 @data
-1.22672,0.435257,0.968451,start
+1.732787,5.179228,4.452565,lock
 

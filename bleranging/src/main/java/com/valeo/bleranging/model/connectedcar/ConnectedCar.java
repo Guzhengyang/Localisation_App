@@ -43,7 +43,7 @@ public abstract class ConnectedCar {
     final static int N_VOTE_VERY_LONG = 10;
     final static int N_VOTE_LONG = 5;
     final static int N_VOTE_SHORT = 3;
-    final static double THRESHOLD_PROB_LOCK = 0.6;
+    final static double THRESHOLD_PROB_LOCK = 0.7;
     final static double THRESHOLD_PROB_UNLOCK = 0.9;
     final static double THRESHOLD_DIST_AWAY_SLOW = 0.07;
     final static double THRESHOLD_DIST_AWAY_EAR = 0.25;
