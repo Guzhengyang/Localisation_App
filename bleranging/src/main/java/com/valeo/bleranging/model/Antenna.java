@@ -16,7 +16,7 @@ public class Antenna {
     private BLEChannel bleChannel;
     private int lastOriginalRssi;
     private int currentOriginalRssi;
-    private int currentmodifiedRssi;
+    private int currentModifiedRssi;
 
     private boolean hasBeenInitialized = false;
     private int offsetBleChannel38;
@@ -70,7 +70,7 @@ public class Antenna {
         } else if (rssi > -30) {
             rssi = -29;
         }
-        currentmodifiedRssi = dynamicOffsetCompensation(rssi, bleChannel);
+        currentModifiedRssi = dynamicOffsetCompensation(rssi, bleChannel);
         lastOriginalRssi = currentOriginalRssi;
         lastBleChannel = bleChannel;
         currentOriginalRssi = rssi;
@@ -92,7 +92,7 @@ public class Antenna {
     }
 
     public int getCurrentModifiedRssi() {
-        return currentmodifiedRssi;
+        return currentModifiedRssi;
     }
 
     /**
