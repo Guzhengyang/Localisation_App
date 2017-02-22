@@ -26,6 +26,7 @@ import com.valeo.bleranging.utils.SoundUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
@@ -230,6 +231,8 @@ public class AlgoManager implements SensorEventListener {
     public SpannableStringBuilder createDebugData(final ConnectedCar connectedCar, SpannableStringBuilder spannableStringBuilder) {
         if (connectedCar != null) {
             spannableStringBuilder.append(connectedCar.printDebug(smartphoneIsInPocket));
+            spannableStringBuilder.append(String.format(Locale.FRANCE, "%f %f %f\n", orientation[0], orientation[1], orientation[2]));
+            spannableStringBuilder.append(String.format(Locale.FRANCE, "%f\n", deltaLinAcc));
         }
         return spannableStringBuilder;
     }
