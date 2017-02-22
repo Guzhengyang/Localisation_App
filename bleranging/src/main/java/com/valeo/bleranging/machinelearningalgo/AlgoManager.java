@@ -29,9 +29,12 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ACCESS;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_EXTERNAL;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INSIDE;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INTERNAL;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_NEAR;
@@ -304,11 +307,13 @@ public class AlgoManager implements SensorEventListener {
             case PREDICTION_OUTSIDE:
                 break;
             case PREDICTION_LOCK:
+            case PREDICTION_EXTERNAL:
                 isInLockArea = true;
                 if (areLockActionsAvailable.get() && rearmLock.get() && SdkPreferencesHelper.getInstance().getSecurityWALEnabled()) {
                     performLockWithCryptoTimeout(false, true);
                 }
                 break;
+            case PREDICTION_INTERNAL:
             case PREDICTION_START:
             case PREDICTION_START_FL:
             case PREDICTION_START_FR:
@@ -320,6 +325,7 @@ public class AlgoManager implements SensorEventListener {
                     mProtocolManager.setIsStartRequested(true);
                 }
                 break;
+            case PREDICTION_ACCESS:
             case PREDICTION_BACK:
             case PREDICTION_RIGHT:
             case PREDICTION_LEFT:

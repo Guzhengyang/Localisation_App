@@ -80,10 +80,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ACCESS;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_EXTERNAL;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FAR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INSIDE;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INTERNAL;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_NEAR;
@@ -918,11 +921,18 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             case PREDICTION_WELCOME:
                 welcome_area.setColor(Color.WHITE);
                 break;
+            case PREDICTION_EXTERNAL:
             case PREDICTION_LOCK:
                 lock_area.setColor(Color.RED);
                 break;
             case PREDICTION_ROOF:
                 rooftop.setStroke(7, Color.RED);
+                break;
+            case PREDICTION_ACCESS:
+                unlock_area_left.setColor(Color.GREEN);
+                unlock_area_right.setColor(Color.GREEN);
+                unlock_area_front.setColor(Color.GREEN);
+                unlock_area_back.setColor(Color.GREEN);
                 break;
             case PREDICTION_LEFT:
                 unlock_area_left.setColor(Color.GREEN);
@@ -935,6 +945,15 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 break;
             case PREDICTION_BACK:
                 unlock_area_back.setColor(Color.GREEN);
+                break;
+            case PREDICTION_INTERNAL:
+                start_area_fl.setColor(Color.CYAN);
+                start_area_fr.setColor(Color.CYAN);
+                start_area_rl.setColor(Color.CYAN);
+                start_area_rr.setColor(Color.CYAN);
+                if (trunk_area != null) {
+                    trunk_area.setColor(Color.CYAN);
+                }
                 break;
             case PREDICTION_START:
                 start_area_fl.setColor(Color.CYAN);
@@ -995,11 +1014,18 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             case PREDICTION_WELCOME:
                 welcome_area.setColor(Color.BLACK);
                 break;
+            case PREDICTION_EXTERNAL:
             case PREDICTION_LOCK:
                 lock_area.setColor(Color.BLACK);
                 break;
             case PREDICTION_ROOF:
                 rooftop.setStroke(0, Color.TRANSPARENT);
+                break;
+            case PREDICTION_ACCESS:
+                unlock_area_left.setColor(Color.BLACK);
+                unlock_area_right.setColor(Color.BLACK);
+                unlock_area_front.setColor(Color.BLACK);
+                unlock_area_back.setColor(Color.BLACK);
                 break;
             case PREDICTION_LEFT:
                 unlock_area_left.setColor(Color.BLACK);
@@ -1012,6 +1038,15 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 break;
             case PREDICTION_BACK:
                 unlock_area_back.setColor(Color.BLACK);
+                break;
+            case PREDICTION_INTERNAL:
+                start_area_fl.setColor(Color.BLACK);
+                start_area_fr.setColor(Color.BLACK);
+                start_area_rl.setColor(Color.BLACK);
+                start_area_rr.setColor(Color.BLACK);
+                if (trunk_area != null) {
+                    trunk_area.setColor(Color.BLACK);
+                }
                 break;
             case PREDICTION_START:
                 start_area_fl.setColor(Color.BLACK);
