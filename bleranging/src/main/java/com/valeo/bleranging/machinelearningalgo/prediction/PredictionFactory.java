@@ -110,14 +110,14 @@ public class PredictionFactory {
         } else {
             switch (carType) {
                 case TYPE_2_A:
-                    return new Prediction(mContext, R.raw.classes_two_start_a_out,
-                            R.raw.rf_two_start_a_out, R.raw.sample_two_start_a_out);
+                    return new Prediction(mContext, R.raw.classes_two_start_a_rssi_out,
+                            R.raw.rf_two_start_rssi_a_out, R.raw.sample_two_start_a_out);
                 case TYPE_2_B:
-                    return new Prediction(mContext, R.raw.classes_two_start_b_out,
-                            R.raw.rf_two_start_b_out, R.raw.sample_two_start_b_out);
+                    return new Prediction(mContext, R.raw.classes_two_start_b_rssi_out,
+                            R.raw.rf_two_start_rssi_b_out, R.raw.sample_two_start_b_out);
                 case TYPE_3_A:
-                    return new Prediction(mContext, R.raw.classes_three_entry_out,
-                            R.raw.rf_three_entry_out, R.raw.sample_three_entry_out);
+                    return new Prediction(mContext, R.raw.classes_three_entry_rssi_out,
+                            R.raw.rf_three_entry_rssi_out, R.raw.sample_three_entry_out);
                 case TYPE_4_A:
                     break;
                 case TYPE_4_B:
@@ -130,8 +130,8 @@ public class PredictionFactory {
 //                                return new Prediction(mContext, R.raw.classes_four_entry,
 //                                        R.raw.rf_four_entry, R.raw.sample_four_entry);
 //                            }
-                            return new Prediction(mContext, R.raw.classes_four_entry_out,
-                                    R.raw.rf_four_entry_out, R.raw.sample_four_entry_out);
+                            return new Prediction(mContext, R.raw.classes_four_entry_rssi_out,
+                                    R.raw.rf_four_entry_rssi_out, R.raw.sample_four_entry_out);
                         case PREDICTION_RP:
                             return new Prediction(mContext, R.raw.classes_four_rp,
                                     R.raw.rf_four_rp, R.raw.sample_four_rp);
@@ -151,8 +151,8 @@ public class PredictionFactory {
 //                            } else {
 //                                return new Prediction(mContext, R.raw.classes_eight_entry_in,
 //                                        R.raw.rf_eight_entry_in, R.raw.sample_eight_entry_in);
-                            return new Prediction(mContext, R.raw.classes_six_entry_out,
-                                    R.raw.rf_six_entry_out, R.raw.sample_six_entry_out);
+                            return new Prediction(mContext, R.raw.classes_six_entry_rssi_out,
+                                    R.raw.rf_six_entry_rssi_out, R.raw.sample_six_entry_out);
                     }
                     break;
                 case TYPE_7_A:
@@ -172,7 +172,7 @@ public class PredictionFactory {
                                         R.raw.rf_eight_entry_roof_out, R.raw.sample_eight_entry_roof_out);
                             } else {
                                 return new Prediction(mContext, R.raw.classes_eight_entry_rssi_out,
-                                        R.raw.rf_eight_entry_rssi_out, R.raw.sample_eight_entry_rssi_out);
+                                        R.raw.rf_eight_entry_rssi_out, R.raw.sample_eight_entry_out);
                             }
                         case PREDICTION_INSIDE:
                             return new Prediction(mContext, R.raw.classes_eight_inside,

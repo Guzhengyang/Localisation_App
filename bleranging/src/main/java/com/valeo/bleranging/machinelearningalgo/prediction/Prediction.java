@@ -375,14 +375,14 @@ public class Prediction {
         } else if (prediction_old == -1) {
             return "";
         } else {
-            sb.append(title).append(" ").append(getPrediction()).append(" ").append(distribution[prediction_old]).append("\n");
+            sb.append(title).append(" ").append(getPrediction()).append(" ").append(String.format(Locale.FRANCE, "%.2f", distribution[prediction_old])).append("\n");
             for (double arssi : rssi) {
                 sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("   ");
             }
             sb.append("\n");
 
             for (int i = 0; i < distribution.length; i++) {
-                sb.append(classes[i]).append(": ").append(distribution[i]).append(" \n");
+                sb.append(classes[i]).append(": ").append(String.format(Locale.FRANCE, "%.2f", distribution[i])).append(" \n");
             }
             sb.append("\n");
             return sb.toString();
