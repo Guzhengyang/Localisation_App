@@ -171,8 +171,8 @@ public class PredictionFactory {
                                 return new Prediction(mContext, R.raw.classes_eight_entry_roof_out,
                                         R.raw.rf_eight_entry_roof_out, R.raw.sample_eight_entry_roof_out);
                             } else {
-                                return new Prediction(mContext, R.raw.classes_eight_entry_out,
-                                        R.raw.rf_eight_entry_out, R.raw.sample_eight_entry_out);
+                                return new Prediction(mContext, R.raw.classes_eight_entry_rssi_out,
+                                        R.raw.rf_eight_entry_rssi_out, R.raw.sample_eight_entry_rssi_out);
                             }
                         case PREDICTION_INSIDE:
                             return new Prediction(mContext, R.raw.classes_eight_inside,

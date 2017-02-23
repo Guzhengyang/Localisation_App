@@ -130,10 +130,11 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         if (isInitialized()) {
             String result = SdkPreferencesHelper.getInstance().getOpeningOrientation() + "\n";
             result += standardPrediction.printDebug(FULL_LOC);
-            if (standardPrediction.getPrediction().equals(PREDICTION_START)) {
-                result += insidePrediction.printDebug(INSIDE_LOC);
-            }
-            return result + rpPrediction.printDebug(RP_LOC);
+            return result;
+//            if (standardPrediction.getPrediction().equals(PREDICTION_START)) {
+//                result += insidePrediction.printDebug(INSIDE_LOC);
+//            }
+//            return result + rpPrediction.printDebug(RP_LOC);
         }
         return "";
     }

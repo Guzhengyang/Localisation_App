@@ -40,7 +40,8 @@ public class Prediction {
     private List<Integer> predictions = new ArrayList<>();
     private double[] distribution;
     private double[] distance;
-    private double[] rssiModified;
+    private double[] rssi;
+    private double[] rssi_offset;
     private int prediction_old = -1;
     private Instance sample;
     private RandomForest rf;
@@ -58,41 +59,46 @@ public class Prediction {
     }
 
     public void init(double[] rssi, int offset) {
-        this.rssiModified = new double[rssi.length];
+        this.rssi_offset = new double[rssi.length];
         this.distance = new double[rssi.length];
+        this.rssi = new double[rssi.length];
         this.distribution = new double[classes.length];
         for (int i = 0; i < rssi.length; i++) {
-            this.rssiModified[i] = rssi[i] - offset;
-            distance[i] = rssi2dist(rssi[i]);
-            sample.setValue(i, distance[i]);
+            this.rssi_offset[i] = rssi[i] - offset;
+
+            distance[i] = rssi2dist(this.rssi_offset[i]);
+//            sample.setValue(i, distance[i]);
+
+            this.rssi[i] = rssi_offset[i];
+            sample.setValue(i, this.rssi[i]);
         }
     }
 
     public void setRssi(int index, double rssi, int offset, double threshold, boolean comValid) {
-        this.rssiModified[index] = rssi - offset;
+        this.rssi_offset[index] = rssi - offset;
         if (prediction_old != -1) {
             // trx order : l, m, r, t, fl, fr, rl, rr
             // Add lock and outside hysteresis to all the trx
 //            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
 //                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
 //                        this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
-//                    rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
+//                    rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
 //                }
 //            }
 
             if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
                     this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
-                rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
+                rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
             }
 
             // Add unlock hysteresis to all the trx
             if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
                     this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
-                rssiModified[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
+                rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
             }
 
         }
-        double dist_new = rssi2dist(rssiModified[index]);
+        double dist_new = rssi2dist(rssi_offset[index]);
         if (comValid) {
             distance[index] = dist_new;
         } else {
@@ -102,34 +108,38 @@ public class Prediction {
     }
 
     public void setRssi(int index, double rssi, int offset, double threshold) {
-        this.rssiModified[index] = rssi - offset;
+        this.rssi_offset[index] = rssi - offset;
         if (prediction_old != -1) {
             // trx order : l, m, r, t, fl, fr, rl, rr
             // Add hysteresis to all the trx
 
 //            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
 //                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
-//                    rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
+//                    rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
 //                }
 //            }
 
             if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
                     this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
-                rssiModified[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
+                rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
             }
 
             if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_FAR)) {
-                rssiModified[index] -= OFFSET_FAR_HYSTERESIS;
+                rssi_offset[index] -= OFFSET_FAR_HYSTERESIS;
             }
             // Add unlock hysteresis to all the trx
             if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
                     this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
-                rssiModified[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
+                rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
             }
         }
-        double dist_new = rssi2dist(rssiModified[index]);
+
+        double dist_new = rssi2dist(rssi_offset[index]);
         distance[index] = correctDistUnilateral(distance[index], dist_new, threshold);
-        sample.setValue(index, distance[index]);
+//        sample.setValue(index, distance[index]);
+
+        this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
+        sample.setValue(index, this.rssi[index]);
     }
 
     public void predict(int nVote) {
@@ -358,14 +368,16 @@ public class Prediction {
         StringBuilder sb = new StringBuilder();
         if (distance == null) {
             return "";
+        } else if (rssi == null) {
+            return "";
         } else if (distribution == null) {
             return "";
         } else if (prediction_old == -1) {
             return "";
         } else {
             sb.append(title).append(" ").append(getPrediction()).append(" ").append(distribution[prediction_old]).append("\n");
-            for (double aDistance : distance) {
-                sb.append(String.format(Locale.FRANCE, "%.2f", aDistance)).append("   ");
+            for (double arssi : rssi) {
+                sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("   ");
             }
             sb.append("\n");
 

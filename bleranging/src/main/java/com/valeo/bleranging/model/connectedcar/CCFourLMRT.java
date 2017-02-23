@@ -107,12 +107,13 @@ public class CCFourLMRT extends ConnectedCar {
     public String printDebug(boolean smartphoneIsInPocket) {
         String result = SdkPreferencesHelper.getInstance().getOpeningOrientation() + "\n";
         if (isInitialized()) {
-            if (SdkPreferencesHelper.getInstance().getComSimulationEnabled() && smartphoneIsInPocket) {
-                result += earPrediction.printDebug(EAR_HELD_LOC);
-            } else {
-                result += standardPrediction.printDebug(STANDARD_LOC);
-            }
-            result += rpPrediction.printDebug(RP_LOC);
+//            if (SdkPreferencesHelper.getInstance().getComSimulationEnabled() && smartphoneIsInPocket) {
+//                result += earPrediction.printDebug(EAR_HELD_LOC);
+//            } else {
+//                result += standardPrediction.printDebug(STANDARD_LOC);
+//            }
+//            result += rpPrediction.printDebug(RP_LOC);
+            return standardPrediction.printDebug(STANDARD_LOC);
         }
         return result;
     }
