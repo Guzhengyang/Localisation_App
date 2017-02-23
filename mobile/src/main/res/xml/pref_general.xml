@@ -44,6 +44,7 @@
             android:title="@string/pref_print_inside_enabled" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:enabled="false"
             android:key="@string/print_rooftop_enabled_pref_name"
             android:title="@string/pref_print_rooftop_enabled" />
     </PreferenceCategory>
