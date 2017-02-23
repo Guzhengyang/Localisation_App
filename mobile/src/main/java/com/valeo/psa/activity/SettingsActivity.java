@@ -371,6 +371,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private CheckBoxPreference are_beacons_inside;
         private CheckBoxPreference print_inside_enabled;
         private CheckBoxPreference print_rooftop_enabled;
+        private CheckBoxPreference is_mini_prediction_used;
         private EditTextPreference offset_smartphone;
         private EditTextPreference offset_hysteresis_lock;
         private EditTextPreference offset_hysteresis_unlock;
@@ -504,6 +505,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             rssi_log_number = ((EditTextPreference) findPreference(getString(R.string.rssi_log_number_pref_name)));
             print_inside_enabled = ((CheckBoxPreference) findPreference(getString(R.string.print_inside_enabled_pref_name)));
             print_rooftop_enabled = ((CheckBoxPreference) findPreference(getString(R.string.print_rooftop_enabled_pref_name)));
+            is_mini_prediction_used = ((CheckBoxPreference) findPreference(getString(R.string.is_mini_prediction_used_pref_name)));
             lin_acc_size = ((EditTextPreference) findPreference(getString(R.string.lin_acc_size_pref_name)));
             frozen_threshold = ((EditTextPreference) findPreference(getString(R.string.frozen_threshold_pref_name)));
             user_speed_enabled = ((CheckBoxPreference) findPreference(getString(R.string.user_speed_enabled_pref_name)));
@@ -521,6 +523,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             are_beacons_inside.setChecked(SdkPreferencesHelper.getInstance().getAreBeaconsInside());
             print_inside_enabled.setChecked(SdkPreferencesHelper.getInstance().isPrintInsideEnabled());
             print_rooftop_enabled.setChecked(SdkPreferencesHelper.getInstance().isPrintRooftopEnabled());
+            is_mini_prediction_used.setChecked(SdkPreferencesHelper.getInstance().getIsMiniPredictionUsed());
             user_speed_enabled.setChecked(SdkPreferencesHelper.getInstance().getUserSpeedEnabled());
             offset_smartphone.setText(offset_smartphone.getSummary().toString());
             offset_hysteresis_lock.setText(offset_hysteresis_lock.getSummary().toString());
@@ -565,6 +568,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(rssi_log_number, String.valueOf(SdkPreferencesHelper.RSSI_LOG_NUMBER));
             print_inside_enabled.setSummary(R.string.pref_print_inside_enabled_summary);
             print_rooftop_enabled.setSummary(R.string.pref_print_rooftop_enabled_summary);
+            is_mini_prediction_used.setSummary(R.string.pref_is_mini_prediction_used_summary);
             bindPreferenceSummaryToValue(lin_acc_size, String.valueOf(SdkPreferencesHelper.LIN_ACC_SIZE));
             bindPreferenceSummaryToValue(frozen_threshold, String.valueOf(SdkPreferencesHelper.FROZEN_THRESHOLD));
             user_speed_enabled.setSummary(R.string.pref_user_speed_enabled_summary);
