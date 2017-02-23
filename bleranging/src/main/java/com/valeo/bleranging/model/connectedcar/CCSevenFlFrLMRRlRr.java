@@ -12,20 +12,13 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
 
     public CCSevenFlFrLMRRlRr(Context mContext) {
         super(mContext, ConnectionNumber.SEVEN_CONNECTION);
-        trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME);
-        trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, TRX_FRONT_RIGHT_NAME);
-        trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
-        trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
-        trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);
-        trxRearLeft = new Trx(NUMBER_TRX_REAR_LEFT, TRX_REAR_LEFT_NAME);
-        trxRearRight = new Trx(NUMBER_TRX_REAR_RIGHT, TRX_REAR_RIGHT_NAME);
-        trxFrontLeft.setEnabled(true);
-        trxFrontRight.setEnabled(true);
-        trxLeft.setEnabled(true);
-        trxMiddle.setEnabled(true);
-        trxRight.setEnabled(true);
-        trxRearLeft.setEnabled(true);
-        trxRearRight.setEnabled(true);
+        Trx trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME);
+        Trx trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, TRX_FRONT_RIGHT_NAME);
+        Trx trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
+        Trx trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
+        Trx trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);
+        Trx trxRearLeft = new Trx(NUMBER_TRX_REAR_LEFT, TRX_REAR_LEFT_NAME);
+        Trx trxRearRight = new Trx(NUMBER_TRX_REAR_RIGHT, TRX_REAR_RIGHT_NAME);
         trxLinkedHMap.put(NUMBER_TRX_FRONT_LEFT, trxFrontLeft);
         trxLinkedHMap.put(NUMBER_TRX_FRONT_RIGHT, trxFrontRight);
         trxLinkedHMap.put(NUMBER_TRX_LEFT, trxLeft);
@@ -38,13 +31,13 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
     @Override
     public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
         if (trxLinkedHMap != null) {
-            trxLinkedHMap.get(NUMBER_TRX_FRONT_LEFT).init(historicDefaultValuePeriph);
-            trxLinkedHMap.get(NUMBER_TRX_FRONT_RIGHT).init(historicDefaultValuePeriph);
-            trxLinkedHMap.get(NUMBER_TRX_LEFT).init(historicDefaultValuePeriph);
-            trxLinkedHMap.get(NUMBER_TRX_MIDDLE).init(historicDefaultValueCentral);
-            trxLinkedHMap.get(NUMBER_TRX_RIGHT).init(historicDefaultValuePeriph);
-            trxLinkedHMap.get(NUMBER_TRX_REAR_LEFT).init(historicDefaultValuePeriph);
-            trxLinkedHMap.get(NUMBER_TRX_REAR_RIGHT).init(historicDefaultValuePeriph);
+            for (Trx trx : trxLinkedHMap.values()) {
+                if (trx.getTrxNumber() == NUMBER_TRX_MIDDLE) {
+                    trx.init(historicDefaultValueCentral);
+                } else {
+                    trx.init(historicDefaultValuePeriph);
+                }
+            }
         }
     }
 

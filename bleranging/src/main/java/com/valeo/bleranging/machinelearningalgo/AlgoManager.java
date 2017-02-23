@@ -234,8 +234,8 @@ public class AlgoManager implements SensorEventListener {
     public SpannableStringBuilder createDebugData(final ConnectedCar connectedCar, SpannableStringBuilder spannableStringBuilder) {
         if (connectedCar != null) {
             spannableStringBuilder.append(connectedCar.printDebug(smartphoneIsInPocket));
-            spannableStringBuilder.append(String.format(Locale.FRANCE, "%f %f %f\n", orientation[0], orientation[1], orientation[2]));
-            spannableStringBuilder.append(String.format(Locale.FRANCE, "%f\n", deltaLinAcc));
+            spannableStringBuilder.append(String.format(Locale.FRANCE, "%.3f %.3f %.3f\n", orientation[0], orientation[1], orientation[2]));
+            spannableStringBuilder.append(String.format(Locale.FRANCE, "%.3f\n", deltaLinAcc));
         }
         return spannableStringBuilder;
     }

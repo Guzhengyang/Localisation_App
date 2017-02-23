@@ -10,7 +10,6 @@ public class Trx {
     private final String trxName;
     private final AtomicBoolean isAntennaActive;
     private final AtomicBoolean hasReceivedRssi;
-    private boolean isEnabled = false;
     private int currentOriginalRssi;
     private BLEChannel bleChannel;
     private boolean hasBeenInitialized = false;
@@ -48,20 +47,15 @@ public class Trx {
         return bleChannel;
     }
 
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
-    }
-
     /**
-     * Check if the trx is active
-     * @return true if the trx is active, false otherwise
+     * Compare a new check with the last one, if they are equals the trx antenna is inactive
+     *
+     * @return true if the trx antenna is active (checker are different), false otherwise (checker are equals)
      */
     public boolean isActive() {
-        return isEnabled && isAntennaActive();
+        isAntennaActive.set(hasReceivedRssi.get());
+        hasReceivedRssi.set(false);
+        return isAntennaActive.get();
     }
 
     /**
@@ -78,22 +72,11 @@ public class Trx {
             return;
         } else if (rssi < -100) {
             rssi = -101;
-        } else if (rssi > -30) {
-            rssi = -29;
+        } else if (rssi > -20) {
+            rssi = -21;
         }
         currentOriginalRssi = rssi;
         hasReceivedRssi.set(isRssiReceived);
-    }
-
-    /**
-     * Compare a new check with the last one, if they are equals the antenna is inactive
-     *
-     * @return true if the antenna is active (checker are different), false otherwise (checker are equals)
-     */
-    private boolean isAntennaActive() {
-        isAntennaActive.set(hasReceivedRssi.get());
-        hasReceivedRssi.set(false);
-        return isAntennaActive.get();
     }
 
     public void saveBleChannel(BLEChannel bleChannel) {

@@ -70,15 +70,6 @@ public abstract class ConnectedCar {
     protected double[] rssi;
     protected boolean comValid = false;
     protected String lastModelUsed = STANDARD_LOC;
-    Trx trxFrontLeft;
-    Trx trxFrontRight;
-    Trx trxLeft;
-    Trx trxMiddle;
-    Trx trxRight;
-    Trx trxTrunk;
-    Trx trxRearLeft;
-    Trx trxBack;
-    Trx trxRearRight;
 
     ConnectedCar(Context context, ConnectionNumber connectionNumber) {
         this.mContext = context;
@@ -133,7 +124,7 @@ public abstract class ConnectedCar {
         }
     }
 
-    public String getCurrentBLEChannelString(int trxNumber) {
+    private String getCurrentBLEChannelString(int trxNumber) {
         String result;
         if (trxLinkedHMap.get(trxNumber) != null) {
             switch (trxLinkedHMap.get(trxNumber).getCurrentBLEChannel()) {

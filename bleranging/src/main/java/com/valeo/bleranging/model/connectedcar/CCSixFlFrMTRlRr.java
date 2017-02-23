@@ -14,18 +14,12 @@ public class CCSixFlFrMTRlRr extends ConnectedCar {
 
     public CCSixFlFrMTRlRr(Context mContext) {
         super(mContext, ConnectionNumber.EIGHT_CONNECTION);
-        trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME);
-        trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, TRX_FRONT_RIGHT_NAME);
-        trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
-        trxTrunk = new Trx(NUMBER_TRX_TRUNK, TRX_TRUNK_NAME);
-        trxRearLeft = new Trx(NUMBER_TRX_REAR_LEFT, TRX_REAR_LEFT_NAME);
-        trxRearRight = new Trx(NUMBER_TRX_REAR_RIGHT, TRX_REAR_RIGHT_NAME);
-        trxFrontLeft.setEnabled(true);
-        trxFrontRight.setEnabled(true);
-        trxMiddle.setEnabled(true);
-        trxTrunk.setEnabled(true);
-        trxRearLeft.setEnabled(true);
-        trxRearRight.setEnabled(true);
+        Trx trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME);
+        Trx trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, TRX_FRONT_RIGHT_NAME);
+        Trx trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
+        Trx trxTrunk = new Trx(NUMBER_TRX_TRUNK, TRX_TRUNK_NAME);
+        Trx trxRearLeft = new Trx(NUMBER_TRX_REAR_LEFT, TRX_REAR_LEFT_NAME);
+        Trx trxRearRight = new Trx(NUMBER_TRX_REAR_RIGHT, TRX_REAR_RIGHT_NAME);
         trxLinkedHMap.put(NUMBER_TRX_MIDDLE, trxMiddle);
         trxLinkedHMap.put(NUMBER_TRX_TRUNK, trxTrunk);
         trxLinkedHMap.put(NUMBER_TRX_FRONT_LEFT, trxFrontLeft);
@@ -37,12 +31,13 @@ public class CCSixFlFrMTRlRr extends ConnectedCar {
     @Override
     public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
         if (trxLinkedHMap != null) {
-            trxLinkedHMap.get(NUMBER_TRX_FRONT_LEFT).init(historicDefaultValuePeriph);
-            trxLinkedHMap.get(NUMBER_TRX_FRONT_RIGHT).init(historicDefaultValuePeriph);
-            trxLinkedHMap.get(NUMBER_TRX_MIDDLE).init(historicDefaultValueCentral);
-            trxLinkedHMap.get(NUMBER_TRX_TRUNK).init(historicDefaultValuePeriph);
-            trxLinkedHMap.get(NUMBER_TRX_REAR_LEFT).init(historicDefaultValuePeriph);
-            trxLinkedHMap.get(NUMBER_TRX_REAR_RIGHT).init(historicDefaultValuePeriph);
+            for (Trx trx : trxLinkedHMap.values()) {
+                if (trx.getTrxNumber() == NUMBER_TRX_MIDDLE) {
+                    trx.init(historicDefaultValueCentral);
+                } else {
+                    trx.init(historicDefaultValuePeriph);
+                }
+            }
         }
     }
 

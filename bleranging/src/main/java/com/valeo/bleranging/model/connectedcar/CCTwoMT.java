@@ -14,10 +14,8 @@ public class CCTwoMT extends ConnectedCar {
 
     public CCTwoMT(Context mContext) {
         super(mContext, ConnectionNumber.TWO_CONNECTION);
-        trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
-        trxTrunk = new Trx(NUMBER_TRX_TRUNK, TRX_TRUNK_NAME);
-        trxMiddle.setEnabled(true);
-        trxTrunk.setEnabled(true);
+        Trx trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
+        Trx trxTrunk = new Trx(NUMBER_TRX_TRUNK, TRX_TRUNK_NAME);
         trxLinkedHMap.put(NUMBER_TRX_MIDDLE, trxMiddle);
         trxLinkedHMap.put(NUMBER_TRX_TRUNK, trxTrunk);
     }
@@ -25,8 +23,13 @@ public class CCTwoMT extends ConnectedCar {
     @Override
     public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
         if (trxLinkedHMap != null) {
-            trxLinkedHMap.get(NUMBER_TRX_MIDDLE).init(historicDefaultValueCentral);
-            trxLinkedHMap.get(NUMBER_TRX_TRUNK).init(historicDefaultValuePeriph);
+            for (Trx trx : trxLinkedHMap.values()) {
+                if (trx.getTrxNumber() == NUMBER_TRX_MIDDLE) {
+                    trx.init(historicDefaultValueCentral);
+                } else {
+                    trx.init(historicDefaultValuePeriph);
+                }
+            }
         }
     }
 
