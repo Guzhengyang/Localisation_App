@@ -3,7 +3,6 @@ package com.valeo.bleranging.model.connectedcar;
 import android.content.Context;
 
 import com.valeo.bleranging.BleRangingHelper;
-import com.valeo.bleranging.model.Trx;
 
 /**
  * Created by l-avaratha on 07/09/2016
@@ -12,30 +11,14 @@ public class CCFiveLMRTB extends ConnectedCar {
 
 
     public CCFiveLMRTB(Context mContext) {
-        super(mContext, ConnectionNumber.FIVE_CONNECTION);
-        Trx trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
-        Trx trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
-        Trx trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);
-        Trx trxTrunk = new Trx(NUMBER_TRX_TRUNK, TRX_TRUNK_NAME);
-        Trx trxBack = new Trx(NUMBER_TRX_BACK, TRX_BACK_NAME);
-        trxLinkedHMap.put(NUMBER_TRX_LEFT, trxLeft);
-        trxLinkedHMap.put(NUMBER_TRX_MIDDLE, trxMiddle);
-        trxLinkedHMap.put(NUMBER_TRX_RIGHT, trxRight);
-        trxLinkedHMap.put(NUMBER_TRX_TRUNK, trxTrunk);
-        trxLinkedHMap.put(NUMBER_TRX_BACK, trxBack);
-    }
-
-    @Override
-    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
-        if (trxLinkedHMap != null) {
-            for (Trx trx : trxLinkedHMap.values()) {
-                if (trx.getTrxNumber() == NUMBER_TRX_MIDDLE) {
-                    trx.init(historicDefaultValueCentral);
-                } else {
-                    trx.init(historicDefaultValuePeriph);
-                }
-            }
-        }
+        super(mContext);
+        trxLinkedHMap = new ConnectedCarFactory.TrxLinkHMapBuilder()
+                .left()
+                .middle()
+                .right()
+                .trunk()
+                .back()
+                .build();
     }
 
     @Override
@@ -51,11 +34,6 @@ public class CCFiveLMRTB extends ConnectedCar {
     @Override
     public boolean isInitialized() {
         return false;
-    }
-
-    @Override
-    public double[] getRssiForRangingPrediction() {
-        return new double[0];
     }
 
     @Override

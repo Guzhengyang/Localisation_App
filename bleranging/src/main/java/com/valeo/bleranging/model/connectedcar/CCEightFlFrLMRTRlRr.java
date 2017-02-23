@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
-import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
@@ -15,36 +14,17 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
 public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     public CCEightFlFrLMRTRlRr(Context mContext) {
-        super(mContext, ConnectionNumber.EIGHT_CONNECTION);
-        Trx trxFrontLeft = new Trx(NUMBER_TRX_FRONT_LEFT, TRX_FRONT_LEFT_NAME);
-        Trx trxFrontRight = new Trx(NUMBER_TRX_FRONT_RIGHT, TRX_FRONT_RIGHT_NAME);
-        Trx trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
-        Trx trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
-        Trx trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);
-        Trx trxTrunk = new Trx(NUMBER_TRX_TRUNK, TRX_TRUNK_NAME);
-        Trx trxRearLeft = new Trx(NUMBER_TRX_REAR_LEFT, TRX_REAR_LEFT_NAME);
-        Trx trxRearRight = new Trx(NUMBER_TRX_REAR_RIGHT, TRX_REAR_RIGHT_NAME);
-        trxLinkedHMap.put(NUMBER_TRX_LEFT, trxLeft);
-        trxLinkedHMap.put(NUMBER_TRX_MIDDLE, trxMiddle);
-        trxLinkedHMap.put(NUMBER_TRX_RIGHT, trxRight);
-        trxLinkedHMap.put(NUMBER_TRX_TRUNK, trxTrunk);
-        trxLinkedHMap.put(NUMBER_TRX_FRONT_LEFT, trxFrontLeft);
-        trxLinkedHMap.put(NUMBER_TRX_FRONT_RIGHT, trxFrontRight);
-        trxLinkedHMap.put(NUMBER_TRX_REAR_LEFT, trxRearLeft);
-        trxLinkedHMap.put(NUMBER_TRX_REAR_RIGHT, trxRearRight);
-    }
-
-    @Override
-    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
-        if (trxLinkedHMap != null) {
-            for (Trx trx : trxLinkedHMap.values()) {
-                if (trx.getTrxNumber() == NUMBER_TRX_MIDDLE) {
-                    trx.init(historicDefaultValueCentral);
-                } else {
-                    trx.init(historicDefaultValuePeriph);
-                }
-            }
-        }
+        super(mContext);
+        trxLinkedHMap = new ConnectedCarFactory.TrxLinkHMapBuilder()
+                .left()
+                .middle()
+                .right()
+                .trunk()
+                .frontLeft()
+                .frontRight()
+                .rearleft()
+                .rearRight()
+                .build();
     }
 
     @Override
@@ -73,20 +53,6 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 && insidePrediction.isPredictRawFileRead()
                 && rpPrediction.isPredictRawFileRead()
                 && (checkForRssiNonNull(rssi) != null));
-    }
-
-    @Override
-    public double[] getRssiForRangingPrediction() {
-        rssi = new double[8];
-        rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
-        rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
-        rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
-        rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
-        rssi[4] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT);
-        rssi[5] = getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT);
-        rssi[6] = getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT);
-        rssi[7] = getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT);
-        return checkForRssiNonNull(rssi);
     }
 
     @Override

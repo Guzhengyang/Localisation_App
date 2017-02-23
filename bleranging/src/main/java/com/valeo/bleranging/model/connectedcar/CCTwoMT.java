@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
-import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 /**
@@ -13,24 +12,11 @@ import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 public class CCTwoMT extends ConnectedCar {
 
     public CCTwoMT(Context mContext) {
-        super(mContext, ConnectionNumber.TWO_CONNECTION);
-        Trx trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
-        Trx trxTrunk = new Trx(NUMBER_TRX_TRUNK, TRX_TRUNK_NAME);
-        trxLinkedHMap.put(NUMBER_TRX_MIDDLE, trxMiddle);
-        trxLinkedHMap.put(NUMBER_TRX_TRUNK, trxTrunk);
-    }
-
-    @Override
-    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
-        if (trxLinkedHMap != null) {
-            for (Trx trx : trxLinkedHMap.values()) {
-                if (trx.getTrxNumber() == NUMBER_TRX_MIDDLE) {
-                    trx.init(historicDefaultValueCentral);
-                } else {
-                    trx.init(historicDefaultValuePeriph);
-                }
-            }
-        }
+        super(mContext);
+        trxLinkedHMap = new ConnectedCarFactory.TrxLinkHMapBuilder()
+                .middle()
+                .trunk()
+                .build();
     }
 
     @Override
@@ -51,14 +37,6 @@ public class CCTwoMT extends ConnectedCar {
         return standardPrediction != null
                 && standardPrediction.isPredictRawFileRead()
                 && (checkForRssiNonNull(rssi) != null);
-    }
-
-    @Override
-    public double[] getRssiForRangingPrediction() {
-        rssi = new double[2];
-        rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
-        rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
-        return checkForRssiNonNull(rssi);
     }
 
     @Override

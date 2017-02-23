@@ -12,24 +12,25 @@ import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.TextUtils;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_BACK;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_FRONT_LEFT;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_FRONT_RIGHT;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_LEFT;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_MIDDLE;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_REAR_LEFT;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_REAR_RIGHT;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_RIGHT;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_TRUNK;
 
 /**
  * Created by l-avaratha on 05/09/2016
  */
 public abstract class ConnectedCar {
-    public final static int NUMBER_TRX_FRONT_LEFT = 1;
-    public final static int NUMBER_TRX_FRONT_RIGHT = 2;
-    public final static int NUMBER_TRX_LEFT = 3;
-    public final static int NUMBER_TRX_MIDDLE = 4;
-    public final static int NUMBER_TRX_RIGHT = 5;
-    public final static int NUMBER_TRX_TRUNK = 6;
-    public final static int NUMBER_TRX_REAR_LEFT = 7;
-    public final static int NUMBER_TRX_BACK = 8;
-    public final static int NUMBER_TRX_REAR_RIGHT = 9;
     public final static String THATCHAM_ORIENTED = "thatcham_oriented";
     public final static String PASSIVE_ENTRY_ORIENTED = "passive_entry_oriented";
     final static String SIMPLE_LOC = "Simple Localisation:";
@@ -47,21 +48,11 @@ public abstract class ConnectedCar {
     final static double THRESHOLD_DIST_AWAY_SLOW = 0.07;
     final static double THRESHOLD_DIST_AWAY_EAR = 0.25;
     final static int START_OFFSET = 2;
-    final static String TRX_FRONT_LEFT_NAME = "FLeft";
-    final static String TRX_FRONT_RIGHT_NAME = "FRight";
-    final static String TRX_LEFT_NAME = "Left";
-    final static String TRX_MIDDLE_NAME = "Middle";
-    final static String TRX_RIGHT_NAME = "Right";
-    final static String TRX_TRUNK_NAME = "Trunk";
-    final static String TRX_REAR_LEFT_NAME = "RLeft";
-    final static String TRX_BACK_NAME = "Back";
-    final static String TRX_REAR_RIGHT_NAME = "RRight";
     private final static int RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE = -60;
     private final static int RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE = -55;
     private final static int RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE = -75;
     protected final Handler mHandlerComValidTimeOut = new Handler();
-    final LinkedHashMap<Integer, Trx> trxLinkedHMap;
-    private final ConnectionNumber connectionNumber;
+    protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
     protected Context mContext;
     protected Prediction standardPrediction;
     protected Prediction earPrediction;
@@ -71,10 +62,8 @@ public abstract class ConnectedCar {
     protected boolean comValid = false;
     protected String lastModelUsed = STANDARD_LOC;
 
-    ConnectedCar(Context context, ConnectionNumber connectionNumber) {
+    ConnectedCar(Context context) {
         this.mContext = context;
-        this.connectionNumber = connectionNumber;
-        this.trxLinkedHMap = new LinkedHashMap<>();
     }
 
     /**
@@ -222,7 +211,17 @@ public abstract class ConnectedCar {
      * @param historicDefaultValuePeriph  the peripheral trx default value
      * @param historicDefaultValueCentral the central trx default value
      */
-    protected abstract void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral);
+    protected void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
+        if (trxLinkedHMap != null) {
+            for (Trx trx : trxLinkedHMap.values()) {
+                if (trx.getTrxNumber() == NUMBER_TRX_MIDDLE) {
+                    trx.init(historicDefaultValueCentral);
+                } else {
+                    trx.init(historicDefaultValuePeriph);
+                }
+            }
+        }
+    }
 
     /**
      * Create predictions
@@ -246,7 +245,18 @@ public abstract class ConnectedCar {
      *
      * @return an array with a rssi from each beacon
      */
-    public abstract double[] getRssiForRangingPrediction();
+    public double[] getRssiForRangingPrediction() {
+        if (trxLinkedHMap != null) {
+            rssi = new double[trxLinkedHMap.size()];
+            Iterator<Trx> trxIterator = trxLinkedHMap.values().iterator();
+            for (int i = 0; i < trxLinkedHMap.size(); i++) {
+                if (trxIterator.hasNext()) {
+                    rssi[i] = getCurrentOriginalRssi(trxIterator.next().getTrxNumber());
+                }
+            }
+        }
+        return checkForRssiNonNull(rssi);
+    }
 
     /**
      * Set the rssi into the machine learning algorithm
@@ -290,6 +300,9 @@ public abstract class ConnectedCar {
      * @return null if a value is equal to 0, the entire array otherwise
      */
     protected double[] checkForRssiNonNull(double[] mRssi) {
+        if (mRssi == null) {
+            return null;
+        }
         for (Double elem : mRssi) {
             if (elem == 0) {
                 return null;
@@ -300,32 +313,25 @@ public abstract class ConnectedCar {
 
     public int getTrxNumber(String address) {
         if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft())) {
-            return ConnectedCar.NUMBER_TRX_FRONT_LEFT;
+            return NUMBER_TRX_FRONT_LEFT;
         } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressFrontRight())) {
-            return ConnectedCar.NUMBER_TRX_FRONT_RIGHT;
+            return NUMBER_TRX_FRONT_RIGHT;
         } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressLeft())) {
-            return ConnectedCar.NUMBER_TRX_LEFT;
+            return NUMBER_TRX_LEFT;
         } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressMiddle())) {
-            return ConnectedCar.NUMBER_TRX_MIDDLE;
+            return NUMBER_TRX_MIDDLE;
         } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressRight())) {
-            return ConnectedCar.NUMBER_TRX_RIGHT;
+            return NUMBER_TRX_RIGHT;
         } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressTrunk())) {
-            return ConnectedCar.NUMBER_TRX_TRUNK;
+            return NUMBER_TRX_TRUNK;
         } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressRearLeft())) {
-            return ConnectedCar.NUMBER_TRX_REAR_LEFT;
+            return NUMBER_TRX_REAR_LEFT;
         } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressBack())) {
-            return ConnectedCar.NUMBER_TRX_BACK;
+            return NUMBER_TRX_BACK;
         } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressRearRight())) {
-            return ConnectedCar.NUMBER_TRX_REAR_RIGHT;
+            return NUMBER_TRX_REAR_RIGHT;
         } else {
             return -1;
         }
-    }
-
-    public enum ConnectionNumber {
-        TWO_CONNECTION, THREE_CONNECTION,
-        FOUR_CONNECTION, FIVE_CONNECTION,
-        SIX_CONNECTION, SEVEN_CONNECTION,
-        EIGHT_CONNECTION
     }
 }

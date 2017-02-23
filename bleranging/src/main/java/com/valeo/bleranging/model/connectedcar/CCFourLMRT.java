@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
-import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 /**
@@ -13,28 +12,13 @@ import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 public class CCFourLMRT extends ConnectedCar {
 
     public CCFourLMRT(Context mContext) {
-        super(mContext, ConnectionNumber.FOUR_CONNECTION);
-        Trx trxLeft = new Trx(NUMBER_TRX_LEFT, TRX_LEFT_NAME);
-        Trx trxMiddle = new Trx(NUMBER_TRX_MIDDLE, TRX_MIDDLE_NAME);
-        Trx trxRight = new Trx(NUMBER_TRX_RIGHT, TRX_RIGHT_NAME);
-        Trx trxTrunk = new Trx(NUMBER_TRX_TRUNK, TRX_TRUNK_NAME);
-        trxLinkedHMap.put(NUMBER_TRX_LEFT, trxLeft);
-        trxLinkedHMap.put(NUMBER_TRX_MIDDLE, trxMiddle);
-        trxLinkedHMap.put(NUMBER_TRX_RIGHT, trxRight);
-        trxLinkedHMap.put(NUMBER_TRX_TRUNK, trxTrunk);
-    }
-
-    @Override
-    public void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
-        if (trxLinkedHMap != null) {
-            for (Trx trx : trxLinkedHMap.values()) {
-                if (trx.getTrxNumber() == NUMBER_TRX_MIDDLE) {
-                    trx.init(historicDefaultValueCentral);
-                } else {
-                    trx.init(historicDefaultValuePeriph);
-                }
-            }
-        }
+        super(mContext);
+        trxLinkedHMap = new ConnectedCarFactory.TrxLinkHMapBuilder()
+                .left()
+                .middle()
+                .right()
+                .trunk()
+                .build();
     }
 
     @Override
@@ -63,16 +47,6 @@ public class CCFourLMRT extends ConnectedCar {
                 && earPrediction.isPredictRawFileRead()
                 && rpPrediction.isPredictRawFileRead()
                 && (checkForRssiNonNull(rssi) != null);
-    }
-
-    @Override
-    public double[] getRssiForRangingPrediction() {
-        rssi = new double[4];
-        rssi[0] = getCurrentOriginalRssi(NUMBER_TRX_LEFT);
-        rssi[1] = getCurrentOriginalRssi(NUMBER_TRX_MIDDLE);
-        rssi[2] = getCurrentOriginalRssi(NUMBER_TRX_RIGHT);
-        rssi[3] = getCurrentOriginalRssi(NUMBER_TRX_TRUNK);
-        return checkForRssiNonNull(rssi);
     }
 
     @Override
