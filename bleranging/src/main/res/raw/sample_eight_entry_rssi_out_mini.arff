@@ -1,0 +1,15 @@
+@relation data
+
+@attribute 'RSSI LEFT_ORIGIN' numeric
+@attribute 'RSSI MIDDLE_ORIGIN' numeric
+@attribute 'RSSI RIGHT_ORIGIN' numeric
+@attribute 'RSSI TRUNK_ORIGIN' numeric
+@attribute 'RSSI FRONTLEFT_ORIGIN' numeric
+@attribute 'RSSI FRONTRIGHT_ORIGIN' numeric
+@attribute 'RSSI REARLEFT_ORIGIN' numeric
+@attribute 'RSSI REARRIGHT_ORIGIN' numeric
+@attribute class {access,external,internal}
+
+@data
+-81,-79,-65,-76,-88,-80,-88,-74,access
+

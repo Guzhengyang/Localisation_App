@@ -120,13 +120,11 @@ public class Prediction {
 //            }
 
             if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
-                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
+                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE) |
+                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_EXTERNAL)) {
                 rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
             }
 
-            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_FAR)) {
-                rssi_offset[index] -= OFFSET_FAR_HYSTERESIS;
-            }
             // Add unlock hysteresis to all the trx
             if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
                     this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {

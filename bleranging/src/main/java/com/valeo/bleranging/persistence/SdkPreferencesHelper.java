@@ -117,14 +117,6 @@ public final class SdkPreferencesHelper {
         saveBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.are_beacons_inside_pref_name), value);
     }
 
-    public Boolean getIsMiniPredictionUsed() {
-        return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.is_mini_prediction_used_pref_name), false);
-    }
-
-    public void setIsMiniPredictionUsed(boolean value) {
-        saveBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.is_mini_prediction_used_pref_name), value);
-    }
-
     public int getAdapterLastPosition() {
         return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.adapter_last_position_pref_name), -1);
     }
@@ -243,6 +235,10 @@ public final class SdkPreferencesHelper {
 
     public Boolean isPrintRooftopEnabled() {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.print_rooftop_enabled_pref_name), false);
+    }
+
+    public Boolean isMiniPredictionUsed() {
+        return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.is_mini_prediction_used_pref_name), false);
     }
 
     public Boolean getUserSpeedEnabled() {

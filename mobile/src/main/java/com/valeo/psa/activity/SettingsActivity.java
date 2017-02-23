@@ -523,7 +523,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             are_beacons_inside.setChecked(SdkPreferencesHelper.getInstance().getAreBeaconsInside());
             print_inside_enabled.setChecked(SdkPreferencesHelper.getInstance().isPrintInsideEnabled());
             print_rooftop_enabled.setChecked(SdkPreferencesHelper.getInstance().isPrintRooftopEnabled());
-            is_mini_prediction_used.setChecked(SdkPreferencesHelper.getInstance().getIsMiniPredictionUsed());
+            is_mini_prediction_used.setChecked(SdkPreferencesHelper.getInstance().isMiniPredictionUsed());
             user_speed_enabled.setChecked(SdkPreferencesHelper.getInstance().getUserSpeedEnabled());
             offset_smartphone.setText(offset_smartphone.getSummary().toString());
             offset_hysteresis_lock.setText(offset_hysteresis_lock.getSummary().toString());

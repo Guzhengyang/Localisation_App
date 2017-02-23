@@ -35,6 +35,7 @@ public class PredictionFactory {
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
         String strategy = SdkPreferencesHelper.getInstance().getOpeningOrientation();
         boolean ifRoof = SdkPreferencesHelper.getInstance().isPrintRooftopEnabled();
+        boolean ifMiniPrediction = SdkPreferencesHelper.getInstance().isMiniPredictionUsed();
         if (areInside) {
             switch (carType) {
                 case TYPE_2_A:
@@ -174,8 +175,14 @@ public class PredictionFactory {
 //                                return new Prediction(mContext, R.raw.classes_eight_entry_rssi_out,
 //                                        R.raw.rf_eight_entry_rssi_out, R.raw.sample_eight_entry_out);
 //                            }
-                            return new Prediction(mContext, R.raw.classes_eight_entry_rssi_out,
+                            if (ifMiniPrediction) {
+                                return new Prediction(mContext, R.raw.classes_eight_entry_rssi_out_mini,
+                                        R.raw.rf_eight_entry_rssi_out_mini, R.raw.sample_eight_entry_rssi_out_mini);
+                            } else {
+                                return new Prediction(mContext, R.raw.classes_eight_entry_rssi_out,
                                         R.raw.rf_eight_entry_rssi_out, R.raw.sample_eight_entry_out);
+                            }
+
                         case PREDICTION_INSIDE:
                             return new Prediction(mContext, R.raw.classes_eight_inside,
                                     R.raw.rf_eight_inside, R.raw.sample_eight_inside);
