@@ -503,6 +503,14 @@ public class AlgoManager implements SensorEventListener {
         return isInWelcomeArea;
     }
 
+    public float[] getOrientation() {
+        return orientation;
+    }
+
+    public double getAcceleration() {
+        return deltaLinAcc;
+    }
+
     public boolean getRearmWelcome() {
         return rearmWelcome.get();
     }
