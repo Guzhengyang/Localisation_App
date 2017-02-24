@@ -8,6 +8,7 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
 import com.valeo.bleranging.machinelearningalgo.prediction.Prediction;
+import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.TextUtils;
@@ -87,7 +88,7 @@ public abstract class ConnectedCar {
      * @param trxNumber  the trx that sent the signal
      * @param bleChannel the ble channel used to sent
      */
-    public void saveBleChannel(int trxNumber, Trx.BLEChannel bleChannel) {
+    public void saveBleChannel(int trxNumber, Antenna.BLEChannel bleChannel) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             trxLinkedHMap.get(trxNumber).saveBleChannel(bleChannel);
         }
@@ -99,17 +100,17 @@ public abstract class ConnectedCar {
      * @param trxNumber the trx that sent the signal
      * @param rssi      the rssi value to save
      */
-    public void saveRssi(int trxNumber, int rssi) {
+    public void saveRssi(int trxNumber, int rssi, byte antennaId) {
         if (trxLinkedHMap.get(trxNumber) != null) {
-            trxLinkedHMap.get(trxNumber).saveRssi(rssi, true);
+            trxLinkedHMap.get(trxNumber).saveRssi(rssi, true, antennaId);
         }
     }
 
-    public Trx.BLEChannel getCurrentBLEChannel(int trxNumber) {
+    public Antenna.BLEChannel getCurrentBLEChannel(int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getCurrentBLEChannel();
         } else {
-            return Trx.BLEChannel.UNKNOWN;
+            return Antenna.BLEChannel.UNKNOWN;
         }
     }
 
@@ -252,6 +253,8 @@ public abstract class ConnectedCar {
             for (int i = 0; i < trxLinkedHMap.size(); i++) {
                 if (trxIterator.hasNext()) {
                     rssi[i] = getCurrentOriginalRssi(trxIterator.next().getTrxNumber());
+                } else {
+                    rssi[i] = 0;
                 }
             }
         }
