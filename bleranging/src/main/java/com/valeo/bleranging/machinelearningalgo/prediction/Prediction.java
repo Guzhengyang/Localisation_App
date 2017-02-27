@@ -19,10 +19,6 @@ import weka.core.Instances;
 import weka.core.SerializationHelper;
 import weka.core.converters.ConverterUtils;
 
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.PASSIVE_ENTRY_ORIENTED;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
@@ -32,7 +28,6 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIE
  */
 
 public class Prediction {
-    protected static final int OFFSET_FAR_HYSTERESIS = 0;
     private static final double f = 2.45 * Math.pow(10, 9);
     private static final double c = 3 * Math.pow(10, 8);
     private static final double P = -30;
@@ -198,19 +193,28 @@ public class Prediction {
         return distribution[temp_prediction] > threshold_prob;
     }
 
-    public void calculatePredictionStandard(double threshold_prob, double threshold_prob_unlock, String orientation) {
+    public void calculatePredictionStandard(double threshold_prob, double threshold_prob_lock2unlock, double threshold_prob_unlock2lock, String orientation) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
             if (orientation.equals(THATCHAM_ORIENTED)) {
+//                lock --> left, right, front, back
                 if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_LEFT)
                         || comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_RIGHT)
-                        || comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_BACK)) {
-                    if (comparePrediction(prediction_old, BleRangingHelper.PREDICTION_LOCK)) {
-                        if (compareDistribution(temp_prediction, threshold_prob_unlock)) {
-                            prediction_old = temp_prediction;
-                            return;
-                        }
-                    } else if (comparePrediction(prediction_old, BleRangingHelper.PREDICTION_TRUNK)) {
+                        || comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_BACK)
+                        || comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_FRONT)) {
+                    if (comparePrediction(prediction_old, BleRangingHelper.PREDICTION_LOCK)
+                            && compareDistribution(temp_prediction, threshold_prob_lock2unlock)) {
+                        prediction_old = temp_prediction;
+                        return;
+                    }
+                }
+//                left, right, front, back --> lock
+                if (comparePrediction(prediction_old, BleRangingHelper.PREDICTION_LEFT)
+                        || comparePrediction(prediction_old, BleRangingHelper.PREDICTION_RIGHT)
+                        || comparePrediction(prediction_old, BleRangingHelper.PREDICTION_BACK)
+                        || comparePrediction(prediction_old, BleRangingHelper.PREDICTION_FRONT)) {
+                    if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_LOCK)
+                            && compareDistribution(temp_prediction, threshold_prob_unlock2lock)) {
                         prediction_old = temp_prediction;
                         return;
                     }
@@ -220,6 +224,17 @@ public class Prediction {
                     return;
                 }
             } else if (orientation.equals(PASSIVE_ENTRY_ORIENTED)) {
+//                left, right, front, back --> lock
+                if (comparePrediction(prediction_old, BleRangingHelper.PREDICTION_LEFT)
+                        || comparePrediction(prediction_old, BleRangingHelper.PREDICTION_RIGHT)
+                        || comparePrediction(prediction_old, BleRangingHelper.PREDICTION_BACK)
+                        || comparePrediction(prediction_old, BleRangingHelper.PREDICTION_FRONT)) {
+                    if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_LOCK)
+                            && compareDistribution(temp_prediction, threshold_prob_unlock2lock)) {
+                        prediction_old = temp_prediction;
+                        return;
+                    }
+                }
                 if (compareDistribution(temp_prediction, threshold_prob)) {
                     prediction_old = temp_prediction;
                     return;
@@ -228,30 +243,37 @@ public class Prediction {
         }
     }
 
-    public void calculatePredictionFull(double threshold_prob, double threshold_prob_unlock, String orientation) {
+    public void calculatePredictionDefault(double threshold_prob, double threshold_prob_lock) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
-            if (orientation.equals(THATCHAM_ORIENTED)) {
-                if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_LEFT)
-                        || comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_RIGHT)
-                        || comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_BACK)
-                        || comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_FRONT)) {
-                    if (comparePrediction(prediction_old, BleRangingHelper.PREDICTION_LOCK)) {
-                        if (compareDistribution(temp_prediction, threshold_prob_unlock)) {
-                            prediction_old = temp_prediction;
-                            return;
-                        }
-                    }
-                }
-                if (compareDistribution(temp_prediction, threshold_prob)) {
+            if (comparePrediction(prediction_old, BleRangingHelper.PREDICTION_LEFT)
+                    || comparePrediction(prediction_old, BleRangingHelper.PREDICTION_RIGHT)
+                    || comparePrediction(prediction_old, BleRangingHelper.PREDICTION_BACK)
+                    || comparePrediction(prediction_old, BleRangingHelper.PREDICTION_BACK)) {
+                if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_LOCK)
+                        && compareDistribution(temp_prediction, threshold_prob_lock)) {
                     prediction_old = temp_prediction;
                     return;
                 }
-            } else if (orientation.equals(PASSIVE_ENTRY_ORIENTED)) {
-                if (compareDistribution(temp_prediction, threshold_prob)) {
-                    prediction_old = temp_prediction;
-                    return;
-                }
+            }
+            if (compareDistribution(temp_prediction, threshold_prob)) {
+                prediction_old = temp_prediction;
+                return;
+            }
+        }
+
+    }
+
+    public void calculatePredictionStart(double threshold_prob) {
+        if (checkOldPrediction()) {
+            int temp_prediction = most(predictions);
+//            cover internal space
+            if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_INSIDE)) {
+                prediction_old = temp_prediction;
+                return;
+            }
+            if (compareDistribution(temp_prediction, threshold_prob)) {
+                prediction_old = temp_prediction;
             }
         }
     }
@@ -269,23 +291,6 @@ public class Prediction {
         }
     }
 
-    public void calculatePredictionSimple(double threshold_prob, double threshold_prob_unlock, double threshold_prob_lock) {
-        if (checkOldPrediction()) {
-            int temp_prediction = most(predictions);
-            if (comparePrediction(temp_prediction, PREDICTION_LOCK) &&
-                    compareDistribution(temp_prediction, threshold_prob_lock)) {
-                prediction_old = temp_prediction;
-            } else if ((comparePrediction(temp_prediction, PREDICTION_LEFT) ||
-                    (comparePrediction(temp_prediction, PREDICTION_RIGHT))) &&
-                    compareDistribution(temp_prediction, threshold_prob_unlock)) {
-                prediction_old = temp_prediction;
-            } else if (comparePrediction(temp_prediction, PREDICTION_START) &&
-                    compareDistribution(temp_prediction, threshold_prob)) {
-                prediction_old = temp_prediction;
-            }
-        }
-    }
-
     public void calculatePredictionEar(double threshold_prob) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
@@ -297,35 +302,6 @@ public class Prediction {
                 prediction_old = temp_prediction;
             }
         }
-    }
-
-    public void calculatePredictionStart(double threshold_prob) {
-        if (checkOldPrediction()) {
-            int temp_prediction = most(predictions);
-//            cover internal space
-            if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_INSIDE)) {
-                prediction_old = temp_prediction;
-                return;
-            }
-            if (compareDistribution(temp_prediction, threshold_prob)) {
-                prediction_old = temp_prediction;
-            }
-        }
-    }
-
-    public void calculatePredictionDefault(double threshold_prob) {
-        if (checkOldPrediction()) {
-            int temp_prediction = most(predictions);
-            if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_START) ||
-                    comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_LOCK)) {
-                prediction_old = temp_prediction;
-                return;
-            }
-            if (compareDistribution(temp_prediction, threshold_prob)) {
-                prediction_old = temp_prediction;
-            }
-        }
-
     }
 
     public void calculatePredictionInside(double threshold_prob) {
