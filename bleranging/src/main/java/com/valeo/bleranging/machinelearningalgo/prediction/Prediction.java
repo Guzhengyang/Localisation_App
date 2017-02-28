@@ -61,10 +61,11 @@ public class Prediction {
         for (int i = 0; i < rssi.length; i++) {
             this.rssi_offset[i] = rssi[i] - offset;
 
-            distance[i] = rssi2dist(this.rssi_offset[i]);
+//            distance[i] = rssi2dist(this.rssi_offset[i]);
 //            sample.setValue(i, distance[i]);
 
             this.rssi[i] = rssi_offset[i];
+            this.distance[i] = rssi2dist(this.rssi[i]);
             sample.setValue(i, this.rssi[i]);
         }
     }
@@ -127,11 +128,12 @@ public class Prediction {
             }
         }
 
-        double dist_new = rssi2dist(rssi_offset[index]);
-        distance[index] = correctDistUnilateral(distance[index], dist_new, threshold);
+//        double dist_new = rssi2dist(rssi_offset[index]);
+//        distance[index] = correctDistUnilateral(distance[index], dist_new, threshold);
 //        sample.setValue(index, distance[index]);
 
         this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
+        distance[index] = rssi2dist(this.rssi[index]);
         sample.setValue(index, this.rssi[index]);
     }
 
@@ -351,10 +353,13 @@ public class Prediction {
         } else {
             sb.append(title).append(" ").append(getPrediction()).append(" ").append(String.format(Locale.FRANCE, "%.2f", distribution[prediction_old])).append("\n");
             for (double arssi : rssi) {
-                sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("   ");
+                sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
             }
             sb.append("\n");
-
+            for (double adistance : distance) {
+                sb.append(String.format(Locale.FRANCE, "%.2f", adistance)).append("   ");
+            }
+            sb.append("\n");
             for (int i = 0; i < distribution.length; i++) {
                 sb.append(classes[i]).append(": ").append(String.format(Locale.FRANCE, "%.2f", distribution[i])).append(" \n");
             }
