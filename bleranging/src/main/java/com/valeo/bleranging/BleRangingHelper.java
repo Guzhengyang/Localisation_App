@@ -165,7 +165,8 @@ public class BleRangingHelper {
             bytesToSend = mProtocolManager.getPacketOnePayload(mAlgoManager, connectedCar);
             lock.writeLock().unlock();
             lock.readLock().lock();
-            mBluetoothManager.sendPackets(bytesToSend, bytesReceived);
+            mBluetoothManager.sendPackets(bytesToSend, bytesReceived,
+                    mProtocolManager.getPacketTwoPayload(connectedCar.getStandardClasses(), connectedCar.getStandardDistribution()));
             lock.readLock().unlock();
             if (mAlgoManager.getIsRKE()) {
                 mAlgoManager.setIsRKE(false);

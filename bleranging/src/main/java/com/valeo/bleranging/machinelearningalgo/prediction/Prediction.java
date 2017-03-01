@@ -368,6 +368,14 @@ public class Prediction {
         }
     }
 
+    public double[] getDistribution() {
+        return distribution;
+    }
+
+    public String[] getClasses() {
+        return classes;
+    }
+
     private class AsyncPredictionInit extends AsyncTask<Integer, Void, Void> {
 
         @Override

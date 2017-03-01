@@ -336,9 +336,10 @@ public class BluetoothManagement {
         }
     }
 
-    public void sendPackets(final byte[] byteToSend, final byte[] byteReceived) {
+    public void sendPackets(final byte[] byteToSend, final byte[] byteReceived, final byte[] dist) {
         mBluetoothLeService.sendPackets(byteToSend);
-        final byte[] concatBytes = concatByte(byteToSend, byteReceived);
+        byte[] concatBytes = concatByte(byteToSend, byteReceived);
+        concatBytes = concatByte(concatBytes, dist);
         sendToPC(concatBytes);
         sendToRemoteControl(concatBytes);
     }

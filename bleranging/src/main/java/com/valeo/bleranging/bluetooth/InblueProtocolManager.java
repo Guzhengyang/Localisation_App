@@ -4,6 +4,7 @@ import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ACCESS;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
@@ -272,5 +273,46 @@ public class InblueProtocolManager {
             payloadFive |= isLockedToSend ? 0x01 : 0x02;
         }
         return payloadFive;
+    }
+
+    public byte[] getPacketTwoPayload(final String[] classes, final double[] distribution) {
+        byte[] payload = new byte[8];
+        if (distribution != null && classes != null) {
+            for (int payloadIndex = 0; payloadIndex < classes.length; payloadIndex++) {
+                payload[payloadIndex] = getPayloadProba(encodeClasses(classes[payloadIndex]), distribution[payloadIndex]);
+            }
+        }
+        return payload;
+    }
+
+    private byte encodeClasses(String classes) {
+        switch (classes) {
+            case PREDICTION_START:
+                return 0x01;
+            case PREDICTION_LOCK:
+                return 0x02;
+            case PREDICTION_TRUNK:
+                return 0x03;
+            case PREDICTION_LEFT:
+                return 0x04;
+            case PREDICTION_RIGHT:
+                return 0x05;
+            case PREDICTION_BACK:
+                return 0x06;
+            case PREDICTION_FRONT:
+                return 0x07;
+            default:
+                return 0x00;
+        }
+    }
+
+    private byte getPayloadProba(byte classe, double proba) {
+        byte payloadProba = classe;
+        PSALogs.d("dist", "class=" + String.format("%02X ", classe));
+        payloadProba = (byte) (payloadProba << 4);
+        PSALogs.d("dist", "proba=" + proba + " ou " + (byte) (proba * 10));
+        payloadProba |= ((byte) (proba * 10) & 0x0F);
+        PSALogs.d("dist", "payloadProba =" + payloadProba);
+        return payloadProba;
     }
 }
