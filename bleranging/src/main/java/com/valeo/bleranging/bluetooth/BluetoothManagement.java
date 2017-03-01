@@ -27,6 +27,7 @@ import com.valeo.bleranging.utils.TextUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Main Bluetooth class
@@ -336,12 +337,21 @@ public class BluetoothManagement {
         }
     }
 
-    public void sendPackets(final byte[] byteToSend, final byte[] byteReceived, final byte[] dist) {
+    public void sendPackets(final byte[] byteToSend, final byte[] byteReceived
+            , final byte[] dist, final byte[] rssi) {
         mBluetoothLeService.sendPackets(byteToSend);
         byte[] concatBytes = concatByte(byteToSend, byteReceived);
-        concatBytes = concatByte(concatBytes, dist);
+        byte[] data = concatByte(concatBytes, dist);
+        PSALogs.d("NIH", "send byteToSend: " + TextUtils.printBleBytes(byteToSend));
+        PSALogs.d("NIH", "send byteReceived: " + TextUtils.printBleBytes(byteReceived));
+        PSALogs.d("NIH", "send dist: " + TextUtils.printBleBytes(dist));
+        PSALogs.d("NIH", "send data: " + TextUtils.printBleBytes(data));
+        sendToRemoteControl(data, UUID.fromString(SampleGattAttributes.VALEO_REMOTE_CONTROL_IN_CHARACTERISTIC));
+        byte[] rssiConcat = concatByte(concatBytes, rssi);
+        PSALogs.d("NIH", "send rssi: " + TextUtils.printBleBytes(rssi));
+        PSALogs.d("NIH", "send rssiConcat: " + TextUtils.printBleBytes(rssiConcat));
+        sendToRemoteControl(rssiConcat, UUID.fromString(SampleGattAttributes.VALEO_REMOTE_CONTROL_IN2_CHARACTERISTIC));
         sendToPC(concatBytes);
-        sendToRemoteControl(concatBytes);
     }
 
     private byte[] concatByte(final byte[] byteToSend, final byte[] byteReceived) {
@@ -350,9 +360,7 @@ public class BluetoothManagement {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 outputStream.write(byteToSend);
                 outputStream.write(byteReceived);
-                byte[] concatBytes = outputStream.toByteArray();
-                PSALogs.d("NIH", "send: " + TextUtils.printBleBytes(concatBytes));
-                return concatBytes;
+                return outputStream.toByteArray();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -368,9 +376,9 @@ public class BluetoothManagement {
         }
     }
 
-    private void sendToRemoteControl(final byte[] concatBytes) {
+    private void sendToRemoteControl(final byte[] concatBytes, UUID uuid) {
         if (isFullyConnected3() && mBluetoothLeServiceForRemoteControl.getBLEGattService() != null) {
-            if (!mBluetoothLeServiceForRemoteControl.sendPackets(concatBytes)) {
+            if (!mBluetoothLeServiceForRemoteControl.sendPackets(concatBytes, uuid)) {
                 disconnectRemoteControl();
             }
         }

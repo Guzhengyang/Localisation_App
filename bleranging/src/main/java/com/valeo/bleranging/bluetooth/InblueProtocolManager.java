@@ -285,6 +285,18 @@ public class InblueProtocolManager {
         return payload;
     }
 
+    public byte[] getPacketThreePayload(final double[] rssi) {
+        byte[] payload;
+        if (rssi != null) {
+            payload = new byte[rssi.length];
+            for (int payloadIndex = 0; payloadIndex < rssi.length; payloadIndex++) {
+                payload[payloadIndex] = (byte) rssi[payloadIndex];
+            }
+            return payload;
+        }
+        return new byte[1];
+    }
+
     private byte encodeClasses(String classes) {
         switch (classes) {
             case PREDICTION_START:

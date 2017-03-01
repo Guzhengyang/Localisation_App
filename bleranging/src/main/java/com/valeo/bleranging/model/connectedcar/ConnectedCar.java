@@ -325,6 +325,13 @@ public abstract class ConnectedCar {
         return null;
     }
 
+    public double[] getStandardRssi() {
+        if (standardPrediction != null) {
+            return standardPrediction.getRssi();
+        }
+        return null;
+    }
+
     public int getTrxNumber(String address) {
         if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft())) {
             return NUMBER_TRX_FRONT_LEFT;

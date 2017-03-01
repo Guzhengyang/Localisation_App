@@ -73,7 +73,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-            PSALogs.i("NIH_REMOTE", "onCharacteristicWrite(" + VALEO_IN_CHARACTERISTIC + "): "
+            PSALogs.i("NIH_REMOTE", "onCharacteristicWrite(" + characteristic.getUuid() + "): "
                     + TextUtils.printBleBytes(characteristic.getValue()));
             if (mDevice != null && mBluetoothGatt != null) {
                 //Disconnect after write
@@ -383,7 +383,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
 
     }
 
-    private boolean writeCharacteristicBatch(byte[][] value) {
+    private boolean writeCharacteristicBatch(byte[][] value, UUID uuid) {
         mPacketToWriteCount = value.length;
         short retriesCounter;
         for (byte[] aValue : value) {
@@ -391,7 +391,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
             boolean bReturnFunctionCall;
             do {
                 retriesCounter++;
-                bReturnFunctionCall = writeCharacteristic(aValue);
+                bReturnFunctionCall = writeCharacteristic(aValue, uuid);
             } while ((!bReturnFunctionCall) && (retriesCounter < MAX_RETRIES_WRITE_CHARACTERISTIC));
             if (retriesCounter == MAX_RETRIES_WRITE_CHARACTERISTIC) {
                 return false;
@@ -400,7 +400,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
         return true;
     }
 
-    private boolean writeCharacteristic(byte[] value) {
+    private boolean writeCharacteristic(byte[] value, UUID uuid) {
         boolean bReturn = false;
         if (mBluetoothAdapter == null) {
             PSALogs.w("NIH_REMOTE", "BluetoothAdapter not initialized 2");
@@ -414,7 +414,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
             PSALogs.e("NIH_REMOTE", "Service not found");
             return false;
         }
-        BluetoothGattCharacteristic charac = service.getCharacteristic(UUID.fromString(VALEO_IN_CHARACTERISTIC));
+        BluetoothGattCharacteristic charac = service.getCharacteristic(uuid);
         if (charac == null) {
             PSALogs.e("NIH_REMOTE", "characteristic not found");
             return false;
@@ -437,8 +437,8 @@ public class BluetoothLeServiceForRemoteControl extends Service {
         return null;
     }
 
-    public boolean sendPackets(byte[] value) {
-        return writeCharacteristicBatch(new byte[][]{value});
+    public boolean sendPackets(byte[] value, UUID uuid) {
+        return writeCharacteristicBatch(new byte[][]{value}, uuid);
     }
 
     public class LocalBinder3 extends Binder {

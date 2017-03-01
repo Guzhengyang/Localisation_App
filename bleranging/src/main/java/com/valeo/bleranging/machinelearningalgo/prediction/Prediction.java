@@ -376,6 +376,10 @@ public class Prediction {
         return classes;
     }
 
+    public double[] getRssi() {
+        return rssi;
+    }
+
     private class AsyncPredictionInit extends AsyncTask<Integer, Void, Void> {
 
         @Override
