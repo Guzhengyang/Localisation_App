@@ -34,7 +34,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
     private final static String VALEO_GENERIC_SERVICE = SampleGattAttributes.VALEO_REMOTE_CONTROL_GENERIC_SERVICE;
     private final static String VALEO_IN_CHARACTERISTIC = SampleGattAttributes.VALEO_REMOTE_CONTROL_IN_CHARACTERISTIC;
     private final static String VALEO_OUT_CHARACTERISTIC = SampleGattAttributes.VALEO_REMOTE_CONTROL_OUT_CHARACTERISTIC;
-    private static final short MAX_RETRIES_WRITE_CHARACTERISTIC = 5;
+    private static final short MAX_RETRIES_WRITE_CHARACTERISTIC = 100;
     private final ArrayList<IBluetoothLeServiceListener> mListeners = new ArrayList<>();
     private final IBinder mBinder = new LocalBinder3();
     private boolean mIsServiceDiscovered = false;
@@ -383,24 +383,27 @@ public class BluetoothLeServiceForRemoteControl extends Service {
 
     }
 
-    private boolean writeCharacteristicBatch(byte[][] value, UUID uuid) {
+    private boolean writeCharacteristicBatch(byte[][] value) {
         mPacketToWriteCount = value.length;
+        PSALogs.i("NIH_", "mPacketToWriteCount " + mPacketToWriteCount);
         short retriesCounter;
         for (byte[] aValue : value) {
             retriesCounter = 0;
             boolean bReturnFunctionCall;
             do {
                 retriesCounter++;
-                bReturnFunctionCall = writeCharacteristic(aValue, uuid);
+                PSALogs.d("NIH_", "retriesCounter in loop" + retriesCounter);
+                bReturnFunctionCall = writeCharacteristic(aValue);
             } while ((!bReturnFunctionCall) && (retriesCounter < MAX_RETRIES_WRITE_CHARACTERISTIC));
             if (retriesCounter == MAX_RETRIES_WRITE_CHARACTERISTIC) {
+                PSALogs.e("NIH_", "retriesCounter " + retriesCounter);
                 return false;
             }
         }
         return true;
     }
 
-    private boolean writeCharacteristic(byte[] value, UUID uuid) {
+    private boolean writeCharacteristic(byte[] value) {
         boolean bReturn = false;
         if (mBluetoothAdapter == null) {
             PSALogs.w("NIH_REMOTE", "BluetoothAdapter not initialized 2");
@@ -414,7 +417,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
             PSALogs.e("NIH_REMOTE", "Service not found");
             return false;
         }
-        BluetoothGattCharacteristic charac = service.getCharacteristic(uuid);
+        BluetoothGattCharacteristic charac = service.getCharacteristic(UUID.fromString(VALEO_IN_CHARACTERISTIC));
         if (charac == null) {
             PSALogs.e("NIH_REMOTE", "characteristic not found");
             return false;
@@ -437,8 +440,8 @@ public class BluetoothLeServiceForRemoteControl extends Service {
         return null;
     }
 
-    public boolean sendPackets(byte[] value, UUID uuid) {
-        return writeCharacteristicBatch(new byte[][]{value}, uuid);
+    public boolean sendPackets(byte[] value) {
+        return writeCharacteristicBatch(new byte[][]{value});
     }
 
     public class LocalBinder3 extends Binder {

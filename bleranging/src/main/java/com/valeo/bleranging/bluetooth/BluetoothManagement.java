@@ -27,7 +27,6 @@ import com.valeo.bleranging.utils.TextUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.UUID;
 
 /**
  * Main Bluetooth class
@@ -346,11 +345,11 @@ public class BluetoothManagement {
         PSALogs.d("NIH", "send byteReceived: " + TextUtils.printBleBytes(byteReceived));
         PSALogs.d("NIH", "send dist: " + TextUtils.printBleBytes(dist));
         PSALogs.d("NIH", "send data: " + TextUtils.printBleBytes(data));
-        sendToRemoteControl(data, UUID.fromString(SampleGattAttributes.VALEO_REMOTE_CONTROL_IN_CHARACTERISTIC));
-        byte[] rssiConcat = concatByte(concatBytes, rssi);
+        boolean sendSuccess = sendToRemoteControl(data);
         PSALogs.d("NIH", "send rssi: " + TextUtils.printBleBytes(rssi));
-        PSALogs.d("NIH", "send rssiConcat: " + TextUtils.printBleBytes(rssiConcat));
-        sendToRemoteControl(rssiConcat, UUID.fromString(SampleGattAttributes.VALEO_REMOTE_CONTROL_IN2_CHARACTERISTIC));
+        if (sendSuccess) {
+            sendToRemoteControl(rssi);
+        }
         sendToPC(concatBytes);
     }
 
@@ -376,12 +375,15 @@ public class BluetoothManagement {
         }
     }
 
-    private void sendToRemoteControl(final byte[] concatBytes, UUID uuid) {
+    private boolean sendToRemoteControl(final byte[] concatBytes) {
         if (isFullyConnected3() && mBluetoothLeServiceForRemoteControl.getBLEGattService() != null) {
-            if (!mBluetoothLeServiceForRemoteControl.sendPackets(concatBytes, uuid)) {
+            if (!mBluetoothLeServiceForRemoteControl.sendPackets(concatBytes)) {
                 disconnectRemoteControl();
+                return false;
             }
+            return true;
         }
+        return false;
     }
 
     //GETTERS
