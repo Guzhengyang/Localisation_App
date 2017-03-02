@@ -19,6 +19,7 @@ import weka.core.Instances;
 import weka.core.SerializationHelper;
 import weka.core.converters.ConverterUtils;
 
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.PASSIVE_ENTRY_ORIENTED;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
@@ -32,6 +33,7 @@ public class Prediction {
     private static final double c = 3 * Math.pow(10, 8);
     private static final double P = -30;
     private static final double THRESHOLD_RSSI_AWAY = 1;
+    private static final double THRESHOLD_RSSI_LOCK = -70;
     private List<Integer> predictions = new ArrayList<>();
     private double[] distribution;
     private double[] distance;
@@ -43,6 +45,8 @@ public class Prediction {
     private String[] classes;
     private Context mContext;
     private boolean arePredictRawFileRead = false;
+    private int INDEX_LOCK;
+    private boolean isThresholdMethod = false;
 
     public Prediction(Context context, int classesId, int rfId, int sampleId) {
         this.mContext = context;
@@ -58,12 +62,17 @@ public class Prediction {
         this.distance = new double[rssi.length];
         this.rssi = new double[rssi.length];
         this.distribution = new double[classes.length];
+//        find index of lock
+        for (int i = 0; i < classes.length; i++) {
+            if (classes[i].endsWith(PREDICTION_LOCK)) {
+                INDEX_LOCK = i;
+                break;
+            }
+        }
         for (int i = 0; i < rssi.length; i++) {
             this.rssi_offset[i] = rssi[i] - offset;
-
 //            distance[i] = rssi2dist(this.rssi_offset[i]);
 //            sample.setValue(i, distance[i]);
-
             this.rssi[i] = rssi_offset[i];
             this.distance[i] = rssi2dist(this.rssi[i]);
             sample.setValue(i, this.rssi[i]);
@@ -226,6 +235,15 @@ public class Prediction {
                     return;
                 }
             } else if (orientation.equals(PASSIVE_ENTRY_ORIENTED)) {
+//                when no decision for lock is made, use threshold method
+                if (ifNoDecision2Lock(distribution, threshold_prob_unlock2lock)) {
+                    if (if2Lock(rssi, THRESHOLD_RSSI_LOCK)) {
+                        prediction_old = INDEX_LOCK;
+                        isThresholdMethod = true;
+                        return;
+                    }
+                }
+                isThresholdMethod = false;
 //                left, right, front, back --> lock
                 if (comparePrediction(prediction_old, BleRangingHelper.PREDICTION_LEFT)
                         || comparePrediction(prediction_old, BleRangingHelper.PREDICTION_RIGHT)
@@ -351,6 +369,11 @@ public class Prediction {
         } else if (prediction_old == -1) {
             return "";
         } else {
+            if (isThresholdMethod) {
+                sb.append("Threshold\n");
+            } else {
+                sb.append("Machine Learning\n");
+            }
             sb.append(title).append(" ").append(getPrediction()).append(" ").append(String.format(Locale.FRANCE, "%.2f", distribution[prediction_old])).append("\n");
             for (double arssi : rssi) {
                 sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
@@ -374,6 +397,40 @@ public class Prediction {
 
     public String[] getClasses() {
         return classes;
+    }
+
+    private boolean bodyAcces(double threshold_rssi) {
+        double maxRssi = max(rssi);
+        return maxRssi > threshold_rssi;
+    }
+
+    private double max(double[] rssi) {
+        double result = rssi[0];
+        for (int i = 1; i < rssi.length; i++) {
+            if (rssi[i] > result) {
+                result = rssi[i];
+            }
+        }
+        return result;
+    }
+
+    private boolean ifNoDecision2Lock(double[] distribution, double threshold_prob_unlock2lock) {
+        return distribution[INDEX_LOCK] > 0.2 & distribution[INDEX_LOCK] <= threshold_prob_unlock2lock;
+    }
+
+    private boolean if2Lock(double[] rssi, double threshold_rssi_lock) {
+        boolean result = true;
+        for (int i = 0; i < rssi.length; i++) {
+            if (rssi[i] > threshold_rssi_lock) {
+                result = false;
+                break;
+            }
+        }
+        return result;
+    }
+
+    public boolean isThresholdMethod() {
+        return isThresholdMethod;
     }
 
     public double[] getRssi() {

@@ -48,6 +48,7 @@
             android:title="@string/pref_print_rooftop_enabled" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:enabled="false"
             android:key="@string/is_mini_prediction_used_pref_name"
             android:title="@string/pref_is_mini_prediction_used" />
     </PreferenceCategory>
