@@ -30,6 +30,8 @@
     <string name="lock_trunk">Lock trunk</string>
     <string name="close_all_windows">Close all windows</string>
     <string name="flash_lights">Flash lights</string>
+    <string name="version_number">Version Number</string>
+    <string name="selected_version_number">version :%s</string>
     <string name="tips">\nTIPS</string>
     <string name="icon">icon</string>
     <string name="drag_icon">drag icon</string>

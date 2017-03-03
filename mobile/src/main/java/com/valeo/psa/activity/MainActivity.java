@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -134,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private TextView activity_title;
     private TextView ble_status;
     private TextView car_door_status;
+    private TextView version_number;
     private TextView tips;
     private TextView nfc_disclaimer;
     private ImageView nfc_logo;
@@ -204,6 +206,18 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         this.mBleRangingHelper = new BleRangingHelper(this, this);
         pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.pulse);
         pulseAnimation2 = AnimationUtils.loadAnimation(this, R.anim.pulse);
+        try {
+            PSALogs.d("version", getPackageName());
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            String versionName = "Unknown";
+            if (packageInfo != null) {
+                versionName = String.format(getString(R.string.selected_version_number),
+                        packageInfo.versionName);
+            }
+            version_number.setText(versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
         NfcManager manager = (NfcManager) getSystemService(Context.NFC_SERVICE);
         NfcAdapter adapter = manager.getDefaultAdapter();
         if (adapter != null && adapter.isEnabled()) {
@@ -504,6 +518,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         car_start_countdown_min_sec = (TextView) findViewById(R.id.car_start_countdown_min_sec);
         ble_status = (TextView) findViewById(R.id.ble_status);
         car_door_status = (TextView) findViewById(R.id.car_door_status);
+        version_number = (TextView) findViewById(R.id.version_number);
         tips = (TextView) findViewById(R.id.tips);
         nfc_disclaimer = (TextView) findViewById(R.id.nfc_disclaimer);
         nfc_logo = (ImageView) findViewById(R.id.nfc_logo);
