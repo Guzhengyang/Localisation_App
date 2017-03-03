@@ -265,7 +265,7 @@ public abstract class ConnectedCar {
      * Set the rssi into the machine learning algorithm
      * @param rssi the array containing rssi from beacons
      */
-    public abstract void setRssi(double[] rssi);
+    public abstract void setRssi(double[] rssi, boolean lockStatus);
 
     /**
      * Calculate a prediction using machine learning

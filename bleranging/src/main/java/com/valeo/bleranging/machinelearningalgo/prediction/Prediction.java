@@ -33,7 +33,6 @@ public class Prediction {
     private static final double c = 3 * Math.pow(10, 8);
     private static final double P = -22;
     private static final double THRESHOLD_RSSI_AWAY = 1;
-    private static final double THRESHOLD_RSSI_LOCK = -67;
     private List<Integer> predictions = new ArrayList<>();
     private double[] distribution;
     private double[] distance;
@@ -79,7 +78,7 @@ public class Prediction {
         }
     }
 
-    public void setRssi(int index, double rssi, int offset, double threshold, boolean comValid) {
+    public void setRssi(int index, double rssi, int offset, double threshold, boolean comValid, boolean lockStatus) {
         this.rssi_offset[index] = rssi - offset;
         if (prediction_old != -1) {
             // trx order : l, m, r, t, fl, fr, rl, rr
@@ -112,31 +111,27 @@ public class Prediction {
         sample.setValue(index, distance[index]);
     }
 
-    public void setRssi(int index, double rssi, int offset, double threshold) {
+    public void setRssi(int index, double rssi, int offset, double threshold, boolean lockStatus) {
         this.rssi_offset[index] = rssi - offset;
         if (prediction_old != -1) {
             // trx order : l, m, r, t, fl, fr, rl, rr
-            // Add hysteresis to all the trx
-
-//            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
-//                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
-//                    rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
-//                }
-//            }
-
+            // Add lock hysteresis to all the trx
             if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
                     this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE) |
                     this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_EXTERNAL)) {
                 rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
             }
-
             // Add unlock hysteresis to all the trx
             if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
                     this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
                 rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
             }
+//            if(lockStatus){
+//                rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
+//            }else {
+//                rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
+//            }
         }
-
 //        double dist_new = rssi2dist(rssi_offset[index]);
 //        distance[index] = correctDistUnilateral(distance[index], dist_new, threshold);
 //        sample.setValue(index, distance[index]);

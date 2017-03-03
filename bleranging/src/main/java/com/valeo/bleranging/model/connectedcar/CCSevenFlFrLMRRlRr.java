@@ -38,7 +38,7 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
     }
 
     @Override
-    public void setRssi(double[] rssi) {
+    public void setRssi(double[] rssi, boolean lockStatus) {
 
     }
 

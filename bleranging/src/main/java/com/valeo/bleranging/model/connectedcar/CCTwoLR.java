@@ -41,11 +41,11 @@ public class CCTwoLR extends ConnectedCar {
     }
 
     @Override
-    public void setRssi(double[] rssi) {
+    public void setRssi(double[] rssi, boolean lockStatus) {
         if (isInitialized()) {
             for (int i = 0; i < rssi.length; i++) {
                 standardPrediction.setRssi(i, rssi[i],
-                        SdkPreferencesHelper.getInstance().getOffsetSmartphone() + START_OFFSET, THRESHOLD_DIST_AWAY_SLOW);
+                        SdkPreferencesHelper.getInstance().getOffsetSmartphone() + START_OFFSET, THRESHOLD_DIST_AWAY_SLOW, lockStatus);
             }
             standardPrediction.predict(N_VOTE_LONG);
         }

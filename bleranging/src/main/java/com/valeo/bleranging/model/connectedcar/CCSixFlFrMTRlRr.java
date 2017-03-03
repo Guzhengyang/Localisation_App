@@ -44,10 +44,10 @@ public class CCSixFlFrMTRlRr extends ConnectedCar {
     }
 
     @Override
-    public void setRssi(double[] rssi) {
+    public void setRssi(double[] rssi, boolean lockStatus) {
         if (isInitialized()) {
             for (int i = 0; i < rssi.length; i++) {
-                standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard());
+                standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard(), lockStatus);
             }
             standardPrediction.predict(N_VOTE_SHORT);
         }
