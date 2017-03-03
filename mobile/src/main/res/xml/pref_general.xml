@@ -72,6 +72,10 @@
             android:key="@string/offset_smartphone_pref_name"
             android:title="@string/pref_offset_smartphone" />
         <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/threshold_lock_pref_name"
+            android:title="@string/pref_threshold_lock"/>
+        <EditTextPreference
             android:inputType="number"
             android:key="@string/offset_hysteresis_lock_pref_name"
             android:title="@string/pref_offset_hysteresis_lock" />

@@ -27,6 +27,7 @@
     <string name="is_mini_prediction_used_pref_name">"com.inblue.PREFERENCE_IS_MINI_PREDICTION_USED"</string>
     <string name="adapter_last_position_pref_name">"com.inblue.PREFERENCE_ADAPTER_LAST_POSITION"</string>
     <string name="offset_smartphone_pref_name">"com.inblue.PREFERENCE_OFFSET_SMARTPHONE"</string>
+    <string name="threshold_lock_pref_name">"com.inblue.PREFERENCE_THRESHOLD_LOCK"</string>
     <string name="offset_hysteresis_lock_pref_name">"com.inblue.PREFERENCE_OFFSET_HYSTERESIS_LOCK"</string>
     <string name="offset_hysteresis_unlock_pref_name">"com.inblue.PREFERENCE_OFFSET_HYSTERESIS_UNLOCK"</string>
     <string name="threshold_prob_standard_pref_name">"com.inblue.PREFERENCE_THRESHOLD_PROB_STANDARD"</string>

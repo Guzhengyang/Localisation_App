@@ -31,9 +31,9 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIE
 public class Prediction {
     private static final double f = 2.45 * Math.pow(10, 9);
     private static final double c = 3 * Math.pow(10, 8);
-    private static final double P = -30;
+    private static final double P = -22;
     private static final double THRESHOLD_RSSI_AWAY = 1;
-    private static final double THRESHOLD_RSSI_LOCK = -70;
+    private static final double THRESHOLD_RSSI_LOCK = -67;
     private List<Integer> predictions = new ArrayList<>();
     private double[] distribution;
     private double[] distance;
@@ -237,7 +237,7 @@ public class Prediction {
             } else if (orientation.equals(PASSIVE_ENTRY_ORIENTED)) {
 //                when no decision for lock is made, use threshold method
                 if (ifNoDecision2Lock(distribution, threshold_prob_unlock2lock)) {
-                    if (if2Lock(rssi, THRESHOLD_RSSI_LOCK)) {
+                    if (if2Lock(rssi, SdkPreferencesHelper.getInstance().getThresholdLock())) {
                         prediction_old = INDEX_LOCK;
                         isThresholdMethod = true;
                         return;
@@ -415,7 +415,7 @@ public class Prediction {
     }
 
     private boolean ifNoDecision2Lock(double[] distribution, double threshold_prob_unlock2lock) {
-        return distribution[INDEX_LOCK] > 0.2 & distribution[INDEX_LOCK] <= threshold_prob_unlock2lock;
+        return distribution[INDEX_LOCK] <= threshold_prob_unlock2lock;
     }
 
     private boolean if2Lock(double[] rssi, double threshold_rssi_lock) {
@@ -427,10 +427,6 @@ public class Prediction {
             }
         }
         return result;
-    }
-
-    public boolean isThresholdMethod() {
-        return isThresholdMethod;
     }
 
     public double[] getRssi() {

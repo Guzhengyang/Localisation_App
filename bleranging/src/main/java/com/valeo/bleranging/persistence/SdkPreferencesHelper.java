@@ -14,6 +14,7 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIE
  */
 public final class SdkPreferencesHelper {
     public final static int OFFSET_SMARTPHONE = 0;
+    public final static int THRESHOLD_LOCK = -67;
     public final static int OFFSET_HYSTERESIS_LOCK = 4;
     public final static int OFFSET_HYSTERESIS_UNLOCK = 0;
     public final static float THRESHOLD_PROB_STANDARD = 0.8f;
@@ -139,6 +140,10 @@ public final class SdkPreferencesHelper {
 
     public void setOffsetSmartphone(int value) {
         saveInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.offset_smartphone_pref_name), value);
+    }
+
+    public int getThresholdLock() {
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.threshold_lock_pref_name), THRESHOLD_LOCK);
     }
 
     public int getOffsetHysteresisLock() {

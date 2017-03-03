@@ -377,6 +377,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private EditTextPreference offset_hysteresis_unlock;
         private EditTextPreference threshold_prob_standard;
         private EditTextPreference threshold_dist_away_standard;
+        private EditTextPreference threshold_lock;
         private EditTextPreference thatcham_timeout;
         private EditTextPreference unlock_timeout;
         private EditTextPreference crypto_pre_auth_timeout;
@@ -493,6 +494,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             security_wal_enabled = ((CheckBoxPreference) findPreference(getString(R.string.security_wal_enabled_pref_name)));
             are_beacons_inside = ((CheckBoxPreference) findPreference(getString(R.string.are_beacons_inside_pref_name)));
             offset_smartphone = ((EditTextPreference) findPreference(getString(R.string.offset_smartphone_pref_name)));
+            threshold_lock = ((EditTextPreference) findPreference(getString(R.string.threshold_lock_pref_name)));
             offset_hysteresis_lock = ((EditTextPreference) findPreference(getString(R.string.offset_hysteresis_lock_pref_name)));
             offset_hysteresis_unlock = ((EditTextPreference) findPreference(getString(R.string.offset_hysteresis_unlock_pref_name)));
             threshold_prob_standard = ((EditTextPreference) findPreference(getString(R.string.threshold_prob_standard_pref_name)));
@@ -526,6 +528,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             is_mini_prediction_used.setChecked(SdkPreferencesHelper.getInstance().isMiniPredictionUsed());
             user_speed_enabled.setChecked(SdkPreferencesHelper.getInstance().getUserSpeedEnabled());
             offset_smartphone.setText(offset_smartphone.getSummary().toString());
+            threshold_lock.setText(threshold_lock.getSummary().toString());
             offset_hysteresis_lock.setText(offset_hysteresis_lock.getSummary().toString());
             offset_hysteresis_unlock.setText(offset_hysteresis_unlock.getSummary().toString());
             threshold_prob_standard.setText(threshold_prob_standard.getSummary().toString());
@@ -556,6 +559,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             security_wal_enabled.setSummary(R.string.pref_security_wal_enabled_summary);
             are_beacons_inside.setSummary(R.string.pref_are_beacons_inside_summary);
             bindPreferenceSummaryToValue(offset_smartphone, String.valueOf(SdkPreferencesHelper.OFFSET_SMARTPHONE));
+            bindPreferenceSummaryToValue(threshold_lock, String.valueOf(SdkPreferencesHelper.THRESHOLD_LOCK));
             bindPreferenceSummaryToValue(offset_hysteresis_lock, String.valueOf(SdkPreferencesHelper.OFFSET_HYSTERESIS_LOCK));
             bindPreferenceSummaryToValue(offset_hysteresis_unlock, String.valueOf(SdkPreferencesHelper.OFFSET_HYSTERESIS_UNLOCK));
             bindPreferenceSummaryToValue(threshold_prob_standard, String.valueOf(SdkPreferencesHelper.THRESHOLD_PROB_STANDARD));

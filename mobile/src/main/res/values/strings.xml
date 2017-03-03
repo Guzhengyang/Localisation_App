@@ -97,6 +97,7 @@
     <string name="pref_outside_ratio_close_to_car_thr">Outside ratio Close to car Thr</string>
     <string name="pref_offset">OFFSET</string>
     <string name="pref_offset_smartphone">Smartphone Offset</string>
+    <string name="pref_threshold_lock">Threshold Lock</string>
     <string name="pref_offset_hysteresis_lock">Hysteresis Lock Offset</string>
     <string name="pref_offset_hysteresis_unlock">Hysteresis Unlock Offset</string>
     <string name="pref_prob_standard">Standard Probability Threshold</string>
