@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="accuracy_zones">
+        <item>left</item>
+        <item>right</item>
+        <item>front</item>
+        <item>back</item>
+        <item>start</item>
+        <item>trunk</item>
+        <item>lock</item>
+    </string-array>
     <string-array name="iconName">
         <item>2 beacons (Middle and Trunk)</item>
         <item>2 beacons (Left and Right)</item>

@@ -26,7 +26,9 @@ import com.valeo.bleranging.utils.SoundUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ACCESS;
@@ -124,6 +126,9 @@ public class AlgoManager implements SensorEventListener {
         }
     };
     private double deltaLinAcc = 0;
+    private String selectedAccuracyZone = PREDICTION_UNKNOWN;
+    private boolean accuracyMeasureEnabled = false;
+    private HashMap<String, Integer> accuracyCounterHMap;
     private boolean smartphoneIsFrozen = false;
     private final Runnable isFrozenRunnable = new Runnable() {
         @Override
@@ -219,6 +224,7 @@ public class AlgoManager implements SensorEventListener {
         this.mHandlerThatchamTimeOut = new Handler();
         this.mLockStatusChangedHandler = new Handler();
         this.mIsFrozenTimeOutHandler = new Handler();
+        this.accuracyCounterHMap = new HashMap<>();
         SensorManager senSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         Sensor senProximity = senSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         Sensor magnetometer = senSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -358,6 +364,18 @@ public class AlgoManager implements SensorEventListener {
             mProtocolManager.setInRemoteParkingArea(true);
         } else {
             mProtocolManager.setInRemoteParkingArea(false);
+        }
+        if (accuracyMeasureEnabled) {
+            if (accuracyCounterHMap.get(lastPrediction) == null) {
+                PSALogs.d("accuracy", "lastPrediction was null");
+                accuracyCounterHMap.put(lastPrediction, 0);
+            }
+            accuracyCounterHMap.put(lastPrediction, accuracyCounterHMap.get(lastPrediction) + 1);
+            for (Map.Entry<String, Integer> entry : accuracyCounterHMap.entrySet()) {
+                String key = entry.getKey();
+                Integer value = entry.getValue();
+                PSALogs.d("accuracy", "key = " + key + ", value = " + value);
+            }
         }
     }
 
@@ -553,5 +571,32 @@ public class AlgoManager implements SensorEventListener {
 
     public void setLastCommandFromTrx(boolean lastCommandFromTrx) {
         this.lastCommandFromTrx = lastCommandFromTrx;
+    }
+
+    public void enableAccuracyMeasure(boolean enable) {
+        accuracyMeasureEnabled = enable;
+    }
+
+    public void setSelectedAccuracyZone(String selectedAccuracyZone) {
+        this.selectedAccuracyZone = selectedAccuracyZone;
+    }
+
+    public void clearAccuracyCounter() {
+        accuracyCounterHMap.clear();
+    }
+
+    public int getSelectedAccuracy() {
+        float total = 0.0f;
+        for (Integer totalCounter : accuracyCounterHMap.values()) {
+            total += totalCounter;
+        }
+        PSALogs.d("accuracy", "final total = " + total);
+        if (accuracyCounterHMap.get(selectedAccuracyZone) != null && total != 0) {
+            PSALogs.d("accuracy", "accuracy = " + (accuracyCounterHMap.get(selectedAccuracyZone) / (1.0 * total)) * 100);
+            return (int) ((accuracyCounterHMap.get(selectedAccuracyZone) / (1.0 * total)) * 100);
+        } else {
+            PSALogs.d("accuracy", "accuracyCounterHMap.get(" + selectedAccuracyZone + ") is null");
+            return 0;
+        }
     }
 }

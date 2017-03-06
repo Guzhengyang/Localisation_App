@@ -50,10 +50,13 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -101,6 +104,7 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RL;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RR;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_THATCHAM;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_WELCOME;
 import static com.valeo.bleranging.BleRangingHelper.RKE_USE_TIMEOUT;
 
@@ -134,6 +138,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private TextView car_start_countdown_min_sec;
     private TextView activity_title;
     private TextView ble_status;
+    private Spinner accuracy_spinner;
+    private Button start_accuracy_measure;
+    private Button stop_accuracy_measure;
+    private TextView accuracy_zone_result;
     private TextView car_door_status;
     private TextView version_number;
     private TextView tips;
@@ -191,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private NotificationManagerCompat notificationManager;
     private boolean predictionColor[][] = new boolean[MAX_ROWS][MAX_COLUMNS];
     private int lastPos = -1;
+    private String selectedAccuracyZone = PREDICTION_UNKNOWN;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         setContentView(R.layout.psa_activity_main);
         setView();
         setRecyclerView();
+        setSpinner();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setFonts();
@@ -443,6 +453,39 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 }
             }
         });
+        start_accuracy_measure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PSALogs.d("accuracy", "start counting");
+                if (!selectedAccuracyZone.equals(PREDICTION_UNKNOWN)) {
+                    accuracy_spinner.setEnabled(false);
+                    start_accuracy_measure.setEnabled(false);
+                    stop_accuracy_measure.setEnabled(true);
+                    mBleRangingHelper.calculateAccuracyFor(selectedAccuracyZone);
+                    accuracy_zone_result.setText("");
+                    accuracy_zone_result.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+        stop_accuracy_measure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PSALogs.d("accuracy", "stop counting");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        stop_accuracy_measure.setEnabled(false);
+                        accuracy_spinner.setEnabled(true);
+                        start_accuracy_measure.setEnabled(true);
+                        accuracy_zone_result.setText(String.format(Locale.FRANCE,
+                                getString(R.string.accuracy_zone_result),
+                                selectedAccuracyZone,
+                                mBleRangingHelper.getCalculatedAccuracy()));
+                        accuracy_zone_result.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        });
     }
 
     private void createNotification(int notifId, String message, int largeIcon, String secondSubText) {
@@ -518,6 +561,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         car_start_countdown_min_sec = (TextView) findViewById(R.id.car_start_countdown_min_sec);
         ble_status = (TextView) findViewById(R.id.ble_status);
         car_door_status = (TextView) findViewById(R.id.car_door_status);
+        accuracy_spinner = (Spinner) findViewById(R.id.accuracy_spinner);
+        start_accuracy_measure = (Button) findViewById(R.id.start_accuracy_measure);
+        stop_accuracy_measure = (Button) findViewById(R.id.stop_accuracy_measure);
+        accuracy_zone_result = (TextView) findViewById(R.id.accuracy_zone_result);
         version_number = (TextView) findViewById(R.id.version_number);
         tips = (TextView) findViewById(R.id.tips);
         nfc_disclaimer = (TextView) findViewById(R.id.nfc_disclaimer);
@@ -647,6 +694,20 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 selected_car_model_pinned.setText(tempCar.getBrandCar());
             }
         }
+    }
+
+    private void setSpinner() {
+        accuracy_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+                selectedAccuracyZone = (String) adapterView.getItemAtPosition(pos);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                selectedAccuracyZone = PREDICTION_UNKNOWN;
+            }
+        });
     }
 
     /**

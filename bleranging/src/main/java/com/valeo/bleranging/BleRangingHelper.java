@@ -967,4 +967,17 @@ public class BleRangingHelper {
         }
         return true;
     }
+
+    public void calculateAccuracyFor(String selectedAccuracyZone) {
+        mAlgoManager.enableAccuracyMeasure(true);
+        mAlgoManager.setSelectedAccuracyZone(selectedAccuracyZone);
+    }
+
+    public Integer getCalculatedAccuracy() {
+        mAlgoManager.enableAccuracyMeasure(false);
+        int result = mAlgoManager.getSelectedAccuracy();
+        mAlgoManager.setSelectedAccuracyZone(PREDICTION_UNKNOWN);
+        mAlgoManager.clearAccuracyCounter();
+        return result;
+    }
 }
