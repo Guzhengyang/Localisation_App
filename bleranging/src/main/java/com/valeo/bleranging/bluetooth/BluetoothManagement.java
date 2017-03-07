@@ -347,9 +347,9 @@ public class BluetoothManagement {
         PSALogs.d("NIH", "send data: " + TextUtils.printBleBytes(data));
         boolean sendSuccess = sendToRemoteControl(data);
         PSALogs.d("NIH", "send rssi: " + TextUtils.printBleBytes(rssi));
-        if (sendSuccess) {
-            sendToRemoteControl(rssi);
-        }
+//        if (sendSuccess) {
+//            sendToRemoteControl(rssi);
+//        }
         sendToPC(concatBytes);
     }
 
