@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.valeo.bleranging.BleRangingHelper;
+import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.util.ArrayList;
@@ -13,12 +14,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import weka.classifiers.functions.Logistic;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.SerializationHelper;
-import weka.core.converters.ConverterUtils;
 
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_EXTERNAL;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.PASSIVE_ENTRY_ORIENTED;
@@ -41,15 +43,16 @@ public class Prediction {
     private int prediction_old = -1;
     private Instance sample;
     private RandomForest rf;
+    private Logistic logistic;
     private String[] classes;
     private Context mContext;
     private boolean arePredictRawFileRead = false;
     private int INDEX_LOCK;
     private boolean isThresholdMethod = false;
 
-    public Prediction(Context context, int classesId, int rfId, int sampleId) {
+    public Prediction(Context context, int modelId) {
         this.mContext = context;
-        new AsyncPredictionInit().execute(classesId, rfId, sampleId);
+        new AsyncPredictionInit().execute(modelId);
     }
 
     public boolean isPredictRawFileRead() {
@@ -63,7 +66,7 @@ public class Prediction {
         this.distribution = new double[classes.length];
 //        find index of lock
         for (int i = 0; i < classes.length; i++) {
-            if (classes[i].endsWith(PREDICTION_LOCK)) {
+            if (classes[i].equalsIgnoreCase(PREDICTION_LOCK) || classes[i].equalsIgnoreCase(PREDICTION_EXTERNAL)) {
                 INDEX_LOCK = i;
                 break;
             }
@@ -144,8 +147,15 @@ public class Prediction {
     public void predict(int nVote) {
         int result = 0;
         try {
-            result = (int) rf.classifyInstance(sample);
-            distribution = rf.distributionForInstance(sample);
+            if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_2_A) ||
+                    SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_2_B) ||
+                    SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_3_A)) {
+                result = (int) logistic.classifyInstance(sample);
+                distribution = logistic.distributionForInstance(sample);
+            } else {
+                result = (int) rf.classifyInstance(sample);
+                distribution = rf.distributionForInstance(sample);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -203,6 +213,15 @@ public class Prediction {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
             if (orientation.equals(THATCHAM_ORIENTED)) {
+                //                when no decision for lock is made, use threshold method
+                if (ifNoDecision2Lock(distribution, threshold_prob_unlock2lock)) {
+                    if (if2Lock(rssi, SdkPreferencesHelper.getInstance().getThresholdLock())) {
+                        prediction_old = INDEX_LOCK;
+                        isThresholdMethod = true;
+                        return;
+                    }
+                }
+                isThresholdMethod = false;
 //                lock --> left, right, front, back
                 if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_LEFT)
                         || comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_RIGHT)
@@ -283,7 +302,8 @@ public class Prediction {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
 //            cover internal space
-            if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_INSIDE)) {
+            if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_INSIDE) ||
+                    comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_INTERNAL)) {
                 prediction_old = temp_prediction;
                 return;
             }
@@ -433,10 +453,16 @@ public class Prediction {
         @Override
         protected Void doInBackground(Integer... elements) {
             try {
-                classes = (String[]) SerializationHelper.read(mContext.getResources().openRawResource(elements[0]));
-                rf = (RandomForest) SerializationHelper.read(mContext.getResources().openRawResource(elements[1]));
-                Instances instances = ConverterUtils.DataSource.read(mContext.getResources().openRawResource(elements[2]));
-                instances.setClassIndex(instances.numAttributes() - 1);
+                Object[] model = (Object[]) SerializationHelper.read(mContext.getResources().openRawResource(elements[0]));
+                if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_2_A) ||
+                        SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_2_B) ||
+                        SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_3_A)) {
+                    logistic = (Logistic) model[0];
+                } else {
+                    rf = (RandomForest) model[0];
+                }
+                classes = (String[]) model[1];
+                Instances instances = (Instances) model[2];
                 sample = instances.instance(0);
                 arePredictRawFileRead = true;
             } catch (Exception e) {

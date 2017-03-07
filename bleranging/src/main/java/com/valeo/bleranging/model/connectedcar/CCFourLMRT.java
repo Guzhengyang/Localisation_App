@@ -24,28 +24,30 @@ public class CCFourLMRT extends ConnectedCar {
     @Override
     public void readPredictionsRawFiles() {
         standardPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_STANDARD);
-        rpPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_RP);
-        earPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_EAR);
+//        rpPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_RP);
+//        earPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_EAR);
     }
 
     @Override
     public void initPredictions() {
         if (isInitialized()) {
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-            rpPrediction.init(rssi, 0);
-            earPrediction.init(rssi, 0);
+//            rpPrediction.init(rssi, 0);
+//            earPrediction.init(rssi, 0);
             standardPrediction.predict(N_VOTE_SHORT);
-            rpPrediction.predict(N_VOTE_VERY_LONG);
-            earPrediction.predict(N_VOTE_LONG);
+//            rpPrediction.predict(N_VOTE_VERY_LONG);
+//            earPrediction.predict(N_VOTE_LONG);
         }
     }
 
     @Override
     public boolean isInitialized() {
-        return standardPrediction != null && earPrediction != null && rpPrediction != null
+        return standardPrediction != null
+//                && earPrediction != null
+//                && rpPrediction != null
                 && standardPrediction.isPredictRawFileRead()
-                && earPrediction.isPredictRawFileRead()
-                && rpPrediction.isPredictRawFileRead()
+//                && earPrediction.isPredictRawFileRead()
+//                && rpPrediction.isPredictRawFileRead()
                 && (checkForRssiNonNull(rssi) != null);
     }
 
@@ -54,12 +56,12 @@ public class CCFourLMRT extends ConnectedCar {
         if (isInitialized()) {
             for (int i = 0; i < rssi.length; i++) {
                 standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard(), lockStatus);
-                earPrediction.setRssi(i, rssi[i], 0, THRESHOLD_DIST_AWAY_EAR, comValid, lockStatus);
-                rpPrediction.setRssi(i, rssi[i], 0, SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard(), lockStatus);
+//                earPrediction.setRssi(i, rssi[i], 0, THRESHOLD_DIST_AWAY_EAR, comValid, lockStatus);
+//                rpPrediction.setRssi(i, rssi[i], 0, SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard(), lockStatus);
             }
             standardPrediction.predict(N_VOTE_SHORT);
-            earPrediction.predict(N_VOTE_LONG);
-            rpPrediction.predict(N_VOTE_VERY_LONG);
+//            earPrediction.predict(N_VOTE_LONG);
+//            rpPrediction.predict(N_VOTE_VERY_LONG);
         }
     }
 
@@ -73,8 +75,8 @@ public class CCFourLMRT extends ConnectedCar {
                 standardPrediction.calculatePredictionStandard(SdkPreferencesHelper.getInstance().getThresholdProbStandard(),
                         THRESHOLD_PROB_LOCK2UNLOCK, THRESHOLD_PROB_UNLOCK2LOCK, PASSIVE_ENTRY_ORIENTED);
             }
-            earPrediction.calculatePredictionEar(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
-            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
+//            earPrediction.calculatePredictionEar(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
+//            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
 
@@ -82,12 +84,6 @@ public class CCFourLMRT extends ConnectedCar {
     public String printDebug(boolean smartphoneIsInPocket) {
         String result = SdkPreferencesHelper.getInstance().getOpeningOrientation() + "\n";
         if (isInitialized()) {
-//            if (SdkPreferencesHelper.getInstance().getComSimulationEnabled() && smartphoneIsInPocket) {
-//                result += earPrediction.printDebug(EAR_HELD_LOC);
-//            } else {
-//                result += standardPrediction.printDebug(STANDARD_LOC);
-//            }
-//            result += rpPrediction.printDebug(RP_LOC);
             return standardPrediction.printDebug(STANDARD_LOC);
         }
         return result;
