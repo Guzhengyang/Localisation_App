@@ -44,7 +44,7 @@ public class CCTwoMT extends ConnectedCar {
         if (isInitialized()) {
             for (int i = 0; i < rssi.length; i++) {
                 standardPrediction.setRssi(i, rssi[i],
-                        SdkPreferencesHelper.getInstance().getOffsetSmartphone() + START_OFFSET, THRESHOLD_DIST_AWAY_SLOW, lockStatus);
+                        SdkPreferencesHelper.getInstance().getOffsetSmartphone(), THRESHOLD_DIST_AWAY_SLOW, lockStatus);
             }
             standardPrediction.predict(N_VOTE_LONG);
         }
