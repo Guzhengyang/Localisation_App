@@ -81,38 +81,28 @@ public class Prediction {
         }
     }
 
-    public void setRssi(int index, double rssi, int offset, double threshold, boolean comValid, boolean lockStatus) {
-        this.rssi_offset[index] = rssi - offset;
-        if (prediction_old != -1) {
-            // trx order : l, m, r, t, fl, fr, rl, rr
-            // Add lock and outside hysteresis to all the trx
-//            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
-//                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
-//                        this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
-//                    rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
-//                }
+//    public void setRssi(int index, double rssi, int offset, double threshold, boolean comValid, boolean lockStatus) {
+//        this.rssi_offset[index] = rssi - offset;
+//        if (prediction_old != -1) {
+//            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
+//                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
+//                rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
 //            }
-
-            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
-                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
-                rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
-            }
-
-            // Add unlock hysteresis to all the trx
-            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
-                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
-                rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
-            }
-
-        }
-        double dist_new = rssi2dist(rssi_offset[index]);
-        if (comValid) {
-            distance[index] = dist_new;
-        } else {
-            distance[index] = correctDistUnilateral(distance[index], dist_new, threshold);
-        }
-        sample.setValue(index, distance[index]);
-    }
+//
+//            // Add unlock hysteresis to all the trx
+//            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
+//                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
+//                rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
+//            }
+//        }
+//        double dist_new = rssi2dist(rssi_offset[index]);
+//        if (comValid) {
+//            distance[index] = dist_new;
+//        } else {
+//            distance[index] = correctDistUnilateral(distance[index], dist_new, threshold);
+//        }
+//        sample.setValue(index, distance[index]);
+//    }
 
     public void setRssi(int index, double rssi, int offset, double threshold, boolean lockStatus) {
         this.rssi_offset[index] = rssi - offset;
@@ -185,10 +175,10 @@ public class Prediction {
 
     private double correctRssiUnilateral(double rssi_old, double rssi_new) {
         double rssi_correted;
-        if (rssi_new < rssi_old) {
+        if (rssi_new > rssi_old) {
             rssi_correted = rssi_new;
         } else {
-            rssi_correted = Math.min(rssi_new - rssi_old, THRESHOLD_RSSI_AWAY) + rssi_old;
+            rssi_correted = rssi_old - Math.min(rssi_old - rssi_new, THRESHOLD_RSSI_AWAY);
         }
         return rssi_correted;
     }
@@ -209,6 +199,7 @@ public class Prediction {
         return distribution[temp_prediction] > threshold_prob;
     }
 
+    //    4, 6, 8 beacons prediction
     public void calculatePredictionStandard(double threshold_prob, double threshold_prob_lock2unlock, double threshold_prob_unlock2lock, String orientation) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
@@ -277,6 +268,7 @@ public class Prediction {
         }
     }
 
+    //    3 beacons prediction
     public void calculatePredictionDefault(double threshold_prob, double threshold_prob_lock) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
@@ -298,6 +290,7 @@ public class Prediction {
 
     }
 
+    //    2 beacons prediction
     public void calculatePredictionStart(double threshold_prob) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
