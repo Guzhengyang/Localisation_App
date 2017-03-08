@@ -16,6 +16,7 @@ public interface BleRangingListener {
 
     void showSnackBar(String message);
 
+    void updateAccuracySpinner();
     void updateBLEStatus();
     void updateCarDoorStatus(boolean lockStatus);
 

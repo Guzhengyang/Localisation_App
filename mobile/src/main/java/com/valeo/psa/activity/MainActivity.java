@@ -51,6 +51,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -139,6 +140,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private TextView activity_title;
     private TextView ble_status;
     private Spinner accuracy_spinner;
+    private List<String> accuracy_spinner_classes;
+    private ArrayAdapter<String> accuracy_spinner_adapter;
     private Button start_accuracy_measure;
     private Button stop_accuracy_measure;
     private TextView accuracy_zone_result;
@@ -697,6 +700,11 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     }
 
     private void setSpinner() {
+        accuracy_spinner_classes = new ArrayList<>();
+        accuracy_spinner_adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, accuracy_spinner_classes);
+        accuracy_spinner_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        accuracy_spinner.setAdapter(accuracy_spinner_adapter);
         accuracy_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
@@ -1368,6 +1376,26 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     @Override
     public void showSnackBar(String message) {
         Snackbar.make(main_scroll, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void updateAccuracySpinner() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (accuracy_spinner != null && accuracy_spinner_classes != null
+                        && accuracy_spinner_adapter != null) {
+                    if (mBleRangingHelper.getStandardClasses() != null) {
+                        accuracy_spinner_classes.clear();
+                        accuracy_spinner_classes.addAll(
+                                Arrays.asList(mBleRangingHelper.getStandardClasses()));
+                        accuracy_spinner_adapter.notifyDataSetChanged();
+                    } else {
+                        PSALogs.e("spinner", "mBleRangingHelper.getStandardClasses is NULL");
+                    }
+                }
+            }
+        });
     }
 
     private void startButtonAnimation(boolean isAnimated) {
