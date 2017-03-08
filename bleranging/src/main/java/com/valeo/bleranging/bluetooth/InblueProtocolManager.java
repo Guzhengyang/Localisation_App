@@ -4,7 +4,6 @@ import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.PSALogs;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ACCESS;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
@@ -313,18 +312,27 @@ public class InblueProtocolManager {
                 return 0x06;
             case PREDICTION_FRONT:
                 return 0x07;
+            case PREDICTION_INTERNAL:
+                return 0x08;
+            case PREDICTION_EXTERNAL:
+                return 0x09;
+            case PREDICTION_ACCESS:
+                return 0x0A;
+            case PREDICTION_INSIDE:
+                return 0x0B;
+            case PREDICTION_OUTSIDE:
+                return 0x0C;
+            case PREDICTION_ROOF:
+                return 0x0D;
             default:
                 return 0x00;
         }
     }
 
-    private byte getPayloadProba(byte classe, double proba) {
-        byte payloadProba = classe;
-        PSALogs.d("dist", "class=" + String.format("%02X ", classe));
-        payloadProba = (byte) (payloadProba << 4);
-        PSALogs.d("dist", "proba=" + proba + " ou " + (byte) (proba * 10));
-        payloadProba |= ((byte) (proba * 10) & 0x0F);
-        PSALogs.d("dist", "payloadProba =" + payloadProba);
-        return payloadProba;
+    private byte getPayloadProba(byte classes, double proba) {
+        byte payloadProb = classes;
+        payloadProb = (byte) (payloadProb << 4);
+        payloadProb |= ((byte) (proba * 10) & 0x0F);
+        return payloadProb;
     }
 }
