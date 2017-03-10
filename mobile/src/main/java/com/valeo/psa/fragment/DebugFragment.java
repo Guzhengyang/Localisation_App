@@ -12,7 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.text.SpannableStringBuilder;
+import android.text.SpannedString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,11 +79,12 @@ public class DebugFragment extends Fragment implements DebugListener {
     private GradientDrawable remote_parking_area;
     private TextView debug_info;
     private boolean predictionColor[][] = new boolean[MAX_ROWS][MAX_COLUMNS];
+    private Bitmap bitmap;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View rootView = inflater.inflate(R.layout.debug_fragment, container, true);
+        View rootView = inflater.inflate(R.layout.debug_fragment, container, false);
         setView(rootView);
         return rootView;
     }
@@ -283,12 +284,12 @@ public class DebugFragment extends Fragment implements DebugListener {
     @Override
     public void applyNewDrawable() {
         signalReceived.setImageDrawable(layerDrawable);
-        chessboard.setBackground(drawChessBoard(1080, 1080));
+//        chessboard.setBackground(drawChessBoard(1080, 1080));
     }
 
     @Override
-    public void printDebugInfo(SpannableStringBuilder spannableStringBuilder) {
-        debug_info.setText(spannableStringBuilder);
+    public void printDebugInfo(final SpannedString spannedString) {
+        debug_info.setText(spannedString);
     }
 
     @Override
@@ -365,7 +366,7 @@ public class DebugFragment extends Fragment implements DebugListener {
         for (boolean[] predictTab : predictionColor) {
             Arrays.fill(predictTab, true);
         }
-        Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
+        bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         int stepX = measuredWidth / MAX_ROWS;
         int stepY = measuredHeight / MAX_COLUMNS;

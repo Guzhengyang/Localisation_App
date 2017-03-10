@@ -12,33 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/car_door_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/vertical_padding"
-            android:gravity="center"
-            android:text="@string/vehicle_locked"
-            android:textColor="@color/black"
-            android:textSize="@dimen/psa_56_px" />
-
-        <include
+        <FrameLayout
             android:id="@+id/door_status_switcher"
-            layout="@layout/rke_fragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/car_door_status" />
+            android:layout_height="wrap_content" />
 
-        <include
+        <FrameLayout
             android:id="@+id/debug_rl"
-            layout="@layout/debug_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/door_status_switcher" />
 
-        <include
+        <FrameLayout
             android:id="@+id/accuracy_rl"
-            layout="@layout/accuracy_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/debug_rl" />
@@ -63,9 +49,8 @@
             android:text="@string/version_number"
             android:textColor="@color/white" />
 
-        <include
+        <FrameLayout
             android:id="@+id/nfc_rl"
-            layout="@layout/nfc_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/version_number" />

@@ -49,6 +49,7 @@ public class Prediction {
     private boolean arePredictRawFileRead = false;
     private int INDEX_LOCK;
     private boolean isThresholdMethod = false;
+    private StringBuilder sb = new StringBuilder();
 
     public Prediction(Context context, int modelId) {
         this.mContext = context;
@@ -57,28 +58,6 @@ public class Prediction {
 
     public boolean isPredictRawFileRead() {
         return arePredictRawFileRead;
-    }
-
-    public void init(double[] rssi, int offset) {
-        this.rssi_offset = new double[rssi.length];
-        this.distance = new double[rssi.length];
-        this.rssi = new double[rssi.length];
-        this.distribution = new double[classes.length];
-//        find index of lock
-        for (int i = 0; i < classes.length; i++) {
-            if (classes[i].equalsIgnoreCase(PREDICTION_LOCK) || classes[i].equalsIgnoreCase(PREDICTION_EXTERNAL)) {
-                INDEX_LOCK = i;
-                break;
-            }
-        }
-        for (int i = 0; i < rssi.length; i++) {
-            this.rssi_offset[i] = rssi[i] - offset;
-//            distance[i] = rssi2dist(this.rssi_offset[i]);
-//            sample.setValue(i, distance[i]);
-            this.rssi[i] = rssi_offset[i];
-            this.distance[i] = rssi2dist(this.rssi[i]);
-            sample.setValue(i, this.rssi[i]);
-        }
     }
 
 //    public void setRssi(int index, double rssi, int offset, double threshold, boolean comValid, boolean lockStatus) {
@@ -103,6 +82,28 @@ public class Prediction {
 //        }
 //        sample.setValue(index, distance[index]);
 //    }
+
+    public void init(double[] rssi, int offset) {
+        this.rssi_offset = new double[rssi.length];
+        this.distance = new double[rssi.length];
+        this.rssi = new double[rssi.length];
+        this.distribution = new double[classes.length];
+//        find index of lock
+        for (int i = 0; i < classes.length; i++) {
+            if (classes[i].equalsIgnoreCase(PREDICTION_LOCK) || classes[i].equalsIgnoreCase(PREDICTION_EXTERNAL)) {
+                INDEX_LOCK = i;
+                break;
+            }
+        }
+        for (int i = 0; i < rssi.length; i++) {
+            this.rssi_offset[i] = rssi[i] - offset;
+//            distance[i] = rssi2dist(this.rssi_offset[i]);
+//            sample.setValue(i, distance[i]);
+            this.rssi[i] = rssi_offset[i];
+            this.distance[i] = rssi2dist(this.rssi[i]);
+            sample.setValue(i, this.rssi[i]);
+        }
+    }
 
     public void setRssi(int index, double rssi, int offset, double threshold, boolean lockStatus) {
         this.rssi_offset[index] = rssi - offset;
@@ -367,7 +368,7 @@ public class Prediction {
     }
 
     public String printDebug(String title) {
-        StringBuilder sb = new StringBuilder();
+        sb.setLength(0);
         if (distance == null) {
             return "";
         } else if (rssi == null) {
@@ -382,7 +383,7 @@ public class Prediction {
             } else {
                 sb.append("Machine Learning\n");
             }
-            sb.append(title).append(" ").append(getPrediction()).append(" ").append(String.format(Locale.FRANCE, "%.2f", distribution[prediction_old])).append("\n");
+            sb.append(String.format(Locale.FRANCE, "%1$s %2$s %3$.2f", title, getPrediction(), distribution[prediction_old])).append("\n");
             for (double arssi : rssi) {
                 sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
             }

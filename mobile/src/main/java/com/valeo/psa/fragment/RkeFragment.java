@@ -55,10 +55,10 @@ public class RkeFragment extends Fragment implements RkeListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View rootView = inflater.inflate(R.layout.rke_fragment, container, true);
+        View rootView = inflater.inflate(R.layout.rke_fragment, container, false);
         setView(rootView);
         setOnClickListeners();
-        final Typeface lightTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/HelveticaNeueLTStd-Lt.otf");
+        final Typeface lightTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "HelveticaNeueLTStd-Lt.otf");
         car_door_status.setTypeface(lightTypeFace, Typeface.NORMAL);
         return rootView;
     }

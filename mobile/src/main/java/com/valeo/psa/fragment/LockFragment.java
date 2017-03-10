@@ -73,7 +73,7 @@ public class LockFragment extends Fragment implements BigButtonView.OnPressListe
      */
     private void init(ViewGroup container) {
         // number password
-        LayoutInflater.from(getContext()).inflate(R.layout.number_blur_lock_view, container, true);
+        LayoutInflater.from(getContext()).inflate(R.layout.number_blur_lock_view, container, false);
 
         BigButtonView[] bigButtonViews = new BigButtonView[10];
         bigButtonViews[0] = (BigButtonView) container.findViewById(R.id.button_0);

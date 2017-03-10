@@ -28,11 +28,10 @@ public class NfcFragment extends Fragment {
     private Typeface lightTypeFace;
     private Typeface boldTypeFace;
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View rootView = inflater.inflate(R.layout.nfc_fragment, container, true);
+        View rootView = inflater.inflate(R.layout.nfc_fragment, container, false);
         setView(rootView);
         return rootView;
     }
@@ -56,8 +55,8 @@ public class NfcFragment extends Fragment {
             nfc_disclaimer.setVisibility(View.VISIBLE);
             nfc_logo.setVisibility(View.VISIBLE);
             try {
-                lightTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/HelveticaNeueLTStd-Lt.otf");
-                boldTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/HelveticaNeueLTStd-Bd.otf");
+                lightTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "HelveticaNeueLTStd-Lt.otf");
+                boldTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "HelveticaNeueLTStd-Bd.otf");
             } catch (Exception e) {
                 PSALogs.e(TAG, "Font not loaded !");
             }

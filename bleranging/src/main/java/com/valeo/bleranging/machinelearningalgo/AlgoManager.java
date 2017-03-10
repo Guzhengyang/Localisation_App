@@ -241,7 +241,8 @@ public class AlgoManager implements SensorEventListener {
         mContext.registerReceiver(mDataReceiver, new IntentFilter(BluetoothLeService.ACTION_DATA_AVAILABLE2));
     }
 
-    public SpannableStringBuilder createDebugData(final ConnectedCar connectedCar, SpannableStringBuilder spannableStringBuilder) {
+    public SpannableStringBuilder createDebugData(final ConnectedCar connectedCar) {
+        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         if (connectedCar != null) {
             spannableStringBuilder.append(connectedCar.printDebug(smartphoneIsInPocket));
             spannableStringBuilder.append(String.format(Locale.FRANCE, "%.3f %.3f %.3f\n", orientation[0], orientation[1], orientation[2]));

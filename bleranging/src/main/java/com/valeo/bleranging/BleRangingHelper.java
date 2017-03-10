@@ -14,7 +14,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
-import android.text.SpannableStringBuilder;
+import android.text.SpannedString;
 
 import com.valeo.bleranging.bluetooth.BluetoothManagement;
 import com.valeo.bleranging.bluetooth.BluetoothManagementListener;
@@ -49,6 +49,7 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_REAR_RIGHT;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_RIGHT;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_TRUNK;
+import static com.valeo.bleranging.utils.LogFileUtils.RSSI_DIR;
 import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
 
 /**
@@ -205,16 +206,15 @@ public class BleRangingHelper {
     private final Runnable printRunner = new Runnable() {
         @Override
         public void run() {
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
             lock.readLock().lock();
-            spannableStringBuilder = connectedCar.createHeaderDebugData(spannableStringBuilder,
-                    bytesToSend, bytesReceived, mBluetoothManager.isFullyConnected());
+            final SpannedString spannedString =
+                    (SpannedString) android.text.TextUtils.concat(
+                            connectedCar.createHeaderDebugData(bytesToSend, bytesReceived,
+                                    mBluetoothManager.isFullyConnected()),
+                            connectedCar.createFirstFooterDebugData(),
+                            mAlgoManager.createDebugData(connectedCar));
             lock.readLock().unlock();
-            spannableStringBuilder = connectedCar.createFirstFooterDebugData(spannableStringBuilder);
-
-            spannableStringBuilder = mAlgoManager.createDebugData(connectedCar, spannableStringBuilder);
-
-            debugListener.printDebugInfo(spannableStringBuilder);
+            debugListener.printDebugInfo(spannedString);
             bleRangingListener.updateBLEStatus();
             mMainHandler.postDelayed(this, 105);
         }
@@ -393,15 +393,16 @@ public class BleRangingHelper {
         }
     };
 
-    public BleRangingHelper(Context context) {
+    public BleRangingHelper(Context context, DebugListener debugListener,
+                            RkeListener rkeListener, SpinnerListener accuracyListener) {
         this.mContext = context;
         askForPermissions();
         setSmartphoneOffset();
         this.mBluetoothManager = new BluetoothManagement(context);
         this.bleRangingListener = (BleRangingListener) context;
-        this.debugListener = (DebugListener) context;
-        this.rkeListener = (RkeListener) context;
-        this.spinnerListener = (SpinnerListener) context;
+        this.debugListener = debugListener;
+        this.rkeListener = rkeListener;
+        this.spinnerListener = accuracyListener;
         this.mProtocolManager = new InblueProtocolManager();
         this.mMainHandler = new Handler(Looper.getMainLooper());
         this.mAlgoManager = new AlgoManager(mContext, bleRangingListener, rkeListener,
@@ -603,7 +604,7 @@ public class BleRangingHelper {
         PSALogs.d("NIH", "closeApp()");
         isCloseAppCalled = true;
         try {
-            if (LogFileUtils.createDir(Environment.getExternalStorageDirectory(), LogFileUtils.RSSI_DIR)) {
+            if (LogFileUtils.createDir(Environment.getExternalStorageDirectory(), RSSI_DIR)) {
                 if (mContext.getExternalCacheDir() != null) {
                     TextUtils.copyFile(mContext.getExternalCacheDir().getAbsolutePath()
                                     + SdkPreferencesHelper.getInstance().getLogFileName(),
@@ -614,6 +615,7 @@ public class BleRangingHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        LogFileUtils.closeBufferedWriter();
         // on settings changes, increase the file number used for logs files name
         SdkPreferencesHelper.getInstance().setRssiLogNumber(SdkPreferencesHelper.getInstance().getRssiLogNumber() + 1);
         mAlgoManager.closeApp();

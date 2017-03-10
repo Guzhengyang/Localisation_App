@@ -20,9 +20,12 @@ public class LogFileUtils {
     public final static String CONFIG_DIR = "/InBlueConfig/";
     private final static String FILENAME_TIMESTAMP_FORMAT = "yyyy-MM-dd_kk";
     private final static String RSSI_TIMESTAMP_FORMAT = "HH:mm:ss:SSS";
-    private final static String LOG_FILE_PREFIX = "/InBlueRssi/allRssi_";
+    private final static SimpleDateFormat sdfRssi = new SimpleDateFormat(RSSI_TIMESTAMP_FORMAT, Locale.FRANCE);
+    private final static SimpleDateFormat sdfFilename = new SimpleDateFormat(FILENAME_TIMESTAMP_FORMAT, Locale.FRANCE);
+    private final static String LOG_FILE_PREFIX = RSSI_DIR + "allRssi_";
     private final static String FILE_EXTENSION = ".csv";
     private static File logFile = null;
+    private static BufferedWriter buf = null;
 
     /**
      * Convert a boolean to a string value
@@ -34,6 +37,26 @@ public class LogFileUtils {
             return "1";
         } else {
             return "0";
+        }
+    }
+
+    public static boolean createBufferedWriter() {
+        try {
+            buf = new BufferedWriter(new FileWriter(logFile, true));
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean closeBufferedWriter() {
+        try {
+            buf.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -216,14 +239,11 @@ public class LogFileUtils {
     private static void appendRssiLog(String text) {
 //        PSALogs.d("log", text);
         try {
-            SimpleDateFormat s = new SimpleDateFormat(RSSI_TIMESTAMP_FORMAT, Locale.FRANCE);
-            String timestamp = s.format(new Date());
+            String timestamp = sdfRssi.format(new Date());
             //BufferedWriter for performance, true to set append to file flag
             if (logFile != null) {
-                BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
                 buf.append(timestamp).append(";").append(text);
                 buf.newLine();
-                buf.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -243,8 +263,7 @@ public class LogFileUtils {
      */
     public static boolean createLogFile(Context mContext) {
         if (createDirectories(mContext)) {
-            SimpleDateFormat sdf = new SimpleDateFormat(FILENAME_TIMESTAMP_FORMAT, Locale.FRANCE);
-            String timestampLog = sdf.format(new Date());
+            String timestampLog = sdfFilename.format(new Date());
             SdkPreferencesHelper.getInstance().setLogFileName(LOG_FILE_PREFIX
                     + SdkPreferencesHelper.getInstance().getRssiLogNumber()
                     + "_" + timestampLog + FILE_EXTENSION);
@@ -285,10 +304,8 @@ public class LogFileUtils {
                 + "preAuthTimeout;actionTimeout;wantedSpeed;stepSize;";
         try {
             if (logFile != null) {
-                BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
                 buf.append(ColNames);
                 buf.newLine();
-                buf.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -320,10 +337,8 @@ public class LogFileUtils {
                 + "BLE CHANNEL REARLEFT;BLE CHANNEL REARRIGHT;BLE CHANNEL BACK;BEEPINT;";
         try {
             if (logFile != null) {
-                BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
                 buf.append(ColNames);
                 buf.newLine();
-                buf.close();
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -152,14 +152,13 @@ public abstract class ConnectedCar {
     /**
      * Create a string of header debug
      *
-     * @param spannableStringBuilder the spannable string builder to fill
      * @param bytesToSend            the bytes to send
      * @param bytesReceived          the bytes received
      * @param isFullyConnected       the boolean that determine if the smartphone is connected or not
      * @return the spannable string builder filled with the header
      */
-    public SpannableStringBuilder createHeaderDebugData(
-            SpannableStringBuilder spannableStringBuilder, final byte[] bytesToSend, final byte[] bytesReceived, boolean isFullyConnected) {
+    public SpannableStringBuilder createHeaderDebugData(final byte[] bytesToSend, final byte[] bytesReceived, boolean isFullyConnected) {
+        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         if (isFullyConnected) {
             if (bytesToSend != null) {
                 spannableStringBuilder.append("       Send:       ").append(TextUtils.printBleBytes((bytesToSend))).append("\n");
@@ -179,14 +178,13 @@ public abstract class ConnectedCar {
     /**
      * Create a string of footer debug
      *
-     * @param spannableStringBuilder the spannable string builder to fill
      * @return the spannable string builder filled with the first footer
      */
-    public SpannableStringBuilder createFirstFooterDebugData(SpannableStringBuilder spannableStringBuilder) {
+    public SpannableStringBuilder createFirstFooterDebugData() {
+        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         for (Trx trx : trxLinkedHMap.values()) {
             spannableStringBuilder.append(String.format(Locale.FRANCE, "%7s",
                     TextUtils.colorText(isActive(trx.getTrxNumber()), trx.getTrxName(), Color.WHITE, Color.DKGRAY)));
-
         }
         spannableStringBuilder.append("\n");
 

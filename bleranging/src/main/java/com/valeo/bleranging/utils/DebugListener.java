@@ -1,6 +1,6 @@
 package com.valeo.bleranging.utils;
 
-import android.text.SpannableStringBuilder;
+import android.text.SpannedString;
 
 /**
  * Created by l-avaratha on 19/07/2016
@@ -12,7 +12,7 @@ public interface DebugListener {
 
     void applyNewDrawable();
 
-    void printDebugInfo(SpannableStringBuilder spannableStringBuilder);
+    void printDebugInfo(final SpannedString spannedString);
 
     void updateCarDrawable(boolean isLocked);
 }

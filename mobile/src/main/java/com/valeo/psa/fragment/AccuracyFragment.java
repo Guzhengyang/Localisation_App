@@ -42,7 +42,7 @@ public class AccuracyFragment extends Fragment implements SpinnerListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View rootView = inflater.inflate(R.layout.accuracy_fragment, container);
+        View rootView = inflater.inflate(R.layout.accuracy_fragment, container, false);
         setView(rootView);
         setOnClickListeners();
         setSpinner();

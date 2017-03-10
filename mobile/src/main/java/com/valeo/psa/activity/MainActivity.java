@@ -30,7 +30,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.SpannableStringBuilder;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
@@ -54,6 +53,8 @@ import com.valeo.bleranging.utils.LogFileUtils;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 import com.valeo.psa.fragment.AccuracyFragment;
+import com.valeo.psa.fragment.DebugFragment;
+import com.valeo.psa.fragment.NfcFragment;
 import com.valeo.psa.fragment.RkeFragment;
 import com.valeo.psa.model.Car;
 import com.valeo.psa.model.ViewModel;
@@ -81,6 +82,11 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 
     private Toolbar toolbar;
     private FrameLayout main_frame;
+    private RkeFragment rkeFragment;
+    private DebugFragment debugFragment;
+    private AccuracyFragment accuracyFragment;
+    private NfcFragment nfcFragment;
+
     private NestedScrollView content_main;
     private CoordinatorLayout main_scroll;
     private AppBarLayout main_appbar;
@@ -119,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         super.onCreate(savedInstanceState);
         setContentView(R.layout.psa_activity_main);
         setView();
+        setFragments();
         setRecyclerView();
 //        setSpinner();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -126,7 +133,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         setFonts();
         setOnClickListeners();
         main_appbar.setExpanded(false, false);
-        this.mBleRangingHelper = new BleRangingHelper(this);
+        this.mBleRangingHelper = new BleRangingHelper(this, debugFragment,
+                rkeFragment, accuracyFragment);
         setVersionNumber();
         notificationManager = NotificationManagerCompat.from(MainActivity.this);
 //        mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
@@ -136,6 +144,19 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 //        }
 //        showAuthenticationScreen();
     }
+
+    private void setFragments() {
+        rkeFragment = new RkeFragment();
+        debugFragment = new DebugFragment();
+        accuracyFragment = new AccuracyFragment();
+        nfcFragment = new NfcFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.door_status_switcher, rkeFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.debug_rl, debugFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.accuracy_rl, accuracyFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.nfc_rl, nfcFragment).commit();
+    }
+
+
 
     private void setVersionNumber() {
         try {
@@ -772,6 +793,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         super.onResume();
         if (mBleRangingHelper != null && !mBleRangingHelper.isCloseAppCalled()) {
             if (LogFileUtils.createLogFile(this)) {
+                LogFileUtils.createBufferedWriter();
                 LogFileUtils.writeFirstColumnSettings();
                 String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
                 LogFileUtils.appendSettingLogs(connectedCarType,
@@ -831,33 +853,5 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     @Override
     public String[] getStandardClasses() {
         return mBleRangingHelper.getStandardClasses();
-    }
-
-    public void lightUpArea(String area) {
-
-    }
-
-    public void darkenArea(String area) {
-
-    }
-
-    public void applyNewDrawable() {
-
-    }
-
-    public void printDebugInfo(SpannableStringBuilder spannableStringBuilder) {
-
-    }
-
-    public void updateCarDrawable(boolean isLocked) {
-
-    }
-
-    public void updateAccuracySpinner() {
-
-    }
-
-    public void updateCarDoorStatus(boolean lockStatus) {
-
     }
 }
