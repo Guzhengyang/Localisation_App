@@ -22,7 +22,6 @@ import com.valeo.bleranging.bluetooth.scanresponse.CentralScanResponse;
 import com.valeo.bleranging.bluetooth.scanresponse.ScanResponseParser;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
-import com.valeo.bleranging.utils.TextUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -341,12 +340,7 @@ public class BluetoothManagement {
         mBluetoothLeService.sendPackets(byteToSend);
         byte[] concatBytes = concatByte(byteToSend, byteReceived);
         byte[] data = concatByte(concatBytes, dist);
-        PSALogs.d("NIH", "send byteToSend: " + TextUtils.printBleBytes(byteToSend));
-        PSALogs.d("NIH", "send byteReceived: " + TextUtils.printBleBytes(byteReceived));
-        PSALogs.d("NIH", "send dist: " + TextUtils.printBleBytes(dist));
-        PSALogs.d("NIH", "send data: " + TextUtils.printBleBytes(data));
         boolean sendSuccess = sendToRemoteControl(data);
-        PSALogs.d("NIH", "send rssi: " + TextUtils.printBleBytes(rssi));
 //        if (sendSuccess) {
 //            sendToRemoteControl(rssi);
 //        }
