@@ -3,31 +3,22 @@ package com.valeo.psa.activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
-import android.nfc.NfcAdapter;
-import android.nfc.NfcManager;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Handler;
 import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
@@ -48,16 +39,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,6 +53,8 @@ import com.valeo.bleranging.utils.BleRangingListener;
 import com.valeo.bleranging.utils.LogFileUtils;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
+import com.valeo.psa.fragment.AccuracyFragment;
+import com.valeo.psa.fragment.RkeFragment;
 import com.valeo.psa.model.Car;
 import com.valeo.psa.model.ViewModel;
 import com.valeo.psa.model.ViewModelId;
@@ -77,132 +63,56 @@ import com.valeo.psa.utils.PreferenceUtils;
 import com.valeo.psa.view.CarListAdapter;
 import com.valeo.psa.view.DividerItemDecoration;
 import com.valeo.psa.view.MyRecyclerAdapter;
-import com.valeo.psa.view.ReverseProgressBar;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ACCESS;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_EXTERNAL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FAR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INSIDE;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INTERNAL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_NEAR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ROOF;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_THATCHAM;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_WELCOME;
-import static com.valeo.bleranging.BleRangingHelper.RKE_USE_TIMEOUT;
-
 public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter.OnStartDragListener,
-        MyRecyclerAdapter.OnIconLongPressedListener, View.OnTouchListener, BleRangingListener {
+        MyRecyclerAdapter.OnIconLongPressedListener, View.OnTouchListener, BleRangingListener,
+        RkeFragment.RkeFragmentActionListener, AccuracyFragment.AccuracyFragmentActionListener {
     private static final String TAG = MainActivity.class.getName();
-    private final static int FIVE_MINUTES_IN_MILLI = 300000;
-    private final static int MINUTE_IN_MILLI = 60000;
-    private final static int SECOND_IN_MILLI = 1000;
     private final static float SCROLL_THRESHOLD = 10;
     private static final int RESULT_SETTINGS = 20;
     private static final int REQUEST_ENABLE_BT = 25117;
     //    private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
     private static final int NOTIFICATION_ID_1 = 1;
-    private static final int MAX_ROWS = 12;
-    private static final int MAX_COLUMNS = 10;
-    private final Handler mHandler = new Handler();
-    private final Paint paintOne = new Paint();
-    private final Paint paintTwo = new Paint();
-    private final Paint paintCar = new Paint();
-    private final Paint paintUnlock = new Paint();
-    private final Paint paintLock = new Paint();
+
     private Toolbar toolbar;
     private FrameLayout main_frame;
     private NestedScrollView content_main;
     private CoordinatorLayout main_scroll;
     private AppBarLayout main_appbar;
-    private ImageView blur_on_touch;
-    private RelativeLayout content_start_car_dialog;
-    private ReverseProgressBar start_car_timeout;
-    private TextView car_start_countdown_min_sec;
-    private TextView activity_title;
-    private TextView ble_status;
-    private Spinner accuracy_spinner;
-    private List<String> accuracy_spinner_classes;
-    private ArrayAdapter<String> accuracy_spinner_adapter;
-    private Button start_accuracy_measure;
-    private Button stop_accuracy_measure;
-    private TextView accuracy_zone_result;
-    private TextView car_door_status;
+
     private TextView version_number;
-    private TextView tips;
-    private TextView nfc_disclaimer;
-    private ImageView nfc_logo;
+
     private RecyclerView control_trunk_windows_lights;
-    private RecyclerView car_model_recyclerView;
-    private TextView selected_car_model_pinned;
-    private TextView rke_loading_progress_bar;
-    private ImageButton vehicle_locked;
-    private ImageButton driver_s_door_unlocked;
-    private ImageButton vehicle_unlocked;
-    private ImageButton start_button;
-    private ImageView chessboard;
-    private ImageView signalReceived;
-    private Animation pulseAnimation;
-    private Animation pulseAnimation2;
-    private ImageView start_button_first_wave;
-    private ImageView start_button_second_wave;
-    private LayerDrawable layerDrawable;
-    private GradientDrawable welcome_area;
-    private GradientDrawable start_area_fl;
-    private GradientDrawable start_area_fr;
-    private GradientDrawable start_area_rl;
-    private GradientDrawable start_area_rr;
-    private GradientDrawable trunk_area;
-    private GradientDrawable lock_area;
-    private GradientDrawable rooftop;
-    private GradientDrawable unlock_area_left;
-    private GradientDrawable unlock_area_right;
-    private GradientDrawable unlock_area_back;
-    private GradientDrawable unlock_area_front;
-    private GradientDrawable thatcham_area;
-    private GradientDrawable remote_parking_area;
-    private DottedProgressBar little_round_progressBar;
-    private TextView debug_info;
-    private ItemTouchHelper ith;
-    private Typeface romanTypeFace;
-    private Typeface lightTypeFace;
-    private Typeface boldTypeFace;
-    private CountDownTimer countDownTimer = null;
-    private int progressMin;
-    private int progressSec;
     private GestureDetectorCompat mDetector;
     private volatile View pressedView;
     private boolean isIconLongPressed = false;
     private float mDownX;
     private float mDownY;
+    private ItemTouchHelper ith;
+    private DottedProgressBar little_round_progressBar;
+    private ImageView blur_on_touch;
+
+    private RecyclerView car_model_recyclerView;
+    private TextView selected_car_model_pinned;
     private CarListAdapter mCarListAdapter = null;
-    private CarDoorStatus carDoorStatus;
+    private Car selectedCar = null;
+    private int lastPos = -1;
+
+    private TextView activity_title;
+    private TextView ble_status;
+
+    private Typeface romanTypeFace;
+    private Typeface lightTypeFace;
+
     private BleRangingHelper mBleRangingHelper;
     private boolean showMenu = true;
     //    private KeyguardManager mKeyguardManager;
-    private Car selectedCar = null;
     private NotificationManagerCompat notificationManager;
-    private boolean predictionColor[][] = new boolean[MAX_ROWS][MAX_COLUMNS];
-    private int lastPos = -1;
-    private String selectedAccuracyZone = PREDICTION_UNKNOWN;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,15 +120,24 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         setContentView(R.layout.psa_activity_main);
         setView();
         setRecyclerView();
-        setSpinner();
+//        setSpinner();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setFonts();
         setOnClickListeners();
         main_appbar.setExpanded(false, false);
-        this.mBleRangingHelper = new BleRangingHelper(this, this);
-        pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.pulse);
-        pulseAnimation2 = AnimationUtils.loadAnimation(this, R.anim.pulse);
+        this.mBleRangingHelper = new BleRangingHelper(this);
+        setVersionNumber();
+        notificationManager = NotificationManagerCompat.from(MainActivity.this);
+//        mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+//        if (!mKeyguardManager.isKeyguardSecure()) {
+//            // Show a message that the user hasn't set up a lock screen.
+//            Toast.makeText(this, getString(R.string.set_security_lock), Toast.LENGTH_LONG).show();
+//        }
+//        showAuthenticationScreen();
+    }
+
+    private void setVersionNumber() {
         try {
             PSALogs.d("version", getPackageName());
             PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -231,20 +150,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        NfcManager manager = (NfcManager) getSystemService(Context.NFC_SERVICE);
-        NfcAdapter adapter = manager.getDefaultAdapter();
-        if (adapter != null && adapter.isEnabled()) {
-            tips.setVisibility(View.VISIBLE);
-            nfc_disclaimer.setVisibility(View.VISIBLE);
-            nfc_logo.setVisibility(View.VISIBLE);
-        }
-        notificationManager = NotificationManagerCompat.from(MainActivity.this);
-//        mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-//        if (!mKeyguardManager.isKeyguardSecure()) {
-//            // Show a message that the user hasn't set up a lock screen.
-//            Toast.makeText(this, getString(R.string.set_security_lock), Toast.LENGTH_LONG).show();
-//        }
-//        showAuthenticationScreen();
     }
 
 //    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -275,22 +180,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                 }
                 startActivityForResult(settingIntent, RESULT_SETTINGS);
                 break;
-//            case R.id.menu_login:
-//                Intent loginIntent = new Intent(this, LoginActivity.class);
-//                startActivityForResult(loginIntent, RESULT_SETTINGS);
-//                break;
-//            case R.id.menu_reconnect_ble:
-//                mBleRangingHelper.connect();
-//                break;
-//            case R.id.menu_reconnect_ble_pc:
-//                mBleRangingHelper.connectToPC();
-//                break;
-//            case R.id.menu_reconnect_ble_remote_control:
-//                mBleRangingHelper.connectToRemoteControl();
-//                break;
-//            case R.id.menu_relaunch_ble_scan:
-//                mBleRangingHelper.relaunchScan();
-//                break;
         }
         return true;
     }
@@ -348,35 +237,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      * Set OnClickListeners
      */
     private void setOnClickListeners() {
-        start_button.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (carDoorStatus != null && carDoorStatus == CarDoorStatus.UNLOCKED) {
-                    if (countDownTimer == null) { // prevent from launching two countDownTimer
-                        // Change toolbar to start car mode
-                        switchToolbarStartCar(true);
-                        /** CountDownTimer starts with 5 minutes and every onTick is 1 second */
-                        countDownTimer = new CountDownTimer(FIVE_MINUTES_IN_MILLI, SECOND_IN_MILLI) {
-                            public void onTick(long millisUntilFinished) {
-                                int timePassed = (int) (millisUntilFinished / SECOND_IN_MILLI);
-                                updateStartCarTimeoutBar(timePassed);
-                                progressMin = (int) (millisUntilFinished / MINUTE_IN_MILLI);
-                                progressSec = timePassed % 60; // ignore minutes
-                                updateStartCarTimeout(progressMin, progressSec);
-                            }
-
-                            public void onFinish() {
-                                // If time up, return to Remote Key Activity
-                                // Change toolbar to normal mode
-                                switchToolbarStartCar(false);
-                                countDownTimer = null;
-                            }
-                        }.start();
-                    }
-                }
-                return false;
-            }
-        });
         mDetector = new GestureDetectorCompat(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public void onLongPress(MotionEvent e) {
@@ -388,105 +248,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     mDownY = e.getY();
                 }
                 super.onLongPress(e);
-            }
-        });
-        vehicle_locked.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mBleRangingHelper.isRKEButtonClickable()) {
-                    rke_loading_progress_bar.setVisibility(View.VISIBLE);
-                    carDoorStatus = CarDoorStatus.LOCKED;
-                    vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
-                    driver_s_door_unlocked.setBackgroundResource(0);
-                    vehicle_unlocked.setBackgroundResource(0);
-                    startButtonAnimation(false);
-                    PSALogs.d("performLock", "RKE LOCK");
-                    mBleRangingHelper.performRKELockAction(true); //lockVehicle
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            rke_loading_progress_bar.setVisibility(View.GONE);
-                        }
-                    }, RKE_USE_TIMEOUT);
-                }
-            }
-        });
-        driver_s_door_unlocked.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mBleRangingHelper.isRKEButtonClickable()) {
-                    rke_loading_progress_bar.setVisibility(View.VISIBLE);
-                    carDoorStatus = CarDoorStatus.DRIVER_DOOR_OPEN;
-                    driver_s_door_unlocked.setBackgroundResource(R.mipmap.slider_button);
-                    vehicle_locked.setBackgroundResource(0);
-                    vehicle_unlocked.setBackgroundResource(0);
-                    start_button.setBackgroundResource(0);
-                    startButtonAnimation(false);
-                    PSALogs.d("performLock", "RKE UNLOCK 1");
-                    mBleRangingHelper.performRKELockAction(false); //unlockVehicle
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            rke_loading_progress_bar.setVisibility(View.GONE);
-                        }
-                    }, RKE_USE_TIMEOUT);
-                }
-            }
-        });
-        vehicle_unlocked.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mBleRangingHelper.isRKEButtonClickable()) {
-                    rke_loading_progress_bar.setVisibility(View.VISIBLE);
-                    carDoorStatus = CarDoorStatus.UNLOCKED;
-                    vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
-                    driver_s_door_unlocked.setBackgroundResource(0);
-                    vehicle_locked.setBackgroundResource(0);
-                    startButtonAnimation(true);
-                    PSALogs.d("performLock", "RKE UNLOCK 2");
-                    mBleRangingHelper.performRKELockAction(false); //unlockVehicle
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            rke_loading_progress_bar.setVisibility(View.GONE);
-                        }
-                    }, RKE_USE_TIMEOUT);
-                    createNotification(NOTIFICATION_ID_1, getString(R.string.notif_unlock_it),
-                            R.mipmap.car_all_doors_button, getString(R.string.vehicle_unlocked));
-                }
-            }
-        });
-        start_accuracy_measure.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PSALogs.d("accuracy", "start counting");
-                if (!selectedAccuracyZone.equals(PREDICTION_UNKNOWN)) {
-                    accuracy_spinner.setEnabled(false);
-                    start_accuracy_measure.setEnabled(false);
-                    stop_accuracy_measure.setEnabled(true);
-                    mBleRangingHelper.calculateAccuracyFor(selectedAccuracyZone);
-                    accuracy_zone_result.setText("");
-                    accuracy_zone_result.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-        stop_accuracy_measure.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PSALogs.d("accuracy", "stop counting");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        stop_accuracy_measure.setEnabled(false);
-                        accuracy_spinner.setEnabled(true);
-                        start_accuracy_measure.setEnabled(true);
-                        accuracy_zone_result.setText(String.format(Locale.FRANCE,
-                                getString(R.string.accuracy_zone_result),
-                                selectedAccuracyZone,
-                                mBleRangingHelper.getCalculatedAccuracy()));
-                        accuracy_zone_result.setVisibility(View.VISIBLE);
-                    }
-                });
             }
         });
     }
@@ -522,33 +283,22 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         try {
             romanTypeFace = Typeface.createFromAsset(getAssets(), "fonts/HelveticaNeueLTStd-Ex.otf");
             lightTypeFace = Typeface.createFromAsset(getAssets(), "fonts/HelveticaNeueLTStd-Lt.otf");
-            boldTypeFace = Typeface.createFromAsset(getAssets(), "fonts/HelveticaNeueLTStd-Bd.otf");
         } catch (Exception e) {
             PSALogs.e(TAG, "Font not loaded !");
         }
         activity_title = (TextView) toolbar.findViewById(R.id.activity_title);
+        activity_title.setTypeface(lightTypeFace, Typeface.NORMAL);
+        activity_title.setGravity(Gravity.CENTER);
         final TextView unlock_trunk_title = (TextView) toolbar.findViewById(R.id.unlock_trunk_title);
         final TextView lock_trunk_title = (TextView) toolbar.findViewById(R.id.lock_trunk_title);
         final TextView close_all_windows_title = (TextView) toolbar.findViewById(R.id.close_all_windows_title);
-        activity_title.setTypeface(lightTypeFace, Typeface.NORMAL);
         unlock_trunk_title.setTypeface(lightTypeFace, Typeface.NORMAL);
         lock_trunk_title.setTypeface(lightTypeFace, Typeface.NORMAL);
         close_all_windows_title.setTypeface(lightTypeFace, Typeface.NORMAL);
-        activity_title.setGravity(Gravity.CENTER);
         ble_status.setTypeface(romanTypeFace, Typeface.NORMAL);
-        car_door_status.setTypeface(lightTypeFace, Typeface.NORMAL);
-        tips.setTypeface(boldTypeFace, Typeface.BOLD);
-        nfc_disclaimer.setTypeface(lightTypeFace, Typeface.NORMAL);
     }
 
-    private void setPaint() {
-        paintOne.setColor(Color.LTGRAY);
-        paintTwo.setColor(Color.BLACK);
-        paintTwo.setStyle(Paint.Style.STROKE); // print border
-        paintCar.setColor(Color.DKGRAY);
-        paintUnlock.setColor(Color.GREEN);
-        paintLock.setColor(Color.RED);
-    }
+
 
     /**
      * Find all view by their id
@@ -559,36 +309,37 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         main_scroll = (CoordinatorLayout) findViewById(R.id.main_scroll);
         main_appbar = (AppBarLayout) findViewById(R.id.main_appbar);
         blur_on_touch = (ImageView) findViewById(R.id.blur_on_touch);
-        content_start_car_dialog = (RelativeLayout) findViewById(R.id.content_start_car_dialog);
-        start_car_timeout = (ReverseProgressBar) findViewById(R.id.start_car_timeout);
-        car_start_countdown_min_sec = (TextView) findViewById(R.id.car_start_countdown_min_sec);
+
         ble_status = (TextView) findViewById(R.id.ble_status);
-        car_door_status = (TextView) findViewById(R.id.car_door_status);
-        accuracy_spinner = (Spinner) findViewById(R.id.accuracy_spinner);
-        start_accuracy_measure = (Button) findViewById(R.id.start_accuracy_measure);
-        stop_accuracy_measure = (Button) findViewById(R.id.stop_accuracy_measure);
-        accuracy_zone_result = (TextView) findViewById(R.id.accuracy_zone_result);
+//        accuracy_spinner = (Spinner) findViewById(accuracy_spinner);
+//        start_accuracy_measure = (Button) findViewById(R.id.start_accuracy_measure);
+//        stop_accuracy_measure = (Button) findViewById(R.id.stop_accuracy_measure);
+//        accuracy_zone_result = (TextView) findViewById(R.id.accuracy_zone_result);
         version_number = (TextView) findViewById(R.id.version_number);
-        tips = (TextView) findViewById(R.id.tips);
-        nfc_disclaimer = (TextView) findViewById(R.id.nfc_disclaimer);
-        nfc_logo = (ImageView) findViewById(R.id.nfc_logo);
+//        tips = (TextView) findViewById(R.id.tips);
+//        nfc_disclaimer = (TextView) findViewById(R.id.nfc_disclaimer);
+//        nfc_logo = (ImageView) findViewById(R.id.nfc_logo);
         control_trunk_windows_lights = (RecyclerView) findViewById(R.id.control_trunk_windows_lights);
         car_model_recyclerView = (RecyclerView) findViewById(R.id.car_model_recyclerView);
         selected_car_model_pinned = (TextView) findViewById(R.id.selected_car_model_pinned);
-        rke_loading_progress_bar = (TextView) findViewById(R.id.rke_loading_progress_bar);
-        vehicle_locked = (ImageButton) findViewById(R.id.vehicle_locked);
-        driver_s_door_unlocked = (ImageButton) findViewById(R.id.driver_s_door_unlocked);
-        vehicle_unlocked = (ImageButton) findViewById(R.id.vehicle_unlocked);
-        start_button = (ImageButton) findViewById(R.id.start_button);
-        start_button_first_wave = (ImageView) findViewById(R.id.start_button_first_wave);
-        start_button_second_wave = (ImageView) findViewById(R.id.start_button_second_wave);
-        chessboard = (ImageView) findViewById(R.id.chessboard);
-        signalReceived = (ImageView) findViewById(R.id.signalReceived);
-        setPaint();
-        updateCarDrawable();
-        applyNewDrawable();
+
+
+//        updateCarDrawable();
+//        applyNewDrawable();
         little_round_progressBar = (DottedProgressBar) findViewById(R.id.little_round_progressBar);
-        debug_info = (TextView) findViewById(R.id.debug_info);
+    }
+
+    public void showHideFragment(final Fragment fragment) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        if (fragment.isHidden()) {
+            ft.show(fragment);
+            PSALogs.d("hidden", "Show");
+        } else {
+            ft.hide(fragment);
+            PSALogs.d("Shown", "Hide");
+        }
+        ft.commit();
     }
 
     /**
@@ -699,25 +450,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         }
     }
 
-    private void setSpinner() {
-        accuracy_spinner_classes = new ArrayList<>();
-        accuracy_spinner_adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, accuracy_spinner_classes);
-        accuracy_spinner_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        accuracy_spinner.setAdapter(accuracy_spinner_adapter);
-        accuracy_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
-                selectedAccuracyZone = (String) adapterView.getItemAtPosition(pos);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                selectedAccuracyZone = PREDICTION_UNKNOWN;
-            }
-        });
-    }
-
     /**
      * Create an list of Car
      *
@@ -747,82 +479,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         ith.startDrag(viewHolder);
-    }
-
-    /**
-     * Set the progress on the ProgressBar
-     *
-     * @param timeout the progress value
-     */
-    private void updateStartCarTimeoutBar(int timeout) {
-        start_car_timeout.setProgress(timeout);
-    }
-
-    /**
-     * Set the current remaining progress time in minutes and seconds
-     *
-     * @param progressMin the progress remaining minutes
-     * @param progressSec the progress remaining seconds
-     */
-    private void updateStartCarTimeout(int progressMin, int progressSec) {
-        car_start_countdown_min_sec.setText(String.format(
-                getString(R.string.car_start_countdown_min_sec),
-                progressMin, progressSec));
-    }
-
-    /**
-     * Switch between toolbar's (normal and start car mode)
-     *
-     * @param mainToStart boolean to determine which toolbar to inflate
-     */
-    private void switchToolbarStartCar(boolean mainToStart) {
-        if (mainToStart) {
-            content_start_car_dialog.setVisibility(View.VISIBLE);
-            ble_status.setVisibility(View.GONE);
-            activity_title.setText(R.string.cancel_start_car);
-            activity_title.setGravity(Gravity.CENTER_VERTICAL);
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) activity_title.getLayoutParams();
-            layoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.main_icon);
-            layoutParams.width = RelativeLayout.LayoutParams.WRAP_CONTENT;
-            activity_title.setLayoutParams(layoutParams);
-            activity_title.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    switchToolbarStartCar(false);
-                    if (countDownTimer != null) {
-                        countDownTimer.cancel();
-                        countDownTimer = null;
-                    }
-                }
-            });
-        } else {
-            content_start_car_dialog.setVisibility(View.GONE);
-            ble_status.setVisibility(View.VISIBLE);
-            setActivityTitle();
-            activity_title.setGravity(Gravity.CENTER);
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) activity_title.getLayoutParams();
-            layoutParams.addRule(RelativeLayout.RIGHT_OF, 0);
-            layoutParams.width = RelativeLayout.LayoutParams.MATCH_PARENT;
-            activity_title.setLayoutParams(layoutParams);
-            activity_title.setOnClickListener(null);
-        }
-    }
-
-    private void setActivityTitle() {
-        switch (SdkPreferencesHelper.getInstance().getConnectedCarBase()) {
-            case ConnectedCarFactory.BASE_1:
-                activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.psu), getString(R.string.psu)));
-                break;
-            case ConnectedCarFactory.BASE_2:
-                activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.wal), getString(R.string.psu)));
-                break;
-            case ConnectedCarFactory.BASE_3:
-                activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.wal), getString(R.string.uir)));
-                break;
-            case ConnectedCarFactory.BASE_4:
-                activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.psu), getString(R.string.uir)));
-                break;
-        }
     }
 
     /**
@@ -864,6 +520,55 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             toolbar.setLayoutParams(layoutParams);
             toolbar.findViewById(R.id.main_toolbar).setVisibility(View.VISIBLE);
             blurActivity(false);
+        }
+    }
+
+    /**
+     * Switch between toolbar's (normal and start car mode)
+     *
+     * @param mainToStart boolean to determine which toolbar to inflate
+     */
+    @Override
+    public void switchToolbarStartCar(boolean mainToStart) {
+        if (mainToStart) {
+            activity_title.setText(R.string.cancel_start_car);
+            activity_title.setGravity(Gravity.CENTER_VERTICAL);
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) activity_title.getLayoutParams();
+            layoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.main_icon);
+            layoutParams.width = RelativeLayout.LayoutParams.WRAP_CONTENT;
+            activity_title.setLayoutParams(layoutParams);
+            activity_title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switchToolbarStartCar(false);
+//                    rkeFragment.cancelCountDownTimer();
+                }
+            });
+        } else {
+            setActivityTitle();
+            activity_title.setGravity(Gravity.CENTER);
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) activity_title.getLayoutParams();
+            layoutParams.addRule(RelativeLayout.RIGHT_OF, 0);
+            layoutParams.width = RelativeLayout.LayoutParams.MATCH_PARENT;
+            activity_title.setLayoutParams(layoutParams);
+            activity_title.setOnClickListener(null);
+        }
+    }
+
+    private void setActivityTitle() {
+        switch (SdkPreferencesHelper.getInstance().getConnectedCarBase()) {
+            case ConnectedCarFactory.BASE_1:
+                activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.psu), getString(R.string.psu)));
+                break;
+            case ConnectedCarFactory.BASE_2:
+                activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.wal), getString(R.string.psu)));
+                break;
+            case ConnectedCarFactory.BASE_3:
+                activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.wal), getString(R.string.uir)));
+                break;
+            case ConnectedCarFactory.BASE_4:
+                activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.psu), getString(R.string.uir)));
+                break;
         }
     }
 
@@ -999,182 +704,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         return true;
     }
 
-    @Override
-    public void lightUpArea(String area) {
-        switch (area) {
-            case PREDICTION_WELCOME:
-                welcome_area.setColor(Color.WHITE);
-                break;
-            case PREDICTION_EXTERNAL:
-            case PREDICTION_LOCK:
-                lock_area.setColor(Color.RED);
-                break;
-            case PREDICTION_ROOF:
-                rooftop.setStroke(7, Color.RED);
-                break;
-            case PREDICTION_ACCESS:
-                unlock_area_left.setColor(Color.GREEN);
-                unlock_area_right.setColor(Color.GREEN);
-                unlock_area_front.setColor(Color.GREEN);
-                unlock_area_back.setColor(Color.GREEN);
-                break;
-            case PREDICTION_LEFT:
-                unlock_area_left.setColor(Color.GREEN);
-                break;
-            case PREDICTION_RIGHT:
-                unlock_area_right.setColor(Color.GREEN);
-                break;
-            case PREDICTION_FRONT:
-                unlock_area_front.setColor(Color.GREEN);
-                break;
-            case PREDICTION_BACK:
-                unlock_area_back.setColor(Color.GREEN);
-                break;
-            case PREDICTION_INTERNAL:
-                start_area_fl.setColor(Color.CYAN);
-                start_area_fr.setColor(Color.CYAN);
-                start_area_rl.setColor(Color.CYAN);
-                start_area_rr.setColor(Color.CYAN);
-                if (trunk_area != null) {
-                    trunk_area.setColor(Color.CYAN);
-                }
-                break;
-            case PREDICTION_START:
-                start_area_fl.setColor(Color.CYAN);
-                start_area_fr.setColor(Color.CYAN);
-                start_area_rl.setColor(Color.CYAN);
-                start_area_rr.setColor(Color.CYAN);
-                break;
-            case PREDICTION_START_FL:
-                start_area_fl.setColor(Color.CYAN);
-                break;
-            case PREDICTION_START_FR:
-                start_area_fr.setColor(Color.CYAN);
-                break;
-            case PREDICTION_START_RL:
-                start_area_rl.setColor(Color.CYAN);
-                break;
-            case PREDICTION_START_RR:
-                start_area_rr.setColor(Color.CYAN);
-                break;
-            case PREDICTION_TRUNK:
-                if (trunk_area != null) {
-                    trunk_area.setColor(Color.MAGENTA);
-                }
-                break;
-            case PREDICTION_THATCHAM:
-                thatcham_area.setColor(Color.YELLOW);
-                break;
-            case PREDICTION_NEAR:
-                remote_parking_area.setColor(Color.CYAN);
-                break;
-            case PREDICTION_FAR:
-                remote_parking_area.setColor(Color.RED);
-                break;
-            case PREDICTION_INSIDE:
-                start_area_fl.setColor(Color.CYAN);
-                start_area_fr.setColor(Color.CYAN);
-                start_area_rl.setColor(Color.CYAN);
-                start_area_rr.setColor(Color.CYAN);
-                if (trunk_area != null) {
-                    trunk_area.setColor(Color.CYAN);
-                }
-                break;
-            case PREDICTION_OUTSIDE:
-                lock_area.setColor(Color.RED);
-                remote_parking_area.setColor(Color.RED);
-                thatcham_area.setColor(Color.RED);
-                unlock_area_left.setColor(Color.RED);
-                unlock_area_back.setColor(Color.RED);
-                unlock_area_right.setColor(Color.RED);
-                unlock_area_front.setColor(Color.RED);
-                break;
-        }
-    }
-
-    @Override
-    public void darkenArea(String area) {
-        switch (area) {
-            case PREDICTION_WELCOME:
-                welcome_area.setColor(Color.BLACK);
-                break;
-            case PREDICTION_EXTERNAL:
-            case PREDICTION_LOCK:
-                lock_area.setColor(Color.BLACK);
-                break;
-            case PREDICTION_ROOF:
-                rooftop.setStroke(0, Color.TRANSPARENT);
-                break;
-            case PREDICTION_ACCESS:
-                unlock_area_left.setColor(Color.BLACK);
-                unlock_area_right.setColor(Color.BLACK);
-                unlock_area_front.setColor(Color.BLACK);
-                unlock_area_back.setColor(Color.BLACK);
-                break;
-            case PREDICTION_LEFT:
-                unlock_area_left.setColor(Color.BLACK);
-                break;
-            case PREDICTION_RIGHT:
-                unlock_area_right.setColor(Color.BLACK);
-                break;
-            case PREDICTION_FRONT:
-                unlock_area_front.setColor(Color.BLACK);
-                break;
-            case PREDICTION_BACK:
-                unlock_area_back.setColor(Color.BLACK);
-                break;
-            case PREDICTION_INTERNAL:
-                start_area_fl.setColor(Color.BLACK);
-                start_area_fr.setColor(Color.BLACK);
-                start_area_rl.setColor(Color.BLACK);
-                start_area_rr.setColor(Color.BLACK);
-                if (trunk_area != null) {
-                    trunk_area.setColor(Color.BLACK);
-                }
-                break;
-            case PREDICTION_START:
-                start_area_fl.setColor(Color.BLACK);
-                start_area_fr.setColor(Color.BLACK);
-                start_area_rl.setColor(Color.BLACK);
-                start_area_rr.setColor(Color.BLACK);
-                break;
-            case PREDICTION_START_FL:
-                start_area_fl.setColor(Color.BLACK);
-                break;
-            case PREDICTION_START_FR:
-                start_area_fr.setColor(Color.BLACK);
-                break;
-            case PREDICTION_START_RL:
-                start_area_rl.setColor(Color.BLACK);
-                break;
-            case PREDICTION_START_RR:
-                start_area_rr.setColor(Color.BLACK);
-                break;
-            case PREDICTION_TRUNK:
-                if (trunk_area != null) {
-                    trunk_area.setColor(Color.BLACK);
-                }
-                break;
-            case PREDICTION_THATCHAM:
-                thatcham_area.setColor(Color.BLACK);
-                break;
-            case PREDICTION_NEAR:
-            case PREDICTION_FAR:
-                remote_parking_area.setColor(Color.BLACK);
-                break;
-        }
-    }
-
-    @Override
-    public void applyNewDrawable() {
-        signalReceived.setImageDrawable(layerDrawable);
-        chessboard.setBackground(drawChessBoard(1080, 1080));
-    }
-
-    @Override
-    public void printDebugInfo(SpannableStringBuilder spannableStringBuilder) {
-        debug_info.setText(spannableStringBuilder);
-    }
 
     @Override
     public void updateBLEStatus() {
@@ -1185,170 +714,14 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                     ble_status.setText(R.string.connected_over_ble);
                 } else {
                     ble_status.setText(R.string.not_connected_over_ble);
-                    vehicle_locked.setBackgroundResource(0);
-                    driver_s_door_unlocked.setBackgroundResource(0);
-                    vehicle_unlocked.setBackgroundResource(0);
-                    startButtonAnimation(false);
+
+//                    vehicle_locked.setBackgroundResource(0);
+//                    driver_s_door_unlocked.setBackgroundResource(0);
+//                    vehicle_unlocked.setBackgroundResource(0);
+//                    startButtonAnimation(false);
                 }
             }
         });
-    }
-
-    @Override
-    public void updateCarDoorStatus(boolean lockStatus) {
-        if (lockStatus) {
-            PSALogs.d("NIH rearm", "update lock");
-            car_door_status.setText(getString(R.string.vehicle_locked));
-            carDoorStatus = CarDoorStatus.LOCKED;
-            vehicle_locked.setBackgroundResource(R.mipmap.slider_button);
-            driver_s_door_unlocked.setBackgroundResource(0);
-            vehicle_unlocked.setBackgroundResource(0);
-            startButtonAnimation(false);
-        } else {
-            PSALogs.d("NIH rearm", "update unlock");
-            car_door_status.setText(getString(R.string.vehicle_unlocked));
-            carDoorStatus = CarDoorStatus.UNLOCKED;
-            vehicle_unlocked.setBackgroundResource(R.mipmap.slider_button);
-            driver_s_door_unlocked.setBackgroundResource(0);
-            vehicle_locked.setBackgroundResource(0);
-            // animation waves start_button
-            startButtonAnimation(true);
-        }
-        updateCarDrawable();
-    }
-
-    @Override
-    public void updateCarDrawable() {
-        layerDrawable = (LayerDrawable) ContextCompat.getDrawable(this, R.drawable.rssi_localization);
-        Drawable carDrawable;
-        switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
-            case ConnectedCarFactory.TYPE_2_A:
-                if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_2_a_close);
-                } else {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_2_a_open);
-                }
-                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                break;
-            case ConnectedCarFactory.TYPE_2_B:
-                if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_2_b_close);
-                } else {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_2_b_open);
-                }
-                trunk_area = null;
-                break;
-            case ConnectedCarFactory.TYPE_3_A:
-                if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_3_a_close);
-                } else {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_3_a_open);
-                }
-                trunk_area = null;
-                break;
-            case ConnectedCarFactory.TYPE_4_A:
-                if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_4_a_close);
-                } else {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_4_a_open);
-                }
-                trunk_area = null;
-                break;
-            case ConnectedCarFactory.TYPE_4_B:
-                if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_4_b_close);
-                } else {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_4_b_open);
-                }
-                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                break;
-            case ConnectedCarFactory.TYPE_5_A:
-                if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_5_close);
-                } else {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_5_open);
-                }
-                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                break;
-            case ConnectedCarFactory.TYPE_6_A:
-                if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_6_close);
-                } else {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_6_open);
-                }
-                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                break;
-            case ConnectedCarFactory.TYPE_7_A:
-                if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_7_close);
-                } else {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_7_open);
-                }
-                trunk_area = null;
-                break;
-            case ConnectedCarFactory.TYPE_8_A:
-                if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_8_close);
-                } else {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_8_open);
-                }
-                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                break;
-            default:
-                if (carDoorStatus == CarDoorStatus.LOCKED) {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_8_close);
-                } else {
-                    carDrawable = ContextCompat.getDrawable(this, R.drawable.car_8_open);
-                }
-                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                break;
-        }
-        welcome_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.welcome_area);
-        start_area_fl = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_fl);
-        start_area_fr = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_fr);
-        start_area_rl = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_rl);
-        start_area_rr = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_rr);
-        lock_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.lock_area);
-        rooftop = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.rooftop);
-        unlock_area_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_left);
-        unlock_area_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_right);
-        unlock_area_back = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_back);
-        unlock_area_front = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front);
-        thatcham_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.thatcham_area);
-        remote_parking_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.remote_parking_area);
-        layerDrawable.setDrawableByLayerId(R.id.car_drawable, carDrawable);
-    }
-
-    private BitmapDrawable drawChessBoard(final int measuredWidth, final int measuredHeight) {
-        for (boolean[] predictTab : predictionColor) {
-            Arrays.fill(predictTab, true);
-        }
-        Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        int stepX = measuredWidth / MAX_ROWS;
-        int stepY = measuredHeight / MAX_COLUMNS;
-        PSALogs.e("chess", "stepX " + stepX + " measuredWidth " + measuredWidth);
-        PSALogs.e("chess", "stepY " + stepY + " measuredHeight " + measuredHeight);
-        for (int width = 0, x = 0; width < measuredWidth && x < MAX_ROWS; width += stepX, x++) {
-            for (int height = 0, y = 0; height < measuredHeight && y < MAX_COLUMNS; height += stepY, y++) {
-                if ((y == 4 || y == 5) && (x == 4 || x == 5 || x == 6 || x == 7)) { // paint Car tiles
-                    canvas.drawRect(width, height, width + stepX, height + stepY, paintCar);
-                } else if (predictionColor[x][y]) { // paint phone position tiles in unlock or lock zone
-                    if (((y == 2 || y == 3 || y == 6 || y == 7) && (x == 2 || x == 3 || x == 4 || x == 5 || x == 6 || x == 7 || x == 8 || x == 9))
-                            || ((y == 4 || y == 5) && (x == 2 || x == 3 || x == 8 || x == 9))) {
-                        canvas.drawRect(width, height, width + stepX, height + stepY, paintUnlock);
-                        canvas.drawRect(width, height, width + stepX, height + stepY, paintTwo);
-                    } else {
-                        canvas.drawRect(width, height, width + stepX, height + stepY, paintLock);
-                        canvas.drawRect(width, height, width + stepX, height + stepY, paintTwo);
-                    }
-                } else { // paint unoccupied zones tiles
-                    canvas.drawRect(width, height, width + stepX, height + stepY, paintOne);
-                    canvas.drawRect(width, height, width + stepX, height + stepY, paintTwo);
-                }
-            }
-        }
-        return new BitmapDrawable(getResources(), bitmap);
     }
 
     @Override
@@ -1376,40 +749,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     @Override
     public void showSnackBar(String message) {
         Snackbar.make(main_scroll, message, Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void updateAccuracySpinner() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (accuracy_spinner != null && accuracy_spinner_classes != null
-                        && accuracy_spinner_adapter != null) {
-                    if (mBleRangingHelper.getStandardClasses() != null) {
-                        accuracy_spinner_classes.clear();
-                        accuracy_spinner_classes.addAll(
-                                Arrays.asList(mBleRangingHelper.getStandardClasses()));
-                        accuracy_spinner_adapter.notifyDataSetChanged();
-                    } else {
-                        PSALogs.e("spinner", "mBleRangingHelper.getStandardClasses is NULL");
-                    }
-                }
-            }
-        });
-    }
-
-    private void startButtonAnimation(boolean isAnimated) {
-        if (isAnimated) {
-            start_button_first_wave.setVisibility(View.VISIBLE);
-            start_button_second_wave.setVisibility(View.VISIBLE);
-            start_button_first_wave.setAnimation(pulseAnimation);
-            start_button_second_wave.setAnimation(pulseAnimation2);
-        } else {
-            start_button_first_wave.setVisibility(View.INVISIBLE);
-            start_button_second_wave.setVisibility(View.INVISIBLE);
-            start_button_first_wave.setAnimation(null);
-            start_button_second_wave.setAnimation(null);
-        }
     }
 
     @Override
@@ -1455,7 +794,70 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         setActivityTitle();
     }
 
-    private enum CarDoorStatus {
-        LOCKED, DRIVER_DOOR_OPEN, UNLOCKED
+    @Override
+    public boolean isRKEButtonClickable() {
+        return mBleRangingHelper.isRKEButtonClickable();
+    }
+
+    @Override
+    public void performRKELockAction(boolean b) {
+        mBleRangingHelper.performRKELockAction(b);
+    }
+
+    @Override
+    public void showBleStatus(boolean b) {
+        if (b) {
+            ble_status.setVisibility(View.VISIBLE);
+        } else {
+            ble_status.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void updateCarDrawable() {
+//        debugFragment.updateCarDrawable;
+    }
+
+    @Override
+    public void calculateAccuracyFor(String zone) {
+        mBleRangingHelper.calculateAccuracyFor(zone);
+    }
+
+    @Override
+    public int getCalculatedAccuracy() {
+        return mBleRangingHelper.getCalculatedAccuracy();
+    }
+
+    @Override
+    public String[] getStandardClasses() {
+        return mBleRangingHelper.getStandardClasses();
+    }
+
+    public void lightUpArea(String area) {
+
+    }
+
+    public void darkenArea(String area) {
+
+    }
+
+    public void applyNewDrawable() {
+
+    }
+
+    public void printDebugInfo(SpannableStringBuilder spannableStringBuilder) {
+
+    }
+
+    public void updateCarDrawable(boolean isLocked) {
+
+    }
+
+    public void updateAccuracySpinner() {
+
+    }
+
+    public void updateCarDoorStatus(boolean lockStatus) {
+
     }
 }

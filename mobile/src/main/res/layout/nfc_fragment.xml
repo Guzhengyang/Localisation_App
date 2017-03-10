@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/tips"
+        android:paddingBottom="@dimen/tips_vertical_padding"
+        android:paddingEnd="@dimen/tips_vertical_padding"
+        android:paddingLeft="@dimen/tips_vertical_padding"
+        android:paddingRight="@dimen/tips_vertical_padding"
+        android:paddingStart="@dimen/tips_vertical_padding"
+        android:text="@string/tips"
+        android:textColor="@color/white"
+        android:textSize="@dimen/psa_47_px" />
+
+    <TextView
+        android:id="@+id/nfc_disclaimer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tips"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:text="@string/nfc_disclaimer"
+        android:textColor="@color/black"
+        android:textSize="@dimen/psa_56_px" />
+
+    <ImageView
+        android:id="@+id/nfc_logo"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_below="@id/nfc_disclaimer"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/nfc_logo"
+        android:paddingTop="@dimen/image_view_vertical_padding"
+        android:src="@mipmap/nfc_logo" />
+</RelativeLayout>

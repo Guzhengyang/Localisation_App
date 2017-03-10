@@ -22,6 +22,7 @@ import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.BleRangingListener;
 import com.valeo.bleranging.utils.CallReceiver;
 import com.valeo.bleranging.utils.PSALogs;
+import com.valeo.bleranging.utils.RkeListener;
 import com.valeo.bleranging.utils.SoundUtils;
 
 import java.util.ArrayList;
@@ -61,6 +62,7 @@ public class AlgoManager implements SensorEventListener {
     private final static int LOCK_STATUS_CHANGED_TIMEOUT = 5000;
     private final InblueProtocolManager mProtocolManager;
     private final BleRangingListener bleRangingListener;
+    private final RkeListener rkeListener;
     private final Context mContext;
     private final Handler mMainHandler;
     private final Handler mHandlerLockTimeOut;
@@ -147,7 +149,7 @@ public class AlgoManager implements SensorEventListener {
             PSALogs.d("performLock", "abortCommandRunner trx: " + mProtocolManager.isLockedFromTrx() + " me: " + mProtocolManager.isLockedToSend());
             if (mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) { // if command from trx and app are different, make the app send what the trx sent
                 mProtocolManager.setIsLockedToSend(mProtocolManager.isLockedFromTrx());
-                bleRangingListener.updateCarDoorStatus(mProtocolManager.isLockedFromTrx());
+                rkeListener.updateCarDoorStatus(mProtocolManager.isLockedFromTrx());
                 rearmLock.set(false);
             }
             isAbortRunning = false;
@@ -214,9 +216,11 @@ public class AlgoManager implements SensorEventListener {
     };
 
     public AlgoManager(Context mContext, BleRangingListener bleRangingListener,
+                       RkeListener rkeListener,
                        InblueProtocolManager mProtocolManager, Handler mMainHandler) {
         this.mContext = mContext;
         this.bleRangingListener = bleRangingListener;
+        this.rkeListener = rkeListener;
         this.mProtocolManager = mProtocolManager;
         this.mMainHandler = mMainHandler;
         this.mHandlerLockTimeOut = new Handler();

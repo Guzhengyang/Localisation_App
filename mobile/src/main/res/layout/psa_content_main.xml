@@ -22,206 +22,26 @@
             android:textColor="@color/black"
             android:textSize="@dimen/psa_56_px" />
 
-        <RelativeLayout
+        <include
             android:id="@+id/door_status_switcher"
+            layout="@layout/rke_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/car_door_status">
+            android:layout_below="@id/car_door_status" />
 
-            <ImageView
-                android:id="@+id/door_status_bg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:contentDescription="@string/door_status_bg"
-                android:paddingTop="@dimen/image_view_vertical_padding"
-                android:src="@mipmap/slider_backgrd" />
-
-            <ImageButton
-                android:id="@+id/vehicle_locked"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_alignBottom="@+id/door_status_bg"
-                android:layout_marginBottom="12dp"
-                android:layout_marginEnd="27dp"
-                android:layout_toStartOf="@+id/start_button_frame"
-                android:adjustViewBounds="true"
-                android:background="@drawable/round_button"
-                android:contentDescription="@string/vehicle_locked"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/car_closed_button"
-                android:tint="@color/car_not_selected_button" />
-
-            <ImageButton
-                android:id="@+id/driver_s_door_unlocked"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="25dp"
-                android:adjustViewBounds="true"
-                android:background="@drawable/round_button"
-                android:contentDescription="@string/driver_s_door_unlocked"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/car_driver_door_button"
-                android:tint="@color/car_not_selected_button" />
-
-            <ImageButton
-                android:id="@+id/vehicle_unlocked"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_alignTop="@+id/vehicle_locked"
-                android:layout_marginStart="28dp"
-                android:layout_toEndOf="@+id/start_button_frame"
-                android:adjustViewBounds="true"
-                android:background="@drawable/round_button"
-                android:contentDescription="@string/vehicle_unlocked"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/car_all_doors_button"
-                android:tint="@color/car_not_selected_button" />
-
-            <View
-                android:id="@+id/dummy_space_view"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/start_button_vertical_padding"
-                android:layout_below="@+id/driver_s_door_unlocked"
-                android:layout_centerHorizontal="true"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/dummy_space_view"
-                android:scaleType="fitCenter" />
-
-            <FrameLayout
-                android:id="@+id/start_button_frame"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/dummy_space_view"
-                android:layout_centerHorizontal="true">
-
-                <ImageButton
-                    android:id="@+id/start_button"
-                    android:layout_width="101dp"
-                    android:layout_height="101dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/round_button"
-                    android:contentDescription="@string/start_button"
-                    android:src="@mipmap/start_button" />
-
-                <ImageView
-                    android:id="@+id/start_button_first_wave"
-                    android:layout_width="111dp"
-                    android:layout_height="111dp"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/start_button"
-                    android:src="@mipmap/start_button_waves"
-                    android:visibility="invisible" />
-
-                <ImageView
-                    android:id="@+id/start_button_second_wave"
-                    android:layout_width="121dp"
-                    android:layout_height="121dp"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/start_button"
-                    android:src="@mipmap/start_button_waves"
-                    android:visibility="invisible" />
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/rke_loading_progress_bar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/start_button_frame"
-                android:layout_alignTop="@+id/door_status_bg"
-                android:background="#AA000000"
-                android:clickable="true"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:gravity="center"
-                android:text="@string/please_wait"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:visibility="gone" />
-        </RelativeLayout>
-
-        <ImageView
-            android:id="@+id/chessboard"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/door_status_switcher"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:background="@color/black"
-            android:contentDescription="@string/chessboard"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/signalReceived"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/chessboard"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:background="@color/black"
-            android:contentDescription="@string/rssi_localization" />
-
-        <TextView
-            android:id="@+id/debug_info"
+        <include
+            android:id="@+id/debug_rl"
+            layout="@layout/debug_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/signalReceived"
-            android:background="@color/black"
-            android:textColor="#ffffff" />
+            android:layout_below="@id/door_status_switcher" />
 
-        <RelativeLayout
+        <include
             android:id="@+id/accuracy_rl"
+            layout="@layout/accuracy_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/debug_info">
-
-            <TextView
-                android:id="@+id/accuracy_zone_selection_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="@string/accuracy_zone_selection" />
-
-            <Spinner
-                android:id="@+id/accuracy_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@id/accuracy_zone_selection_tv"
-                android:layout_gravity="center"
-                android:layout_toEndOf="@id/accuracy_zone_selection_tv"
-                android:entries="@array/accuracy_zones"
-                android:gravity="center" />
-
-            <Button
-                android:id="@+id/start_accuracy_measure"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/accuracy_zone_selection_tv"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:background="@android:color/holo_green_dark"
-                android:text="@string/start_accuracy_measure" />
-
-            <Button
-                android:id="@+id/stop_accuracy_measure"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@id/accuracy_zone_selection_tv"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:background="@android:color/holo_red_dark"
-                android:enabled="false"
-                android:text="@string/stop_accuracy_measure" />
-
-            <TextView
-                android:id="@+id/accuracy_zone_result"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/start_accuracy_measure"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="@string/accuracy_zone_result"
-                android:visibility="invisible" />
-        </RelativeLayout>
+            android:layout_below="@id/debug_rl" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/control_trunk_windows_lights"
@@ -243,42 +63,12 @@
             android:text="@string/version_number"
             android:textColor="@color/white" />
 
-        <TextView
-            android:id="@+id/tips"
+        <include
+            android:id="@+id/nfc_rl"
+            layout="@layout/nfc_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/version_number"
-            android:background="@color/tips"
-            android:paddingEnd="@dimen/tips_vertical_padding"
-            android:paddingLeft="@dimen/tips_vertical_padding"
-            android:paddingRight="@dimen/tips_vertical_padding"
-            android:paddingStart="@dimen/tips_vertical_padding"
-            android:text="@string/tips"
-            android:textColor="@color/white"
-            android:textSize="@dimen/psa_47_px"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/nfc_disclaimer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tips"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:text="@string/nfc_disclaimer"
-            android:textColor="@color/black"
-            android:textSize="@dimen/psa_56_px"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/nfc_logo"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_below="@id/nfc_disclaimer"
-            android:layout_centerHorizontal="true"
-            android:contentDescription="@string/nfc_logo"
-            android:paddingTop="@dimen/image_view_vertical_padding"
-            android:src="@mipmap/nfc_logo"
-            android:visibility="gone" />
+            android:layout_below="@id/version_number" />
 
     </RelativeLayout>
 
