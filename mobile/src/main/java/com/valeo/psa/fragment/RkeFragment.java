@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,13 +14,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.RkeListener;
 import com.valeo.psa.R;
-import com.valeo.psa.view.ReverseProgressBar;
 
 import static com.valeo.bleranging.BleRangingHelper.RKE_USE_TIMEOUT;
 
@@ -29,9 +26,6 @@ import static com.valeo.bleranging.BleRangingHelper.RKE_USE_TIMEOUT;
  * Created by l-avaratha on 09/03/2017
  */
 public class RkeFragment extends Fragment implements RkeListener {
-    private final static int FIVE_MINUTES_IN_MILLI = 300000;
-    private final static int MINUTE_IN_MILLI = 60000;
-    private final static int SECOND_IN_MILLI = 1000;
     private final Handler mHandler = new Handler();
     private TextView car_door_status;
     private TextView rke_loading_progress_bar;
@@ -43,12 +37,6 @@ public class RkeFragment extends Fragment implements RkeListener {
     private Animation pulseAnimation2;
     private ImageView start_button_first_wave;
     private ImageView start_button_second_wave;
-    private RelativeLayout content_start_car_dialog;
-    private ReverseProgressBar start_car_timeout;
-    private TextView car_start_countdown_min_sec;
-    private CountDownTimer countDownTimer = null;
-    private int progressMin;
-    private int progressSec;
     private CarDoorStatus carDoorStatus;
     private RkeFragmentActionListener mListener;
 
@@ -82,12 +70,7 @@ public class RkeFragment extends Fragment implements RkeListener {
         start_button = (ImageButton) rootView.findViewById(R.id.start_button);
         start_button_first_wave = (ImageView) rootView.findViewById(R.id.start_button_first_wave);
         start_button_second_wave = (ImageView) rootView.findViewById(R.id.start_button_second_wave);
-
-        content_start_car_dialog = (RelativeLayout) rootView.findViewById(R.id.content_start_car_dialog);
-        start_car_timeout = (ReverseProgressBar) rootView.findViewById(R.id.start_car_timeout);
-        car_start_countdown_min_sec = (TextView) rootView.findViewById(R.id.car_start_countdown_min_sec);
         rke_loading_progress_bar = (TextView) rootView.findViewById(R.id.rke_loading_progress_bar);
-
     }
 
     @Override
@@ -105,27 +88,7 @@ public class RkeFragment extends Fragment implements RkeListener {
             @Override
             public boolean onLongClick(View v) {
                 if (carDoorStatus != null && carDoorStatus == CarDoorStatus.UNLOCKED) {
-                    if (countDownTimer == null) { // prevent from launching two countDownTimer
-                        // Change toolbar to start car mode
-                        switchToolbarStartCar(true);
-                        /** CountDownTimer starts with 5 minutes and every onTick is 1 second */
-                        countDownTimer = new CountDownTimer(FIVE_MINUTES_IN_MILLI, SECOND_IN_MILLI) {
-                            public void onTick(long millisUntilFinished) {
-                                int timePassed = (int) (millisUntilFinished / SECOND_IN_MILLI);
-                                updateStartCarTimeoutBar(timePassed);
-                                progressMin = (int) (millisUntilFinished / MINUTE_IN_MILLI);
-                                progressSec = timePassed % 60; // ignore minutes
-                                updateStartCarTimeout(progressMin, progressSec);
-                            }
-
-                            public void onFinish() {
-                                // If time up, return to Remote Key Activity
-                                // Change toolbar to normal mode
-                                switchToolbarStartCar(false);
-                                countDownTimer = null;
-                            }
-                        }.start();
-                    }
+                    mListener.startButtonActions();
                 }
                 return false;
             }
@@ -212,51 +175,6 @@ public class RkeFragment extends Fragment implements RkeListener {
         }
     }
 
-    /**
-     * Set the progress on the ProgressBar
-     *
-     * @param timeout the progress value
-     */
-    private void updateStartCarTimeoutBar(int timeout) {
-        start_car_timeout.setProgress(timeout);
-    }
-
-    /**
-     * Set the current remaining progress time in minutes and seconds
-     *
-     * @param progressMin the progress remaining minutes
-     * @param progressSec the progress remaining seconds
-     */
-    private void updateStartCarTimeout(int progressMin, int progressSec) {
-        car_start_countdown_min_sec.setText(String.format(
-                getString(R.string.car_start_countdown_min_sec),
-                progressMin, progressSec));
-    }
-
-    /**
-     * Switch between toolbar's (normal and start car mode)
-     *
-     * @param mainToStart boolean to determine which toolbar to inflate
-     */
-    private void switchToolbarStartCar(boolean mainToStart) {
-        if (mainToStart) {
-            content_start_car_dialog.setVisibility(View.VISIBLE);
-            mListener.showBleStatus(false);
-            mListener.switchToolbarStartCar(true);
-        } else {
-            content_start_car_dialog.setVisibility(View.GONE);
-            mListener.showBleStatus(true);
-            mListener.switchToolbarStartCar(false);
-        }
-    }
-
-    public void cancelCountDownTimer() {
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-            countDownTimer = null;
-        }
-    }
-
     @Override
     public void updateCarDoorStatus(boolean lockStatus) {
         if (lockStatus) {
@@ -280,19 +198,23 @@ public class RkeFragment extends Fragment implements RkeListener {
         mListener.updateCarDrawable();
     }
 
+    public void resetDisplayAfterDisconnection() {
+        vehicle_locked.setBackgroundResource(0);
+        driver_s_door_unlocked.setBackgroundResource(0);
+        vehicle_unlocked.setBackgroundResource(0);
+        startButtonAnimation(false);
+    }
+
     private enum CarDoorStatus {
         LOCKED, DRIVER_DOOR_OPEN, UNLOCKED
     }
 
     public interface RkeFragmentActionListener {
         boolean isRKEButtonClickable();
-
         void performRKELockAction(boolean lock);
-
         void showBleStatus(boolean show);
-
         void updateCarDrawable();
 
-        void switchToolbarStartCar(boolean mainToStart);
+        void startButtonActions();
     }
 }

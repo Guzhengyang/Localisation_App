@@ -128,7 +128,6 @@ public class AlgoManager implements SensorEventListener {
         }
     };
     private double deltaLinAcc = 0;
-    private String selectedAccuracyZone = PREDICTION_UNKNOWN;
     private boolean accuracyMeasureEnabled = false;
     private HashMap<String, Integer> accuracyCounterHMap;
     private boolean smartphoneIsFrozen = false;
@@ -372,7 +371,7 @@ public class AlgoManager implements SensorEventListener {
         }
         if (accuracyMeasureEnabled) {
             if (accuracyCounterHMap.get(lastPrediction) == null) {
-                PSALogs.d("accuracy", "lastPrediction was null");
+                PSALogs.d("accuracy", lastPrediction + " was null");
                 accuracyCounterHMap.put(lastPrediction, 0);
             }
             accuracyCounterHMap.put(lastPrediction, accuracyCounterHMap.get(lastPrediction) + 1);
@@ -582,15 +581,13 @@ public class AlgoManager implements SensorEventListener {
         accuracyMeasureEnabled = enable;
     }
 
-    public void setSelectedAccuracyZone(String selectedAccuracyZone) {
-        this.selectedAccuracyZone = selectedAccuracyZone;
-    }
-
     public void clearAccuracyCounter() {
+        PSALogs.d("accuracy", "accuracyCounterHMap clearing...." + accuracyCounterHMap.size());
         accuracyCounterHMap.clear();
+        PSALogs.d("accuracy", "accuracyCounterHMap cleared " + accuracyCounterHMap.size());
     }
 
-    public int getSelectedAccuracy() {
+    public int getSelectedAccuracy(String selectedAccuracyZone) {
         float total = 0.0f;
         for (Integer totalCounter : accuracyCounterHMap.values()) {
             total += totalCounter;

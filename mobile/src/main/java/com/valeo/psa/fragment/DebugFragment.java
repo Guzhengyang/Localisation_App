@@ -80,10 +80,12 @@ public class DebugFragment extends Fragment implements DebugListener {
     private TextView debug_info;
     private boolean predictionColor[][] = new boolean[MAX_ROWS][MAX_COLUMNS];
     private Bitmap bitmap;
+    private Bundle bundle;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        bundle = getArguments();
         View rootView = inflater.inflate(R.layout.debug_fragment, container, false);
         setView(rootView);
         return rootView;
@@ -111,8 +113,10 @@ public class DebugFragment extends Fragment implements DebugListener {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        updateCarDrawable(false);
-        applyNewDrawable();
+        if (bundle != null) {
+            updateCarDrawable(bundle.getBoolean("lockStatus"));
+            applyNewDrawable();
+        }
     }
 
     @Override
@@ -293,7 +297,7 @@ public class DebugFragment extends Fragment implements DebugListener {
     }
 
     @Override
-    public void updateCarDrawable(boolean isLocked) {
+    public void updateCarDrawable(final boolean isLocked) {
         layerDrawable = (LayerDrawable) ContextCompat.getDrawable(getActivity(), R.drawable.rssi_localization);
         Drawable carDrawable;
         switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
