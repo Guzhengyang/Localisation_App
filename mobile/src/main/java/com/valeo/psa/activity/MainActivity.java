@@ -12,7 +12,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -57,6 +56,7 @@ import com.valeo.psa.fragment.AccuracyFragment;
 import com.valeo.psa.fragment.DebugFragment;
 import com.valeo.psa.fragment.NfcFragment;
 import com.valeo.psa.fragment.RkeFragment;
+import com.valeo.psa.fragment.StartFragment;
 import com.valeo.psa.model.Car;
 import com.valeo.psa.model.ViewModel;
 import com.valeo.psa.model.ViewModelId;
@@ -65,7 +65,6 @@ import com.valeo.psa.utils.PreferenceUtils;
 import com.valeo.psa.view.CarListAdapter;
 import com.valeo.psa.view.DividerItemDecoration;
 import com.valeo.psa.view.MyRecyclerAdapter;
-import com.valeo.psa.view.ReverseProgressBar;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,22 +73,21 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter.OnStartDragListener,
         MyRecyclerAdapter.OnIconLongPressedListener, View.OnTouchListener, BleRangingListener,
-        RkeFragment.RkeFragmentActionListener, AccuracyFragment.AccuracyFragmentActionListener {
+        RkeFragment.RkeFragmentActionListener, AccuracyFragment.AccuracyFragmentActionListener,
+        StartFragment.StartFragmentActionListener {
     private static final String TAG = MainActivity.class.getName();
     private final static float SCROLL_THRESHOLD = 10;
     private static final int RESULT_SETTINGS = 20;
     private static final int REQUEST_ENABLE_BT = 25117;
     //    private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
     private static final int NOTIFICATION_ID_1 = 1;
-    private final static int FIVE_MINUTES_IN_MILLI = 300000;
-    private final static int MINUTE_IN_MILLI = 60000;
-    private final static int SECOND_IN_MILLI = 1000;
     private Toolbar toolbar;
     private FrameLayout main_frame;
     private RkeFragment rkeFragment;
     private DebugFragment debugFragment;
     private AccuracyFragment accuracyFragment;
     private NfcFragment nfcFragment;
+    private StartFragment startFragment;
     private NestedScrollView content_main;
     private CoordinatorLayout main_scroll;
     private AppBarLayout main_appbar;
@@ -127,12 +125,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 ////            startActivityForResult(intent, REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS); // TODO uncomment to activate
 //        }
 //    }
-    private RelativeLayout content_start_car_dialog;
-    private ReverseProgressBar start_car_timeout;
-    private TextView car_start_countdown_min_sec;
-    private CountDownTimer countDownTimer = null;
-    private int progressMin;
-    private int progressSec;
+    private RelativeLayout main_rl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,10 +160,13 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         debugFragment = new DebugFragment();
         accuracyFragment = new AccuracyFragment();
         nfcFragment = new NfcFragment();
+        startFragment = new StartFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.door_status_switcher, rkeFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.debug_rl, debugFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.accuracy_rl, accuracyFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.nfc_rl, nfcFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.start_rl, startFragment).commit();
+        showHideFragment(startFragment);
     }
 
     private void setVersionNumber() {
@@ -327,14 +323,12 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      * Find all view by their id
      */
     private void setView() {
+        main_rl = (RelativeLayout) findViewById(R.id.main_rl);
         main_frame = (FrameLayout) findViewById(R.id.main_frame);
         content_main = (NestedScrollView) findViewById(R.id.content_main);
         main_scroll = (CoordinatorLayout) findViewById(R.id.main_scroll);
         main_appbar = (AppBarLayout) findViewById(R.id.main_appbar);
         blur_on_touch = (ImageView) findViewById(R.id.blur_on_touch);
-        content_start_car_dialog = (RelativeLayout) findViewById(R.id.content_start_car_dialog);
-        start_car_timeout = (ReverseProgressBar) findViewById(R.id.start_car_timeout);
-        car_start_countdown_min_sec = (TextView) findViewById(R.id.car_start_countdown_min_sec);
         ble_status = (TextView) findViewById(R.id.ble_status);
         version_number = (TextView) findViewById(R.id.version_number);
         control_trunk_windows_lights = (RecyclerView) findViewById(R.id.control_trunk_windows_lights);
@@ -534,44 +528,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             toolbar.setLayoutParams(layoutParams);
             toolbar.findViewById(R.id.main_toolbar).setVisibility(View.VISIBLE);
             blurActivity(false);
-        }
-    }
-
-    /**
-     * Switch between toolbar's (normal and start car mode)
-     *
-     * @param mainToStart boolean to determine which toolbar to inflate
-     */
-    private void switchToolbarStartCar(boolean mainToStart) {
-        if (mainToStart) {
-            content_start_car_dialog.setVisibility(View.VISIBLE);
-            showBleStatus(false);
-            activity_title.setText(R.string.cancel_start_car);
-            activity_title.setGravity(Gravity.CENTER_VERTICAL);
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) activity_title.getLayoutParams();
-            layoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.main_icon);
-            layoutParams.width = RelativeLayout.LayoutParams.WRAP_CONTENT;
-            activity_title.setLayoutParams(layoutParams);
-            activity_title.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    switchToolbarStartCar(false);
-                    if (countDownTimer != null) {
-                        countDownTimer.cancel();
-                        countDownTimer = null;
-                    }
-                }
-            });
-        } else {
-            content_start_car_dialog.setVisibility(View.GONE);
-            showBleStatus(true);
-            setActivityTitle();
-            activity_title.setGravity(Gravity.CENTER);
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) activity_title.getLayoutParams();
-            layoutParams.addRule(RelativeLayout.RIGHT_OF, 0);
-            layoutParams.width = RelativeLayout.LayoutParams.MATCH_PARENT;
-            activity_title.setLayoutParams(layoutParams);
-            activity_title.setOnClickListener(null);
         }
     }
 
@@ -855,47 +811,20 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 
     @Override
     public void startButtonActions() {
-        if (countDownTimer == null) { // prevent from launching two countDownTimer
-            // Change toolbar to start car mode
-            switchToolbarStartCar(true);
-            /** CountDownTimer starts with 5 minutes and every onTick is 1 second */
-            countDownTimer = new CountDownTimer(FIVE_MINUTES_IN_MILLI, SECOND_IN_MILLI) {
-                public void onTick(long millisUntilFinished) {
-                    int timePassed = (int) (millisUntilFinished / SECOND_IN_MILLI);
-                    updateStartCarTimeoutBar(timePassed);
-                    progressMin = (int) (millisUntilFinished / MINUTE_IN_MILLI);
-                    progressSec = timePassed % 60; // ignore minutes
-                    updateStartCarTimeout(progressMin, progressSec);
-                }
-
-                public void onFinish() {
-                    // If time up, return to Remote Key Activity
-                    // Change toolbar to normal mode
-                    switchToolbarStartCar(false);
-                    countDownTimer = null;
-                }
-            }.start();
+//        showBleStatus(false);
+        if (startFragment != null) {
+            main_rl.setVisibility(View.GONE);
+            showHideFragment(startFragment);
+            startFragment.startButtonActions();
         }
     }
 
-    /**
-     * Set the progress on the ProgressBar
-     *
-     * @param timeout the progress value
-     */
-    private void updateStartCarTimeoutBar(int timeout) {
-        start_car_timeout.setProgress(timeout);
-    }
-
-    /**
-     * Set the current remaining progress time in minutes and seconds
-     *
-     * @param progressMin the progress remaining minutes
-     * @param progressSec the progress remaining seconds
-     */
-    private void updateStartCarTimeout(int progressMin, int progressSec) {
-        car_start_countdown_min_sec.setText(String.format(
-                getString(R.string.car_start_countdown_min_sec),
-                progressMin, progressSec));
+    @Override
+    public void startButtonActionsFinished() {
+        if (startFragment != null) {
+            main_rl.setVisibility(View.VISIBLE);
+            showHideFragment(startFragment);
+        }
+//        showBleStatus(true);
     }
 }

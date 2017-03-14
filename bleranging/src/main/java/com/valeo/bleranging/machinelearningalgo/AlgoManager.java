@@ -582,9 +582,7 @@ public class AlgoManager implements SensorEventListener {
     }
 
     public void clearAccuracyCounter() {
-        PSALogs.d("accuracy", "accuracyCounterHMap clearing...." + accuracyCounterHMap.size());
         accuracyCounterHMap.clear();
-        PSALogs.d("accuracy", "accuracyCounterHMap cleared " + accuracyCounterHMap.size());
     }
 
     public int getSelectedAccuracy(String selectedAccuracyZone) {
@@ -592,9 +590,7 @@ public class AlgoManager implements SensorEventListener {
         for (Integer totalCounter : accuracyCounterHMap.values()) {
             total += totalCounter;
         }
-        PSALogs.d("accuracy", "final total = " + total);
         if (accuracyCounterHMap.get(selectedAccuracyZone) != null && total != 0) {
-            PSALogs.d("accuracy", "accuracy = " + (accuracyCounterHMap.get(selectedAccuracyZone) / (1.0 * total)) * 100);
             return (int) ((accuracyCounterHMap.get(selectedAccuracyZone) / (1.0 * total)) * 100);
         } else {
             PSALogs.d("accuracy", "accuracyCounterHMap.get(" + selectedAccuracyZone + ") is null");

@@ -6,102 +6,108 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
-    <FrameLayout
-        android:id="@+id/main_frame"
+    <RelativeLayout
+        android:id="@+id/main_rl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar">
+        android:layout_height="wrap_content">
 
-        <android.support.design.widget.CoordinatorLayout
-            android:id="@+id/main_scroll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <android.support.design.widget.AppBarLayout
-                android:id="@+id/main_appbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/background_light">
-
-                <android.support.design.widget.CollapsingToolbarLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
-
-                    <include
-                        layout="@layout/psa_content_car_model_selection_header"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/app_bar_height"
-                        android:minHeight="200dp"
-                        app:layout_collapseMode="none" />
-                </android.support.design.widget.CollapsingToolbarLayout>
-
-                <TextView
-                    android:id="@+id/selected_car_model_pinned"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/activity_vertical_margin"
-                    android:layout_marginTop="@dimen/car_model_type_margin"
-                    android:gravity="center"
-                    android:text="@string/ds5"
-                    android:textColor="@color/psa_car_model"
-                    android:textSize="@dimen/psa_70_px"
-                    android:textStyle="italic"
-                    app:layout_collapseMode="pin" />
-            </android.support.design.widget.AppBarLayout>
-
-            <include
-                android:id="@+id/content_main"
-                layout="@layout/psa_content_main"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-        </android.support.design.widget.CoordinatorLayout>
-        <ImageView
-            android:id="@+id/blur_on_touch"
+        <FrameLayout
+            android:id="@+id/main_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clickable="true"
-            android:contentDescription="@string/blur_on_touch"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:visibility="gone" />
+            android:layout_below="@+id/toolbar">
 
-        <TextView
-            android:id="@+id/ble_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawablePadding="@dimen/imageview_padding"
-            android:drawableStart="@mipmap/bluetooth_icon"
-            android:gravity="center_vertical"
-            android:padding="@dimen/imageview_padding"
-            android:text="@string/not_connected_over_ble"
-            android:textColor="@color/ble_status"
-            android:textSize="@dimen/psa_40_px" />
-    </FrameLayout>
+            <android.support.design.widget.CoordinatorLayout
+                android:id="@+id/main_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/content_start_car_dialog"
-        layout="@layout/psa_content_start_car_dialog"
+                <android.support.design.widget.AppBarLayout
+                    android:id="@+id/main_appbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/background_light">
+
+                    <android.support.design.widget.CollapsingToolbarLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
+
+                        <include
+                            layout="@layout/psa_content_car_model_selection_header"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/app_bar_height"
+                            android:minHeight="200dp"
+                            app:layout_collapseMode="none" />
+                    </android.support.design.widget.CollapsingToolbarLayout>
+
+                    <TextView
+                        android:id="@+id/selected_car_model_pinned"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="@dimen/activity_vertical_margin"
+                        android:layout_marginTop="@dimen/car_model_type_margin"
+                        android:gravity="center"
+                        android:text="@string/ds5"
+                        android:textColor="@color/psa_car_model"
+                        android:textSize="@dimen/psa_70_px"
+                        android:textStyle="italic"
+                        app:layout_collapseMode="pin" />
+                </android.support.design.widget.AppBarLayout>
+
+                <include
+                    android:id="@+id/content_main"
+                    layout="@layout/psa_content_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+            </android.support.design.widget.CoordinatorLayout>
+
+            <ImageView
+                android:id="@+id/blur_on_touch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:contentDescription="@string/blur_on_touch"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/ble_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/imageview_padding"
+                android:drawableStart="@mipmap/bluetooth_icon"
+                android:gravity="center_vertical"
+                android:padding="@dimen/imageview_padding"
+                android:text="@string/not_connected_over_ble"
+                android:textColor="@color/ble_status"
+                android:textSize="@dimen/psa_40_px" />
+        </FrameLayout>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/toolbarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@mipmap/header_backgrd"
+            app:popupTheme="@style/myAppTheme.PopupOverlay">
+
+            <include layout="@layout/psa_main_toolbar" />
+
+            <include layout="@layout/psa_unlock_trunk_toolbar" />
+
+            <include layout="@layout/psa_lock_trunk_toolbar" />
+
+            <include layout="@layout/psa_close_all_windows_toolbar" />
+        </android.support.v7.widget.Toolbar>
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/start_rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="@style/toolbarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@mipmap/header_backgrd"
-        app:popupTheme="@style/myAppTheme.PopupOverlay">
-
-        <include layout="@layout/psa_main_toolbar" />
-
-        <include layout="@layout/psa_unlock_trunk_toolbar" />
-
-        <include layout="@layout/psa_lock_trunk_toolbar" />
-
-        <include layout="@layout/psa_close_all_windows_toolbar" />
-    </android.support.v7.widget.Toolbar>
 </RelativeLayout>
