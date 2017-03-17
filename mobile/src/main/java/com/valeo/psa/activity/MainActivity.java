@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         getSupportFragmentManager().beginTransaction().add(R.id.accuracy_rl, accuracyFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.nfc_rl, nfcFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.start_rl, startFragment).commit();
-        showHideFragment(startFragment);
+        showHideFragment(startFragment); // hide startFragment
     }
 
     private void setVersionNumber() {
@@ -779,15 +779,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     }
 
     @Override
-    public void showBleStatus(boolean b) {
-        if (b) {
-            ble_status.setVisibility(View.VISIBLE);
-        } else {
-            ble_status.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
     public void updateCarDrawable() {
         if (debugFragment != null) {
             debugFragment.updateCarDrawable(mBleRangingHelper.getLockStatus());
@@ -811,7 +802,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 
     @Override
     public void startButtonActions() {
-//        showBleStatus(false);
         if (startFragment != null) {
             main_rl.setVisibility(View.GONE);
             showHideFragment(startFragment);
@@ -825,6 +815,5 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
             main_rl.setVisibility(View.VISIBLE);
             showHideFragment(startFragment);
         }
-//        showBleStatus(true);
     }
 }

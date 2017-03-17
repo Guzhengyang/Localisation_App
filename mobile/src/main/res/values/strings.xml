@@ -239,4 +239,5 @@
     <string name="algo_standard">SD</string>
     <string name="algo_machine_learning">ML</string>
     <string name="algo_unknown">\?</string>
+    <string name="slider_button_description">slider button</string>
 </resources>
