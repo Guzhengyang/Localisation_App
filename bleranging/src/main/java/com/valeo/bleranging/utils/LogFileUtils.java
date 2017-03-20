@@ -122,7 +122,10 @@ public class LogFileUtils {
                                       String channelLeft, String channelMiddle, String channelRight, String channelTrunk,
                                       String channelFrontLeft, String channelFrontRight,
                                       String channelRearLeft, String channelRearRight,
-                                      String channelBack, int beepInt) {
+                                      String channelBack, int beepInt,
+                                      int antennaLeft, int antennaMiddle, int antennaRight,
+                                      int antennaTrunk, int antennaFrontLeft, int antennaFrontRight,
+                                      int antennaRearLeft, int antennaRearRight, int antennaBack) {
         final String comma = ";";
         String log = rssiLeftOriginal + comma + rssiMiddleOriginal + comma + rssiRightOriginal + comma + rssiTrunkOriginal + comma +
                 rssiFrontLeftOriginal + comma + rssiFrontRightOriginal + comma + rssiRearLeftOriginal + comma + rssiRearRightOriginal + comma + rssiBackOriginal + comma +
@@ -186,7 +189,10 @@ public class LogFileUtils {
                 + channelLeft + comma + channelMiddle + comma + channelRight + comma
                 + channelTrunk + comma + channelFrontLeft + comma + channelFrontRight + comma
                 + channelRearLeft + comma + channelRearRight + comma
-                + channelBack + comma + beepInt + comma;
+                + channelBack + comma + beepInt + comma
+                + antennaLeft + comma + antennaMiddle + comma + antennaRight + comma
+                + antennaTrunk + comma + antennaFrontLeft + comma + antennaFrontRight + comma
+                + antennaRearLeft + comma + antennaRearRight + comma + antennaBack + comma;
         appendRssiLog(log);
     }
 
@@ -334,7 +340,10 @@ public class LogFileUtils {
                 + "PREDICTION;LOCK FROM TRX;LOCK TO SEND;START ALLOWED;IS THATCHAM;"
                 + "BLE CHANNEL LEFT;BLE CHANNEL MIDDLE;BLE CHANNEL RIGHT;BLE CHANNEL TRUNK;"
                 + "BLE CHANNEL FRONTLEFT;BLE CHANNEL FRONTRIGHT;"
-                + "BLE CHANNEL REARLEFT;BLE CHANNEL REARRIGHT;BLE CHANNEL BACK;BEEPINT;";
+                + "BLE CHANNEL REARLEFT;BLE CHANNEL REARRIGHT;BLE CHANNEL BACK;BEEPINT;"
+                + "ANTENNA LEFT;ANTENNA MIDDLE;ANTENNA RIGHT;ANTENNA TRUNK;"
+                + "ANTENNA FRONTLEFT;ANTENNA FRONTRIGHT;"
+                + "ANTENNA REARLEFT;ANTENNA REARRIGHT;ANTENNA BACK;";
         try {
             if (logFile != null) {
                 buf.append(ColNames);

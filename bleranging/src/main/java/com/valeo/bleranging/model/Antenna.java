@@ -14,7 +14,7 @@ public class Antenna {
     private Antenna.BLEChannel bleChannel;
     private boolean hasBeenInitialized = false;
 
-    public Antenna(int trxNumber, int antennaId) {
+    Antenna(int trxNumber, int antennaId) {
         this.trxNumber = trxNumber;
         this.antennaId = antennaId;
         this.bleChannel = Antenna.BLEChannel.UNKNOWN;
@@ -31,7 +31,7 @@ public class Antenna {
      *
      * @return true if the trx antenna is active (checker are different), false otherwise (checker are equals)
      */
-    public boolean isActive() {
+    boolean isActive() {
         isAntennaActive.set(hasReceivedRssi.get());
         hasReceivedRssi.set(false);
         return isAntennaActive.get();
@@ -42,10 +42,12 @@ public class Antenna {
      *
      * @param rssi           the rssi of the packet received
      * @param isRssiReceived true if the rssi has been received, false otherwise
+     * @param bleChannel     ble channel of the packet received
      */
-    public synchronized void saveRssi(int rssi, boolean isRssiReceived) {
+    synchronized void saveRssi(int rssi, boolean isRssiReceived, Antenna.BLEChannel bleChannel) {
         if (!hasBeenInitialized) {
             this.currentOriginalRssi = rssi;
+            this.bleChannel = bleChannel;
             this.hasBeenInitialized = true;
         }
         if (rssi == 0) {
@@ -56,10 +58,11 @@ public class Antenna {
             rssi = -21;
         }
         currentOriginalRssi = rssi;
+        this.bleChannel = bleChannel;
         hasReceivedRssi.set(isRssiReceived);
     }
 
-    public int getAntennaId() {
+    int getAntennaId() {
         return antennaId;
     }
 
@@ -68,16 +71,23 @@ public class Antenna {
      *
      * @return the current original rssi value.
      */
-    public int getCurrentOriginalRssi() {
+    int getCurrentOriginalRssi() {
         return currentOriginalRssi;
     }
 
-    public Antenna.BLEChannel getCurrentBLEChannel() {
+    Antenna.BLEChannel getCurrentBLEChannel() {
         return bleChannel;
     }
 
-    public void saveBleChannel(Antenna.BLEChannel bleChannel) {
-        this.bleChannel = bleChannel;
+    @Override
+    public String toString() {
+        return "Antenna{" +
+                "antennaId=" + antennaId +
+                ", trxNumber=" + trxNumber +
+                ", isAntennaActive=" + isAntennaActive +
+                ", currentOriginalRssi=" + currentOriginalRssi +
+                ", bleChannel=" + bleChannel +
+                '}';
     }
 
     public enum BLEChannel {

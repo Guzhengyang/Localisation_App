@@ -7,7 +7,7 @@ import com.valeo.bleranging.utils.TextUtils;
  */
 
 public class BeaconScanResponse {
-    public final byte advertisingChannel;
+    private final byte advertisingChannel;
     private final byte pcbaPnIndicator;
     private final byte[] softwareVersion;
     private final int dataType;
@@ -16,9 +16,9 @@ public class BeaconScanResponse {
     private final byte[] rollingCounter;
     private final byte beaconPosition;
 
-    public BeaconScanResponse(byte pcbaPnIndicator, byte[] softwareVersion, byte advertisingChannel,
-                              int dataType, byte[] data, byte batteryMeasurement,
-                              byte[] rollingCounter, byte beaconPosition) {
+    BeaconScanResponse(byte pcbaPnIndicator, byte[] softwareVersion, byte advertisingChannel,
+                       int dataType, byte[] data, byte batteryMeasurement,
+                       byte[] rollingCounter, byte beaconPosition) {
         this.pcbaPnIndicator = pcbaPnIndicator;
         this.softwareVersion = softwareVersion;
         this.advertisingChannel = advertisingChannel;
@@ -27,6 +27,10 @@ public class BeaconScanResponse {
         this.batteryMeasurement = batteryMeasurement;
         this.rollingCounter = rollingCounter;
         this.beaconPosition = beaconPosition;
+    }
+
+    public byte getAdvertisingChannel() {
+        return advertisingChannel;
     }
 
     @Override

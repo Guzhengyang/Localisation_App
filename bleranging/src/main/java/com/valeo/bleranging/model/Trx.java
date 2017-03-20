@@ -2,6 +2,8 @@ package com.valeo.bleranging.model;
 
 import android.util.SparseIntArray;
 
+import com.valeo.bleranging.utils.PSALogs;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +18,7 @@ public class Trx {
     private final String trxName;
     private final List<Antenna> antennaList;
     private final SparseIntArray antennaIdArray;
+    private Antenna currentAntenna;
 
     public Trx(int trxNumber, String trxName) {
         this.trxNumber = trxNumber;
@@ -86,36 +89,59 @@ public class Trx {
      * @param rssi the rssi of the packet received
      * @param isRssiReceived true if the rssi has been received, false otherwise
      */
-    public void saveRssi(int rssi, boolean isRssiReceived, byte antennaId) {
+    public void saveRssi(int rssi, boolean isRssiReceived,
+                         byte antennaId, Antenna.BLEChannel bleChannel) {
         if (antennaList != null) {
-            Antenna tmpAntenna = getAntennaById(antennaId);
+            final Antenna tmpAntenna = getAntennaById(antennaId);
             if (tmpAntenna != null) {
-                tmpAntenna.saveRssi(rssi, isRssiReceived);
+                currentAntenna = tmpAntenna;
+                PSALogs.d("antenna", currentAntenna.toString());
+                tmpAntenna.saveRssi(rssi, isRssiReceived, bleChannel);
+            } else {
+                PSALogs.d("NIH", "tmpAntenna is null, cannot save rssi");
             }
+        } else {
+            PSALogs.d("NIH", "antennaList is null, cannot save rssi");
         }
     }
 
     /**
-     * Get the current original rssi
+     * Get the current antenna id
      *
-     * @return the current original rssi value.
+     * @return the antenna id, or 0
+     */
+    public int getAntennaId() {
+        if (currentAntenna != null) {
+            return currentAntenna.getAntennaId();
+        }
+        return 0;
+    }
+
+    /**
+     * Get the current original rssi
+     * @return the current original rssi value, or 0
      */
     public int getCurrentOriginalRssi() { //TODO change to int[]
-        int[] currentOriginRssi = new int[antennaList.size()];
-        for (int i = 0; i < antennaList.size(); i++) {
-            currentOriginRssi[i] = antennaList.get(i).getCurrentOriginalRssi();
+//        int[] currentOriginRssi = new int[antennaList.size()];
+//        for (int i = 0; i < antennaList.size(); i++) {
+//            currentOriginRssi[i] = antennaList.get(i).getCurrentOriginalRssi();
+//        }
+//        return currentOriginRssi[0];
+        if (currentAntenna != null) {
+            return currentAntenna.getCurrentOriginalRssi();
         }
-        return currentOriginRssi[0];
+        return 0;
     }
 
+    /**
+     * Get the current ble channel
+     * @return the current ble channel, or ble channel unknown
+     */
     public Antenna.BLEChannel getCurrentBLEChannel() {
-        return antennaList.get(0).getCurrentBLEChannel();
-    }
-
-    public void saveBleChannel(Antenna.BLEChannel bleChannel) {
-        for (Antenna antenna : antennaList) {
-            antenna.saveBleChannel(bleChannel);
+        if (currentAntenna != null) {
+            return currentAntenna.getCurrentBLEChannel();
         }
+        return Antenna.BLEChannel.UNKNOWN;
     }
 
     public int getTrxNumber() {

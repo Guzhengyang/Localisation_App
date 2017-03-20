@@ -11,6 +11,7 @@ import com.valeo.bleranging.machinelearningalgo.prediction.Prediction;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.TextUtils;
 
 import java.util.Iterator;
@@ -52,16 +53,16 @@ public abstract class ConnectedCar {
     private final static int RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE = -60;
     private final static int RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE = -55;
     private final static int RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE = -75;
-    protected final Handler mHandlerComValidTimeOut = new Handler();
+    final Handler mHandlerComValidTimeOut = new Handler();
     protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
     protected Context mContext;
-    protected Prediction standardPrediction;
-    protected Prediction earPrediction;
-    protected Prediction rpPrediction;
-    protected Prediction insidePrediction;
     protected double[] rssi;
-    protected boolean comValid = false;
-    protected String lastModelUsed = STANDARD_LOC;
+    Prediction standardPrediction;
+    Prediction earPrediction;
+    Prediction rpPrediction;
+    Prediction insidePrediction;
+    boolean comValid = false;
+    String lastModelUsed = STANDARD_LOC;
 
     ConnectedCar(Context context) {
         this.mContext = context;
@@ -83,26 +84,17 @@ public abstract class ConnectedCar {
     // COMPARE UTILS
 
     /**
-     * Save the current ble channel
-     *
-     * @param trxNumber  the trx that sent the signal
-     * @param bleChannel the ble channel used to sent
-     */
-    public void saveBleChannel(int trxNumber, Antenna.BLEChannel bleChannel) {
-        if (trxLinkedHMap.get(trxNumber) != null) {
-            trxLinkedHMap.get(trxNumber).saveBleChannel(bleChannel);
-        }
-    }
-
-    /**
      * Save an incoming rssi
      *
-     * @param trxNumber the trx that sent the signal
-     * @param rssi      the rssi value to save
+     * @param trxNumber   the trx that sent the signal
+     * @param rssi        the rssi value to save
+     * @param bleChannel  the ble Channel
      */
-    public void saveRssi(int trxNumber, int rssi, byte antennaId) {
+    public void saveRssi(int trxNumber, int rssi, byte antennaId, Antenna.BLEChannel bleChannel) {
         if (trxLinkedHMap.get(trxNumber) != null) {
-            trxLinkedHMap.get(trxNumber).saveRssi(rssi, true, antennaId);
+            trxLinkedHMap.get(trxNumber).saveRssi(rssi, true, antennaId, bleChannel);
+        } else {
+            PSALogs.d("NIH", "trx is null, cannot save rssi");
         }
     }
 
@@ -140,6 +132,14 @@ public abstract class ConnectedCar {
     public int getCurrentOriginalRssi(int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getCurrentOriginalRssi();
+        } else {
+            return 0;
+        }
+    }
+
+    public int getCurrentAntennaId(int trxNumber) {
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            return trxLinkedHMap.get(trxNumber).getAntennaId();
         } else {
             return 0;
         }
@@ -210,7 +210,7 @@ public abstract class ConnectedCar {
      * @param historicDefaultValuePeriph  the peripheral trx default value
      * @param historicDefaultValueCentral the central trx default value
      */
-    protected void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
+    private void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
         if (trxLinkedHMap != null) {
             for (Trx trx : trxLinkedHMap.values()) {
                 if (trx.getTrxNumber() == NUMBER_TRX_MIDDLE) {
@@ -300,7 +300,7 @@ public abstract class ConnectedCar {
      * @param mRssi the array of rssi to check
      * @return null if a value is equal to 0, the entire array otherwise
      */
-    protected double[] checkForRssiNonNull(double[] mRssi) {
+    double[] checkForRssiNonNull(double[] mRssi) {
         if (mRssi == null) {
             return null;
         }
