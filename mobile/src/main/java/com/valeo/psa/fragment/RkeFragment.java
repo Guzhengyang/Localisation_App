@@ -80,9 +80,6 @@ public class RkeFragment extends Fragment implements RkeListener {
                     }
                     view.setVisibility(View.INVISIBLE);
                     return true;
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                    PSALogs.d("DragDrop", "ACTION_MOVE");
-                    return true;
                 } else {
                     return false;
                 }
