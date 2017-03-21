@@ -51,9 +51,9 @@ public class PredictionFactory {
                         case PREDICTION_STANDARD:
                             return new Prediction(mContext, R.raw.four_in);
                         case PREDICTION_RP:
-                            return new Prediction(mContext, R.raw.eight_out);
+                            return new Prediction(mContext, R.raw.four_in);
                         case PREDICTION_EAR:
-                            return new Prediction(mContext, R.raw.eight_out);
+                            return new Prediction(mContext, R.raw.four_in);
                     }
                     break;
                 case TYPE_5_A:
@@ -71,9 +71,9 @@ public class PredictionFactory {
                         case PREDICTION_STANDARD:
                             return new Prediction(mContext, R.raw.eight_in);
                         case PREDICTION_INSIDE:
-                            return new Prediction(mContext, R.raw.eight_out);
+                            return new Prediction(mContext, R.raw.eight_in);
                         case PREDICTION_RP:
-                            return new Prediction(mContext, R.raw.eight_out);
+                            return new Prediction(mContext, R.raw.eight_in);
                     }
                     break;
             }
@@ -92,9 +92,9 @@ public class PredictionFactory {
                         case PREDICTION_STANDARD:
                             return new Prediction(mContext, R.raw.four_out);
                         case PREDICTION_RP:
-                            return new Prediction(mContext, R.raw.eight_out);
+                            return new Prediction(mContext, R.raw.four_out);
                         case PREDICTION_EAR:
-                            return new Prediction(mContext, R.raw.eight_out);
+                            return new Prediction(mContext, R.raw.four_out);
                     }
                     break;
                 case TYPE_5_A:
