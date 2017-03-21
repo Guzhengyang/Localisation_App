@@ -25,8 +25,6 @@ import com.valeo.bleranging.utils.DebugListener;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 
-import java.util.Arrays;
-
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ACCESS;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_EXTERNAL;
@@ -53,7 +51,7 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_WELCOME;
  * Created by l-avaratha on 09/03/2017
  */
 public class DebugFragment extends Fragment implements DebugListener {
-    private static final int MAX_ROWS = 12;
+    private static final int MAX_ROWS = 11;
     private static final int MAX_COLUMNS = 10;
     private final Paint paintOne = new Paint();
     private final Paint paintTwo = new Paint();
@@ -78,8 +76,6 @@ public class DebugFragment extends Fragment implements DebugListener {
     private GradientDrawable thatcham_area;
     private GradientDrawable remote_parking_area;
     private TextView debug_info;
-    private boolean predictionColor[][] = new boolean[MAX_ROWS][MAX_COLUMNS];
-    private Bitmap bitmap;
     private Bundle bundle;
 
     @Override
@@ -288,7 +284,7 @@ public class DebugFragment extends Fragment implements DebugListener {
     @Override
     public void applyNewDrawable() {
         signalReceived.setImageDrawable(layerDrawable);
-//        chessboard.setBackground(drawChessBoard(1080, 1080));
+        chessboard.setBackground(drawChessBoard(700));
     }
 
     @Override
@@ -366,35 +362,22 @@ public class DebugFragment extends Fragment implements DebugListener {
         }
     }
 
-    private BitmapDrawable drawChessBoard(final int measuredWidth, final int measuredHeight) {
-        for (boolean[] predictTab : predictionColor) {
-            Arrays.fill(predictTab, true);
-        }
-        bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        int stepX = measuredWidth / MAX_ROWS;
-        int stepY = measuredHeight / MAX_COLUMNS;
+    private BitmapDrawable drawChessBoard(final int measuredWidth) {
+        final int stepX = measuredWidth / MAX_ROWS;
+        final int measuredHeight = stepX * MAX_COLUMNS;
+        final int stepY = measuredHeight / MAX_COLUMNS;
+        final Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(bitmap);
         PSALogs.i("chess", "stepX " + stepX + " measuredWidth " + measuredWidth);
-        PSALogs.i("chess", "stepY " + stepY + " measuredHeight " + measuredHeight);
+        canvas.drawRect(0, 0, measuredWidth, measuredHeight, paintLock); //lock rect
+        canvas.drawRect(stepX, stepY * 2, stepX * 9, stepY * 8, paintUnlock); // unlock rect
         for (int width = 0, x = 0; width < measuredWidth && x < MAX_ROWS; width += stepX, x++) {
-            for (int height = 0, y = 0; height < measuredHeight && y < MAX_COLUMNS; height += stepY, y++) {
-                if ((y == 4 || y == 5) && (x == 4 || x == 5 || x == 6 || x == 7)) { // paint Car tiles
-                    canvas.drawRect(width, height, width + stepX, height + stepY, paintCar);
-                } else if (predictionColor[x][y]) { // paint phone position tiles in unlock or lock zone
-                    if (((y == 2 || y == 3 || y == 6 || y == 7) && (x == 2 || x == 3 || x == 4 || x == 5 || x == 6 || x == 7 || x == 8 || x == 9))
-                            || ((y == 4 || y == 5) && (x == 2 || x == 3 || x == 8 || x == 9))) {
-                        canvas.drawRect(width, height, width + stepX, height + stepY, paintUnlock);
-                        canvas.drawRect(width, height, width + stepX, height + stepY, paintTwo);
-                    } else {
-                        canvas.drawRect(width, height, width + stepX, height + stepY, paintLock);
-                        canvas.drawRect(width, height, width + stepX, height + stepY, paintTwo);
-                    }
-                } else { // paint unoccupied zones tiles
-                    canvas.drawRect(width, height, width + stepX, height + stepY, paintOne);
-                    canvas.drawRect(width, height, width + stepX, height + stepY, paintTwo);
-                }
-            }
+            canvas.drawLine(width, 0, width, measuredHeight, paintTwo); // rows lines
         }
+        for (int height = 0, y = 0; height < measuredHeight && y < MAX_COLUMNS; height += stepY, y++) {
+            canvas.drawLine(0, height, measuredWidth, height, paintTwo); // columns lines
+        }
+        canvas.drawRect(stepX * 3, stepY * 4, stepX * 7, stepY * 6, paintCar); // car rect
         return new BitmapDrawable(getResources(), bitmap);
     }
 
