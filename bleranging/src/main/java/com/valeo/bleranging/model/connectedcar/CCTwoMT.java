@@ -1,6 +1,7 @@
 package com.valeo.bleranging.model.connectedcar;
 
 import android.content.Context;
+import android.graphics.PointF;
 
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
@@ -71,5 +72,10 @@ public class CCTwoMT extends ConnectedCar {
             return standardPrediction.getPrediction();
         }
         return BleRangingHelper.PREDICTION_UNKNOWN;
+    }
+
+    @Override
+    public PointF getPredictionCoord() {
+        return new PointF(0f, 0f);
     }
 }

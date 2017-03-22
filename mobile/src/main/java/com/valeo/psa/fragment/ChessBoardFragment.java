@@ -83,14 +83,14 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     }
 
     @Override
-    public void updateChessboard(final float pointX, final float pointY) {
-        chessboard.setImageBitmap(placeUserOnChessBoard(pointX, pointY));
+    public void updateChessboard(final PointF point) {
+        chessboard.setImageBitmap(placeUserOnChessBoard(point));
     }
 
-    private Bitmap placeUserOnChessBoard(final float pointX, final float pointY) {
+    private Bitmap placeUserOnChessBoard(final PointF point) {
         final Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
-        final PointF currentLoc = new PointF(pointX, pointY);
+        final PointF currentLoc = point;
         if (positions.size() == MAX_POSITIONS) {
             positions.remove(0);
         }

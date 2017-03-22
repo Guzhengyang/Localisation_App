@@ -2,11 +2,13 @@ package com.valeo.bleranging.model.connectedcar;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.os.Handler;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
+import com.valeo.bleranging.machinelearningalgo.prediction.PredictionCoord;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionZone;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
@@ -57,6 +59,7 @@ public abstract class ConnectedCar {
     protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
     protected Context mContext;
     protected double[] rssi;
+    PredictionCoord coordPrediction;
     PredictionZone standardPrediction;
     PredictionZone earPrediction;
     PredictionZone rpPrediction;
@@ -283,6 +286,13 @@ public abstract class ConnectedCar {
      * @return the position prediction
      */
     public abstract String getPredictionPosition(boolean smartphoneIsInPocket);
+
+    /**
+     * Get a coord prediction regarding the car
+     *
+     * @return the position prediction
+     */
+    public abstract PointF getPredictionCoord();
 
     /**
      * Get a prediction of proximity with the car

@@ -16,6 +16,8 @@ import weka.core.SerializationHelper;
 
 public class PredictionCoord {
     private static final double THRESHOLD_RSSI_AWAY = 1;
+    private static final int MAX_ROWS = 11;
+    private static final int MAX_COLUMNS = 10;
     private Context mContext;
     private MultilayerPerceptron mlp_Px;
     private MultilayerPerceptron mlp_Py;
@@ -55,8 +57,18 @@ public class PredictionCoord {
         try {
             coord[0] = mlp_Px.classifyInstance(sample);
             coord[1] = mlp_Py.classifyInstance(sample);
+            if (coord[0] > MAX_ROWS) {
+                coord[0] = MAX_ROWS;
+            } else if (coord[0] < 0) {
+                coord[0] = 0;
+            }
+            if (coord[1] > MAX_COLUMNS) {
+                coord[1] = MAX_COLUMNS;
+            } else if (coord[1] < 0) {
+                coord[1] = 0;
+            }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

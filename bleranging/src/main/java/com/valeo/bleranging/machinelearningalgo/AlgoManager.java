@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.PointF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -440,6 +441,13 @@ public class AlgoManager implements SensorEventListener {
             return connectedCar.getPredictionPosition(smartphoneIsInPocket);
         }
         return PREDICTION_UNKNOWN;
+    }
+
+    public PointF getPredictionCoord(final ConnectedCar connectedCar) {
+        if (connectedCar != null) {
+            return connectedCar.getPredictionCoord();
+        }
+        return new PointF(0f, 0f);
     }
 
     public String getPredictionProximity(final ConnectedCar connectedCar) {

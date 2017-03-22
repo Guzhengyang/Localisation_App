@@ -1,8 +1,11 @@
 package com.valeo.bleranging.model.connectedcar;
 
 import android.content.Context;
+import android.graphics.PointF;
 
 import com.valeo.bleranging.BleRangingHelper;
+import com.valeo.bleranging.R;
+import com.valeo.bleranging.machinelearningalgo.prediction.PredictionCoord;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
@@ -29,6 +32,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     @Override
     public void readPredictionsRawFiles() {
+        coordPrediction = new PredictionCoord(mContext, R.raw.mlp);
         standardPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_STANDARD);
 //        insidePrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_INSIDE);
 //        rpPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_RP);
@@ -37,6 +41,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public void initPredictions() {
         if (isInitialized()) {
+            coordPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             standardPrediction.predict(N_VOTE_SHORT);
 //            insidePrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
@@ -48,7 +53,9 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     @Override
     public boolean isInitialized() {
-        return (standardPrediction != null
+        return (coordPrediction != null
+                && coordPrediction.isPredictRawFileRead()
+                && standardPrediction != null
 //                && insidePrediction != null
 //                && rpPrediction != null
                 && standardPrediction.isPredictRawFileRead()
@@ -61,6 +68,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     public void setRssi(double[] rssi, boolean lockStatus) {
         if (isInitialized()) {
             for (int i = 0; i < rssi.length; i++) {
+                coordPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone());
                 standardPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard(), lockStatus);
 //                insidePrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), THRESHOLD_DIST_AWAY_SLOW, lockStatus);
 //                rpPrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard(), lockStatus);
@@ -74,6 +82,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public void calculatePrediction() {
         if (isInitialized()) {
+            coordPrediction.calculatePredictionCoord();
             if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
                 standardPrediction.calculatePredictionStandard(SdkPreferencesHelper.getInstance().getThresholdProbStandard(),
                         THRESHOLD_PROB_LOCK2UNLOCK, THRESHOLD_PROB_UNLOCK2LOCK, THATCHAM_ORIENTED);
@@ -107,6 +116,13 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             return result;
         }
         return BleRangingHelper.PREDICTION_UNKNOWN;
+    }
+
+    public PointF getPredictionCoord() {
+        if (isInitialized()) {
+            return coordPrediction.getPredictionCoord();
+        }
+        return new PointF(0f, 0f);
     }
 
     private String getInsidePrediction() {
