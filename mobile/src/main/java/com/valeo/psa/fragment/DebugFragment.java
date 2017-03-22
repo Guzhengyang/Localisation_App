@@ -1,10 +1,6 @@
 package com.valeo.psa.fragment;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
@@ -19,10 +15,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.valeo.bleranging.listeners.DebugListener;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.DebugListener;
-import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ACCESS;
@@ -51,14 +46,6 @@ import static com.valeo.bleranging.BleRangingHelper.PREDICTION_WELCOME;
  * Created by l-avaratha on 09/03/2017
  */
 public class DebugFragment extends Fragment implements DebugListener {
-    private static final int MAX_ROWS = 11;
-    private static final int MAX_COLUMNS = 10;
-    private final Paint paintOne = new Paint();
-    private final Paint paintTwo = new Paint();
-    private final Paint paintCar = new Paint();
-    private final Paint paintUnlock = new Paint();
-    private final Paint paintLock = new Paint();
-    private ImageView chessboard;
     private ImageView signalReceived;
     private LayerDrawable layerDrawable;
     private GradientDrawable welcome_area;
@@ -91,19 +78,8 @@ public class DebugFragment extends Fragment implements DebugListener {
      * Find all view by their id
      */
     private void setView(View rootView) {
-        chessboard = (ImageView) rootView.findViewById(R.id.chessboard);
         signalReceived = (ImageView) rootView.findViewById(R.id.signalReceived);
-        setPaint();
         debug_info = (TextView) rootView.findViewById(R.id.debug_info);
-    }
-
-    private void setPaint() {
-        paintOne.setColor(Color.LTGRAY);
-        paintTwo.setColor(Color.BLACK);
-        paintTwo.setStyle(Paint.Style.STROKE); // print border
-        paintCar.setColor(Color.DKGRAY);
-        paintUnlock.setColor(Color.GREEN);
-        paintLock.setColor(Color.RED);
     }
 
     @Override
@@ -284,7 +260,6 @@ public class DebugFragment extends Fragment implements DebugListener {
     @Override
     public void applyNewDrawable() {
         signalReceived.setImageDrawable(layerDrawable);
-        chessboard.setBackground(drawChessBoard(700));
     }
 
     @Override
@@ -361,24 +336,4 @@ public class DebugFragment extends Fragment implements DebugListener {
             return ContextCompat.getDrawable(getActivity(), isOpenChoice);
         }
     }
-
-    private BitmapDrawable drawChessBoard(final int measuredWidth) {
-        final int stepX = measuredWidth / MAX_ROWS;
-        final int measuredHeight = stepX * MAX_COLUMNS;
-        final int stepY = measuredHeight / MAX_COLUMNS;
-        final Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(bitmap);
-        PSALogs.i("chess", "stepX " + stepX + " measuredWidth " + measuredWidth);
-        canvas.drawRect(0, 0, measuredWidth, measuredHeight, paintLock); //lock rect
-        canvas.drawRect(stepX, stepY * 2, stepX * 9, stepY * 8, paintUnlock); // unlock rect
-        for (int width = 0, x = 0; width < measuredWidth && x < MAX_ROWS; width += stepX, x++) {
-            canvas.drawLine(width, 0, width, measuredHeight, paintTwo); // rows lines
-        }
-        for (int height = 0, y = 0; height < measuredHeight && y < MAX_COLUMNS; height += stepY, y++) {
-            canvas.drawLine(0, height, measuredWidth, height, paintTwo); // columns lines
-        }
-        canvas.drawRect(stepX * 3, stepY * 4, stepX * 7, stepY * 6, paintCar); // car rect
-        return new BitmapDrawable(getResources(), bitmap);
-    }
-
 }

@@ -1,4 +1,4 @@
-package com.valeo.bleranging.utils;
+package com.valeo.bleranging.listeners;
 
 import android.text.SpannedString;
 

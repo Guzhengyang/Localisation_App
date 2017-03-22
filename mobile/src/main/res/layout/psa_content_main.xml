@@ -18,10 +18,16 @@
             android:layout_height="wrap_content" />
 
         <FrameLayout
-            android:id="@+id/debug_rl"
+            android:id="@+id/chessboard_rl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/door_status_switcher" />
+
+        <FrameLayout
+            android:id="@+id/debug_rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/chessboard_rl" />
 
         <FrameLayout
             android:id="@+id/accuracy_rl"

@@ -46,13 +46,14 @@ import android.widget.Toast;
 
 import com.trncic.library.DottedProgressBar;
 import com.valeo.bleranging.BleRangingHelper;
+import com.valeo.bleranging.listeners.BleRangingListener;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.BleRangingListener;
 import com.valeo.bleranging.utils.LogFileUtils;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 import com.valeo.psa.fragment.AccuracyFragment;
+import com.valeo.psa.fragment.ChessBoardFragment;
 import com.valeo.psa.fragment.DebugFragment;
 import com.valeo.psa.fragment.NfcFragment;
 import com.valeo.psa.fragment.RkeFragment;
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     private Toolbar toolbar;
     private FrameLayout main_frame;
     private RkeFragment rkeFragment;
+    private ChessBoardFragment chessboardFragment;
     private DebugFragment debugFragment;
     private AccuracyFragment accuracyFragment;
     private NfcFragment nfcFragment;
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         setFonts();
         setOnClickListeners();
         main_appbar.setExpanded(false, false);
-        this.mBleRangingHelper = new BleRangingHelper(this, debugFragment,
+        this.mBleRangingHelper = new BleRangingHelper(this, chessboardFragment, debugFragment,
                 rkeFragment, accuracyFragment);
         final Bundle bundleArgs = new Bundle();
         bundleArgs.putBoolean("lockStatus", mBleRangingHelper.getLockStatus());
@@ -157,11 +159,13 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 
     private void setFragments() {
         rkeFragment = new RkeFragment();
+        chessboardFragment = new ChessBoardFragment();
         debugFragment = new DebugFragment();
         accuracyFragment = new AccuracyFragment();
         nfcFragment = new NfcFragment();
         startFragment = new StartFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.door_status_switcher, rkeFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.chessboard_rl, chessboardFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.debug_rl, debugFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.accuracy_rl, accuracyFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.nfc_rl, nfcFragment).commit();

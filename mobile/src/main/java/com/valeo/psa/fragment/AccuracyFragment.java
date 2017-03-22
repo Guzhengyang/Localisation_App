@@ -14,8 +14,8 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.valeo.bleranging.listeners.SpinnerListener;
 import com.valeo.bleranging.utils.PSALogs;
-import com.valeo.bleranging.utils.SpinnerListener;
 import com.valeo.psa.R;
 
 import java.util.ArrayList;

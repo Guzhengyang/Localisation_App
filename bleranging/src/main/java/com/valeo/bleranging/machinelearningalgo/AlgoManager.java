@@ -17,12 +17,12 @@ import android.text.SpannableStringBuilder;
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
+import com.valeo.bleranging.listeners.BleRangingListener;
+import com.valeo.bleranging.listeners.RkeListener;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.BleRangingListener;
 import com.valeo.bleranging.utils.CallReceiver;
 import com.valeo.bleranging.utils.PSALogs;
-import com.valeo.bleranging.utils.RkeListener;
 import com.valeo.bleranging.utils.SoundUtils;
 
 import java.util.ArrayList;

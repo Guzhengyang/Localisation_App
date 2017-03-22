@@ -22,8 +22,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.valeo.bleranging.listeners.RkeListener;
 import com.valeo.bleranging.utils.PSALogs;
-import com.valeo.bleranging.utils.RkeListener;
 import com.valeo.psa.R;
 
 import static android.view.DragEvent.ACTION_DRAG_LOCATION;
