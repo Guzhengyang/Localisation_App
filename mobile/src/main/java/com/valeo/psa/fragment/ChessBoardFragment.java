@@ -90,7 +90,10 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     private Bitmap placeUserOnChessBoard(final PointF point) {
         final Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
+        PSALogs.d("chess", String.format(Locale.FRANCE, "%.1f %.1f", point.x, point.y));
         final PointF currentLoc = point;
+        currentLoc.x = point.x * stepX;
+        currentLoc.y = point.y * stepY;
         if (positions.size() == MAX_POSITIONS) {
             positions.remove(0);
         }
@@ -101,7 +104,7 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
         for (int index = 0; index + 1 < positions.size(); index++) {
             canvas.drawLine(positions.get(index).x, positions.get(index).y, positions.get(index + 1).x, positions.get(index + 1).y, paintOne);
         }
-        PSALogs.d("chess", String.format(Locale.FRANCE, "%.1f %.1f\n %.1f %.1f", lastLoc.x, lastLoc.y, currentLoc.x, currentLoc.y));
+//        PSALogs.d("chess", String.format(Locale.FRANCE, "%.1f %.1f\n %.1f %.1f", lastLoc.x, lastLoc.y, currentLoc.x, currentLoc.y));
         lastLoc = currentLoc;
         return bitmap;
     }
