@@ -30,7 +30,7 @@ public class PredictionFactory {
      *
      * @return a prediction
      */
-    public static Prediction getPrediction(Context mContext, String predictionType) {
+    public static PredictionZone getPrediction(Context mContext, String predictionType) {
         boolean areInside = SdkPreferencesHelper.getInstance().getAreBeaconsInside();
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
         String strategy = SdkPreferencesHelper.getInstance().getOpeningOrientation();
@@ -39,21 +39,21 @@ public class PredictionFactory {
         if (areInside) {
             switch (carType) {
                 case TYPE_2_A:
-                    return new Prediction(mContext, R.raw.two_a_in);
+                    return new PredictionZone(mContext, R.raw.two_a_in);
                 case TYPE_2_B:
-                    return new Prediction(mContext, R.raw.two_b_in);
+                    return new PredictionZone(mContext, R.raw.two_b_in);
                 case TYPE_3_A:
-                    return new Prediction(mContext, R.raw.three_in);
+                    return new PredictionZone(mContext, R.raw.three_in);
                 case TYPE_4_A:
                     break;
                 case TYPE_4_B:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            return new Prediction(mContext, R.raw.four_in);
+                            return new PredictionZone(mContext, R.raw.four_in);
                         case PREDICTION_RP:
-                            return new Prediction(mContext, R.raw.four_in);
+                            return new PredictionZone(mContext, R.raw.four_in);
                         case PREDICTION_EAR:
-                            return new Prediction(mContext, R.raw.four_in);
+                            return new PredictionZone(mContext, R.raw.four_in);
                     }
                     break;
                 case TYPE_5_A:
@@ -61,7 +61,7 @@ public class PredictionFactory {
                 case TYPE_6_A:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            return new Prediction(mContext, R.raw.six_in);
+                            return new PredictionZone(mContext, R.raw.six_in);
                     }
                     break;
                 case TYPE_7_A:
@@ -69,32 +69,32 @@ public class PredictionFactory {
                 case TYPE_8_A:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            return new Prediction(mContext, R.raw.eight_in);
+                            return new PredictionZone(mContext, R.raw.eight_in);
                         case PREDICTION_INSIDE:
-                            return new Prediction(mContext, R.raw.eight_in);
+                            return new PredictionZone(mContext, R.raw.eight_in);
                         case PREDICTION_RP:
-                            return new Prediction(mContext, R.raw.eight_in);
+                            return new PredictionZone(mContext, R.raw.eight_in);
                     }
                     break;
             }
         } else {
             switch (carType) {
                 case TYPE_2_A:
-                    return new Prediction(mContext, R.raw.two_a_out);
+                    return new PredictionZone(mContext, R.raw.two_a_out);
                 case TYPE_2_B:
-                    return new Prediction(mContext, R.raw.two_b_out);
+                    return new PredictionZone(mContext, R.raw.two_b_out);
                 case TYPE_3_A:
-                    return new Prediction(mContext, R.raw.three_out);
+                    return new PredictionZone(mContext, R.raw.three_out);
                 case TYPE_4_A:
                     break;
                 case TYPE_4_B:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            return new Prediction(mContext, R.raw.four_out);
+                            return new PredictionZone(mContext, R.raw.four_out);
                         case PREDICTION_RP:
-                            return new Prediction(mContext, R.raw.four_out);
+                            return new PredictionZone(mContext, R.raw.four_out);
                         case PREDICTION_EAR:
-                            return new Prediction(mContext, R.raw.four_out);
+                            return new PredictionZone(mContext, R.raw.four_out);
                     }
                     break;
                 case TYPE_5_A:
@@ -102,7 +102,7 @@ public class PredictionFactory {
                 case TYPE_6_A:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            return new Prediction(mContext, R.raw.six_out);
+                            return new PredictionZone(mContext, R.raw.six_out);
                     }
                     break;
                 case TYPE_7_A:
@@ -111,14 +111,14 @@ public class PredictionFactory {
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
                             if (ifMiniPrediction) {
-                                return new Prediction(mContext, R.raw.eight_out);
+                                return new PredictionZone(mContext, R.raw.eight_out);
                             } else {
-                                return new Prediction(mContext, R.raw.eight_out);
+                                return new PredictionZone(mContext, R.raw.eight_out);
                             }
                         case PREDICTION_INSIDE:
-                            return new Prediction(mContext, R.raw.eight_out);
+                            return new PredictionZone(mContext, R.raw.eight_out);
                         case PREDICTION_RP:
-                            return new Prediction(mContext, R.raw.eight_out);
+                            return new PredictionZone(mContext, R.raw.eight_out);
                     }
                     break;
             }

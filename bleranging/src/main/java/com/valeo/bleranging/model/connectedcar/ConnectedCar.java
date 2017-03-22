@@ -7,7 +7,7 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
-import com.valeo.bleranging.machinelearningalgo.prediction.Prediction;
+import com.valeo.bleranging.machinelearningalgo.prediction.PredictionZone;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
@@ -57,10 +57,10 @@ public abstract class ConnectedCar {
     protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
     protected Context mContext;
     protected double[] rssi;
-    Prediction standardPrediction;
-    Prediction earPrediction;
-    Prediction rpPrediction;
-    Prediction insidePrediction;
+    PredictionZone standardPrediction;
+    PredictionZone earPrediction;
+    PredictionZone rpPrediction;
+    PredictionZone insidePrediction;
     boolean comValid = false;
     String lastModelUsed = STANDARD_LOC;
 

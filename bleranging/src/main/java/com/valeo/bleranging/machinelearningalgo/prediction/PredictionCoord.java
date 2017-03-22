@@ -1,0 +1,107 @@
+package com.valeo.bleranging.machinelearningalgo.prediction;
+
+import android.content.Context;
+import android.graphics.PointF;
+import android.os.AsyncTask;
+import android.widget.Toast;
+
+import weka.classifiers.functions.MultilayerPerceptron;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.SerializationHelper;
+
+/**
+ * Created by l-avaratha on 12/01/2017
+ */
+
+public class PredictionCoord {
+    private static final double THRESHOLD_RSSI_AWAY = 1;
+    private Context mContext;
+    private MultilayerPerceptron mlp_Px;
+    private MultilayerPerceptron mlp_Py;
+    private Instance sample;
+    private double[] rssi_offset;
+    private double[] rssi;
+    private double[] coord;
+    private boolean arePredictRawFileRead = false;
+
+    public PredictionCoord(Context context, int modelId) {
+        this.mContext = context;
+        new AsyncPredictionInit().execute(modelId);
+    }
+
+    public boolean isPredictRawFileRead() {
+        return arePredictRawFileRead;
+    }
+
+    public void init(double[] rssi, int offset) {
+        this.rssi_offset = new double[rssi.length];
+        this.rssi = new double[rssi.length];
+        this.coord = new double[2];
+        for (int i = 0; i < rssi.length; i++) {
+            this.rssi_offset[i] = rssi[i] - offset;
+            this.rssi[i] = rssi_offset[i];
+            sample.setValue(i, this.rssi[i]);
+        }
+    }
+
+    public void setRssi(int index, double rssi, int offset) {
+        this.rssi_offset[index] = rssi - offset;
+        this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
+        sample.setValue(index, this.rssi[index]);
+    }
+
+    public void calculatePredictionCoord() {
+        try {
+            coord[0] = mlp_Px.classifyInstance(sample);
+            coord[1] = mlp_Py.classifyInstance(sample);
+        } catch (Exception e) {
+
+        }
+    }
+
+    public PointF getPredictionCoord() {
+        return new PointF((float) coord[0], (float) coord[1]);
+    }
+
+    private double correctRssiUnilateral(double rssi_old, double rssi_new) {
+        double rssi_correted;
+        if (rssi_new > rssi_old) {
+            rssi_correted = rssi_new;
+        } else {
+            rssi_correted = rssi_old - Math.min(rssi_old - rssi_new, THRESHOLD_RSSI_AWAY);
+        }
+        return rssi_correted;
+    }
+
+    public double[] getRssi() {
+        return rssi;
+    }
+
+    private class AsyncPredictionInit extends AsyncTask<Integer, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Integer... elements) {
+            try {
+                Object[] model = (Object[]) SerializationHelper.read(mContext.getResources().openRawResource(elements[0]));
+                mlp_Px = (MultilayerPerceptron) model[0];
+                mlp_Py = (MultilayerPerceptron) model[1];
+                Instances instances = (Instances) model[2];
+                sample = instances.instance(0);
+                arePredictRawFileRead = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                arePredictRawFileRead = false;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (!arePredictRawFileRead) {
+                Toast.makeText(mContext, "Init for MLP failed", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+}

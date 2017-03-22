@@ -30,7 +30,7 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIE
  * Created by l-avaratha on 12/01/2017
  */
 
-public class Prediction {
+public class PredictionZone {
     private static final double f = 2.45 * Math.pow(10, 9);
     private static final double c = 3 * Math.pow(10, 8);
     private static final double P = -22;
@@ -51,7 +51,7 @@ public class Prediction {
     private boolean isThresholdMethod = false;
     private StringBuilder sb = new StringBuilder();
 
-    public Prediction(Context context, int modelId) {
+    public PredictionZone(Context context, int modelId) {
         this.mContext = context;
         new AsyncPredictionInit().execute(modelId);
     }
