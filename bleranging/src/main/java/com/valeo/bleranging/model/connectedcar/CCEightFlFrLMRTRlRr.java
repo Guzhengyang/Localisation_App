@@ -83,10 +83,10 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     public void calculatePrediction() {
         if (isInitialized()) {
             coordPrediction.calculatePredictionCoord();
-            if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(THATCHAM_ORIENTED)) {
+            if (SdkPreferencesHelper.getInstance().getOpeningStrategy().equalsIgnoreCase(THATCHAM_ORIENTED)) {
                 standardPrediction.calculatePredictionStandard(SdkPreferencesHelper.getInstance().getThresholdProbStandard(),
                         THRESHOLD_PROB_LOCK2UNLOCK, THRESHOLD_PROB_UNLOCK2LOCK, THATCHAM_ORIENTED);
-            } else if (SdkPreferencesHelper.getInstance().getOpeningOrientation().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
+            } else if (SdkPreferencesHelper.getInstance().getOpeningStrategy().equalsIgnoreCase(PASSIVE_ENTRY_ORIENTED)) {
                 standardPrediction.calculatePredictionStandard(SdkPreferencesHelper.getInstance().getThresholdProbStandard(),
                         THRESHOLD_PROB_LOCK2UNLOCK, THRESHOLD_PROB_UNLOCK2LOCK, PASSIVE_ENTRY_ORIENTED);
             }
@@ -98,7 +98,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public String printDebug(boolean smartphoneIsInPocket) {
         if (isInitialized()) {
-            String result = SdkPreferencesHelper.getInstance().getOpeningOrientation() + "\n";
+            String result = SdkPreferencesHelper.getInstance().getOpeningStrategy() + "\n";
             result += standardPrediction.printDebug(FULL_LOC);
             return result;
         }

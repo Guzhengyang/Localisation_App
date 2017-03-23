@@ -94,7 +94,7 @@ public final class SdkPreferencesHelper {
         return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_base_pref_name), ConnectedCarFactory.BASE_3);
     }
 
-    public String getOpeningOrientation() {
+    public String getOpeningStrategy() {
         return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.opening_orientation_type_pref_name), THATCHAM_ORIENTED);
     }
 

@@ -3,6 +3,7 @@ package com.valeo.bleranging.machinelearningalgo.prediction;
 import android.content.Context;
 
 import com.valeo.bleranging.R;
+import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_2_A;
@@ -33,7 +34,7 @@ public class PredictionFactory {
     public static PredictionZone getPrediction(Context mContext, String predictionType) {
         boolean areInside = SdkPreferencesHelper.getInstance().getAreBeaconsInside();
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-        String strategy = SdkPreferencesHelper.getInstance().getOpeningOrientation();
+        String strategy = SdkPreferencesHelper.getInstance().getOpeningStrategy();
         boolean ifRoof = SdkPreferencesHelper.getInstance().isPrintRooftopEnabled();
         boolean ifMiniPrediction = SdkPreferencesHelper.getInstance().isMiniPredictionUsed();
         if (areInside) {
@@ -90,7 +91,11 @@ public class PredictionFactory {
                 case TYPE_4_B:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            return new PredictionZone(mContext, R.raw.four_out);
+                            if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
+                                return new PredictionZone(mContext, R.raw.four_out_thatcham);
+                            } else {
+                                return new PredictionZone(mContext, R.raw.four_out);
+                            }
                         case PREDICTION_RP:
                             return new PredictionZone(mContext, R.raw.four_out);
                         case PREDICTION_EAR:
@@ -110,8 +115,8 @@ public class PredictionFactory {
                 case TYPE_8_A:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            if (ifMiniPrediction) {
-                                return new PredictionZone(mContext, R.raw.eight_out);
+                            if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
+                                return new PredictionZone(mContext, R.raw.eight_out_thatcham);
                             } else {
                                 return new PredictionZone(mContext, R.raw.eight_out);
                             }
