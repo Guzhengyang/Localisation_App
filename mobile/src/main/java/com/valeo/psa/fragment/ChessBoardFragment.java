@@ -4,11 +4,13 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,22 +28,20 @@ import java.util.Locale;
  */
 public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     private static final int MAX_POSITIONS = 15;
-    private static final int MAX_ROWS = 11;
-    private static final int MAX_COLUMNS = 10;
-    private static final int MAX_WIDTH = 700;
+    private static final float MAX_ROWS = 11;
+    private static final float MAX_COLUMNS = 10;
     private final Paint paintOne = new Paint();
     private final Paint paintTwo = new Paint();
     private final Paint paintCar = new Paint();
     private final Paint paintUnlock = new Paint();
     private final Paint paintLock = new Paint();
     private final ArrayList<PointF> positions = new ArrayList<>(MAX_POSITIONS);
+    private final Path path = new Path();
     private ImageView chessboard;
     private int measuredWidth;
-    private int stepX;
+    private float stepX;
     private int measuredHeight;
-    private int stepY;
-    private PointF lastLoc;
-
+    private float stepY;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -60,9 +60,11 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     }
 
     private void setSteps() {
-        measuredWidth = MAX_WIDTH;
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        measuredWidth = metrics.widthPixels;
         stepX = measuredWidth / MAX_ROWS;
-        measuredHeight = stepX * MAX_COLUMNS;
+        measuredHeight = (int) (stepX * MAX_COLUMNS);
         stepY = measuredHeight / MAX_COLUMNS;
     }
 
@@ -90,22 +92,25 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     private Bitmap placeUserOnChessBoard(final PointF point) {
         final Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
-        PSALogs.d("chess", String.format(Locale.FRANCE, "%.1f %.1f", point.x, point.y));
-        final PointF currentLoc = point;
-        currentLoc.x = point.x * stepX;
-        currentLoc.y = point.y * stepY;
+        PSALogs.d("chess", String.format(Locale.FRANCE, "coord : %.1f %.1f", point.x, point.y));
+        point.x *= stepX;
+        point.y *= stepY;
+        PSALogs.d("chess", String.format(Locale.FRANCE, "pixel : %.1f %.1f", point.x, point.y));
         if (positions.size() == MAX_POSITIONS) {
             positions.remove(0);
+            path.reset();
+            path.moveTo(positions.get(0).x, positions.get(0).y);
         }
-        positions.add(currentLoc);
-        if (positions.size() == 1 || lastLoc == null) {
-            lastLoc = currentLoc;
+        positions.add(point);
+        if (positions.size() == 1) {
+            positions.add(point);
+            path.moveTo(point.x, point.y);
         }
-        for (int index = 0; index + 1 < positions.size(); index++) {
-            canvas.drawLine(positions.get(index).x, positions.get(index).y, positions.get(index + 1).x, positions.get(index + 1).y, paintOne);
+        for (int index = 1; index < positions.size(); index++) {
+            PointF tempPoint = positions.get(index);
+            path.lineTo(tempPoint.x, tempPoint.y);
         }
-//        PSALogs.d("chess", String.format(Locale.FRANCE, "%.1f %.1f\n %.1f %.1f", lastLoc.x, lastLoc.y, currentLoc.x, currentLoc.y));
-        lastLoc = currentLoc;
+        canvas.drawPath(path, paintOne);
         return bitmap;
     }
 
