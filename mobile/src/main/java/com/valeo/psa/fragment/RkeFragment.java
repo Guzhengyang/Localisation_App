@@ -19,7 +19,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.valeo.bleranging.listeners.RkeListener;
@@ -27,8 +26,6 @@ import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 
 import static android.view.DragEvent.ACTION_DRAG_LOCATION;
-import static android.widget.RelativeLayout.ALIGN_START;
-import static android.widget.RelativeLayout.ALIGN_TOP;
 import static com.valeo.bleranging.BleRangingHelper.RKE_USE_TIMEOUT;
 
 /**
@@ -38,10 +35,10 @@ public class RkeFragment extends Fragment implements RkeListener {
     private final Handler mHandler = new Handler();
     private TextView car_door_status;
     private TextView rke_loading_progress_bar;
-    private ImageView circle_selector;
-    private ImageButton vehicle_locked;
-    private ImageButton driver_s_door_unlocked;
-    private ImageButton vehicle_unlocked;
+    private ImageButton circle_selector;
+    private ImageView vehicle_locked;
+    private ImageView driver_s_door_unlocked;
+    private ImageView vehicle_unlocked;
     private ImageButton start_button;
     private Animation pulseAnimation;
     private Animation pulseAnimation2;
@@ -88,12 +85,14 @@ public class RkeFragment extends Fragment implements RkeListener {
     }
 
     private void placeOver(View dragView, View view) {
-        final RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) dragView.getLayoutParams();
-        layoutParams.removeRule(ALIGN_TOP);
-        layoutParams.removeRule(ALIGN_START);
-        layoutParams.addRule(ALIGN_TOP, ((FrameLayout) view.getParent()).getId());
-        layoutParams.addRule(ALIGN_START, ((FrameLayout) view.getParent()).getId());
-        dragView.setLayoutParams(layoutParams);
+//        final RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) dragView.getLayoutParams();
+//        layoutParams.removeRule(ALIGN_TOP);
+//        layoutParams.removeRule(ALIGN_START);
+//        layoutParams.addRule(ALIGN_TOP, ((FrameLayout) view.getParent()).getId());
+//        layoutParams.addRule(ALIGN_START, ((FrameLayout) view.getParent()).getId());
+//        dragView.setLayoutParams(layoutParams);
+        ((FrameLayout) dragView.getParent()).removeView(dragView);
+        ((FrameLayout) view.getParent()).addView(dragView, 0);
     }
 
     private void rkeActions(View view) {
@@ -131,10 +130,10 @@ public class RkeFragment extends Fragment implements RkeListener {
      */
     private void setView(View rootView) {
         car_door_status = (TextView) rootView.findViewById(R.id.car_door_status);
-        circle_selector = (ImageView) rootView.findViewById(R.id.circle_selector);
-        vehicle_locked = (ImageButton) rootView.findViewById(R.id.vehicle_locked);
-        driver_s_door_unlocked = (ImageButton) rootView.findViewById(R.id.driver_s_door_unlocked);
-        vehicle_unlocked = (ImageButton) rootView.findViewById(R.id.vehicle_unlocked);
+        circle_selector = (ImageButton) rootView.findViewById(R.id.circle_selector);
+        vehicle_locked = (ImageView) rootView.findViewById(R.id.vehicle_locked);
+        driver_s_door_unlocked = (ImageView) rootView.findViewById(R.id.driver_s_door_unlocked);
+        vehicle_unlocked = (ImageView) rootView.findViewById(R.id.vehicle_unlocked);
         start_button = (ImageButton) rootView.findViewById(R.id.start_button);
         start_button_first_wave = (ImageView) rootView.findViewById(R.id.start_button_first_wave);
         start_button_second_wave = (ImageView) rootView.findViewById(R.id.start_button_second_wave);
@@ -161,24 +160,45 @@ public class RkeFragment extends Fragment implements RkeListener {
                 return false;
             }
         });
-        vehicle_locked.setOnClickListener(new View.OnClickListener() {
+//        vehicle_locked.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                rkeAction(CarDoorStatus.LOCKED, vehicle_locked, false, true);
+//            }
+//        });
+//        driver_s_door_unlocked.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                rkeAction(CarDoorStatus.DRIVER_DOOR_OPEN, driver_s_door_unlocked, false, false);
+//            }
+//        });
+//        vehicle_unlocked.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                rkeAction(CarDoorStatus.UNLOCKED, vehicle_unlocked, true, false);
+////              createNotification(NOTIFICATION_ID_1, getString(R.string.notif_unlock_it),
+////              R.mipmap.car_all_doors_button, getString(R.string.vehicle_unlocked));
+//            }
+//        });
+        vehicle_locked.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                rkeAction(CarDoorStatus.LOCKED, vehicle_locked, false, true);
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                return false;
             }
         });
-        driver_s_door_unlocked.setOnClickListener(new View.OnClickListener() {
+        driver_s_door_unlocked.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                rkeAction(CarDoorStatus.DRIVER_DOOR_OPEN, driver_s_door_unlocked, false, false);
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                return false;
             }
         });
-        vehicle_unlocked.setOnClickListener(new View.OnClickListener() {
+        vehicle_unlocked.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                rkeAction(CarDoorStatus.UNLOCKED, vehicle_unlocked, true, false);
-//              createNotification(NOTIFICATION_ID_1, getString(R.string.notif_unlock_it),
-//              R.mipmap.car_all_doors_button, getString(R.string.vehicle_unlocked));
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                return false;
             }
         });
     }

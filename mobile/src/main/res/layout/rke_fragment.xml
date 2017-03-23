@@ -36,10 +36,18 @@
             android:layout_marginBottom="28dp"
             android:layout_marginEnd="27dp"
             android:layout_toStartOf="@+id/start_button_frame"
-            android:adjustViewBounds="true"
-            android:background="@drawable/round_button">
-
+            android:adjustViewBounds="true">
             <ImageButton
+                android:id="@+id/circle_selector"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                android:background="@drawable/round_button"
+                android:contentDescription="@string/slider_button_description"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/slider_button" />
+
+            <ImageView
                 android:id="@+id/vehicle_locked"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -59,7 +67,7 @@
             android:adjustViewBounds="true"
             android:background="@drawable/round_button">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/driver_s_door_unlocked"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -80,7 +88,7 @@
             android:adjustViewBounds="true"
             android:background="@drawable/round_button">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/vehicle_unlocked"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -91,17 +99,6 @@
                 android:tint="@color/car_not_selected_button" />
         </FrameLayout>
 
-        <ImageView
-            android:id="@+id/circle_selector"
-            android:layout_width="91dp"
-            android:layout_height="91dp"
-            android:layout_alignStart="@id/frame_layout_vehicule_locked"
-            android:layout_alignTop="@id/frame_layout_vehicule_locked"
-            android:layout_marginStart="-15dp"
-            android:layout_marginTop="-8dp"
-            android:background="@drawable/round_button"
-            android:contentDescription="@string/slider_button_description"
-            android:src="@mipmap/slider_button" />
         <View
             android:id="@+id/dummy_space_view"
             android:layout_width="wrap_content"
