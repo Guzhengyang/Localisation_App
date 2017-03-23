@@ -59,6 +59,6 @@ public class CCFiveLMRTB extends ConnectedCar {
 
     @Override
     public PointF getPredictionCoord() {
-        return new PointF(0f, 0f);
+        return null;
     }
 }

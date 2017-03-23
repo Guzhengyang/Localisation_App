@@ -86,7 +86,9 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
 
     @Override
     public void updateChessboard(final PointF point) {
-        chessboard.setImageBitmap(placeUserOnChessBoard(point));
+        if (point != null) {
+            chessboard.setImageBitmap(placeUserOnChessBoard(point));
+        }
     }
 
     private Bitmap placeUserOnChessBoard(final PointF point) {

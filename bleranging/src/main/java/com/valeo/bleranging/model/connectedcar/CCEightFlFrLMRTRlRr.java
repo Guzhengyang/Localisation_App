@@ -122,7 +122,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         if (isInitialized()) {
             return coordPrediction.getPredictionCoord();
         }
-        return new PointF(0f, 0f);
+        return null;
     }
 
     private String getInsidePrediction() {

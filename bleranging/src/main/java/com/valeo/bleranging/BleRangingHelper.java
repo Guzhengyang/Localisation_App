@@ -899,7 +899,8 @@ public class BleRangingHelper {
     /**
      * Update the mini map with our location around the car
      */
-    private void updateCarLocalization(String predictionPosition, String predictionProximity, PointF coord) {
+    private void updateCarLocalization(String predictionPosition,
+                                       String predictionProximity, PointF coord) {
         for (String elementPred : PREDICTIONS) {
             debugListener.darkenArea(elementPred);
         }

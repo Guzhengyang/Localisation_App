@@ -447,7 +447,7 @@ public class AlgoManager implements SensorEventListener {
         if (connectedCar != null) {
             return connectedCar.getPredictionCoord();
         }
-        return new PointF(0f, 0f);
+        return null;
     }
 
     public String getPredictionProximity(final ConnectedCar connectedCar) {
