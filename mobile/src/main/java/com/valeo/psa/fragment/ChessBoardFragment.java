@@ -32,6 +32,7 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     private static final float MAX_COLUMNS = 10;
     private final Paint paintOne = new Paint();
     private final Paint paintTwo = new Paint();
+    private final Paint paintThree = new Paint();
     private final Paint paintCar = new Paint();
     private final Paint paintUnlock = new Paint();
     private final Paint paintLock = new Paint();
@@ -74,6 +75,8 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
         paintOne.setStrokeWidth(5f);
         paintTwo.setColor(Color.LTGRAY);
         paintTwo.setStyle(Paint.Style.STROKE); // print border
+        paintThree.setColor(Color.YELLOW);
+        paintThree.setStrokeWidth(25f);
         paintCar.setColor(Color.DKGRAY);
         paintUnlock.setColor(Color.GREEN);
         paintLock.setColor(Color.RED);
@@ -113,6 +116,7 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
             path.lineTo(tempPoint.x, tempPoint.y);
         }
         canvas.drawPath(path, paintOne);
+        canvas.drawPoint(point.x, point.y, paintThree);
         return bitmap;
     }
 

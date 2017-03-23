@@ -5,6 +5,10 @@ import android.graphics.PointF;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -19,6 +23,8 @@ public class PredictionCoord {
     private static final double THRESHOLD_DIST = 0.3;
     private static final int MAX_ROWS = 11;
     private static final int MAX_COLUMNS = 10;
+    private static final int MAX_HISTORIC_SIZE = 5;
+    private final LinkedHashMap<Integer, List<Double>> rssiHistoric;
     private Context mContext;
     private MultilayerPerceptron mlp_Px;
     private MultilayerPerceptron mlp_Py;
@@ -30,6 +36,7 @@ public class PredictionCoord {
 
     public PredictionCoord(Context context, int modelId) {
         this.mContext = context;
+        rssiHistoric = new LinkedHashMap<>();
         new AsyncPredictionInit().execute(modelId);
     }
 
@@ -45,17 +52,36 @@ public class PredictionCoord {
             this.rssi_offset[i] = rssi[i] - offset;
             this.rssi[i] = rssi_offset[i];
             sample.setValue(i, this.rssi[i]);
+            rssiHistoric.put(i, new ArrayList<Double>());
+            rssiHistoric.get(i).add(this.rssi[i]);
         }
     }
 
     public void setRssi(int index, double rssi, int offset) {
         this.rssi_offset[index] = rssi - offset;
         this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
-        sample.setValue(index, this.rssi[index]);
+        if (rssiHistoric.get(index).size() == MAX_HISTORIC_SIZE) {
+            rssiHistoric.get(index).remove(0);
+        }
+        rssiHistoric.get(index).add(this.rssi[index]);
     }
 
+    private double averageRssi(List<Double> rssiList) {
+        if (rssiList == null || rssiList.size() == 0) {
+            return 0;
+        }
+        double somme = 0;
+        for (Double elem : rssiList) {
+            somme += elem;
+        }
+        return somme / rssiList.size();
+    }
+    
     public void calculatePredictionCoord() {
         double[] coord_new = new double[2];
+        for (Integer index : rssiHistoric.keySet()) {
+            sample.setValue(index, averageRssi(rssiHistoric.get(index)));
+        }
         try {
             coord_new[0] = mlp_Px.classifyInstance(sample);
             coord_new[1] = mlp_Py.classifyInstance(sample);
