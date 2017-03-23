@@ -16,6 +16,7 @@ import weka.core.SerializationHelper;
 
 public class PredictionCoord {
     private static final double THRESHOLD_RSSI_AWAY = 1;
+    private static final double THRESHOLD_DIST = 0.3;
     private static final int MAX_ROWS = 11;
     private static final int MAX_COLUMNS = 10;
     private Context mContext;
@@ -54,26 +55,42 @@ public class PredictionCoord {
     }
 
     public void calculatePredictionCoord() {
+        double[] coord_new = new double[2];
         try {
-            coord[0] = mlp_Px.classifyInstance(sample);
-            coord[1] = mlp_Py.classifyInstance(sample);
-            if (coord[0] > MAX_ROWS) {
-                coord[0] = MAX_ROWS;
-            } else if (coord[0] < 0) {
-                coord[0] = 0;
-            }
-            if (coord[1] > MAX_COLUMNS) {
-                coord[1] = MAX_COLUMNS;
-            } else if (coord[1] < 0) {
-                coord[1] = 0;
-            }
+            coord_new[0] = mlp_Px.classifyInstance(sample);
+            coord_new[1] = mlp_Py.classifyInstance(sample);
+            correctCoord(coord_new, THRESHOLD_DIST);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public PointF getPredictionCoord() {
-        return new PointF((float) coord[0], (float) coord[1]);
+        return new PointF((float) coord[0], MAX_COLUMNS - (float) coord[1]);
+    }
+
+    private void correctCoord(double[] coord_new, double threshold_dist) {
+        double deltaX = coord_new[0] - coord[0];
+        double deltaY = coord_new[1] - coord[1];
+        double dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        if (dist > threshold_dist) {
+            double ratio = threshold_dist / dist;
+            coord[0] = coord[0] + deltaX * ratio;
+            coord[1] = coord[1] + deltaY * ratio;
+        } else {
+            coord[0] = coord_new[0];
+            coord[1] = coord_new[1];
+        }
+        if (coord[0] > MAX_ROWS) {
+            coord[0] = MAX_ROWS;
+        } else if (coord[0] < 0) {
+            coord[0] = 0;
+        }
+        if (coord[1] > MAX_COLUMNS) {
+            coord[1] = MAX_COLUMNS;
+        } else if (coord[1] < 0) {
+            coord[1] = 0;
+        }
     }
 
     private double correctRssiUnilateral(double rssi_old, double rssi_new) {
