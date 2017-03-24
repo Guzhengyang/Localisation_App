@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -15,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.valeo.bleranging.listeners.ChessBoardListener;
 import com.valeo.bleranging.utils.PSALogs;
@@ -37,8 +37,9 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     private final Paint paintUnlock = new Paint();
     private final Paint paintLock = new Paint();
     private final ArrayList<PointF> positions = new ArrayList<>(MAX_POSITIONS);
-    private final Path path = new Path();
+    //    private final Path path = new Path();
     private ImageView chessboard;
+    private TextView chessboard_debug_info;
     private int measuredWidth;
     private float stepX;
     private int measuredHeight;
@@ -56,6 +57,7 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
      */
     private void setView(View rootView) {
         chessboard = (ImageView) rootView.findViewById(R.id.chessboard);
+        chessboard_debug_info = (TextView) rootView.findViewById(R.id.chessboard_debug_info);
         setPaint();
         setSteps();
     }
@@ -98,24 +100,25 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
         final Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
         PSALogs.d("chess", String.format(Locale.FRANCE, "coord : %.1f %.1f", point.x, point.y));
+        chessboard_debug_info.setText(String.format(Locale.FRANCE, "coord : x = %.1f      y = %.1f", point.x, (10 - point.y)));
         point.x *= stepX;
         point.y *= stepY;
         PSALogs.d("chess", String.format(Locale.FRANCE, "pixel : %.1f %.1f", point.x, point.y));
         if (positions.size() == MAX_POSITIONS) {
             positions.remove(0);
-            path.reset();
-            path.moveTo(positions.get(0).x, positions.get(0).y);
+//            path.reset();
+//            path.moveTo(positions.get(0).x, positions.get(0).y);
         }
         positions.add(point);
         if (positions.size() == 1) {
             positions.add(point);
-            path.moveTo(point.x, point.y);
+//            path.moveTo(point.x, point.y);
         }
-        for (int index = 1; index < positions.size(); index++) {
-            PointF tempPoint = positions.get(index);
-            path.lineTo(tempPoint.x, tempPoint.y);
-        }
-        canvas.drawPath(path, paintOne);
+//        for (int index = 1; index < positions.size(); index++) {
+//            PointF tempPoint = positions.get(index);
+//            path.lineTo(tempPoint.x, tempPoint.y);
+//        }
+//        canvas.drawPath(path, paintOne);
         canvas.drawPoint(point.x, point.y, paintThree);
         return bitmap;
     }

@@ -11,4 +11,12 @@
         android:background="@color/black"
         android:contentDescription="@string/chessboard" />
 
+    <TextView
+        android:id="@+id/chessboard_debug_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/chessboard"
+        android:background="@color/black"
+        android:textColor="#ffffff" />
 </RelativeLayout>
