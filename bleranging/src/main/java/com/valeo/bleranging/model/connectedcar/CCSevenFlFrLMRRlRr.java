@@ -44,7 +44,7 @@ public class CCSevenFlFrLMRRlRr extends ConnectedCar {
     }
 
     @Override
-    public void calculatePrediction() {
+    public void calculatePrediction(float[] orientation) {
 
     }
 

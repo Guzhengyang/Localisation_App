@@ -43,7 +43,7 @@ public class CCFiveLMRTB extends ConnectedCar {
     }
 
     @Override
-    public void calculatePrediction() {
+    public void calculatePrediction(float[] orientation) {
 
     }
 

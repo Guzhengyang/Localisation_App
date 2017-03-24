@@ -52,7 +52,7 @@ public class CCThreeLMR extends ConnectedCar {
     }
 
     @Override
-    public void calculatePrediction() {
+    public void calculatePrediction(float[] orientation) {
         if (isInitialized()) {
             standardPrediction.calculatePredictionDefault(SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard(),
                     THRESHOLD_PROB_UNLOCK2LOCK);

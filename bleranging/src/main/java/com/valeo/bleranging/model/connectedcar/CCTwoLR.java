@@ -54,7 +54,7 @@ public class CCTwoLR extends ConnectedCar {
     }
 
     @Override
-    public void calculatePrediction() {
+    public void calculatePrediction(float[] orientation) {
         if (isInitialized()) {
             standardPrediction.calculatePredictionStart(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }

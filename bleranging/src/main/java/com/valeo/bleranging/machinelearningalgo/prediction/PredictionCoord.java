@@ -23,7 +23,7 @@ public class PredictionCoord {
     private static final double THRESHOLD_DIST = 0.3;
     private static final int MAX_ROWS = 11;
     private static final int MAX_COLUMNS = 10;
-    private static final int MAX_HISTORIC_SIZE = 5;
+    private static final int MAX_HISTORIC_SIZE = 3;
     private final LinkedHashMap<Integer, List<Double>> rssiHistoric;
     private Context mContext;
     private MultilayerPerceptron mlp_Px;
@@ -76,12 +76,13 @@ public class PredictionCoord {
         }
         return somme / rssiList.size();
     }
-    
-    public void calculatePredictionCoord() {
+
+    public void calculatePredictionCoord(float[] orientation) {
         double[] coord_new = new double[2];
         for (Integer index : rssiHistoric.keySet()) {
             sample.setValue(index, averageRssi(rssiHistoric.get(index)));
         }
+//        sample.setValue(rssi.length, orientation[0]);
         try {
             coord_new[0] = mlp_Px.classifyInstance(sample);
             coord_new[1] = mlp_Py.classifyInstance(sample);

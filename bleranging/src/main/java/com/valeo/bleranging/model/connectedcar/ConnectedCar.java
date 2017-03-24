@@ -271,7 +271,7 @@ public abstract class ConnectedCar {
     /**
      * Calculate a prediction using machine learning
      */
-    public abstract void calculatePrediction();
+    public abstract void calculatePrediction(float[] orientation);
 
     /**
      * Print debug info
