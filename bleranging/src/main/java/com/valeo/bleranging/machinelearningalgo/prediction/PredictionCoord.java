@@ -8,6 +8,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Instance;
@@ -121,7 +122,11 @@ public class PredictionCoord {
     }
 
     public String printDebug() {
-        return coord[0] + " " + coord[1];
+        if (coord != null) {
+            return String.format(Locale.FRANCE, "%.2f %.2f", coord[0], coord[1]);
+        } else {
+            return "";
+        }
     }
 
     private double correctRssiUnilateral(double rssi_old, double rssi_new) {

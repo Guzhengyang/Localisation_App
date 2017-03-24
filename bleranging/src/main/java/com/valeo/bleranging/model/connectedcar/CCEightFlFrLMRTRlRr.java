@@ -98,8 +98,9 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public String printDebug(boolean smartphoneIsInPocket) {
         if (isInitialized()) {
-            String result = SdkPreferencesHelper.getInstance().getOpeningStrategy() + "\n";
+            String result = "";
             result += coordPrediction.printDebug() + "\n";
+            result += SdkPreferencesHelper.getInstance().getOpeningStrategy() + "\n";
             result += standardPrediction.printDebug(FULL_LOC);
             return result;
         }
