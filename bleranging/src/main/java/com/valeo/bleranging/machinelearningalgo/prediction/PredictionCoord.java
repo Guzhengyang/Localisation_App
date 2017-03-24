@@ -120,6 +120,10 @@ public class PredictionCoord {
         }
     }
 
+    public String printDebug() {
+        return coord[0] + " " + coord[1];
+    }
+
     private double correctRssiUnilateral(double rssi_old, double rssi_new) {
         double rssi_correted;
         if (rssi_new > rssi_old) {
