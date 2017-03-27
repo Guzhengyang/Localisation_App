@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/pref_ble_address">
-        <EditTextPreference
+        <com.valeo.psa.view.SafeEditTextPreferenceView
             android:inputType="textCapCharacters"
             android:key="@string/address_connectable_pref_name"
             android:title="@string/pref_ble_address_connectable" />
-        <EditTextPreference
+        <com.valeo.psa.view.SafeEditTextPreferenceView
             android:inputType="textCapCharacters"
             android:key="@string/address_connectable_pc_pref_name"
             android:title="@string/pref_ble_address_connectable_pc" />
-        <EditTextPreference
+        <com.valeo.psa.view.SafeEditTextPreferenceView
             android:inputType="textCapCharacters"
             android:key="@string/address_connectable_remote_control_pref_name"
             android:title="@string/pref_ble_address_connectable_remote_control" />
-        <EditTextPreference
+        <com.valeo.psa.view.SafeEditTextPreferenceView
             android:inputType="textCapCharacters"
             android:key="@string/address_front_left_pref_name"
             android:title="@string/pref_ble_address_front_left" />
-        <EditTextPreference
+        <com.valeo.psa.view.SafeEditTextPreferenceView
             android:inputType="textCapCharacters"
             android:key="@string/address_front_right_pref_name"
             android:title="@string/pref_ble_address_front_right" />
-        <EditTextPreference
+        <com.valeo.psa.view.SafeEditTextPreferenceView
             android:inputType="textCapCharacters"
             android:key="@string/address_left_pref_name"
             android:title="@string/pref_ble_address_left" />
-        <EditTextPreference
+        <com.valeo.psa.view.SafeEditTextPreferenceView
             android:inputType="textCapCharacters"
             android:key="@string/address_middle_pref_name"
             android:title="@string/pref_ble_address_middle" />
-        <EditTextPreference
+        <com.valeo.psa.view.SafeEditTextPreferenceView
             android:inputType="textCapCharacters"
             android:key="@string/address_right_pref_name"
             android:title="@string/pref_ble_address_right" />
-        <EditTextPreference
+        <com.valeo.psa.view.SafeEditTextPreferenceView
             android:inputType="textCapCharacters"
             android:key="@string/address_trunk_pref_name"
             android:title="@string/pref_ble_address_trunk" />
-        <EditTextPreference
+        <com.valeo.psa.view.SafeEditTextPreferenceView
             android:inputType="textCapCharacters"
             android:key="@string/address_rear_left_pref_name"
             android:title="@string/pref_ble_address_rear_left" />
-        <EditTextPreference
+        <com.valeo.psa.view.SafeEditTextPreferenceView
             android:inputType="textCapCharacters"
             android:key="@string/address_back_pref_name"
             android:title="@string/pref_ble_address_back" />
-        <EditTextPreference
+        <com.valeo.psa.view.SafeEditTextPreferenceView
             android:inputType="textCapCharacters"
             android:key="@string/address_rear_right_pref_name"
             android:title="@string/pref_ble_address_rear_right" />

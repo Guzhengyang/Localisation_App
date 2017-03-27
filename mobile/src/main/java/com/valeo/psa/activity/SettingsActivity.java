@@ -27,6 +27,7 @@ import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 import com.valeo.psa.utils.PreferenceUtils;
+import com.valeo.psa.view.SafeEditTextPreferenceView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -235,18 +236,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 }
             }
         };
-        private EditTextPreference address_connectable;
-        private EditTextPreference address_connectable_pc;
-        private EditTextPreference address_connectable_remote_control;
-        private EditTextPreference address_front_left;
-        private EditTextPreference address_front_right;
-        private EditTextPreference address_left;
-        private EditTextPreference address_middle;
-        private EditTextPreference address_right;
-        private EditTextPreference address_trunk;
-        private EditTextPreference address_rear_left;
-        private EditTextPreference address_back;
-        private EditTextPreference address_rear_right;
+        private SafeEditTextPreferenceView address_connectable;
+        private SafeEditTextPreferenceView address_connectable_pc;
+        private SafeEditTextPreferenceView address_connectable_remote_control;
+        private SafeEditTextPreferenceView address_front_left;
+        private SafeEditTextPreferenceView address_front_right;
+        private SafeEditTextPreferenceView address_left;
+        private SafeEditTextPreferenceView address_middle;
+        private SafeEditTextPreferenceView address_right;
+        private SafeEditTextPreferenceView address_trunk;
+        private SafeEditTextPreferenceView address_rear_left;
+        private SafeEditTextPreferenceView address_back;
+        private SafeEditTextPreferenceView address_rear_right;
         private Preference export_preferences;
         private Preference import_preferences;
         private String sharedPreferencesName;
@@ -345,18 +346,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         private void setViews() {
-            address_connectable = ((EditTextPreference) findPreference(getString(R.string.address_connectable_pref_name)));
-            address_connectable_pc = ((EditTextPreference) findPreference(getString(R.string.address_connectable_pc_pref_name)));
-            address_connectable_remote_control = ((EditTextPreference) findPreference(getString(R.string.address_connectable_remote_control_pref_name)));
-            address_front_left = ((EditTextPreference) findPreference(getString(R.string.address_front_left_pref_name)));
-            address_front_right = ((EditTextPreference) findPreference(getString(R.string.address_front_right_pref_name)));
-            address_left = ((EditTextPreference) findPreference(getString(R.string.address_left_pref_name)));
-            address_middle = ((EditTextPreference) findPreference(getString(R.string.address_middle_pref_name)));
-            address_right = ((EditTextPreference) findPreference(getString(R.string.address_right_pref_name)));
-            address_trunk = ((EditTextPreference) findPreference(getString(R.string.address_trunk_pref_name)));
-            address_rear_left = ((EditTextPreference) findPreference(getString(R.string.address_rear_left_pref_name)));
-            address_back = ((EditTextPreference) findPreference(getString(R.string.address_back_pref_name)));
-            address_rear_right = ((EditTextPreference) findPreference(getString(R.string.address_rear_right_pref_name)));
+            address_connectable = ((SafeEditTextPreferenceView) findPreference(getString(R.string.address_connectable_pref_name)));
+            address_connectable_pc = ((SafeEditTextPreferenceView) findPreference(getString(R.string.address_connectable_pc_pref_name)));
+            address_connectable_remote_control = ((SafeEditTextPreferenceView) findPreference(getString(R.string.address_connectable_remote_control_pref_name)));
+            address_front_left = ((SafeEditTextPreferenceView) findPreference(getString(R.string.address_front_left_pref_name)));
+            address_front_right = ((SafeEditTextPreferenceView) findPreference(getString(R.string.address_front_right_pref_name)));
+            address_left = ((SafeEditTextPreferenceView) findPreference(getString(R.string.address_left_pref_name)));
+            address_middle = ((SafeEditTextPreferenceView) findPreference(getString(R.string.address_middle_pref_name)));
+            address_right = ((SafeEditTextPreferenceView) findPreference(getString(R.string.address_right_pref_name)));
+            address_trunk = ((SafeEditTextPreferenceView) findPreference(getString(R.string.address_trunk_pref_name)));
+            address_rear_left = ((SafeEditTextPreferenceView) findPreference(getString(R.string.address_rear_left_pref_name)));
+            address_back = ((SafeEditTextPreferenceView) findPreference(getString(R.string.address_back_pref_name)));
+            address_rear_right = ((SafeEditTextPreferenceView) findPreference(getString(R.string.address_rear_right_pref_name)));
             export_preferences = findPreference(getString(R.string.export_pref_name));
             import_preferences = findPreference(getString(R.string.import_pref_name));
         }
