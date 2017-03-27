@@ -16,6 +16,8 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -194,6 +196,45 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class ConnectionPreferenceFragment extends PreferenceFragment {
         private static final int PICK_IMPORT_GENERAL_FILE_RESULT_CODE = 92141;
+        private final TextWatcher textWatcher = new TextWatcher() {
+            private boolean allowSemiColonAdd = false;
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start,
+                                      int before, int count) {
+                allowSemiColonAdd = count == 1;
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() > 17) {
+                    editable.delete(17, editable.length());
+                    return;
+                }
+                if (!allowSemiColonAdd) { // if user deletes element, delete semicolon automatically
+                    for (int i = 1; i < 6; i++) {
+                        if (editable.length() == (3 * i) - 1) {
+                            editable.delete(editable.length() - 1, editable.length());
+                            return;
+                        }
+                    }
+                } else {
+                    if (editable.length() < 15) {
+                        for (int i = 1; i < 6; i++) {
+                            if (editable.length() == (3 * i) - 1) {
+                                editable.append(":");
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        };
         private EditTextPreference address_connectable;
         private EditTextPreference address_connectable_pc;
         private EditTextPreference address_connectable_remote_control;
@@ -221,6 +262,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             setHasOptionsMenu(true);
             setViews();
             bindSummaries();
+            addTextWatchers();
             setOnClickListeners(getActivity());
         }
 
@@ -353,6 +395,21 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(address_rear_left, SdkPreferencesHelper.BLE_ADDRESS_REAR_LEFT);
             bindPreferenceSummaryToValue(address_back, SdkPreferencesHelper.BLE_ADDRESS_BACK);
             bindPreferenceSummaryToValue(address_rear_right, SdkPreferencesHelper.BLE_ADDRESS_REAR_RIGHT);
+        }
+
+        private void addTextWatchers() {
+            address_connectable.getEditText().addTextChangedListener(textWatcher);
+            address_connectable_pc.getEditText().addTextChangedListener(textWatcher);
+            address_connectable_remote_control.getEditText().addTextChangedListener(textWatcher);
+            address_front_left.getEditText().addTextChangedListener(textWatcher);
+            address_front_right.getEditText().addTextChangedListener(textWatcher);
+            address_left.getEditText().addTextChangedListener(textWatcher);
+            address_middle.getEditText().addTextChangedListener(textWatcher);
+            address_right.getEditText().addTextChangedListener(textWatcher);
+            address_trunk.getEditText().addTextChangedListener(textWatcher);
+            address_rear_left.getEditText().addTextChangedListener(textWatcher);
+            address_back.getEditText().addTextChangedListener(textWatcher);
+            address_rear_right.getEditText().addTextChangedListener(textWatcher);
         }
     }
 
