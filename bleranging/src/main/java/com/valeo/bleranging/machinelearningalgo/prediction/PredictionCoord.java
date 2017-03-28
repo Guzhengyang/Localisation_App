@@ -24,7 +24,7 @@ public class PredictionCoord {
     private static final double THRESHOLD_DIST = 0.3;
     private static final int MAX_ROWS = 11;
     private static final int MAX_COLUMNS = 10;
-    private static final int MAX_HISTORIC_SIZE = 3;
+    private static final int MAX_HISTORIC_SIZE = 5;
     private final LinkedHashMap<Integer, List<Double>> rssiHistoric;
     private Context mContext;
     private MultilayerPerceptron mlp_Px;
@@ -101,14 +101,16 @@ public class PredictionCoord {
         double deltaX = coord_new[0] - coord[0];
         double deltaY = coord_new[1] - coord[1];
         double dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        if (dist > threshold_dist) {
-            double ratio = threshold_dist / dist;
-            coord[0] = coord[0] + deltaX * ratio;
-            coord[1] = coord[1] + deltaY * ratio;
-        } else {
-            coord[0] = coord_new[0];
-            coord[1] = coord_new[1];
-        }
+//        if (dist > threshold_dist) {
+//            double ratio = threshold_dist / dist;
+//            coord[0] = coord[0] + deltaX * ratio;
+//            coord[1] = coord[1] + deltaY * ratio;
+//        } else {
+//            coord[0] = coord_new[0];
+//            coord[1] = coord_new[1];
+//        }
+        coord[0] = coord_new[0];
+        coord[1] = coord_new[1];
         if (coord[0] > MAX_ROWS) {
             coord[0] = MAX_ROWS;
         } else if (coord[0] < 0) {
