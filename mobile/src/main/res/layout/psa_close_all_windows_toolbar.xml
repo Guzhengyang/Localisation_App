@@ -41,9 +41,9 @@
         android:minHeight="10dip"
         android:paddingBottom="12dp"
         android:progress="100"
-        app:activeDot="@drawable/ic_play_dark"
+        app:activeDot="@android:drawable/ic_media_play"
         app:dotSize="15dp"
-        app:inactiveDot="@drawable/ic_play_light"
+        app:inactiveDot="@android:drawable/ic_menu_send"
         app:jumpingSpeed="60"
         app:spacing="1dp" />
 </RelativeLayout>

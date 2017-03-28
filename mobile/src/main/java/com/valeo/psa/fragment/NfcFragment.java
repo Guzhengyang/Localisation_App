@@ -16,8 +16,6 @@ import android.widget.TextView;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 
-import static com.google.android.gms.internal.zzs.TAG;
-
 /**
  * Created by l-avaratha on 09/03/2017
  */
@@ -58,7 +56,7 @@ public class NfcFragment extends Fragment {
                 lightTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "HelveticaNeueLTStd-Lt.otf");
                 boldTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "HelveticaNeueLTStd-Bd.otf");
             } catch (Exception e) {
-                PSALogs.e(TAG, "Font not loaded !");
+                PSALogs.e("NfcFragment", "Font not loaded !");
             }
             tips.setTypeface(boldTypeFace, Typeface.BOLD);
             nfc_disclaimer.setTypeface(lightTypeFace, Typeface.NORMAL);
