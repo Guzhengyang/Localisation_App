@@ -1,6 +1,7 @@
 package com.valeo.bleranging.utils;
 
 import android.content.Context;
+import android.os.Handler;
 
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
@@ -26,6 +27,7 @@ public class LogFileUtils {
     private final static String FILE_EXTENSION = ".csv";
     private static File logFile = null;
     private static BufferedWriter buf = null;
+    private static boolean isWriting = false;
 
     /**
      * Convert a boolean to a string value
@@ -50,13 +52,39 @@ public class LogFileUtils {
         }
     }
 
-    public static boolean closeBufferedWriter() {
+    private static void writeWithBufferedWriter(String text) {
+        isWriting = true;
         try {
-            buf.close();
-            return true;
+            if (logFile != null) {
+                buf.append(text);
+                buf.newLine();
+            }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            isWriting = false;
+        }
+    }
+
+    public static boolean closeBufferedWriter() {
+        PSALogs.d("closeBufferedWriter", "isWriting = " + isWriting);
+        if (isWriting) {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    closeBufferedWriter();
+                }
+            }, 70);
             return false;
+        } else {
+            try {
+                buf.close();
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
     }
 
@@ -193,7 +221,7 @@ public class LogFileUtils {
                 + antennaLeft + comma + antennaMiddle + comma + antennaRight + comma
                 + antennaTrunk + comma + antennaFrontLeft + comma + antennaFrontRight + comma
                 + antennaRearLeft + comma + antennaRearRight + comma + antennaBack + comma;
-        appendRssiLog(log);
+        appendTimestampToLog(log);
     }
 
     /**
@@ -236,24 +264,15 @@ public class LogFileUtils {
                 + String.valueOf(preAuthTimeout) + comma
                 + String.valueOf(actionTimeout) + comma
                 + String.valueOf(wantedSpeed) + comma + String.valueOf(stepSize) + comma;
-        appendRssiLog(log);
+        appendTimestampToLog(log);
     }
 
     /**
      * Function used to debug and write logs into a file.
      */
-    private static void appendRssiLog(String text) {
-//        PSALogs.d("log", text);
-        try {
-            String timestamp = sdfRssi.format(new Date());
-            //BufferedWriter for performance, true to set append to file flag
-            if (logFile != null) {
-                buf.append(timestamp).append(";").append(text);
-                buf.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private static void appendTimestampToLog(String text) {
+        String timestamp = sdfRssi.format(new Date());
+        writeWithBufferedWriter(timestamp + ";" + text);
     }
 
     /**
@@ -302,20 +321,13 @@ public class LogFileUtils {
     public static void writeFirstColumnSettings() {
         //Write 1st row with column names
         //BufferedWriter for performance, true to set append to file flag
-        String ColNames = "TIMESTAMP;carType;carBase;addressConnectable;"
+        String colNames = "TIMESTAMP;carType;carBase;addressConnectable;"
                 + "addressConnectableRemote;addressConnectablePC;addressFrontLeft;addressFrontRight;"
                 + "addressLeft;addressMiddle;addressRight;addressTrunk;"
                 + "addressRearLeft;addressBack;addressRearRight;"
                 + "logNumber;"
                 + "preAuthTimeout;actionTimeout;wantedSpeed;stepSize;";
-        try {
-            if (logFile != null) {
-                buf.append(ColNames);
-                buf.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        writeWithBufferedWriter(colNames);
     }
 
     /**
@@ -324,7 +336,7 @@ public class LogFileUtils {
     public static void writeFirstColumnLogs() {
         //Write 1st row with column names
         //BufferedWriter for performance, true to set append to file flag
-        String ColNames = "TIMESTAMP;"
+        String colNames = "TIMESTAMP;"
                 + "RSSI LEFT_ORIGIN;RSSI MIDDLE_ORIGIN;RSSI RIGHT_ORIGIN;"
                 + "RSSI TRUNK_ORIGIN;RSSI FRONTLEFT_ORIGIN;RSSI FRONTRIGHT_ORIGIN;"
                 + "RSSI REARLEFT_ORIGIN;RSSI REARRIGHT_ORIGIN;RSSI BACK_ORIGIN;"
@@ -344,14 +356,7 @@ public class LogFileUtils {
                 + "ANTENNA LEFT;ANTENNA MIDDLE;ANTENNA RIGHT;ANTENNA TRUNK;"
                 + "ANTENNA FRONTLEFT;ANTENNA FRONTRIGHT;"
                 + "ANTENNA REARLEFT;ANTENNA REARRIGHT;ANTENNA BACK;";
-        try {
-            if (logFile != null) {
-                buf.append(ColNames);
-                buf.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        writeWithBufferedWriter(colNames);
     }
 
     public static boolean createDir(File dirPath, String dirName) {
