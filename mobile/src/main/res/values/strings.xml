@@ -8,6 +8,7 @@
     <string name="validate_lock_pin">OK</string>
     <string name="cancel_lock_pin">Cancel</string>
     <string name="you_can_start_tv">You can start your car !</string>
+    <string name="you_can_not_start_tv">Key not detected !</string>
     <string name="car_start_countdown_min_sec">%1$02d : %2$02d</string>
     <string name="unlock_trunk_title">Unlocking trunk</string>
     <string name="lock_trunk_title">Locking trunk</string>

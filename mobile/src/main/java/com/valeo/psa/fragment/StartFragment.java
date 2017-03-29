@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.psa.R;
 import com.valeo.psa.view.ReverseProgressBar;
 
@@ -23,6 +24,7 @@ public class StartFragment extends Fragment {
     private final static int MINUTE_IN_MILLI = 60000;
     private final static int SECOND_IN_MILLI = 1000;
     private ReverseProgressBar start_car_timeout;
+    private TextView you_can_start_tv;
     private TextView car_start_countdown_min_sec;
     private CountDownTimer countDownTimer = null;
     private int progressMin;
@@ -62,10 +64,11 @@ public class StartFragment extends Fragment {
             }
         });
         start_car_timeout = (ReverseProgressBar) rootView.findViewById(R.id.start_car_timeout);
+        you_can_start_tv = (TextView) rootView.findViewById(R.id.you_can_start_tv);
         car_start_countdown_min_sec = (TextView) rootView.findViewById(R.id.car_start_countdown_min_sec);
     }
 
-    public void startButtonActions() {
+    public void startButtonActions(final BleRangingHelper mBleRangingHelper) {
         if (countDownTimer == null) { // prevent from launching two countDownTimer
             /** CountDownTimer starts with 5 minutes and every onTick is 1 second */
             countDownTimer = new CountDownTimer(FIVE_MINUTES_IN_MILLI, SECOND_IN_MILLI) {
@@ -75,6 +78,13 @@ public class StartFragment extends Fragment {
                     progressMin = (int) (millisUntilFinished / MINUTE_IN_MILLI);
                     progressSec = timePassed % 60; // ignore minutes
                     updateStartCarTimeout(progressMin, progressSec);
+                    if (isAdded()) {
+                        if (mBleRangingHelper.isStartRequested()) {
+                            you_can_start_tv.setText(getString(R.string.you_can_start_tv));
+                        } else {
+                            you_can_start_tv.setText(getString(R.string.you_can_not_start_tv));
+                        }
+                    }
                 }
 
                 public void onFinish() {
@@ -103,8 +113,10 @@ public class StartFragment extends Fragment {
      * @param progressSec the progress remaining seconds
      */
     private void updateStartCarTimeout(int progressMin, int progressSec) {
-        car_start_countdown_min_sec.setText(String.format(
-                getString(R.string.car_start_countdown_min_sec), progressMin, progressSec));
+        if (isAdded()) {
+            car_start_countdown_min_sec.setText(String.format(
+                    getString(R.string.car_start_countdown_min_sec), progressMin, progressSec));
+        }
     }
 
     public interface StartFragmentActionListener {

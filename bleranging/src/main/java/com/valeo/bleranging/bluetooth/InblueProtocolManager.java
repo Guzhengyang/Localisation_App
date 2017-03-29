@@ -29,7 +29,7 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.BASE_1
  * Temporary class providing methods to handle 'New' Inblue BLE protocol
  */
 public class InblueProtocolManager {
-    public final static int MAX_BLE_TRAME_BYTE = 6;
+    private final static int MAX_BLE_TRAME_BYTE = 6;
     private int packetOneCounter = 0;
     private boolean isStartRequested = false;
     private boolean isWelcomeRequested = false;

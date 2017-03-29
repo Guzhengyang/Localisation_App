@@ -809,7 +809,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         if (startFragment != null) {
             main_rl.setVisibility(View.GONE);
             showHideFragment(startFragment);
-            startFragment.startButtonActions();
+            mBleRangingHelper.setIsStartRequested(true);
+            startFragment.startButtonActions(mBleRangingHelper);
         }
     }
 
@@ -817,6 +818,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     public void startButtonActionsFinished() {
         if (startFragment != null) {
             main_rl.setVisibility(View.VISIBLE);
+            mBleRangingHelper.setIsStartRequested(false);
             showHideFragment(startFragment);
         }
     }
