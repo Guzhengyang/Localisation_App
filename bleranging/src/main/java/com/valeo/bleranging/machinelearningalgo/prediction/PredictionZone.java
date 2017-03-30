@@ -106,35 +106,36 @@ public class PredictionZone {
     }
 
     public void setRssi(int index, double rssi, int offset, double threshold, boolean lockStatus) {
-        this.rssi_offset[index] = rssi - offset;
-        if (prediction_old != -1) {
-            // trx order : l, m, r, t, fl, fr, rl, rr
-            // Add lock hysteresis to all the trx
-            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
-                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE) |
-                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_EXTERNAL)) {
-                rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
-            }
-            // Add unlock hysteresis to all the trx
-            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
-                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
-                rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
-            }
+        if (this.rssi_offset != null) {
+            this.rssi_offset[index] = rssi - offset;
+            if (prediction_old != -1) {
+                // trx order : l, m, r, t, fl, fr, rl, rr
+                // Add lock hysteresis to all the trx
+                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
+                        this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE) |
+                        this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_EXTERNAL)) {
+                    rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
+                }
+                // Add unlock hysteresis to all the trx
+                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
+                        this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
+                    rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
+                }
 //            if(lockStatus){
 //                rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
 //            }else {
 //                rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
 //            }
-        }
+            }
 //        double dist_new = rssi2dist(rssi_offset[index]);
 //        distance[index] = correctDistUnilateral(distance[index], dist_new, threshold);
 //        sample.setValue(index, distance[index]);
 
-        this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
-        distance[index] = rssi2dist(this.rssi[index]);
-        sample.setValue(index, this.rssi[index]);
+            this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
+            distance[index] = rssi2dist(this.rssi[index]);
+            sample.setValue(index, this.rssi[index]);
+        }
     }
-
     public void predict(int nVote) {
         int result = 0;
         try {

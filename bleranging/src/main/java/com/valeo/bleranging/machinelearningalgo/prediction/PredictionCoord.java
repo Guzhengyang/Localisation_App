@@ -59,12 +59,14 @@ public class PredictionCoord {
     }
 
     public void setRssi(int index, double rssi, int offset) {
-        this.rssi_offset[index] = rssi - offset;
-        this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
-        if (rssiHistoric.get(index).size() == MAX_HISTORIC_SIZE) {
-            rssiHistoric.get(index).remove(0);
+        if (this.rssi_offset != null) {
+            this.rssi_offset[index] = rssi - offset;
+            this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
+            if (rssiHistoric.get(index).size() == MAX_HISTORIC_SIZE) {
+                rssiHistoric.get(index).remove(0);
+            }
+            rssiHistoric.get(index).add(this.rssi[index]);
         }
-        rssiHistoric.get(index).add(this.rssi[index]);
     }
 
     private double averageRssi(List<Double> rssiList) {
