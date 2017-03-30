@@ -470,7 +470,7 @@ public class PredictionZone {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (!arePredictRawFileRead) {
-                Toast.makeText(mContext, "Init failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Init for rf failed", Toast.LENGTH_SHORT).show();
             }
         }
     }

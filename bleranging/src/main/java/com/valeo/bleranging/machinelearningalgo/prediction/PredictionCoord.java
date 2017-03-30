@@ -93,6 +93,14 @@ public class PredictionCoord {
         }
     }
 
+    public double[] index2PxPy(int index) {
+        double[] coord = new double[2];
+        index = index - 1;
+        coord[1] = Math.floor(index / (2 * MAX_ROWS + 1));
+        coord[0] = index - coord[1] * (2 * MAX_ROWS + 1);
+        return coord;
+    }
+
     public PointF getPredictionCoord() {
         return new PointF((float) coord[0], MAX_COLUMNS - (float) coord[1]);
     }
