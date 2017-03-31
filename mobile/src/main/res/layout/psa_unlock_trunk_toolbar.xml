@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/unlock_trunk_toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,35 +8,44 @@
 
     <ImageView
         android:id="@+id/unlock_trunk_icon"
-        android:layout_width="@dimen/psa_header_padding"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_marginEnd="@dimen/psa_header_icon_right_padding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:contentDescription="@string/unlock_trunk"
-        android:src="@mipmap/open_trunk_button" />
+        android:src="@mipmap/open_trunk_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/unlock_trunk_title"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/unlock_trunk_title"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@id/unlock_trunk_icon"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:gravity="center_vertical"
-        android:paddingTop="@dimen/status_bar_height"
         android:text="@string/unlock_trunk_title"
         android:textColor="@color/white"
-        android:textSize="@dimen/psa_56_px" />
+        android:textSize="@dimen/psa_56_px"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar3"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toEndOf="@id/unlock_trunk_icon"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
+        android:id="@+id/progressBar3"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/unlock_trunk_icon"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/unlock_trunk_title"
-        android:layout_toEndOf="@id/unlock_trunk_icon"
+        android:layout_marginEnd="8dp"
         android:indeterminate="false"
         android:maxHeight="10dip"
         android:minHeight="10dip"
-        android:progress="100" />
-</RelativeLayout>
+        android:progress="100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/unlock_trunk_title"
+        app:layout_constraintStart_toStartOf="@id/unlock_trunk_title"
+        app:layout_constraintTop_toBottomOf="@id/unlock_trunk_title" />
+</android.support.constraint.ConstraintLayout>
