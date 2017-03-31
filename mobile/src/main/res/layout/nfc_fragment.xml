@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -8,32 +9,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/tips"
-        android:paddingBottom="@dimen/tips_vertical_padding"
-        android:paddingEnd="@dimen/tips_vertical_padding"
-        android:paddingLeft="@dimen/tips_vertical_padding"
-        android:paddingRight="@dimen/tips_vertical_padding"
-        android:paddingStart="@dimen/tips_vertical_padding"
+        android:paddingBottom="8dp"
         android:text="@string/tips"
         android:textColor="@color/white"
-        android:textSize="@dimen/psa_47_px" />
+        android:textSize="18sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/nfc_disclaimer"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tips"
-        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
         android:text="@string/nfc_disclaimer"
         android:textColor="@color/black"
-        android:textSize="@dimen/psa_56_px" />
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tips" />
 
     <ImageView
         android:id="@+id/nfc_logo"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_below="@id/nfc_disclaimer"
-        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
         android:contentDescription="@string/nfc_logo"
-        android:paddingTop="@dimen/image_view_vertical_padding"
-        android:src="@mipmap/nfc_logo" />
-</RelativeLayout>
+        android:src="@mipmap/nfc_logo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nfc_disclaimer" />
+</android.support.constraint.ConstraintLayout>
