@@ -444,6 +444,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
                             SdkPreferencesHelper.getInstance().setAreBeaconsInside(false);
                         } else if (selectedCar.getBrandCar().equalsIgnoreCase(getString(R.string.ds5_2))) {
                             SdkPreferencesHelper.getInstance().setAreBeaconsInside(true);
+                        } else if (selectedCar.getBrandCar().equalsIgnoreCase(getString(R.string.ds5_3))) {
+                            SdkPreferencesHelper.getInstance().setAreBeaconsInside(true);
                         }
                     }
                     CarListAdapter.ViewHolder vh = (CarListAdapter.ViewHolder) recyclerView.findViewHolderForAdapterPosition(position);

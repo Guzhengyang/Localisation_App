@@ -70,7 +70,7 @@ public class PredictionFactory {
                 case TYPE_8_A:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            return new PredictionZone(mContext, R.raw.eight_in);
+                            return new PredictionZone(mContext, R.raw.eight_in_new);
                         case PREDICTION_INSIDE:
                             return new PredictionZone(mContext, R.raw.eight_in);
                         case PREDICTION_RP:
