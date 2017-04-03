@@ -751,7 +751,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
         super.onResume();
         if (mBleRangingHelper != null && !mBleRangingHelper.isCloseAppCalled()) {
             if (LogFileUtils.createLogFile(this)) {
-                LogFileUtils.createBufferedWriter();
                 LogFileUtils.writeFirstColumnSettings();
                 String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
                 LogFileUtils.appendSettingLogs(connectedCarType,

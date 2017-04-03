@@ -1,7 +1,6 @@
 package com.valeo.bleranging.utils;
 
 import android.content.Context;
-import android.os.Handler;
 
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
@@ -26,8 +25,6 @@ public class LogFileUtils {
     private final static String LOG_FILE_PREFIX = RSSI_DIR + "allRssi_";
     private final static String FILE_EXTENSION = ".csv";
     private static File logFile = null;
-    private static BufferedWriter buf = null;
-    private static boolean isWriting = false;
 
     /**
      * Convert a boolean to a string value
@@ -42,48 +39,23 @@ public class LogFileUtils {
         }
     }
 
-    public static boolean createBufferedWriter() {
-        try {
-            buf = new BufferedWriter(new FileWriter(logFile, true));
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     private static void writeWithBufferedWriter(String text) {
-        isWriting = true;
-        try {
-            if (logFile != null) {
+        if (logFile != null) {
+            BufferedWriter buf = null;
+            try {
+                buf = new BufferedWriter(new FileWriter(logFile, true));
                 buf.append(text);
                 buf.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            isWriting = false;
-        }
-    }
-
-    public static boolean closeBufferedWriter() {
-        PSALogs.d("closeBufferedWriter", "isWriting = " + isWriting);
-        if (isWriting) {
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    closeBufferedWriter();
-                }
-            }, 70);
-            return false;
-        } else {
-            try {
-                buf.close();
-                return true;
             } catch (IOException e) {
                 e.printStackTrace();
-                return false;
+            } finally {
+                if (buf != null) {
+                    try {
+                        buf.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
