@@ -19,7 +19,7 @@
     <string name="car_model_type">Car Model Type</string>
     <string name="ds5">DS 5 DC-917-NY</string>
     <string name="ds5_2">DS 5 EB-967-AK</string>
-    <string name="ds5_3">DS 5 EB-967-AK interior</string>
+    <string name="ds5_3">DS 5 EB-967-AK Yagi</string>
     <string name="door_status_bg">door status bg</string>
     <string name="vehicle_locked">Vehicle locked</string>
     <string name="driver_s_door_unlocked">Driver\'s door unlocked</string>
