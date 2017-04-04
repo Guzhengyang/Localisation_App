@@ -40,7 +40,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -127,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
 ////            startActivityForResult(intent, REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS); // TODO uncomment to activate
 //        }
 //    }
-    private RelativeLayout main_rl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -327,7 +325,6 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
      * Find all view by their id
      */
     private void setView() {
-        main_rl = (RelativeLayout) findViewById(R.id.main_rl);
         main_frame = (FrameLayout) findViewById(R.id.main_frame);
         content_main = (NestedScrollView) findViewById(R.id.content_main);
         main_scroll = (CoordinatorLayout) findViewById(R.id.main_scroll);
@@ -808,7 +805,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     @Override
     public void startButtonActions() {
         if (startFragment != null) {
-            main_rl.setVisibility(View.GONE);
+            toolbar.setVisibility(View.GONE);
+            main_frame.setVisibility(View.GONE);
             showHideFragment(startFragment);
             mBleRangingHelper.setIsStartRequested(true);
             startFragment.startButtonActions(mBleRangingHelper);
@@ -818,7 +816,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerAdapter
     @Override
     public void startButtonActionsFinished() {
         if (startFragment != null) {
-            main_rl.setVisibility(View.VISIBLE);
+            toolbar.setVisibility(View.VISIBLE);
+            main_frame.setVisibility(View.VISIBLE);
             mBleRangingHelper.setIsStartRequested(false);
             showHideFragment(startFragment);
         }
