@@ -9,13 +9,11 @@
     <ImageView
         android:id="@+id/unlock_trunk_icon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:contentDescription="@string/unlock_trunk"
         android:src="@mipmap/open_trunk_button"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/unlock_trunk_title"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -39,12 +37,12 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:indeterminate="false"
+        android:indeterminate="true"
         android:maxHeight="10dip"
         android:minHeight="10dip"
+        android:paddingBottom="12dp"
         android:progress="100"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/unlock_trunk_icon"
         app:layout_constraintEnd_toEndOf="@id/unlock_trunk_title"
         app:layout_constraintStart_toStartOf="@id/unlock_trunk_title"
         app:layout_constraintTop_toBottomOf="@id/unlock_trunk_title" />

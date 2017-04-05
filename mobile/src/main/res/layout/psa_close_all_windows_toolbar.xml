@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/close_all_windows_toolbar"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:visibility="gone">
 
     <ImageView
@@ -15,7 +15,6 @@
         android:src="@mipmap/close_windows_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/close_all_windows_title"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
