@@ -132,6 +132,14 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
                 }
                 startActivityForResult(settingIntent, RESULT_SETTINGS);
                 break;
+//            case R.id.menu_login:
+//                Intent loginIntent = new Intent(this, LoginActivity.class);
+//                startActivityForResult(loginIntent, RESULT_SETTINGS);
+//                break;
+//            case R.id.menu_security_questions:
+//                Intent securityQuestionsIntent = new Intent(this, SecurityQuestionsActivity.class);
+//                startActivityForResult(securityQuestionsIntent, RESULT_SETTINGS);
+//                break;
         }
         return true;
     }

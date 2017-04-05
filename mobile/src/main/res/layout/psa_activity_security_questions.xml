@@ -1,67 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/security_questions_subtitle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="26dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
         android:text="@string/security_questions_subtitle"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/security_question_one"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/security_questions_subtitle"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="45dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="128dp"
         android:labelFor="@+id/security_question_answer_one"
         android:text="@string/security_question_one"
-        android:textStyle="normal|bold" />
-
-    <TextView
-        android:id="@+id/security_question_two"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/security_question_answer_one"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="26dp"
-        android:contentDescription="@string/security_question_two"
-        android:labelFor="@+id/security_question_answer_two"
-        android:text="@string/security_question_two"
-        android:textStyle="normal|bold" />
-
-    <EditText
-        android:id="@+id/security_question_answer_two"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/security_question_two"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="21dp"
-        android:contentDescription="@string/security_question_two"
-        android:ems="10"
-        android:inputType="text" />
+        android:textStyle="normal|bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/security_questions_subtitle" />
 
     <EditText
         android:id="@+id/security_question_answer_one"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/security_question_one"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="11dp"
+        android:layout_marginTop="16dp"
         android:contentDescription="@string/security_question_one"
         android:ems="10"
-        android:inputType="text" />
-</RelativeLayout>
+        android:inputType="text"
+        app:layout_constraintLeft_toLeftOf="@+id/security_question_one"
+        app:layout_constraintRight_toRightOf="@+id/security_question_one"
+        app:layout_constraintTop_toBottomOf="@+id/security_question_one" />
+
+    <TextView
+        android:id="@+id/security_question_two"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:contentDescription="@string/security_question_two"
+        android:labelFor="@+id/security_question_answer_two"
+        android:text="@string/security_question_two"
+        android:textStyle="normal|bold"
+        app:layout_constraintLeft_toLeftOf="@id/security_question_answer_one"
+        app:layout_constraintRight_toRightOf="@id/security_question_answer_one"
+        app:layout_constraintTop_toBottomOf="@id/security_question_answer_one" />
+
+    <EditText
+        android:id="@+id/security_question_answer_two"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/security_question_two"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintLeft_toLeftOf="@id/security_question_two"
+        app:layout_constraintRight_toRightOf="@id/security_question_two"
+        app:layout_constraintTop_toBottomOf="@id/security_question_two" />
+
+
+</android.support.constraint.ConstraintLayout>
