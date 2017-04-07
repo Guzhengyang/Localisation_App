@@ -115,7 +115,8 @@
             android:background="@drawable/round_button"
             android:contentDescription="@string/driver_s_door_unlocked"
             android:scaleType="fitCenter"
-            android:src="@mipmap/car_driver_door_button" />
+            android:src="@mipmap/car_driver_door_button"
+            android:visibility="invisible" />
     </FrameLayout>
 
     <FrameLayout
@@ -139,7 +140,8 @@
             android:background="@drawable/round_button"
             android:contentDescription="@string/vehicle_locked"
             android:scaleType="fitCenter"
-            android:src="@mipmap/car_closed_button" />
+            android:src="@mipmap/car_closed_button"
+            android:visibility="invisible" />
     </FrameLayout>
 
     <FrameLayout
@@ -163,7 +165,8 @@
             android:background="@drawable/round_button"
             android:contentDescription="@string/vehicle_unlocked"
             android:scaleType="fitCenter"
-            android:src="@mipmap/car_all_doors_button" />
+            android:src="@mipmap/car_all_doors_button"
+            android:visibility="invisible" />
 
     </FrameLayout>
 

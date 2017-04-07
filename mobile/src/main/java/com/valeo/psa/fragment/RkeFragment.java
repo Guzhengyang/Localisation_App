@@ -91,8 +91,10 @@ public class RkeFragment extends Fragment implements RkeListener {
 //        layoutParams.addRule(ALIGN_TOP, ((FrameLayout) view.getParent()).getId());
 //        layoutParams.addRule(ALIGN_START, ((FrameLayout) view.getParent()).getId());
 //        dragView.setLayoutParams(layoutParams);
+        ((FrameLayout) dragView.getParent()).getChildAt(1).setVisibility(View.INVISIBLE);
         ((FrameLayout) dragView.getParent()).removeView(dragView);
         ((FrameLayout) view.getParent()).addView(dragView, 0);
+        view.setVisibility(View.VISIBLE);
     }
 
     private void rkeActions(View view) {
@@ -276,7 +278,7 @@ public class RkeFragment extends Fragment implements RkeListener {
         private boolean containsDraggable;
 
         @Override
-        public boolean onDrag(View view, DragEvent dragEvent) {
+        public boolean onDrag(final View view, DragEvent dragEvent) {
             // Defines a variable to store the action type for the incoming event
             final int action = dragEvent.getAction();
             switch (action) {
@@ -298,6 +300,7 @@ public class RkeFragment extends Fragment implements RkeListener {
                                 @Override
                                 public void run() {
                                     dragView.setVisibility(View.VISIBLE);
+                                    view.setVisibility(View.VISIBLE);
                                 }
                             });
                         }
@@ -306,10 +309,12 @@ public class RkeFragment extends Fragment implements RkeListener {
                 case DragEvent.ACTION_DRAG_ENTERED:
                     PSALogs.d("DragDrop", "ACTION_DRAG_ENTERED " + view.getId());
                     containsDraggable = true;
+                    view.setVisibility(View.VISIBLE);
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
                     PSALogs.d("DragDrop", "ACTION_DRAG_EXITED " + view.getId());
                     containsDraggable = false;
+                    view.setVisibility(View.INVISIBLE);
                     break;
                 case DragEvent.ACTION_DROP:
                     PSALogs.d("DragDrop", "ACTION_DROP " + view.getId());
