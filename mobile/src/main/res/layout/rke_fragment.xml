@@ -1,164 +1,209 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/door_status_switcher"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/car_door_status"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/vertical_padding"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="@string/vehicle_locked"
+        android:textAlignment="center"
         android:textColor="@color/black"
-        android:textSize="@dimen/psa_56_px" />
+        android:textSize="@dimen/psa_56_px"
+        android:textStyle="bold|italic"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <RelativeLayout
+    <ImageView
+        android:id="@+id/door_status_bg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/door_status_bg"
+        android:paddingBottom="@dimen/image_view_vertical_padding"
+        android:paddingTop="@dimen/image_view_vertical_padding"
+        android:src="@mipmap/slider_backgrd"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/car_door_status" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/car_door_status">
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.37" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.32" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.68" />
+
+    <FrameLayout
+        android:id="@+id/start_button_frame"
+        android:layout_width="121dp"
+        android:layout_height="121dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/frame_layout_driver_s_door_unlocked"
+        app:layout_constraintHorizontal_bias="0.383"
+        app:layout_constraintStart_toStartOf="@+id/frame_layout_driver_s_door_unlocked"
+        app:layout_constraintTop_toBottomOf="@+id/frame_layout_driver_s_door_unlocked"
+        tools:layout_editor_absoluteX="145dp">
         <ImageView
-            android:id="@+id/door_status_bg"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:contentDescription="@string/door_status_bg"
-            android:paddingBottom="@dimen/image_view_vertical_padding"
-            android:paddingTop="@dimen/image_view_vertical_padding"
-            android:src="@mipmap/slider_backgrd" />
+            android:id="@+id/start_button_second_wave"
+            android:layout_width="121dp"
+            android:layout_height="121dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/start_button"
+            android:src="@mipmap/start_button_waves"
+            android:visibility="invisible" />
 
-        <FrameLayout
-            android:id="@+id/frame_layout_vehicule_locked"
+        <ImageView
+            android:id="@+id/start_button_first_wave"
+            android:layout_width="111dp"
+            android:layout_height="111dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/start_button"
+            android:src="@mipmap/start_button_waves"
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:id="@+id/start_button"
+            android:layout_width="101dp"
+            android:layout_height="101dp"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:background="@drawable/round_button"
+            android:contentDescription="@string/start_button"
+            android:src="@mipmap/start_button" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/frame_layout_driver_s_door_unlocked"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/round_button"
+        app:layout_constraintBottom_toTopOf="@+id/start_button_frame"
+        app:layout_constraintLeft_toLeftOf="@+id/door_status_bg"
+        app:layout_constraintRight_toRightOf="@+id/door_status_bg"
+        app:layout_constraintTop_toTopOf="@+id/door_status_bg"
+        app:layout_constraintVertical_bias="0.060000002">
+
+        <ImageButton
+            android:id="@+id/circle_selector"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="0dp"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/round_button"
+            android:contentDescription="@string/slider_button_description"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/slider_button"
+            app:layout_constraintBottom_toBottomOf="@id/frame_layout_driver_s_door_unlocked"
+            app:layout_constraintEnd_toEndOf="@id/frame_layout_driver_s_door_unlocked"
+            app:layout_constraintStart_toStartOf="@id/frame_layout_driver_s_door_unlocked"
+            app:layout_constraintTop_toTopOf="@id/frame_layout_driver_s_door_unlocked" />
+
+        <ImageView
+            android:id="@+id/driver_s_door_unlocked"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_alignBottom="@+id/door_status_bg"
-            android:layout_marginBottom="28dp"
-            android:layout_marginEnd="27dp"
-            android:layout_toStartOf="@+id/start_button_frame"
-            android:adjustViewBounds="true">
-            <ImageButton
-                android:id="@+id/circle_selector"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_gravity="center"
-                android:background="@drawable/round_button"
-                android:contentDescription="@string/slider_button_description"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/slider_button" />
+            android:layout_gravity="center"
+            android:background="@drawable/round_button"
+            android:contentDescription="@string/driver_s_door_unlocked"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/car_driver_door_button"
+            android:tint="@color/car_not_selected_button" />
+    </FrameLayout>
 
-            <ImageView
-                android:id="@+id/vehicle_locked"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/round_button"
-                android:contentDescription="@string/vehicle_locked"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/car_closed_button"
-                android:tint="@color/car_not_selected_button" />
-        </FrameLayout>
+    <FrameLayout
+        android:id="@+id/frame_layout_vehicule_locked"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_marginStart="8dp"
+        android:adjustViewBounds="true"
+        app:layout_constraintRight_toLeftOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/guideline2">
 
-        <FrameLayout
-            android:id="@+id/frame_layout_driver_s_door_unlocked"
+        <ImageView
+            android:id="@+id/vehicle_locked"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="25dp"
-            android:adjustViewBounds="true"
-            android:background="@drawable/round_button">
+            android:layout_gravity="center"
+            android:background="@drawable/round_button"
+            android:contentDescription="@string/vehicle_locked"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/car_closed_button"
+            android:tint="@color/car_not_selected_button" />
+    </FrameLayout>
 
-            <ImageView
-                android:id="@+id/driver_s_door_unlocked"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/round_button"
-                android:contentDescription="@string/driver_s_door_unlocked"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/car_driver_door_button"
-                android:tint="@color/car_not_selected_button" />
-        </FrameLayout>
+    <FrameLayout
+        android:id="@+id/frame_layout_vehicule_unlocked"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_marginStart="0dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/round_button"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline4"
+        app:layout_constraintTop_toTopOf="@+id/guideline2">
 
-        <FrameLayout
-            android:id="@+id/frame_layout_vehicule_unlocked"
+        <ImageView
+            android:id="@+id/vehicle_unlocked"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_alignTop="@id/frame_layout_vehicule_locked"
-            android:layout_marginStart="28dp"
-            android:layout_toEndOf="@+id/start_button_frame"
-            android:adjustViewBounds="true"
-            android:background="@drawable/round_button">
+            android:layout_gravity="center"
+            android:background="@drawable/round_button"
+            android:contentDescription="@string/vehicle_unlocked"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/car_all_doors_button"
+            android:tint="@color/car_not_selected_button" />
 
-            <ImageView
-                android:id="@+id/vehicle_unlocked"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/round_button"
-                android:contentDescription="@string/vehicle_unlocked"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/car_all_doors_button"
-                android:tint="@color/car_not_selected_button" />
-        </FrameLayout>
+    </FrameLayout>
 
-        <View
-            android:id="@+id/dummy_space_view"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/start_button_vertical_padding"
-            android:layout_below="@id/frame_layout_driver_s_door_unlocked"
-            android:layout_centerHorizontal="true"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/dummy_space_view"
-            android:scaleType="fitCenter" />
+    <TextView
+        android:id="@+id/rke_loading_progress_bar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#AA000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="center"
+        android:text="@string/please_wait"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <FrameLayout
-            android:id="@+id/start_button_frame"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/dummy_space_view"
-            android:layout_centerHorizontal="true">
-
-            <ImageButton
-                android:id="@+id/start_button"
-                android:layout_width="101dp"
-                android:layout_height="101dp"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:background="@drawable/round_button"
-                android:contentDescription="@string/start_button"
-                android:src="@mipmap/start_button" />
-
-            <ImageView
-                android:id="@+id/start_button_first_wave"
-                android:layout_width="111dp"
-                android:layout_height="111dp"
-                android:layout_gravity="center"
-                android:contentDescription="@string/start_button"
-                android:src="@mipmap/start_button_waves"
-                android:visibility="invisible" />
-
-            <ImageView
-                android:id="@+id/start_button_second_wave"
-                android:layout_width="121dp"
-                android:layout_height="121dp"
-                android:layout_gravity="center"
-                android:contentDescription="@string/start_button"
-                android:src="@mipmap/start_button_waves"
-                android:visibility="invisible" />
-        </FrameLayout>
-
-        <TextView
-            android:id="@+id/rke_loading_progress_bar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/start_button_frame"
-            android:layout_alignTop="@+id/door_status_bg"
-            android:background="#AA000000"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:gravity="center"
-            android:text="@string/please_wait"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:visibility="gone" />
-    </RelativeLayout>
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
