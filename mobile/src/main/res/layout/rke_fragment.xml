@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/door_status_switcher"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -25,37 +24,16 @@
 
     <ImageView
         android:id="@+id/door_status_bg"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:contentDescription="@string/door_status_bg"
         android:paddingBottom="@dimen/image_view_vertical_padding"
         android:paddingTop="@dimen/image_view_vertical_padding"
-        android:src="@mipmap/slider_backgrd"
+        android:src="@mipmap/slider_background"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/car_door_status" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.37" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.32" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.68" />
 
     <FrameLayout
         android:id="@+id/start_button_frame"
@@ -65,10 +43,8 @@
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/frame_layout_driver_s_door_unlocked"
-        app:layout_constraintHorizontal_bias="0.383"
         app:layout_constraintStart_toStartOf="@+id/frame_layout_driver_s_door_unlocked"
-        app:layout_constraintTop_toBottomOf="@+id/frame_layout_driver_s_door_unlocked"
-        tools:layout_editor_absoluteX="145dp">
+        app:layout_constraintTop_toBottomOf="@+id/frame_layout_driver_s_door_unlocked">
         <ImageView
             android:id="@+id/start_button_second_wave"
             android:layout_width="121dp"
@@ -104,16 +80,14 @@
         android:layout_height="90dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:adjustViewBounds="true"
         android:background="@drawable/round_button"
-        app:layout_constraintBottom_toTopOf="@+id/start_button_frame"
-        app:layout_constraintLeft_toLeftOf="@+id/door_status_bg"
-        app:layout_constraintRight_toRightOf="@+id/door_status_bg"
-        app:layout_constraintTop_toTopOf="@+id/door_status_bg"
+        app:layout_constraintBottom_toTopOf="@id/start_button_frame"
+        app:layout_constraintLeft_toLeftOf="@id/door_status_bg"
+        app:layout_constraintRight_toRightOf="@id/door_status_bg"
+        app:layout_constraintTop_toTopOf="@id/door_status_bg"
         app:layout_constraintVertical_bias="0.060000002">
 
         <ImageButton
@@ -137,21 +111,25 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center"
+            android:layout_marginEnd="6dp"
             android:background="@drawable/round_button"
             android:contentDescription="@string/driver_s_door_unlocked"
             android:scaleType="fitCenter"
-            android:src="@mipmap/car_driver_door_button"
-            android:tint="@color/car_not_selected_button" />
+            android:src="@mipmap/car_driver_door_button" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/frame_layout_vehicule_locked"
         android:layout_width="90dp"
         android:layout_height="90dp"
+        android:layout_marginEnd="28dp"
         android:layout_marginStart="8dp"
         android:adjustViewBounds="true"
-        app:layout_constraintRight_toLeftOf="@+id/guideline3"
-        app:layout_constraintTop_toTopOf="@+id/guideline2">
+        app:layout_constraintBottom_toBottomOf="@id/door_status_bg"
+        app:layout_constraintEnd_toStartOf="@id/frame_layout_driver_s_door_unlocked"
+        app:layout_constraintTop_toBottomOf="@id/door_status_bg"
+        app:layout_constraintTop_toTopOf="@id/door_status_bg"
+        app:layout_constraintVertical_bias="0.86">
 
         <ImageView
             android:id="@+id/vehicle_locked"
@@ -161,19 +139,21 @@
             android:background="@drawable/round_button"
             android:contentDescription="@string/vehicle_locked"
             android:scaleType="fitCenter"
-            android:src="@mipmap/car_closed_button"
-            android:tint="@color/car_not_selected_button" />
+            android:src="@mipmap/car_closed_button" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/frame_layout_vehicule_unlocked"
         android:layout_width="90dp"
         android:layout_height="90dp"
-        android:layout_marginStart="0dp"
+        android:layout_marginStart="28dp"
         android:adjustViewBounds="true"
         android:background="@drawable/round_button"
-        app:layout_constraintLeft_toLeftOf="@+id/guideline4"
-        app:layout_constraintTop_toTopOf="@+id/guideline2">
+        app:layout_constraintBottom_toBottomOf="@id/door_status_bg"
+        app:layout_constraintStart_toEndOf="@id/frame_layout_driver_s_door_unlocked"
+        app:layout_constraintTop_toBottomOf="@id/door_status_bg"
+        app:layout_constraintTop_toTopOf="@id/door_status_bg"
+        app:layout_constraintVertical_bias="0.84000003">
 
         <ImageView
             android:id="@+id/vehicle_unlocked"
@@ -183,8 +163,7 @@
             android:background="@drawable/round_button"
             android:contentDescription="@string/vehicle_unlocked"
             android:scaleType="fitCenter"
-            android:src="@mipmap/car_all_doors_button"
-            android:tint="@color/car_not_selected_button" />
+            android:src="@mipmap/car_all_doors_button" />
 
     </FrameLayout>
 
