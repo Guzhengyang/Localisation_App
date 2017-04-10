@@ -290,7 +290,7 @@ public class RkeFragment extends Fragment implements RkeListener {
         void startButtonActions();
     }
 
-    class MyDragListener implements View.OnDragListener {
+    private class MyDragListener implements View.OnDragListener {
         private boolean containsDraggable;
 
         @Override
