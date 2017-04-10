@@ -33,9 +33,35 @@ import static com.valeo.bleranging.BleRangingHelper.RKE_USE_TIMEOUT;
  */
 public class RkeFragment extends Fragment implements RkeListener {
     private final Handler mHandler = new Handler();
+    private final View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                PSALogs.d("DragDrop", "ACTION_DOWN");
+                final ClipData dragData = ClipData.newPlainText((CharSequence) view.getTag(), (CharSequence) view.getTag());
+                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    PSALogs.d("DragDrop", "startDragAndDrop");
+                    view.startDragAndDrop(dragData, shadowBuilder, view, 0);
+                } else {
+                    PSALogs.d("DragDrop", "startDrag");
+                    view.startDrag(dragData, shadowBuilder, view, 0);
+                }
+                view.setVisibility(View.INVISIBLE);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    };
     private TextView car_door_status;
     private TextView rke_loading_progress_bar;
-    private ImageButton circle_selector;
+    private ImageButton circle_selector_driver_s_door_unlocked;
+    private ImageButton circle_selector_unlocked;
+    private ImageButton circle_selector_locked;
+    private FrameLayout frame_vehicle_locked;
+    private FrameLayout frame_driver_s_door_unlocked;
+    private FrameLayout frame_vehicle_unlocked;
     private ImageView vehicle_locked;
     private ImageView driver_s_door_unlocked;
     private ImageView vehicle_unlocked;
@@ -61,62 +87,50 @@ public class RkeFragment extends Fragment implements RkeListener {
     }
 
     private void setOnTouchListeners() {
-        circle_selector.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    PSALogs.d("DragDrop", "ACTION_DOWN");
-                    final ClipData dragData = ClipData.newPlainText((CharSequence) view.getTag(), (CharSequence) view.getTag());
-                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        PSALogs.d("DragDrop", "startDragAndDrop");
-                        view.startDragAndDrop(dragData, shadowBuilder, view, 0);
-                    } else {
-                        PSALogs.d("DragDrop", "startDrag");
-                        view.startDrag(dragData, shadowBuilder, view, 0);
-                    }
-                    view.setVisibility(View.INVISIBLE);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
+        circle_selector_locked.setOnTouchListener(mOnTouchListener);
+        circle_selector_unlocked.setOnTouchListener(mOnTouchListener);
+        circle_selector_driver_s_door_unlocked.setOnTouchListener(mOnTouchListener);
     }
 
-    private void placeOver(View dragView, View view) {
-//        final RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) dragView.getLayoutParams();
-//        layoutParams.removeRule(ALIGN_TOP);
-//        layoutParams.removeRule(ALIGN_START);
-//        layoutParams.addRule(ALIGN_TOP, ((FrameLayout) view.getParent()).getId());
-//        layoutParams.addRule(ALIGN_START, ((FrameLayout) view.getParent()).getId());
-//        dragView.setLayoutParams(layoutParams);
-        ((FrameLayout) dragView.getParent()).getChildAt(1).setVisibility(View.INVISIBLE);
-        ((FrameLayout) dragView.getParent()).removeView(dragView);
-        ((FrameLayout) view.getParent()).addView(dragView, 0);
-        view.setVisibility(View.VISIBLE);
+    private void hideOldSelection() {
+        // Hide everyone
+        circle_selector_driver_s_door_unlocked.setVisibility(View.INVISIBLE);
+        driver_s_door_unlocked.setVisibility(View.INVISIBLE);
+        circle_selector_unlocked.setVisibility(View.INVISIBLE);
+        vehicle_unlocked.setVisibility(View.INVISIBLE);
+        circle_selector_locked.setVisibility(View.INVISIBLE);
+        vehicle_locked.setVisibility(View.INVISIBLE);
+    }
+
+    private void placeSelectorOver(View view) {
+        hideOldSelection();
+        // Show the selected view
+        ((FrameLayout) view).getChildAt(0).setVisibility(View.VISIBLE);
+        ((FrameLayout) view).getChildAt(1).setVisibility(View.VISIBLE);
     }
 
     private void rkeActions(View view) {
-        switch (view.getId()) {
-            case R.id.vehicle_locked:
-                rkeAction(CarDoorStatus.LOCKED, vehicle_locked, false, true);
-                break;
-            case R.id.driver_s_door_unlocked:
-                rkeAction(CarDoorStatus.DRIVER_DOOR_OPEN, driver_s_door_unlocked, false, false);
-                break;
-            case R.id.vehicle_unlocked:
-                rkeAction(CarDoorStatus.UNLOCKED, vehicle_unlocked, true, false);
-                break;
-            default:
-                break;
+        if (((FrameLayout) view).getChildAt(1) != null) {
+            switch (((FrameLayout) view).getChildAt(1).getId()) {
+                case R.id.vehicle_locked:
+                    rkeAction(CarDoorStatus.LOCKED, frame_vehicle_locked, false, true);
+                    break;
+                case R.id.driver_s_door_unlocked:
+                    rkeAction(CarDoorStatus.DRIVER_DOOR_OPEN, frame_driver_s_door_unlocked, false, false);
+                    break;
+                case R.id.vehicle_unlocked:
+                    rkeAction(CarDoorStatus.UNLOCKED, frame_vehicle_unlocked, true, false);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
     private void setOnDragListeners() {
-        vehicle_locked.setOnDragListener(new MyDragListener());
-        vehicle_unlocked.setOnDragListener(new MyDragListener());
-        driver_s_door_unlocked.setOnDragListener(new MyDragListener());
+        frame_vehicle_locked.setOnDragListener(new MyDragListener());
+        frame_vehicle_unlocked.setOnDragListener(new MyDragListener());
+        frame_driver_s_door_unlocked.setOnDragListener(new MyDragListener());
     }
 
     @Override
@@ -132,7 +146,12 @@ public class RkeFragment extends Fragment implements RkeListener {
      */
     private void setView(View rootView) {
         car_door_status = (TextView) rootView.findViewById(R.id.car_door_status);
-        circle_selector = (ImageButton) rootView.findViewById(R.id.circle_selector);
+        circle_selector_driver_s_door_unlocked = (ImageButton) rootView.findViewById(R.id.circle_selector_driver_s_door_unlocked);
+        circle_selector_locked = (ImageButton) rootView.findViewById(R.id.circle_selector_locked);
+        circle_selector_unlocked = (ImageButton) rootView.findViewById(R.id.circle_selector_unlocked);
+        frame_vehicle_locked = (FrameLayout) rootView.findViewById(R.id.frame_layout_vehicule_locked);
+        frame_driver_s_door_unlocked = (FrameLayout) rootView.findViewById(R.id.frame_layout_driver_s_door_unlocked);
+        frame_vehicle_unlocked = (FrameLayout) rootView.findViewById(R.id.frame_layout_vehicule_unlocked);
         vehicle_locked = (ImageView) rootView.findViewById(R.id.vehicle_locked);
         driver_s_door_unlocked = (ImageView) rootView.findViewById(R.id.driver_s_door_unlocked);
         vehicle_unlocked = (ImageView) rootView.findViewById(R.id.vehicle_unlocked);
@@ -210,7 +229,7 @@ public class RkeFragment extends Fragment implements RkeListener {
         if (mListener.isRKEButtonClickable()) {
             rke_loading_progress_bar.setVisibility(View.VISIBLE);
             carDoorStatus = mCarDoorStatus;
-            placeOver(circle_selector, view);
+            placeSelectorOver(view);
             startButtonAnimation(enableStartAnimation);
             mListener.performRKELockAction(lockCar);
             mHandler.postDelayed(new Runnable() {
@@ -242,24 +261,21 @@ public class RkeFragment extends Fragment implements RkeListener {
             PSALogs.d("NIH rearm", "update lock");
             car_door_status.setText(getString(R.string.vehicle_locked));
             carDoorStatus = CarDoorStatus.LOCKED;
-            placeOver(circle_selector, vehicle_locked);
+            placeSelectorOver(frame_vehicle_locked);
             startButtonAnimation(false);
         } else {
             PSALogs.d("NIH rearm", "update unlock");
             car_door_status.setText(getString(R.string.vehicle_unlocked));
             carDoorStatus = CarDoorStatus.UNLOCKED;
-            placeOver(circle_selector, vehicle_unlocked);
+            placeSelectorOver(frame_vehicle_unlocked);
             // animation waves start_button
             startButtonAnimation(true);
-        }
-        if (!circle_selector.isShown()) {
-            circle_selector.setVisibility(View.VISIBLE);
         }
         mListener.updateCarDrawable();
     }
 
     public void resetDisplayAfterDisconnection() {
-        circle_selector.setVisibility(View.GONE);
+        hideOldSelection();
         startButtonAnimation(false);
     }
 
@@ -300,7 +316,9 @@ public class RkeFragment extends Fragment implements RkeListener {
                                 @Override
                                 public void run() {
                                     dragView.setVisibility(View.VISIBLE);
-                                    view.setVisibility(View.VISIBLE);
+                                    if (((FrameLayout) dragView.getParent()).getChildAt(1) != null) {
+                                        ((FrameLayout) dragView.getParent()).getChildAt(1).setVisibility(View.VISIBLE);
+                                    }
                                 }
                             });
                         }
@@ -309,12 +327,16 @@ public class RkeFragment extends Fragment implements RkeListener {
                 case DragEvent.ACTION_DRAG_ENTERED:
                     PSALogs.d("DragDrop", "ACTION_DRAG_ENTERED " + view.getId());
                     containsDraggable = true;
-                    view.setVisibility(View.VISIBLE);
+                    if (((FrameLayout) view).getChildAt(1) != null) {
+                        ((FrameLayout) view).getChildAt(1).setVisibility(View.VISIBLE);
+                    }
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
                     PSALogs.d("DragDrop", "ACTION_DRAG_EXITED " + view.getId());
                     containsDraggable = false;
-                    view.setVisibility(View.INVISIBLE);
+                    if (((FrameLayout) view).getChildAt(1) != null) {
+                        ((FrameLayout) view).getChildAt(1).setVisibility(View.INVISIBLE);
+                    }
                     break;
                 case DragEvent.ACTION_DROP:
                     PSALogs.d("DragDrop", "ACTION_DROP " + view.getId());
@@ -322,10 +344,11 @@ public class RkeFragment extends Fragment implements RkeListener {
                     if (dragView != null) {
                         if (containsDraggable) {
                             PSALogs.d("DragDrop", "INSIDE dragView = " + dragView.toString());
-                            placeOver(dragView, view);
+                            placeSelectorOver(view);
                             rkeActions(view);
+                        } else {
+                            dragView.setVisibility(View.VISIBLE);
                         }
-                        dragView.setVisibility(View.VISIBLE);
                     }
                     break;
                 default:

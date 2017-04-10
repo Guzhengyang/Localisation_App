@@ -91,7 +91,7 @@
         app:layout_constraintVertical_bias="0.060000002">
 
         <ImageButton
-            android:id="@+id/circle_selector"
+            android:id="@+id/circle_selector_driver_s_door_unlocked"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
@@ -101,6 +101,7 @@
             android:contentDescription="@string/slider_button_description"
             android:scaleType="fitCenter"
             android:src="@mipmap/slider_button"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@id/frame_layout_driver_s_door_unlocked"
             app:layout_constraintEnd_toEndOf="@id/frame_layout_driver_s_door_unlocked"
             app:layout_constraintStart_toStartOf="@id/frame_layout_driver_s_door_unlocked"
@@ -132,6 +133,23 @@
         app:layout_constraintTop_toTopOf="@id/door_status_bg"
         app:layout_constraintVertical_bias="0.86">
 
+        <ImageButton
+            android:id="@+id/circle_selector_locked"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="0dp"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/round_button"
+            android:contentDescription="@string/slider_button_description"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/slider_button"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/frame_layout_vehicule_locked"
+            app:layout_constraintEnd_toEndOf="@id/frame_layout_vehicule_locked"
+            app:layout_constraintStart_toStartOf="@id/frame_layout_vehicule_locked"
+            app:layout_constraintTop_toTopOf="@id/frame_layout_vehicule_locked" />
+
         <ImageView
             android:id="@+id/vehicle_locked"
             android:layout_width="60dp"
@@ -156,6 +174,23 @@
         app:layout_constraintTop_toBottomOf="@id/door_status_bg"
         app:layout_constraintTop_toTopOf="@id/door_status_bg"
         app:layout_constraintVertical_bias="0.84000003">
+
+        <ImageButton
+            android:id="@+id/circle_selector_unlocked"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="0dp"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/round_button"
+            android:contentDescription="@string/slider_button_description"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/slider_button"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/frame_layout_vehicule_unlocked"
+            app:layout_constraintEnd_toEndOf="@id/frame_layout_vehicule_unlocked"
+            app:layout_constraintStart_toStartOf="@id/frame_layout_vehicule_unlocked"
+            app:layout_constraintTop_toTopOf="@id/frame_layout_vehicule_unlocked" />
 
         <ImageView
             android:id="@+id/vehicle_unlocked"
