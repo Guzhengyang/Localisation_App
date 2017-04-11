@@ -26,6 +26,7 @@ import com.valeo.bleranging.utils.PSALogs;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Main Bluetooth class
@@ -337,24 +338,27 @@ public class BluetoothManagement {
 
     public void sendPackets(final byte[] byteToSend, final byte[] byteReceived
             , final byte[] dist, final byte[] rssi, final byte[] coordAndDistance) {
-        mBluetoothLeService.sendPackets(byteToSend);
-        byte[] data = concatByte(byteToSend, byteReceived, coordAndDistance, dist);
-        boolean sendSuccess = sendToRemoteControl(data);
+        if (byteToSend != null) {
+            mBluetoothLeService.sendPackets(Arrays.copyOf(byteToSend, 6)); // TODO send byteToSend when trx is ready to received it completely
+            if (byteReceived != null) {
+                byte[] concatBytes = concatByte(Arrays.copyOf(byteToSend, 6), Arrays.copyOf(byteReceived, 6));
+                byte[] data1 = concatByte(concatBytes, coordAndDistance);
+                byte[] data2 = concatByte(data1, dist);
+                boolean sendSuccess = sendToRemoteControl(data2);
 //        if (sendSuccess) {
 //            sendToRemoteControl(rssi);
 //        }
-        sendToPC(data);
+                sendToPC(concatBytes);
+            }
+        }
     }
 
-    private byte[] concatByte(final byte[] byteToSend, final byte[] byteReceived,
-                              final byte[] coordAndDistance, final byte[] distribution) {
+    private byte[] concatByte(final byte[] byteToSend, final byte[] byteReceived) {
         if (byteToSend != null && byteReceived != null) {
             try {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 outputStream.write(byteToSend);
                 outputStream.write(byteReceived);
-                outputStream.write(coordAndDistance);
-                outputStream.write(distribution);
                 return outputStream.toByteArray();
             } catch (IOException e) {
                 e.printStackTrace();

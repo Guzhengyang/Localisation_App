@@ -364,6 +364,19 @@ public class BleRangingHelper {
                 if (bytesReceived != null) {
                     lock.readLock().lock();
                     newLockStatus = (bytesReceived[5] & 0x01) != 0;
+                    if (bytesReceived.length == 8) {
+                        final int receivedTrxNumber = bytesReceived[6] & 0xF0;
+                        final int receivedChannelNumber = bytesReceived[6] & 0x0F;
+                        Antenna.BLEChannel receivedChannel = Antenna.BLEChannel.UNKNOWN;
+                        if (receivedChannelNumber == 0x00) {
+                            receivedChannel = Antenna.BLEChannel.BLE_CHANNEL_37;
+                        } else if (receivedChannelNumber == 0x01) {
+                            receivedChannel = Antenna.BLEChannel.BLE_CHANNEL_38;
+                        } else if (receivedChannelNumber == 0x02) {
+                            receivedChannel = Antenna.BLEChannel.BLE_CHANNEL_39;
+                        }
+                        connectedCar.saveCarRssi(receivedTrxNumber, bytesReceived[7], receivedChannel);
+                    }
                     lock.readLock().unlock();
                 }
                 if (oldLockStatus != newLockStatus) {
