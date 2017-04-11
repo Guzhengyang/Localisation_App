@@ -112,7 +112,7 @@ public abstract class ConnectedCar {
         if (trxLinkedHMap.get(trxNumber) != null) {
             trxLinkedHMap.get(trxNumber).saveCarRssi(rssi, bleChannel);
         } else {
-            PSALogs.d("NIH", "trx is null, cannot save rssi");
+            PSALogs.d("NIH", "trx is null, cannot save car rssi");
         }
     }
 
