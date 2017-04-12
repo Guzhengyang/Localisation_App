@@ -5,9 +5,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.valeo.bleranging.BleRangingHelper;
-import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,11 +16,6 @@ import java.util.Map;
 import hex.genmodel.easy.EasyPredictModelWrapper;
 import hex.genmodel.easy.RowData;
 import hex.genmodel.easy.prediction.MultinomialModelPrediction;
-import weka.classifiers.functions.Logistic;
-import weka.classifiers.trees.RandomForest;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.SerializationHelper;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_EXTERNAL;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
@@ -45,25 +38,22 @@ public class PredictionZone {
     private double[] rssi;
     private double[] rssi_offset;
     private int prediction_old = -1;
-    private Instance sample;
-    private RandomForest rf;
-    private Logistic logistic;
     private String[] classes;
     private Context mContext;
     private boolean arePredictRawFileRead = false;
     private int INDEX_LOCK;
     private boolean isThresholdMethod = false;
     private StringBuilder sb = new StringBuilder();
-
-    private String modelClassName = "EightIn";
     private EasyPredictModelWrapper modelWrapper;
-    private MultinomialModelPrediction modelPrediction;
     private RowData rowData;
+    private List<String> rowDataKeySet;
     private String label;
 
-    public PredictionZone(Context context, int modelId) {
+    public PredictionZone(Context context, String modelClassName, List<String> rowDataKeySet) {
         this.mContext = context;
-        new AsyncPredictionInit().execute(modelId);
+        this.rowDataKeySet = rowDataKeySet;
+        this.rowData = new RowData();
+        new AsyncPredictionInit().execute(modelClassName);
     }
 
     public boolean isPredictRawFileRead() {
@@ -90,7 +80,6 @@ public class PredictionZone {
 //        } else {
 //            distance[index] = correctDistUnilateral(distance[index], dist_new, threshold);
 //        }
-//        sample.setValue(index, distance[index]);
 //    }
 
     public void init(double[] rssi, int offset) {
@@ -98,8 +87,6 @@ public class PredictionZone {
         this.distance = new double[rssi.length];
         this.rssi = new double[rssi.length];
         this.distribution = new double[classes.length];
-        this.rowData = new RowData();
-
 //        find index of lock
         for (int i = 0; i < classes.length; i++) {
             if (classes[i].equalsIgnoreCase(PREDICTION_LOCK) || classes[i].equalsIgnoreCase(PREDICTION_EXTERNAL)) {
@@ -110,10 +97,8 @@ public class PredictionZone {
         for (int i = 0; i < rssi.length; i++) {
             this.rssi_offset[i] = rssi[i] - offset;
 //            distance[i] = rssi2dist(this.rssi_offset[i]);
-//            sample.setValue(i, distance[i]);
             this.rssi[i] = rssi_offset[i];
             this.distance[i] = rssi2dist(this.rssi[i]);
-            sample.setValue(i, this.rssi[i]);
         }
         constructRowData(rssi);
     }
@@ -144,42 +129,31 @@ public class PredictionZone {
 
                 this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
                 distance[index] = rssi2dist(this.rssi[index]);
-                sample.setValue(index, this.rssi[index]);
             }
             constructRowData(this.rssi);
         }
     }
 
     private void constructRowData(double[] rssi) {
-        //            RSSI LEFT_ORIGIN,RSSI MIDDLE_ORIGIN,RSSI RIGHT_ORIGIN,RSSI TRUNK_ORIGIN,RSSI FRONTLEFT_ORIGIN,RSSI FRONTRIGHT_ORIGIN,RSSI REARLEFT_ORIGIN,RSSI REARRIGHT_ORIGIN
-        rowData.put("RSSI LEFT_ORIGIN", rssi[0] + "");
-        rowData.put("RSSI MIDDLE_ORIGIN", rssi[1] + "");
-        rowData.put("RSSI RIGHT_ORIGIN", rssi[2] + "");
-        rowData.put("RSSI TRUNK_ORIGIN", rssi[3] + "");
-        rowData.put("RSSI FRONTLEFT_ORIGIN", rssi[4] + "");
-        rowData.put("RSSI FRONTRIGHT_ORIGIN", rssi[5] + "");
-        rowData.put("RSSI REARLEFT_ORIGIN", rssi[6] + "");
-        rowData.put("RSSI REARRIGHT_ORIGIN", rssi[7] + "");
+        if (rssi == null) {
+            return;
+        }
+        int i = 0;
+        for (String elem : rowDataKeySet) {
+            if (i < rssi.length) {
+                rowData.put(elem, String.valueOf(rssi[i]));
+                i++;
+            }
+        }
     }
 
     public void predict(int nVote) {
         int result = 0;
         try {
-            if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_2_A) ||
-                    SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_2_B) ||
-                    SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_3_A)) {
-                result = (int) logistic.classifyInstance(sample);
-                distribution = logistic.distributionForInstance(sample);
-
-            } else {
-                result = (int) rf.classifyInstance(sample);
-                distribution = rf.distributionForInstance(sample);
-
-                modelPrediction = modelWrapper.predictMultinomial(rowData);
-                label = modelPrediction.label;
-                PSALogs.d("modelPrediction", (modelPrediction != null) + "");
-                PSALogs.d("label", label);
-            }
+            final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
+            label = modelPrediction.label;
+            result = modelPrediction.labelIndex;
+            distribution = modelPrediction.classProbabilities;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -478,28 +452,14 @@ public class PredictionZone {
         return rssi;
     }
 
-    private class AsyncPredictionInit extends AsyncTask<Integer, Void, Void> {
+    private class AsyncPredictionInit extends AsyncTask<String, Void, Void> {
 
         @Override
-        protected Void doInBackground(Integer... elements) {
+        protected Void doInBackground(String... elements) {
             try {
-                Object[] model = (Object[]) SerializationHelper.read(mContext.getResources().openRawResource(elements[0]));
-                if (SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_2_A) ||
-                        SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_2_B) ||
-                        SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_3_A)) {
-                    logistic = (Logistic) model[0];
-                } else {
-                    rf = (RandomForest) model[0];
-                }
-                classes = (String[]) model[1];
-                Instances instances = (Instances) model[2];
-                sample = instances.instance(0);
-                arePredictRawFileRead = true;
-
-                hex.genmodel.GenModel rawModel;
-                rawModel = (hex.genmodel.GenModel) Class.forName(modelClassName).newInstance();
+                hex.genmodel.GenModel rawModel = (hex.genmodel.GenModel) Class.forName(elements[0]).newInstance();
                 modelWrapper = new EasyPredictModelWrapper(rawModel);
-
+                arePredictRawFileRead = true;
             } catch (Exception e) {
                 e.printStackTrace();
                 arePredictRawFileRead = false;
