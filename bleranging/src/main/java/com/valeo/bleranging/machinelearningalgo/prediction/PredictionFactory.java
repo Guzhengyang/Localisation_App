@@ -70,7 +70,11 @@ public class PredictionFactory {
                 case TYPE_8_A:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            return new PredictionZone(mContext, R.raw.eight_in_new);
+                            if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
+                                return new PredictionZone(mContext, R.raw.eight_in_thatcham_new);
+                            } else {
+                                return new PredictionZone(mContext, R.raw.eight_in_new);
+                            }
                         case PREDICTION_INSIDE:
                             return new PredictionZone(mContext, R.raw.eight_in);
                         case PREDICTION_RP:
