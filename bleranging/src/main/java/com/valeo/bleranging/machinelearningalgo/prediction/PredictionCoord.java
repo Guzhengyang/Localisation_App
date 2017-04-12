@@ -58,14 +58,17 @@ public class PredictionCoord {
         }
     }
 
-    public void setRssi(int index, double rssi, int offset) {
+    public void setRssi(double rssi[], int offset) {
         if (this.rssi_offset != null) {
-            this.rssi_offset[index] = rssi - offset;
-            this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
-            if (rssiHistoric.get(index).size() == MAX_HISTORIC_SIZE) {
-                rssiHistoric.get(index).remove(0);
+            for (int index = 0; index < rssi.length; index++) {
+                this.rssi_offset[index] = rssi[index] - offset;
+                this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
+                if (rssiHistoric.get(index).size() == MAX_HISTORIC_SIZE) {
+                    rssiHistoric.get(index).remove(0);
+                }
+                rssiHistoric.get(index).add(this.rssi[index]);
             }
-            rssiHistoric.get(index).add(this.rssi[index]);
+
         }
     }
 

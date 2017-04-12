@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import hex.genmodel.easy.EasyPredictModelWrapper;
+import hex.genmodel.easy.RowData;
+import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
@@ -50,6 +54,12 @@ public class PredictionZone {
     private int INDEX_LOCK;
     private boolean isThresholdMethod = false;
     private StringBuilder sb = new StringBuilder();
+
+    private String modelClassName = "EightIn";
+    private EasyPredictModelWrapper modelWrapper;
+    private MultinomialModelPrediction modelPrediction;
+    private RowData rowData;
+    private String label;
 
     public PredictionZone(Context context, int modelId) {
         this.mContext = context;
@@ -88,6 +98,8 @@ public class PredictionZone {
         this.distance = new double[rssi.length];
         this.rssi = new double[rssi.length];
         this.distribution = new double[classes.length];
+        this.rowData = new RowData();
+
 //        find index of lock
         for (int i = 0; i < classes.length; i++) {
             if (classes[i].equalsIgnoreCase(PREDICTION_LOCK) || classes[i].equalsIgnoreCase(PREDICTION_EXTERNAL)) {
@@ -103,39 +115,53 @@ public class PredictionZone {
             this.distance[i] = rssi2dist(this.rssi[i]);
             sample.setValue(i, this.rssi[i]);
         }
+        constructRowData(rssi);
     }
 
-    public void setRssi(int index, double rssi, int offset, double threshold, boolean lockStatus) {
+    public void setRssi(double rssi[], int offset, boolean lockStatus) {
         if (this.rssi_offset != null) {
-            this.rssi_offset[index] = rssi - offset;
-            if (prediction_old != -1) {
-                // trx order : l, m, r, t, fl, fr, rl, rr
-                // Add lock hysteresis to all the trx
-                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
-                        this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE) |
-                        this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_EXTERNAL)) {
-                    rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
-                }
-                // Add unlock hysteresis to all the trx
-                if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
-                        this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
-                    rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
-                }
+            for (int index = 0; index < rssi.length; index++) {
+                this.rssi_offset[index] = rssi[index] - offset;
+                if (prediction_old != -1) {
+                    // trx order : l, m, r, t, fl, fr, rl, rr
+                    // Add lock hysteresis to all the trx
+                    if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
+                            this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE) |
+                            this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_EXTERNAL)) {
+                        rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
+                    }
+                    // Add unlock hysteresis to all the trx
+                    if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
+                            this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
+                        rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
+                    }
 //            if(lockStatus){
 //                rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
 //            }else {
 //                rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
 //            }
-            }
-//        double dist_new = rssi2dist(rssi_offset[index]);
-//        distance[index] = correctDistUnilateral(distance[index], dist_new, threshold);
-//        sample.setValue(index, distance[index]);
+                }
 
-            this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
-            distance[index] = rssi2dist(this.rssi[index]);
-            sample.setValue(index, this.rssi[index]);
+                this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
+                distance[index] = rssi2dist(this.rssi[index]);
+                sample.setValue(index, this.rssi[index]);
+            }
+            constructRowData(this.rssi);
         }
     }
+
+    private void constructRowData(double[] rssi) {
+        //            RSSI LEFT_ORIGIN,RSSI MIDDLE_ORIGIN,RSSI RIGHT_ORIGIN,RSSI TRUNK_ORIGIN,RSSI FRONTLEFT_ORIGIN,RSSI FRONTRIGHT_ORIGIN,RSSI REARLEFT_ORIGIN,RSSI REARRIGHT_ORIGIN
+        rowData.put("RSSI LEFT_ORIGIN", rssi[0] + "");
+        rowData.put("RSSI MIDDLE_ORIGIN", rssi[1] + "");
+        rowData.put("RSSI RIGHT_ORIGIN", rssi[2] + "");
+        rowData.put("RSSI TRUNK_ORIGIN", rssi[3] + "");
+        rowData.put("RSSI FRONTLEFT_ORIGIN", rssi[4] + "");
+        rowData.put("RSSI FRONTRIGHT_ORIGIN", rssi[5] + "");
+        rowData.put("RSSI REARLEFT_ORIGIN", rssi[6] + "");
+        rowData.put("RSSI REARRIGHT_ORIGIN", rssi[7] + "");
+    }
+
     public void predict(int nVote) {
         int result = 0;
         try {
@@ -144,9 +170,15 @@ public class PredictionZone {
                     SdkPreferencesHelper.getInstance().getConnectedCarType().equalsIgnoreCase(ConnectedCarFactory.TYPE_3_A)) {
                 result = (int) logistic.classifyInstance(sample);
                 distribution = logistic.distributionForInstance(sample);
+
             } else {
                 result = (int) rf.classifyInstance(sample);
                 distribution = rf.distributionForInstance(sample);
+
+                modelPrediction = modelWrapper.predictMultinomial(rowData);
+                label = modelPrediction.label;
+                PSALogs.d("modelPrediction", (modelPrediction != null) + "");
+                PSALogs.d("label", label);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -378,7 +410,10 @@ public class PredictionZone {
             return "";
         } else if (prediction_old == -1) {
             return "";
+        } else if (label == null) {
+            return "";
         } else {
+            sb.append("h2o prediction label: ").append(label).append("\n");
             if (isThresholdMethod) {
                 sb.append("Threshold\n");
             } else {
@@ -460,6 +495,11 @@ public class PredictionZone {
                 Instances instances = (Instances) model[2];
                 sample = instances.instance(0);
                 arePredictRawFileRead = true;
+
+                hex.genmodel.GenModel rawModel;
+                rawModel = (hex.genmodel.GenModel) Class.forName(modelClassName).newInstance();
+                modelWrapper = new EasyPredictModelWrapper(rawModel);
+
             } catch (Exception e) {
                 e.printStackTrace();
                 arePredictRawFileRead = false;
