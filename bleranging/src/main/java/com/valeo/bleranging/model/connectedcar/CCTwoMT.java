@@ -22,7 +22,7 @@ public class CCTwoMT extends ConnectedCar {
 
     @Override
     public void readPredictionsRawFiles() {
-        standardPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_STANDARD);
+        standardPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_STANDARD);
     }
 
     @Override

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.PointF;
 
 import com.valeo.bleranging.BleRangingHelper;
-import com.valeo.bleranging.R;
-import com.valeo.bleranging.machinelearningalgo.prediction.PredictionCoord;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
@@ -32,10 +30,10 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     @Override
     public void readPredictionsRawFiles() {
-        coordPrediction = new PredictionCoord(mContext, R.raw.mlp);
-        standardPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_STANDARD);
-//        insidePrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_INSIDE);
-//        rpPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_RP);
+        coordPrediction = PredictionFactory.getPredictionCoord(mContext, PredictionFactory.PREDICTION_STANDARD);
+        standardPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_STANDARD);
+//        insidePrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_INSIDE);
+//        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);
     }
 
     @Override

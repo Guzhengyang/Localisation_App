@@ -25,6 +25,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-cast-framework:10.2.1'
     compile 'com.android.support:mediarouter-v7:25.3.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
-    compile files('libs/weka.jar')
     compile files('libs/h2o-genmodel.jar')
 }

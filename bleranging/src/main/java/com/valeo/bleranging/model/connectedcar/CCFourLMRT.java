@@ -24,9 +24,9 @@ public class CCFourLMRT extends ConnectedCar {
 
     @Override
     public void readPredictionsRawFiles() {
-        standardPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_STANDARD);
-//        rpPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_RP);
-//        earPrediction = PredictionFactory.getPrediction(mContext, PredictionFactory.PREDICTION_EAR);
+        standardPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_STANDARD);
+//        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);
+//        earPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_EAR);
     }
 
     @Override

@@ -27,33 +27,53 @@ public class PredictionFactory {
     public final static String PREDICTION_INSIDE = "inside_prediction";
     public final static String PREDICTION_RP = "rp_prediction";
     public final static String PREDICTION_EAR = "ear_prediction";
-    private final static String WRAPPER_H2O_2_A_IN = "TwoIn";
-    private final static String WRAPPER_H2O_2_B_IN = "TwoIn";
-    private final static String WRAPPER_H2O_3_A_IN = "ThreeIn";
-    private final static String WRAPPER_H2O_4_A_IN = "FourIn";
-    private final static String WRAPPER_H2O_4_B_IN = "FourIn";
-    private final static String WRAPPER_H2O_5_A_IN = "FiveIn";
-    private final static String WRAPPER_H2O_6_A_IN = "SixIn";
-    private final static String WRAPPER_H2O_7_A_IN = "SevenIn";
-    private final static String WRAPPER_H2O_8_A_IN = "EightIn";
-    private final static String WRAPPER_H2O_8_A_IN_THATCHAM = "EightInThatcham";
-    private final static String WRAPPER_H2O_2_A_OUT = "TwoOut";
-    private final static String WRAPPER_H2O_2_B_OUT = "TwoOut";
-    private final static String WRAPPER_H2O_3_A_OUT = "ThreeOut";
-    private final static String WRAPPER_H2O_4_A_OUT = "FourOut";
-    private final static String WRAPPER_H2O_4_B_OUT = "FourOut";
-    private final static String WRAPPER_H2O_5_A_OUT = "FiveOut";
-    private final static String WRAPPER_H2O_6_A_OUT = "SixOut";
-    private final static String WRAPPER_H2O_7_A_OUT = "SevenOut";
-    private final static String WRAPPER_H2O_8_A_OUT = "EightOut";
-    private final static String WRAPPER_H2O_8_A_OUT_THATCHAM = "EightOutThatcham";
+    private final static String ZONE_H2O_2_A_IN = "TwoIn";
+    private final static String ZONE_H2O_2_B_IN = "TwoIn";
+    private final static String ZONE_H2O_3_A_IN = "ThreeIn";
+    private final static String ZONE_H2O_4_A_IN = "FourIn";
+    private final static String ZONE_H2O_4_B_IN = "FourIn";
+    private final static String ZONE_H2O_5_A_IN = "FiveIn";
+    private final static String ZONE_H2O_6_A_IN = "SixIn";
+    private final static String ZONE_H2O_7_A_IN = "SevenIn";
+    private final static String ZONE_H2O_8_A_IN = "EightIn";
+    private final static String ZONE_H2O_8_A_IN_THATCHAM = "EightInThatcham";
+    private final static String ZONE_H2O_2_A_OUT = "TwoOut";
+    private final static String ZONE_H2O_2_B_OUT = "TwoOut";
+    private final static String ZONE_H2O_3_A_OUT = "ThreeOut";
+    private final static String ZONE_H2O_4_A_OUT = "FourOut";
+    private final static String ZONE_H2O_4_B_OUT = "FourOut";
+    private final static String ZONE_H2O_5_A_OUT = "FiveOut";
+    private final static String ZONE_H2O_6_A_OUT = "SixOut";
+    private final static String ZONE_H2O_7_A_OUT = "SevenOut";
+    private final static String ZONE_H2O_8_A_OUT = "EightOut";
+    private final static String ZONE_H2O_8_A_OUT_THATCHAM = "EightOutThatcham";
+    private final static String COORD_H2O_2_A_IN = "TwoIn";
+    private final static String COORD_H2O_2_B_IN = "TwoIn";
+    private final static String COORD_H2O_3_A_IN = "ThreeIn";
+    private final static String COORD_H2O_4_A_IN = "FourIn";
+    private final static String COORD_H2O_4_B_IN = "FourIn";
+    private final static String COORD_H2O_5_A_IN = "FiveIn";
+    private final static String COORD_H2O_6_A_IN = "SixIn";
+    private final static String COORD_H2O_7_A_IN = "SevenIn";
+    private final static String COORD_H2O_8_A_IN = "EightIn";
+    private final static String COORD_H2O_8_A_IN_THATCHAM = "EightInThatcham";
+    private final static String COORD_H2O_2_A_OUT = "TwoOut";
+    private final static String COORD_H2O_2_B_OUT = "TwoOut";
+    private final static String COORD_H2O_3_A_OUT = "ThreeOut";
+    private final static String COORD_H2O_4_A_OUT = "FourOut";
+    private final static String COORD_H2O_4_B_OUT = "FourOut";
+    private final static String COORD_H2O_5_A_OUT = "FiveOut";
+    private final static String COORD_H2O_6_A_OUT = "SixOut";
+    private final static String COORD_H2O_7_A_OUT = "SevenOut";
+    private final static String COORD_H2O_8_A_OUT = "EightOut";
+    private final static String COORD_H2O_8_A_OUT_THATCHAM = "EightOutThatcham";
 
     /**
-     * Create and return a prediction
+     * Create and return a coord prediction
      *
-     * @return a prediction
+     * @return a coord prediction
      */
-    public static PredictionZone getPrediction(Context mContext, String predictionType) {
+    public static PredictionCoord getPredictionCoord(Context mContext, String predictionType) {
         boolean areInside = SdkPreferencesHelper.getInstance().getAreBeaconsInside();
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
         String strategy = SdkPreferencesHelper.getInstance().getOpeningStrategy();
@@ -62,21 +82,21 @@ public class PredictionFactory {
         if (areInside) {
             switch (carType) {
                 case TYPE_2_A:
-                    return new PredictionZone(mContext, WRAPPER_H2O_2_A_IN, rowDataKeySetFactory(TYPE_2_A));
+                    return new PredictionCoord(mContext, COORD_H2O_2_A_IN, rowDataKeySetFactory(TYPE_2_A));
                 case TYPE_2_B:
-                    return new PredictionZone(mContext, WRAPPER_H2O_2_B_IN, rowDataKeySetFactory(TYPE_2_B));
+                    return new PredictionCoord(mContext, COORD_H2O_2_B_IN, rowDataKeySetFactory(TYPE_2_B));
                 case TYPE_3_A:
-                    return new PredictionZone(mContext, WRAPPER_H2O_3_A_IN, rowDataKeySetFactory(TYPE_3_A));
+                    return new PredictionCoord(mContext, COORD_H2O_3_A_IN, rowDataKeySetFactory(TYPE_3_A));
                 case TYPE_4_A:
                     break;
                 case TYPE_4_B:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            return new PredictionZone(mContext, WRAPPER_H2O_4_B_IN, rowDataKeySetFactory(TYPE_4_B));
+                            return new PredictionCoord(mContext, COORD_H2O_4_B_IN, rowDataKeySetFactory(TYPE_4_B));
                         case PREDICTION_RP:
-                            return new PredictionZone(mContext, WRAPPER_H2O_4_B_IN, rowDataKeySetFactory(TYPE_4_B));
+                            return new PredictionCoord(mContext, COORD_H2O_4_B_IN, rowDataKeySetFactory(TYPE_4_B));
                         case PREDICTION_EAR:
-                            return new PredictionZone(mContext, WRAPPER_H2O_4_B_IN, rowDataKeySetFactory(TYPE_4_B));
+                            return new PredictionCoord(mContext, COORD_H2O_4_B_IN, rowDataKeySetFactory(TYPE_4_B));
                     }
                     break;
                 case TYPE_5_A:
@@ -84,7 +104,7 @@ public class PredictionFactory {
                 case TYPE_6_A:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            return new PredictionZone(mContext, WRAPPER_H2O_6_A_IN, rowDataKeySetFactory(TYPE_6_A));
+                            return new PredictionCoord(mContext, COORD_H2O_6_A_IN, rowDataKeySetFactory(TYPE_6_A));
                     }
                     break;
                 case TYPE_7_A:
@@ -93,35 +113,35 @@ public class PredictionFactory {
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
                             if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
-                                return new PredictionZone(mContext, WRAPPER_H2O_8_A_IN_THATCHAM, rowDataKeySetFactory(TYPE_8_A));
+                                return new PredictionCoord(mContext, COORD_H2O_8_A_IN_THATCHAM, rowDataKeySetFactory(TYPE_8_A));
                             } else {
-                                return new PredictionZone(mContext, WRAPPER_H2O_8_A_IN, rowDataKeySetFactory(TYPE_8_A));
+                                return new PredictionCoord(mContext, COORD_H2O_8_A_IN, rowDataKeySetFactory(TYPE_8_A));
                             }
                         case PREDICTION_INSIDE:
-                            return new PredictionZone(mContext, WRAPPER_H2O_8_A_IN, rowDataKeySetFactory(TYPE_8_A));
+                            return new PredictionCoord(mContext, COORD_H2O_8_A_IN, rowDataKeySetFactory(TYPE_8_A));
                         case PREDICTION_RP:
-                            return new PredictionZone(mContext, WRAPPER_H2O_8_A_IN, rowDataKeySetFactory(TYPE_8_A));
+                            return new PredictionCoord(mContext, COORD_H2O_8_A_IN, rowDataKeySetFactory(TYPE_8_A));
                     }
                     break;
             }
         } else {
             switch (carType) {
                 case TYPE_2_A:
-                    return new PredictionZone(mContext, WRAPPER_H2O_2_A_OUT, rowDataKeySetFactory(TYPE_2_A));
+                    return new PredictionCoord(mContext, COORD_H2O_2_A_OUT, rowDataKeySetFactory(TYPE_2_A));
                 case TYPE_2_B:
-                    return new PredictionZone(mContext, WRAPPER_H2O_2_B_OUT, rowDataKeySetFactory(TYPE_2_B));
+                    return new PredictionCoord(mContext, COORD_H2O_2_B_OUT, rowDataKeySetFactory(TYPE_2_B));
                 case TYPE_3_A:
-                    return new PredictionZone(mContext, WRAPPER_H2O_3_A_OUT, rowDataKeySetFactory(TYPE_3_A));
+                    return new PredictionCoord(mContext, COORD_H2O_3_A_OUT, rowDataKeySetFactory(TYPE_3_A));
                 case TYPE_4_A:
                     break;
                 case TYPE_4_B:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            return new PredictionZone(mContext, WRAPPER_H2O_4_B_OUT, rowDataKeySetFactory(TYPE_4_B));
+                            return new PredictionCoord(mContext, COORD_H2O_4_B_OUT, rowDataKeySetFactory(TYPE_4_B));
                         case PREDICTION_RP:
-                            return new PredictionZone(mContext, WRAPPER_H2O_4_B_OUT, rowDataKeySetFactory(TYPE_4_B));
+                            return new PredictionCoord(mContext, COORD_H2O_4_B_OUT, rowDataKeySetFactory(TYPE_4_B));
                         case PREDICTION_EAR:
-                            return new PredictionZone(mContext, WRAPPER_H2O_4_B_OUT, rowDataKeySetFactory(TYPE_4_B));
+                            return new PredictionCoord(mContext, COORD_H2O_4_B_OUT, rowDataKeySetFactory(TYPE_4_B));
                     }
                     break;
                 case TYPE_5_A:
@@ -129,7 +149,7 @@ public class PredictionFactory {
                 case TYPE_6_A:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            return new PredictionZone(mContext, WRAPPER_H2O_6_A_OUT, rowDataKeySetFactory(TYPE_6_A));
+                            return new PredictionCoord(mContext, COORD_H2O_6_A_OUT, rowDataKeySetFactory(TYPE_6_A));
                     }
                     break;
                 case TYPE_7_A:
@@ -138,14 +158,119 @@ public class PredictionFactory {
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
                             if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
-                                return new PredictionZone(mContext, WRAPPER_H2O_8_A_OUT, rowDataKeySetFactory(TYPE_8_A));
+                                return new PredictionCoord(mContext, COORD_H2O_8_A_OUT, rowDataKeySetFactory(TYPE_8_A));
                             } else {
-                                return new PredictionZone(mContext, WRAPPER_H2O_8_A_OUT, rowDataKeySetFactory(TYPE_8_A));
+                                return new PredictionCoord(mContext, COORD_H2O_8_A_OUT, rowDataKeySetFactory(TYPE_8_A));
                             }
                         case PREDICTION_INSIDE:
-                            return new PredictionZone(mContext, WRAPPER_H2O_8_A_OUT, rowDataKeySetFactory(TYPE_8_A));
+                            return new PredictionCoord(mContext, COORD_H2O_8_A_OUT, rowDataKeySetFactory(TYPE_8_A));
                         case PREDICTION_RP:
-                            return new PredictionZone(mContext, WRAPPER_H2O_8_A_OUT, rowDataKeySetFactory(TYPE_8_A));
+                            return new PredictionCoord(mContext, COORD_H2O_8_A_OUT, rowDataKeySetFactory(TYPE_8_A));
+                    }
+                    break;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Create and return a zone prediction
+     *
+     * @return a zone prediction
+     */
+    public static PredictionZone getPredictionZone(Context mContext, String predictionType) {
+        boolean areInside = SdkPreferencesHelper.getInstance().getAreBeaconsInside();
+        String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
+        String strategy = SdkPreferencesHelper.getInstance().getOpeningStrategy();
+        boolean ifRoof = SdkPreferencesHelper.getInstance().isPrintRooftopEnabled();
+        boolean ifMiniPrediction = SdkPreferencesHelper.getInstance().isMiniPredictionUsed();
+        if (areInside) {
+            switch (carType) {
+                case TYPE_2_A:
+                    return new PredictionZone(mContext, ZONE_H2O_2_A_IN, rowDataKeySetFactory(TYPE_2_A));
+                case TYPE_2_B:
+                    return new PredictionZone(mContext, ZONE_H2O_2_B_IN, rowDataKeySetFactory(TYPE_2_B));
+                case TYPE_3_A:
+                    return new PredictionZone(mContext, ZONE_H2O_3_A_IN, rowDataKeySetFactory(TYPE_3_A));
+                case TYPE_4_A:
+                    break;
+                case TYPE_4_B:
+                    switch (predictionType) {
+                        case PREDICTION_STANDARD:
+                            return new PredictionZone(mContext, ZONE_H2O_4_B_IN, rowDataKeySetFactory(TYPE_4_B));
+                        case PREDICTION_RP:
+                            return new PredictionZone(mContext, ZONE_H2O_4_B_IN, rowDataKeySetFactory(TYPE_4_B));
+                        case PREDICTION_EAR:
+                            return new PredictionZone(mContext, ZONE_H2O_4_B_IN, rowDataKeySetFactory(TYPE_4_B));
+                    }
+                    break;
+                case TYPE_5_A:
+                    break;
+                case TYPE_6_A:
+                    switch (predictionType) {
+                        case PREDICTION_STANDARD:
+                            return new PredictionZone(mContext, ZONE_H2O_6_A_IN, rowDataKeySetFactory(TYPE_6_A));
+                    }
+                    break;
+                case TYPE_7_A:
+                    break;
+                case TYPE_8_A:
+                    switch (predictionType) {
+                        case PREDICTION_STANDARD:
+                            if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
+                                return new PredictionZone(mContext, ZONE_H2O_8_A_IN_THATCHAM, rowDataKeySetFactory(TYPE_8_A));
+                            } else {
+                                return new PredictionZone(mContext, ZONE_H2O_8_A_IN, rowDataKeySetFactory(TYPE_8_A));
+                            }
+                        case PREDICTION_INSIDE:
+                            return new PredictionZone(mContext, ZONE_H2O_8_A_IN, rowDataKeySetFactory(TYPE_8_A));
+                        case PREDICTION_RP:
+                            return new PredictionZone(mContext, ZONE_H2O_8_A_IN, rowDataKeySetFactory(TYPE_8_A));
+                    }
+                    break;
+            }
+        } else {
+            switch (carType) {
+                case TYPE_2_A:
+                    return new PredictionZone(mContext, ZONE_H2O_2_A_OUT, rowDataKeySetFactory(TYPE_2_A));
+                case TYPE_2_B:
+                    return new PredictionZone(mContext, ZONE_H2O_2_B_OUT, rowDataKeySetFactory(TYPE_2_B));
+                case TYPE_3_A:
+                    return new PredictionZone(mContext, ZONE_H2O_3_A_OUT, rowDataKeySetFactory(TYPE_3_A));
+                case TYPE_4_A:
+                    break;
+                case TYPE_4_B:
+                    switch (predictionType) {
+                        case PREDICTION_STANDARD:
+                            return new PredictionZone(mContext, ZONE_H2O_4_B_OUT, rowDataKeySetFactory(TYPE_4_B));
+                        case PREDICTION_RP:
+                            return new PredictionZone(mContext, ZONE_H2O_4_B_OUT, rowDataKeySetFactory(TYPE_4_B));
+                        case PREDICTION_EAR:
+                            return new PredictionZone(mContext, ZONE_H2O_4_B_OUT, rowDataKeySetFactory(TYPE_4_B));
+                    }
+                    break;
+                case TYPE_5_A:
+                    break;
+                case TYPE_6_A:
+                    switch (predictionType) {
+                        case PREDICTION_STANDARD:
+                            return new PredictionZone(mContext, ZONE_H2O_6_A_OUT, rowDataKeySetFactory(TYPE_6_A));
+                    }
+                    break;
+                case TYPE_7_A:
+                    break;
+                case TYPE_8_A:
+                    switch (predictionType) {
+                        case PREDICTION_STANDARD:
+                            if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
+                                return new PredictionZone(mContext, ZONE_H2O_8_A_OUT, rowDataKeySetFactory(TYPE_8_A));
+                            } else {
+                                return new PredictionZone(mContext, ZONE_H2O_8_A_OUT, rowDataKeySetFactory(TYPE_8_A));
+                            }
+                        case PREDICTION_INSIDE:
+                            return new PredictionZone(mContext, ZONE_H2O_8_A_OUT, rowDataKeySetFactory(TYPE_8_A));
+                        case PREDICTION_RP:
+                            return new PredictionZone(mContext, ZONE_H2O_8_A_OUT, rowDataKeySetFactory(TYPE_8_A));
                     }
                     break;
             }

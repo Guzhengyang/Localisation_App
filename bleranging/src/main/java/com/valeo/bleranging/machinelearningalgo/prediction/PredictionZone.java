@@ -38,7 +38,6 @@ public class PredictionZone {
     private double[] rssi;
     private double[] rssi_offset;
     private int prediction_old = -1;
-    private String[] classes;
     private Context mContext;
     private boolean arePredictRawFileRead = false;
     private int INDEX_LOCK;
@@ -86,10 +85,11 @@ public class PredictionZone {
         this.rssi_offset = new double[rssi.length];
         this.distance = new double[rssi.length];
         this.rssi = new double[rssi.length];
-        this.distribution = new double[classes.length];
+        this.distribution = new double[modelWrapper.getResponseDomainValues().length];
 //        find index of lock
-        for (int i = 0; i < classes.length; i++) {
-            if (classes[i].equalsIgnoreCase(PREDICTION_LOCK) || classes[i].equalsIgnoreCase(PREDICTION_EXTERNAL)) {
+        for (int i = 0; i < modelWrapper.getResponseDomainValues().length; i++) {
+            if (modelWrapper.getResponseDomainValues()[i].equalsIgnoreCase(PREDICTION_LOCK)
+                    || modelWrapper.getResponseDomainValues()[i].equalsIgnoreCase(PREDICTION_EXTERNAL)) {
                 INDEX_LOCK = i;
                 break;
             }
@@ -110,14 +110,14 @@ public class PredictionZone {
                 if (prediction_old != -1) {
                     // trx order : l, m, r, t, fl, fr, rl, rr
                     // Add lock hysteresis to all the trx
-                    if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
-                            this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE) |
-                            this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_EXTERNAL)) {
+                    if (this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
+                            this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE) |
+                            this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_EXTERNAL)) {
                         rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
                     }
                     // Add unlock hysteresis to all the trx
-                    if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
-                            this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
+                    if (this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
+                            this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
                         rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
                     }
 //            if(lockStatus){
@@ -200,7 +200,7 @@ public class PredictionZone {
     }
 
     private boolean comparePrediction(int calculatedPrediction, String expectedPrediction) {
-        return classes[calculatedPrediction].equals(expectedPrediction);
+        return modelWrapper.getResponseDomainValues()[calculatedPrediction].equals(expectedPrediction);
     }
 
     private boolean compareDistribution(int temp_prediction, double threshold_prob) {
@@ -351,7 +351,7 @@ public class PredictionZone {
 
     public String getPrediction() {
         if (prediction_old != -1) {
-            return classes[prediction_old];
+            return modelWrapper.getResponseDomainValues()[prediction_old];
         }
         return PREDICTION_UNKNOWN;
     }
@@ -403,7 +403,7 @@ public class PredictionZone {
             }
             sb.append("\n");
             for (int i = 0; i < distribution.length; i++) {
-                sb.append(classes[i]).append(": ").append(String.format(Locale.FRANCE, "%.2f", distribution[i])).append(" \n");
+                sb.append(modelWrapper.getResponseDomainValues()[i]).append(": ").append(String.format(Locale.FRANCE, "%.2f", distribution[i])).append(" \n");
             }
             sb.append("\n");
             return sb.toString();
@@ -415,7 +415,7 @@ public class PredictionZone {
     }
 
     public String[] getClasses() {
-        return classes;
+        return modelWrapper.getResponseDomainValues();
     }
 
     private boolean bodyAcces(double threshold_rssi) {

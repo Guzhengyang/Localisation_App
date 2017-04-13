@@ -10,10 +10,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
-import weka.classifiers.functions.MultilayerPerceptron;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.SerializationHelper;
+import hex.genmodel.easy.EasyPredictModelWrapper;
+import hex.genmodel.easy.RowData;
+
 
 /**
  * Created by l-avaratha on 12/01/2017
@@ -27,22 +26,37 @@ public class PredictionCoord {
     private static final int MAX_HISTORIC_SIZE = 5;
     private final LinkedHashMap<Integer, List<Double>> rssiHistoric;
     private Context mContext;
-    private MultilayerPerceptron mlp_Px;
-    private MultilayerPerceptron mlp_Py;
-    private Instance sample;
     private double[] rssi_offset;
     private double[] rssi;
     private double[] coord;
     private boolean arePredictRawFileRead = false;
+    private EasyPredictModelWrapper modelWrapper;
+    private RowData rowData;
+    private List<String> rowDataKeySet;
 
-    public PredictionCoord(Context context, int modelId) {
+    public PredictionCoord(Context context, String modelClassName, List<String> rowDataKeySet) {
         this.mContext = context;
-        rssiHistoric = new LinkedHashMap<>();
-        new AsyncPredictionInit().execute(modelId);
+        this.rssiHistoric = new LinkedHashMap<>();
+        this.rowDataKeySet = rowDataKeySet;
+        this.rowData = new RowData();
+        new AsyncPredictionInit().execute(modelClassName);
     }
 
     public boolean isPredictRawFileRead() {
         return arePredictRawFileRead;
+    }
+
+    private void constructRowData(double[] rssi) {
+        if (rssi == null) {
+            return;
+        }
+        int i = 0;
+        for (String elem : rowDataKeySet) {
+            if (i < rssi.length) {
+                rowData.put(elem, String.valueOf(rssi[i]));
+                i++;
+            }
+        }
     }
 
     public void init(double[] rssi, int offset) {
@@ -52,10 +66,10 @@ public class PredictionCoord {
         for (int i = 0; i < rssi.length; i++) {
             this.rssi_offset[i] = rssi[i] - offset;
             this.rssi[i] = rssi_offset[i];
-            sample.setValue(i, this.rssi[i]);
             rssiHistoric.put(i, new ArrayList<Double>());
             rssiHistoric.get(i).add(this.rssi[i]);
         }
+        constructRowData(rssi);
     }
 
     public void setRssi(double rssi[], int offset) {
@@ -68,7 +82,7 @@ public class PredictionCoord {
                 }
                 rssiHistoric.get(index).add(this.rssi[index]);
             }
-
+            constructRowData(this.rssi);
         }
     }
 
@@ -86,12 +100,12 @@ public class PredictionCoord {
     public void calculatePredictionCoord(float[] orientation) {
         double[] coord_new = new double[2];
         for (Integer index : rssiHistoric.keySet()) {
-            sample.setValue(index, averageRssi(rssiHistoric.get(index)));
+//            sample.setValue(index, averageRssi(rssiHistoric.get(index)));
         }
 //        sample.setValue(rssi.length, orientation[0]);
         try {
-            coord_new[0] = mlp_Px.classifyInstance(sample);
-            coord_new[1] = mlp_Py.classifyInstance(sample);
+//            coord_new[0] = mlp_Px.classifyInstance(sample);
+//            coord_new[1] = mlp_Py.classifyInstance(sample);
             correctCoord(coord_new, THRESHOLD_DIST);
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,16 +172,13 @@ public class PredictionCoord {
         return rssi;
     }
 
-    private class AsyncPredictionInit extends AsyncTask<Integer, Void, Void> {
+    private class AsyncPredictionInit extends AsyncTask<String, Void, Void> {
 
         @Override
-        protected Void doInBackground(Integer... elements) {
+        protected Void doInBackground(String... elements) {
             try {
-                Object[] model = (Object[]) SerializationHelper.read(mContext.getResources().openRawResource(elements[0]));
-                mlp_Px = (MultilayerPerceptron) model[0];
-                mlp_Py = (MultilayerPerceptron) model[1];
-                Instances instances = (Instances) model[2];
-                sample = instances.instance(0);
+                hex.genmodel.GenModel rawModel = (hex.genmodel.GenModel) Class.forName(elements[0]).newInstance();
+                modelWrapper = new EasyPredictModelWrapper(rawModel);
                 arePredictRawFileRead = true;
             } catch (Exception e) {
                 e.printStackTrace();
