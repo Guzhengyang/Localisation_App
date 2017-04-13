@@ -5,6 +5,8 @@ import android.graphics.PointF;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.valeo.bleranging.utils.PSALogs;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -104,8 +106,6 @@ public class PredictionCoord {
         }
 //        sample.setValue(rssi.length, orientation[0]);
         try {
-//            coord_new[0] = mlp_Px.classifyInstance(sample);
-//            coord_new[1] = mlp_Py.classifyInstance(sample);
             correctCoord(coord_new, THRESHOLD_DIST);
         } catch (Exception e) {
             e.printStackTrace();
@@ -177,7 +177,9 @@ public class PredictionCoord {
         @Override
         protected Void doInBackground(String... elements) {
             try {
+                PSALogs.d("mlp", "Init");
                 hex.genmodel.GenModel rawModel = (hex.genmodel.GenModel) Class.forName(elements[0]).newInstance();
+                PSALogs.d("mlp", "" + (rawModel != null));
                 modelWrapper = new EasyPredictModelWrapper(rawModel);
                 arePredictRawFileRead = true;
             } catch (Exception e) {

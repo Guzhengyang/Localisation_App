@@ -30,46 +30,24 @@ public class PredictionFactory {
     private final static String ZONE_H2O_2_A_IN = "TwoIn";
     private final static String ZONE_H2O_2_B_IN = "TwoIn";
     private final static String ZONE_H2O_3_A_IN = "ThreeIn";
-    private final static String ZONE_H2O_4_A_IN = "FourIn";
     private final static String ZONE_H2O_4_B_IN = "FourIn";
-    private final static String ZONE_H2O_5_A_IN = "FiveIn";
     private final static String ZONE_H2O_6_A_IN = "SixIn";
     private final static String ZONE_H2O_6_A_IN_THATCHAM = "SixInThatcham";
-    private final static String ZONE_H2O_7_A_IN = "SevenIn";
     private final static String ZONE_H2O_8_A_IN = "EightIn";
     private final static String ZONE_H2O_8_A_IN_THATCHAM = "EightInThatcham";
     private final static String ZONE_H2O_2_A_OUT = "TwoOut";
     private final static String ZONE_H2O_2_B_OUT = "TwoOut";
     private final static String ZONE_H2O_3_A_OUT = "ThreeOut";
-    private final static String ZONE_H2O_4_A_OUT = "FourOut";
     private final static String ZONE_H2O_4_B_OUT = "FourOut";
     private final static String ZONE_H2O_4_B_OUT_THATCHAM = "FourOutThatcham";
-    private final static String ZONE_H2O_5_A_OUT = "FiveOut";
     private final static String ZONE_H2O_6_A_OUT = "SixOut";
-    private final static String ZONE_H2O_7_A_OUT = "SevenOut";
     private final static String ZONE_H2O_8_A_OUT = "EightOut";
     private final static String ZONE_H2O_8_A_OUT_THATCHAM = "EightOutThatcham";
 
-    private final static String COORD_H2O_2_A_IN = "TwoIn";
-    private final static String COORD_H2O_2_B_IN = "TwoIn";
-    private final static String COORD_H2O_3_A_IN = "ThreeIn";
-    private final static String COORD_H2O_4_A_IN = "FourIn";
-    private final static String COORD_H2O_4_B_IN = "FourIn";
-    private final static String COORD_H2O_5_A_IN = "FiveIn";
-    private final static String COORD_H2O_6_A_IN = "SixIn";
-    private final static String COORD_H2O_7_A_IN = "SevenIn";
-    private final static String COORD_H2O_8_A_IN = "EightIn";
-    private final static String COORD_H2O_8_A_IN_THATCHAM = "EightInThatcham";
-    private final static String COORD_H2O_2_A_OUT = "TwoOut";
-    private final static String COORD_H2O_2_B_OUT = "TwoOut";
-    private final static String COORD_H2O_3_A_OUT = "ThreeOut";
-    private final static String COORD_H2O_4_A_OUT = "FourOut";
-    private final static String COORD_H2O_4_B_OUT = "FourOut";
-    private final static String COORD_H2O_5_A_OUT = "FiveOut";
-    private final static String COORD_H2O_6_A_OUT = "SixOut";
-    private final static String COORD_H2O_7_A_OUT = "SevenOut";
-    private final static String COORD_H2O_8_A_OUT = "EightOut";
-    private final static String COORD_H2O_8_A_OUT_THATCHAM = "EightOutThatcham";
+
+    private final static String COORD_H2O_8_A_IN = "MLP4Clf";
+    private final static String COORD_H2O_8_A_OUT = "MLPClf";
+
 
     /**
      * Create and return a coord prediction
