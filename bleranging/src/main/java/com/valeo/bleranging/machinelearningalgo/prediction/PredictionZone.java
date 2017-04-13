@@ -96,7 +96,6 @@ public class PredictionZone {
         }
         for (int i = 0; i < rssi.length; i++) {
             this.rssi_offset[i] = rssi[i] - offset;
-//            distance[i] = rssi2dist(this.rssi_offset[i]);
             this.rssi[i] = rssi_offset[i];
             this.distance[i] = rssi2dist(this.rssi[i]);
         }
@@ -387,7 +386,7 @@ public class PredictionZone {
         } else if (label == null) {
             return "";
         } else {
-            sb.append("h2o prediction label: ").append(label).append("\n");
+            sb.append("Prediction label: ").append(label).append("\n");
             if (isThresholdMethod) {
                 sb.append("Threshold\n");
             } else {
@@ -416,11 +415,6 @@ public class PredictionZone {
 
     public String[] getClasses() {
         return modelWrapper.getResponseDomainValues();
-    }
-
-    private boolean bodyAcces(double threshold_rssi) {
-        double maxRssi = max(rssi);
-        return maxRssi > threshold_rssi;
     }
 
     private double max(double[] rssi) {
@@ -471,7 +465,7 @@ public class PredictionZone {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (!arePredictRawFileRead) {
-                Toast.makeText(mContext, "Init for rf failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Init for Random Forest failed", Toast.LENGTH_SHORT).show();
             }
         }
     }

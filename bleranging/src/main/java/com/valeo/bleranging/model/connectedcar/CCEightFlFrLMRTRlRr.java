@@ -30,7 +30,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     @Override
     public void readPredictionsRawFiles() {
-        coordPrediction = PredictionFactory.getPredictionCoord(mContext, PredictionFactory.PREDICTION_STANDARD);
+        coordPrediction = PredictionFactory.getPredictionCoord(mContext);
         standardPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_STANDARD);
 //        insidePrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_INSIDE);
 //        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);

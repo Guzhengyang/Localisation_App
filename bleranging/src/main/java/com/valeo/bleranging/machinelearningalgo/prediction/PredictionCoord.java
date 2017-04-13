@@ -128,14 +128,14 @@ public class PredictionCoord {
         double deltaX = coord_new[0] - coord[0];
         double deltaY = coord_new[1] - coord[1];
         double dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-//        if (dist > threshold_dist) {
-//            double ratio = threshold_dist / dist;
-//            coord[0] = coord[0] + deltaX * ratio;
-//            coord[1] = coord[1] + deltaY * ratio;
-//        } else {
-//            coord[0] = coord_new[0];
-//            coord[1] = coord_new[1];
-//        }
+        if (dist > threshold_dist) {
+            double ratio = threshold_dist / dist;
+            coord[0] = coord[0] + deltaX * ratio;
+            coord[1] = coord[1] + deltaY * ratio;
+        } else {
+            coord[0] = coord_new[0];
+            coord[1] = coord_new[1];
+        }
         coord[0] = coord_new[0];
         coord[1] = coord_new[1];
         if (coord[0] > MAX_ROWS) {
