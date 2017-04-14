@@ -87,7 +87,7 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
 
     @Override
     public void applyNewDrawable() {
-        chessboard.setImageDrawable(drawChessBoard());
+        chessboard.setBackground(drawChessBoard());
     }
 
     @Override
@@ -120,15 +120,6 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
 //            path.lineTo(tempPoint.x, tempPoint.y);
 //        }
 //        canvas.drawPath(path, paintOne);
-        canvas.drawRect(0, 0, measuredWidth, measuredHeight, paintLock); //lock rect
-        canvas.drawRect(stepX, stepY * 2, stepX * 9, stepY * 8, paintUnlock); // unlock rect
-        for (int width = 0, x = 0; width < measuredWidth && x < MAX_ROWS; width += stepX, x++) {
-            canvas.drawLine(width, 0, width, measuredHeight, paintTwo); // rows lines
-        }
-        for (int height = 0, y = 0; height < measuredHeight && y < MAX_COLUMNS; height += stepY, y++) {
-            canvas.drawLine(0, height, measuredWidth, height, paintTwo); // columns lines
-        }
-        canvas.drawRect(stepX * 3, stepY * 4, stepX * 7, stepY * 6, paintCar); // car rect
         canvas.drawPoint(point.x, point.y, paintThree);
         return bitmap;
     }
