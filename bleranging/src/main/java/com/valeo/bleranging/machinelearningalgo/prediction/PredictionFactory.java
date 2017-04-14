@@ -43,10 +43,8 @@ public class PredictionFactory {
     private final static String ZONE_H2O_6_A_OUT = "SixOut";
     private final static String ZONE_H2O_8_A_OUT = "EightOut";
     private final static String ZONE_H2O_8_A_OUT_THATCHAM = "EightOutThatcham";
-
-
     private final static String COORD_H2O_8_A_IN = "MLP4Clf";
-    private final static String COORD_H2O_8_A_OUT = "MLPClf";
+    private final static String COORD_H2O_8_A_OUT = "MLP4Clf";
 
 
     /**

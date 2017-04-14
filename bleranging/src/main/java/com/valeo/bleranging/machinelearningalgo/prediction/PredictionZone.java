@@ -386,12 +386,12 @@ public class PredictionZone {
         } else if (label == null) {
             return "";
         } else {
-            sb.append("Prediction label: ").append(label).append("\n");
             if (isThresholdMethod) {
                 sb.append("Threshold\n");
             } else {
                 sb.append("Machine Learning\n");
             }
+            sb.append("Current Prediction Label: ").append(label).append("\n");
             sb.append(String.format(Locale.FRANCE, "%1$s %2$s %3$.2f", title, getPrediction(), distribution[prediction_old])).append("\n");
             for (double arssi : rssi) {
                 sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
@@ -414,7 +414,11 @@ public class PredictionZone {
     }
 
     public String[] getClasses() {
-        return modelWrapper.getResponseDomainValues();
+        if (modelWrapper != null) {
+            return modelWrapper.getResponseDomainValues();
+        } else {
+            return null;
+        }
     }
 
     private double max(double[] rssi) {
@@ -465,7 +469,7 @@ public class PredictionZone {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (!arePredictRawFileRead) {
-                Toast.makeText(mContext, "Init for Random Forest failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Init for Random Forest failed", Toast.LENGTH_LONG).show();
             }
         }
     }

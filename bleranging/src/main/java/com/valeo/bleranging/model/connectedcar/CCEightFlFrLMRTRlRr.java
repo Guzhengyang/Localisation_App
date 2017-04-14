@@ -52,11 +52,11 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public boolean isInitialized() {
         return (coordPrediction != null
-//                && coordPrediction.isPredictRawFileRead()
+                && coordPrediction.isPredictRawFileRead()
                 && standardPrediction != null
+                && standardPrediction.isPredictRawFileRead()
 //                && insidePrediction != null
 //                && rpPrediction != null
-                && standardPrediction.isPredictRawFileRead()
 //                && insidePrediction.isPredictRawFileRead()
 //                && rpPrediction.isPredictRawFileRead()
                 && (checkForRssiNonNull(rssi) != null));

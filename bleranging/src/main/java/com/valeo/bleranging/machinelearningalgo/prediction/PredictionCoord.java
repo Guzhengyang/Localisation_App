@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import hex.genmodel.easy.EasyPredictModelWrapper;
 import hex.genmodel.easy.RowData;
+import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 
 
 /**
@@ -22,7 +23,7 @@ import hex.genmodel.easy.RowData;
 
 public class PredictionCoord {
     private static final double THRESHOLD_RSSI_AWAY = 1;
-    private static final double THRESHOLD_DIST = 0.3;
+    private static final double THRESHOLD_DIST = 0.5;
     private static final int MAX_ROWS = 11;
     private static final int MAX_COLUMNS = 10;
     private static final int MAX_HISTORIC_SIZE = 5;
@@ -35,6 +36,7 @@ public class PredictionCoord {
     private EasyPredictModelWrapper modelWrapper;
     private RowData rowData;
     private List<String> rowDataKeySet;
+    private String label;
 
     public PredictionCoord(Context context, String modelClassName, List<String> rowDataKeySet) {
         this.mContext = context;
@@ -84,7 +86,11 @@ public class PredictionCoord {
                 }
                 rssiHistoric.get(index).add(this.rssi[index]);
             }
-            constructRowData(this.rssi);
+            double[] rssiAverage = new double[rssi.length];
+            for (int i = 0; i < rssi.length; i++) {
+                rssiAverage[i] = averageRssi(rssiHistoric.get(i));
+            }
+            constructRowData(rssiAverage);
         }
     }
 
@@ -100,23 +106,36 @@ public class PredictionCoord {
     }
 
     public void calculatePredictionCoord(float[] orientation) {
-        double[] coord_new = new double[2];
-        for (Integer index : rssiHistoric.keySet()) {
-//            sample.setValue(index, averageRssi(rssiHistoric.get(index)));
-        }
-//        sample.setValue(rssi.length, orientation[0]);
+        double[] coord_new;
+        String index;
         try {
+            final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
+            label = modelPrediction.label;
+            index = label.replace("S", "");
+            coord_new = square2PxPy(Integer.parseInt(index));
+            PSALogs.d("coord_new", "x=" + coord_new[0] + " y=" + coord_new[1]);
             correctCoord(coord_new, THRESHOLD_DIST);
+            PSALogs.d("coord", "x=" + coord[0] + " y=" + coord[1]);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public double[] index2PxPy(int index) {
+    public double[] point2PxPy(int index) {
         double[] coord = new double[2];
         index = index - 1;
         coord[1] = Math.floor(index / (2 * MAX_ROWS + 1));
         coord[0] = index - coord[1] * (2 * MAX_ROWS + 1);
+        return coord;
+    }
+
+    public double[] square2PxPy(int index) {
+        double[] coord = new double[2];
+        index = index - 1;
+        coord[1] = Math.floor(index / MAX_ROWS);
+        coord[0] = index - coord[1] * MAX_ROWS;
+        coord[0] = coord[0] + 0.5;
+        coord[1] = coord[1] + 0.5;
         return coord;
     }
 
@@ -136,8 +155,6 @@ public class PredictionCoord {
             coord[0] = coord_new[0];
             coord[1] = coord_new[1];
         }
-        coord[0] = coord_new[0];
-        coord[1] = coord_new[1];
         if (coord[0] > MAX_ROWS) {
             coord[0] = MAX_ROWS;
         } else if (coord[0] < 0) {
@@ -193,7 +210,7 @@ public class PredictionCoord {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (!arePredictRawFileRead) {
-                Toast.makeText(mContext, "Init for MLP failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Init for Coord Model Fail", Toast.LENGTH_LONG).show();
             }
         }
     }
