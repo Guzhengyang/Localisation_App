@@ -60,4 +60,9 @@ public class CCFourLMRB extends ConnectedCar {
     public PointF getPredictionCoord() {
         return null;
     }
+
+    @Override
+    public double getDist2Car() {
+        return 0;
+    }
 }

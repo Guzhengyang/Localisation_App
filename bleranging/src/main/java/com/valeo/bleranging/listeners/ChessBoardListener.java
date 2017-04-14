@@ -8,5 +8,5 @@ import android.graphics.PointF;
 public interface ChessBoardListener {
     void applyNewDrawable();
 
-    void updateChessboard(final PointF point);
+    void updateChessboard(final PointF point, final double dist);
 }

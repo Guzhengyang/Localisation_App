@@ -450,6 +450,13 @@ public class AlgoManager implements SensorEventListener {
         return null;
     }
 
+    public double getDist2Car(final ConnectedCar connectedCar) {
+        if (connectedCar != null) {
+            return connectedCar.getDist2Car();
+        }
+        return 0;
+    }
+
     public String getPredictionProximity(final ConnectedCar connectedCar) {
         if (connectedCar != null) {
             return connectedCar.getPredictionProximity();

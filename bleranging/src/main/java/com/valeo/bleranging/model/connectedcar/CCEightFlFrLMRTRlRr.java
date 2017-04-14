@@ -95,7 +95,6 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     public String printDebug(boolean smartphoneIsInPocket) {
         if (isInitialized()) {
             String result = "";
-//            result += coordPrediction.printDebug() + "\n";
             result += SdkPreferencesHelper.getInstance().getOpeningStrategy() + "\n";
             result += standardPrediction.printDebug(FULL_LOC);
             return result;
@@ -121,6 +120,13 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             return coordPrediction.getPredictionCoord();
         }
         return null;
+    }
+
+    public double getDist2Car() {
+        if (isInitialized()) {
+            return coordPrediction.getDist2Car();
+        }
+        return 0f;
     }
 
     private String getInsidePrediction() {

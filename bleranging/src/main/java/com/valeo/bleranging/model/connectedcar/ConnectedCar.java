@@ -366,4 +366,6 @@ public abstract class ConnectedCar {
             return -1;
         }
     }
+
+    public abstract double getDist2Car();
 }

@@ -5,8 +5,6 @@ import android.graphics.PointF;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import com.valeo.bleranging.utils.PSALogs;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,11 +25,13 @@ public class PredictionCoord {
     private static final int MAX_ROWS = 11;
     private static final int MAX_COLUMNS = 10;
     private static final int MAX_HISTORIC_SIZE = 5;
+    private static double X1 = 3, X2 = 7, Y1 = 4, Y2 = 6;
     private final LinkedHashMap<Integer, List<Double>> rssiHistoric;
     private Context mContext;
     private double[] rssi_offset;
     private double[] rssi;
     private double[] coord;
+    private double dist;
     private boolean arePredictRawFileRead = false;
     private EasyPredictModelWrapper modelWrapper;
     private RowData rowData;
@@ -113,9 +113,8 @@ public class PredictionCoord {
             label = modelPrediction.label;
             index = label.replace("S", "");
             coord_new = square2PxPy(Integer.parseInt(index));
-            PSALogs.d("coord_new", "x=" + coord_new[0] + " y=" + coord_new[1]);
             correctCoord(coord_new, THRESHOLD_DIST);
-            PSALogs.d("coord", "x=" + coord[0] + " y=" + coord[1]);
+            calculateDist2Car();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -142,6 +141,11 @@ public class PredictionCoord {
     public PointF getPredictionCoord() {
         return new PointF((float) coord[0], MAX_COLUMNS - (float) coord[1]);
     }
+
+    public double getDist2Car() {
+        return dist;
+    }
+
 
     private void correctCoord(double[] coord_new, double threshold_dist) {
         double deltaX = coord_new[0] - coord[0];
@@ -175,6 +179,35 @@ public class PredictionCoord {
         }
     }
 
+    private void calculateDist2Car() {
+        if ((coord[0] < X1) & (coord[1] < Y1)) {
+            dist = Math.sqrt((coord[0] - X1) * (coord[0] - X1) + (coord[1] - Y1) * (coord[1] - Y1));
+        } else if ((coord[0] < X1) & (coord[1] > Y2)) {
+            dist = Math.sqrt((coord[0] - X1) * (coord[0] - X1) + (coord[1] - Y2) * (coord[1] - Y2));
+        } else if ((coord[0] > X2) & (coord[1] < Y1)) {
+            dist = Math.sqrt((coord[0] - X2) * (coord[0] - X2) + (coord[1] - Y1) * (coord[1] - Y1));
+        } else if ((coord[0] > X2) & (coord[1] > Y2)) {
+            dist = Math.sqrt((coord[0] - X2) * (coord[0] - X2) + (coord[1] - Y2) * (coord[1] - Y2));
+        } else if ((coord[0] < X1) & (coord[1] > Y1) & (coord[1] < Y2)) {
+            dist = X1 - coord[0];
+        } else if ((coord[0] > X2) & (coord[1] > Y1) & (coord[1] < Y2)) {
+            dist = coord[0] - X2;
+        } else if ((coord[1] < Y1) & (coord[0] > X1) & (coord[0] < X2)) {
+            dist = Y1 - coord[1];
+        } else if ((coord[1] > Y2) & (coord[0] > X1) & (coord[0] < X2)) {
+            dist = coord[1] - Y2;
+        } else if ((coord[0] > X1) & (coord[0] < X2) & (coord[1] > Y1) & (coord[1] < Y2)) {
+            dist = -1;
+        }
+    }
+
+    private double calculateDist(double[] point1, double[] point2) {
+        double deltaX = point1[0] - point1[0];
+        double deltaY = point2[1] - point2[1];
+        double dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        return dist;
+    }
+
     private double correctRssiUnilateral(double rssi_old, double rssi_new) {
         double rssi_correted;
         if (rssi_new > rssi_old) {
@@ -194,9 +227,7 @@ public class PredictionCoord {
         @Override
         protected Void doInBackground(String... elements) {
             try {
-                PSALogs.d("mlp", "Init");
                 hex.genmodel.GenModel rawModel = (hex.genmodel.GenModel) Class.forName(elements[0]).newInstance();
-                PSALogs.d("mlp", "" + (rawModel != null));
                 modelWrapper = new EasyPredictModelWrapper(rawModel);
                 arePredictRawFileRead = true;
             } catch (Exception e) {
