@@ -74,6 +74,15 @@ public class PredictionCoord {
             rssiHistoric.get(i).add(this.rssi[i]);
         }
         constructRowData(rssi);
+        try {
+            String index;
+            final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
+            label = modelPrediction.label;
+            index = label.replace("S", "");
+            this.coord = square2PxPy(Integer.parseInt(index));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setRssi(double rssi[], int offset) {

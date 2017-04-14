@@ -44,6 +44,7 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     private float stepX;
     private int measuredHeight;
     private float stepY;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
