@@ -66,9 +66,9 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         measuredWidth = metrics.widthPixels;
-        stepX = measuredWidth / MAX_ROWS;
+        stepX = (float) (Math.round((measuredWidth / MAX_ROWS) * 100.0) / 100.0);
         measuredHeight = (int) (stepX * MAX_COLUMNS);
-        stepY = measuredHeight / MAX_COLUMNS;
+        stepY = (float) (Math.round((measuredHeight / MAX_COLUMNS) * 100.0) / 100.0);
     }
 
     private void setPaint() {
@@ -86,7 +86,7 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
 
     @Override
     public void applyNewDrawable() {
-        chessboard.setBackground(drawChessBoard());
+        chessboard.setImageDrawable(drawChessBoard());
     }
 
     @Override
@@ -99,7 +99,7 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     private Bitmap placeUserOnChessBoard(final PointF point, final double dist) {
         final Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
-        PSALogs.d("chess", String.format(Locale.FRANCE, "coord : %.1f %.1f", point.x, point.y));
+        PSALogs.d("chess", String.format(Locale.FRANCE, "coord : %.1f %.1f", point.x, (10 - point.y)));
         chessboard_debug_info.setText(String.format(Locale.FRANCE, "coord : x = %.1f      y = %.1f    distance : %.1f", point.x, (10 - point.y), dist));
         point.x *= stepX;
         point.y *= stepY;
@@ -119,6 +119,15 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
 //            path.lineTo(tempPoint.x, tempPoint.y);
 //        }
 //        canvas.drawPath(path, paintOne);
+        canvas.drawRect(0, 0, measuredWidth, measuredHeight, paintLock); //lock rect
+        canvas.drawRect(stepX, stepY * 2, stepX * 9, stepY * 8, paintUnlock); // unlock rect
+        for (int width = 0, x = 0; width < measuredWidth && x < MAX_ROWS; width += stepX, x++) {
+            canvas.drawLine(width, 0, width, measuredHeight, paintTwo); // rows lines
+        }
+        for (int height = 0, y = 0; height < measuredHeight && y < MAX_COLUMNS; height += stepY, y++) {
+            canvas.drawLine(0, height, measuredWidth, height, paintTwo); // columns lines
+        }
+        canvas.drawRect(stepX * 3, stepY * 4, stepX * 7, stepY * 6, paintCar); // car rect
         canvas.drawPoint(point.x, point.y, paintThree);
         return bitmap;
     }
@@ -127,6 +136,7 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
         final Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
         PSALogs.i("chess", "stepX " + stepX + " measuredWidth " + measuredWidth);
+        PSALogs.i("chess", "stepY " + stepY + " measuredHeight " + measuredHeight);
         canvas.drawRect(0, 0, measuredWidth, measuredHeight, paintLock); //lock rect
         canvas.drawRect(stepX, stepY * 2, stepX * 9, stepY * 8, paintUnlock); // unlock rect
         for (int width = 0, x = 0; width < measuredWidth && x < MAX_ROWS; width += stepX, x++) {
