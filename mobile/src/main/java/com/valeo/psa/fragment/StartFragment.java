@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.valeo.bleranging.BleRangingHelper;
@@ -52,8 +53,19 @@ public class StartFragment extends Fragment {
      */
     private void setView(View rootView) {
         final Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        final ImageView main_icon = (ImageView) toolbar.findViewById(R.id.main_icon);
         final TextView start_fragment_title = (TextView) toolbar.findViewById(R.id.start_fragment_title);
         start_fragment_title.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (countDownTimer != null) {
+                    countDownTimer.cancel();
+                    countDownTimer = null;
+                }
+                mListener.startButtonActionsFinished();
+            }
+        });
+        main_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (countDownTimer != null) {
