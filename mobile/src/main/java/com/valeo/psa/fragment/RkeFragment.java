@@ -54,6 +54,9 @@ public class RkeFragment extends Fragment implements RkeListener {
             }
         }
     };
+    private boolean isDragging = false;
+    private boolean updateAfterDragStops = false;
+    private boolean savedLockStatus = false;
     private TextView car_door_status;
     private TextView rke_loading_progress_bar;
     private ImageButton circle_selector_driver_s_door_unlocked;
@@ -204,21 +207,18 @@ public class RkeFragment extends Fragment implements RkeListener {
         vehicle_locked.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
                 return false;
             }
         });
         driver_s_door_unlocked.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
                 return false;
             }
         });
         vehicle_unlocked.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
                 return false;
             }
         });
@@ -257,19 +257,26 @@ public class RkeFragment extends Fragment implements RkeListener {
 
     @Override
     public void updateCarDoorStatus(boolean lockStatus) {
-        if (lockStatus) {
-            PSALogs.d("NIH rearm", "update lock");
-            car_door_status.setText(getString(R.string.vehicle_locked));
-            carDoorStatus = CarDoorStatus.LOCKED;
-            placeSelectorOver(frame_vehicle_locked);
-            startButtonAnimation(false);
+        PSALogs.d("DragDrop", "updateCarDoorStatus isDragging " + isDragging);
+        if (isDragging) {
+            updateAfterDragStops = true;
+            savedLockStatus = lockStatus;
+            PSALogs.d("DragDrop", "call updateCarDoorStatus when user was dragging, to apply savedLockStatus " + savedLockStatus);
         } else {
-            PSALogs.d("NIH rearm", "update unlock");
-            car_door_status.setText(getString(R.string.vehicle_unlocked));
-            carDoorStatus = CarDoorStatus.UNLOCKED;
-            placeSelectorOver(frame_vehicle_unlocked);
-            // animation waves start_button
-            startButtonAnimation(true);
+            if (lockStatus) {
+                PSALogs.d("NIH rearm", "update lock");
+                car_door_status.setText(getString(R.string.vehicle_locked));
+                carDoorStatus = CarDoorStatus.LOCKED;
+                placeSelectorOver(frame_vehicle_locked);
+                startButtonAnimation(false);
+            } else {
+                PSALogs.d("NIH rearm", "update unlock");
+                car_door_status.setText(getString(R.string.vehicle_unlocked));
+                carDoorStatus = CarDoorStatus.UNLOCKED;
+                placeSelectorOver(frame_vehicle_unlocked);
+                // animation waves start_button
+                startButtonAnimation(true);
+            }
         }
         mListener.updateCarDrawable();
     }
@@ -300,11 +307,13 @@ public class RkeFragment extends Fragment implements RkeListener {
             switch (action) {
                 case DragEvent.ACTION_DRAG_STARTED:
                     PSALogs.d("DragDrop", "ACTION_DRAG_STARTED " + view.getId());
+                    isDragging = true;
                     break;
                 case ACTION_DRAG_LOCATION:
                     // Ignore the event
                     return true;
                 case DragEvent.ACTION_DRAG_ENDED:
+                    isDragging = false;
                     if (dragEvent.getResult()) {
                         PSALogs.d("DragDrop", "The drop was handled.");
                     } else {
@@ -312,15 +321,27 @@ public class RkeFragment extends Fragment implements RkeListener {
                         final View dragView = (View) dragEvent.getLocalState();
                         if (dragView != null) {
                             PSALogs.d("DragDrop", "OUTSIDE dragView = " + dragView.toString());
-                            dragView.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dragView.setVisibility(View.VISIBLE);
-                                    if (((FrameLayout) dragView.getParent()).getChildAt(1) != null) {
-                                        ((FrameLayout) dragView.getParent()).getChildAt(1).setVisibility(View.VISIBLE);
+                            if (updateAfterDragStops) {
+                                PSALogs.d("DragDrop", "updateCarDoorStatus After Drag Stops");
+                                dragView.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        updateAfterDragStops = false;
+                                        updateCarDoorStatus(savedLockStatus);
                                     }
-                                }
-                            });
+                                });
+                            } else {
+                                dragView.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        PSALogs.d("DragDrop", "redraw invisible buttons");
+                                        dragView.setVisibility(View.VISIBLE);
+                                        if (((FrameLayout) dragView.getParent()).getChildAt(1) != null) {
+                                            ((FrameLayout) dragView.getParent()).getChildAt(1).setVisibility(View.VISIBLE);
+                                        }
+                                    }
+                                });
+                            }
                         }
                     }
                     break;
@@ -341,14 +362,21 @@ public class RkeFragment extends Fragment implements RkeListener {
                 case DragEvent.ACTION_DROP:
                     PSALogs.d("DragDrop", "ACTION_DROP " + view.getId());
                     final View dragView = (View) dragEvent.getLocalState();
-                    if (dragView != null) {
-                        if (containsDraggable) {
-                            PSALogs.d("DragDrop", "INSIDE dragView = " + dragView.toString());
-                            placeSelectorOver(view);
-                            rkeActions(view);
-                        } else {
-                            dragView.setVisibility(View.VISIBLE);
+                    if (!updateAfterDragStops) { // if no auto relock happened
+                        if (dragView != null) {
+                            if (containsDraggable) {
+                                PSALogs.d("DragDrop", "INSIDE dragView = " + dragView.toString());
+                                placeSelectorOver(view);
+                                rkeActions(view);
+                            } else {
+                                dragView.setVisibility(View.VISIBLE);
+                            }
                         }
+                    } else { // Ignore command if user was dragging and auto relock happened
+                        PSALogs.d("DragDrop", "ACTION_DROP updateCarDoorStatus");
+                        updateAfterDragStops = false;
+                        isDragging = false;
+                        updateCarDoorStatus(savedLockStatus);
                     }
                     break;
                 default:
