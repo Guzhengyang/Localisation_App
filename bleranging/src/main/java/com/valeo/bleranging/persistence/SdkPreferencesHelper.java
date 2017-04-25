@@ -14,10 +14,10 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIE
  */
 public final class SdkPreferencesHelper {
     public final static int OFFSET_SMARTPHONE = 0;
-    public final static int THRESHOLD_LOCK = -67;
-    public final static int OFFSET_HYSTERESIS_LOCK = 4;
+    public final static int THRESHOLD_LOCK = -80;
+    public final static int OFFSET_HYSTERESIS_LOCK = 2;
     public final static int OFFSET_HYSTERESIS_UNLOCK = 0;
-    public final static float THRESHOLD_PROB_STANDARD = 0.8f;
+    public final static float THRESHOLD_PROB_STANDARD = 0.6f;
     public final static float THRESHOLD_DIST_AWAY_STANDARD = 0.10f;
     //    public final static float BACK_TIMEOUT = 3.0f;
     public final static float UNLOCK_TIMEOUT = 0f;
@@ -91,7 +91,7 @@ public final class SdkPreferencesHelper {
     }
 
     public String getConnectedCarBase() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_base_pref_name), ConnectedCarFactory.BASE_3);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_base_pref_name), ConnectedCarFactory.BASE_1);
     }
 
     public String getOpeningStrategy() {

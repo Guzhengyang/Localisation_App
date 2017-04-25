@@ -49,11 +49,13 @@ public class PredictionZone {
     private RowData rowData;
     private List<String> rowDataKeySet;
     private String label;
+    private String predictionType;
 
-    public PredictionZone(Context context, String modelClassName, List<String> rowDataKeySet) {
+    public PredictionZone(Context context, String modelClassName, List<String> rowDataKeySet, String predictionType) {
         this.mContext = context;
         this.rowDataKeySet = rowDataKeySet;
         this.rowData = new RowData();
+        this.predictionType = predictionType;
         new AsyncPredictionInit().execute(modelClassName);
     }
 
@@ -153,18 +155,24 @@ public class PredictionZone {
     public void predict(int nVote) {
         int result = 0;
         try {
-            if (rssi.length == 8 | rssi.length == 6) {
-                final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
-                label = modelPrediction.label;
-                result = modelPrediction.labelIndex;
-                distribution = modelPrediction.classProbabilities;
-            } else {
+            if (predictionType.equalsIgnoreCase(PredictionFactory.PREDICTION_RP)) {
                 final BinomialModelPrediction modelPrediction = modelWrapper.predictBinomial(rowData);
                 label = modelPrediction.label;
                 result = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
+            } else {
+                if (rssi.length == 8 | rssi.length == 6) {
+                    final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
+                    label = modelPrediction.label;
+                    result = modelPrediction.labelIndex;
+                    distribution = modelPrediction.classProbabilities;
+                } else {
+                    final BinomialModelPrediction modelPrediction = modelWrapper.predictBinomial(rowData);
+                    label = modelPrediction.label;
+                    result = modelPrediction.labelIndex;
+                    distribution = modelPrediction.classProbabilities;
+                }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -398,12 +406,12 @@ public class PredictionZone {
         } else if (label == null) {
             return "";
         } else {
-            if (isThresholdMethod) {
-                sb.append("Threshold\n");
-            } else {
-                sb.append("Machine Learning\n");
-            }
-            sb.append("Current Prediction Label: ").append(label).append("\n");
+//            if (isThresholdMethod) {
+//                sb.append("Threshold\n");
+//            } else {
+//                sb.append("Machine Learning\n");
+//            }
+//            sb.append("Current Prediction Label: ").append(label).append("\n");
             sb.append(String.format(Locale.FRANCE, "%1$s %2$s %3$.2f", title, getPrediction(), distribution[prediction_old])).append("\n");
             for (double arssi : rssi) {
                 sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");

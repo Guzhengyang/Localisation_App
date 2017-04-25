@@ -83,7 +83,7 @@ public class CCFourLMRT extends ConnectedCar {
     public String printDebug(boolean smartphoneIsInPocket) {
         String result = SdkPreferencesHelper.getInstance().getOpeningStrategy() + "\n";
         if (isInitialized()) {
-            return standardPrediction.printDebug(STANDARD_LOC);
+            return standardPrediction.printDebug(STANDARD_LOC) + rpPrediction.printDebug(RP_LOC);
         }
         return result;
     }
