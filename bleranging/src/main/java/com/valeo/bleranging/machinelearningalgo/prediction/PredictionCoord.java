@@ -148,7 +148,10 @@ public class PredictionCoord {
     }
 
     public PointF getPredictionCoord() {
-        return new PointF((float) coord[0], MAX_COLUMNS - (float) coord[1]);
+        if (coord != null && coord.length >= 2) {
+            return new PointF((float) coord[0], MAX_COLUMNS - (float) coord[1]);
+        }
+        return new PointF(0f, 0f);
     }
 
     public double getDist2Car() {

@@ -336,23 +336,25 @@ public class BluetoothManagement {
     }
 
     public void sendPackets(final byte[] byteToSend, final byte[] byteReceived
-            , final byte[] dist, final byte[] rssi) {
+            , final byte[] dist, final byte[] rssi, final byte[] coordAndDistance) {
         mBluetoothLeService.sendPackets(byteToSend);
-        byte[] concatBytes = concatByte(byteToSend, byteReceived);
-        byte[] data = concatByte(concatBytes, dist);
+        byte[] data = concatByte(byteToSend, byteReceived, coordAndDistance, dist);
         boolean sendSuccess = sendToRemoteControl(data);
 //        if (sendSuccess) {
 //            sendToRemoteControl(rssi);
 //        }
-        sendToPC(concatBytes);
+        sendToPC(data);
     }
 
-    private byte[] concatByte(final byte[] byteToSend, final byte[] byteReceived) {
+    private byte[] concatByte(final byte[] byteToSend, final byte[] byteReceived,
+                              final byte[] coordAndDistance, final byte[] distribution) {
         if (byteToSend != null && byteReceived != null) {
             try {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 outputStream.write(byteToSend);
                 outputStream.write(byteReceived);
+                outputStream.write(coordAndDistance);
+                outputStream.write(distribution);
                 return outputStream.toByteArray();
             } catch (IOException e) {
                 e.printStackTrace();

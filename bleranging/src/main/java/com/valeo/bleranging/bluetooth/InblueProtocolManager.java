@@ -1,5 +1,7 @@
 package com.valeo.bleranging.bluetooth;
 
+import android.graphics.PointF;
+
 import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
@@ -294,6 +296,16 @@ public class InblueProtocolManager {
             return payload;
         }
         return new byte[1];
+    }
+
+    public byte[] getPacketFourPayload(PointF predictionCoord, double distance) {
+        byte[] payloadSix = new byte[3];
+        if (predictionCoord != null) {
+            payloadSix[0] = (byte) predictionCoord.x;
+            payloadSix[1] = (byte) predictionCoord.y;
+        }
+        payloadSix[2] = (byte) distance;
+        return payloadSix;
     }
 
     private byte encodeClasses(String classes) {
