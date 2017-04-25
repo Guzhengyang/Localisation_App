@@ -15,10 +15,12 @@ import java.util.Map;
 
 import hex.genmodel.easy.EasyPredictModelWrapper;
 import hex.genmodel.easy.RowData;
+import hex.genmodel.easy.prediction.BinomialModelPrediction;
 import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_EXTERNAL;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.PASSIVE_ENTRY_ORIENTED;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
@@ -89,7 +91,8 @@ public class PredictionZone {
 //        find index of lock
         for (int i = 0; i < modelWrapper.getResponseDomainValues().length; i++) {
             if (modelWrapper.getResponseDomainValues()[i].equalsIgnoreCase(PREDICTION_LOCK)
-                    || modelWrapper.getResponseDomainValues()[i].equalsIgnoreCase(PREDICTION_EXTERNAL)) {
+                    || modelWrapper.getResponseDomainValues()[i].equalsIgnoreCase(PREDICTION_EXTERNAL)
+                    || modelWrapper.getResponseDomainValues()[i].equalsIgnoreCase(PREDICTION_OUTSIDE)) {
                 INDEX_LOCK = i;
                 break;
             }
@@ -111,7 +114,8 @@ public class PredictionZone {
                     // Add lock hysteresis to all the trx
                     if (this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
                             this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE) |
-                            this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_EXTERNAL)) {
+                            this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_EXTERNAL) |
+                            this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_FAR)) {
                         rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
                     }
                     // Add unlock hysteresis to all the trx
@@ -149,10 +153,18 @@ public class PredictionZone {
     public void predict(int nVote) {
         int result = 0;
         try {
-            final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
-            label = modelPrediction.label;
-            result = modelPrediction.labelIndex;
-            distribution = modelPrediction.classProbabilities;
+            if (rssi.length == 8 | rssi.length == 6) {
+                final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
+                label = modelPrediction.label;
+                result = modelPrediction.labelIndex;
+                distribution = modelPrediction.classProbabilities;
+            } else {
+                final BinomialModelPrediction modelPrediction = modelWrapper.predictBinomial(rowData);
+                label = modelPrediction.label;
+                result = modelPrediction.labelIndex;
+                distribution = modelPrediction.classProbabilities;
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -297,7 +309,6 @@ public class PredictionZone {
 
     }
 
-    //    2 beacons prediction
     public void calculatePredictionStart(double threshold_prob) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
@@ -316,6 +327,7 @@ public class PredictionZone {
     public void calculatePredictionRP(double threshold_prob) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
+//            reduce false positive
             if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_FAR)) {
                 prediction_old = temp_prediction;
                 return;

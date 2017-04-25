@@ -25,7 +25,7 @@ public class CCFourLMRT extends ConnectedCar {
     @Override
     public void readPredictionsRawFiles() {
         standardPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_STANDARD);
-//        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);
+        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);
 //        earPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_EAR);
     }
 
@@ -33,10 +33,10 @@ public class CCFourLMRT extends ConnectedCar {
     public void initPredictions() {
         if (isInitialized()) {
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-//            rpPrediction.init(rssi, 0);
+            rpPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
 //            earPrediction.init(rssi, 0);
             standardPrediction.predict(N_VOTE_SHORT);
-//            rpPrediction.predict(N_VOTE_VERY_LONG);
+            rpPrediction.predict(N_VOTE_LONG);
 //            earPrediction.predict(N_VOTE_LONG);
         }
     }
@@ -45,10 +45,10 @@ public class CCFourLMRT extends ConnectedCar {
     public boolean isInitialized() {
         return standardPrediction != null
 //                && earPrediction != null
-//                && rpPrediction != null
+                && rpPrediction != null
                 && standardPrediction.isPredictRawFileRead()
 //                && earPrediction.isPredictRawFileRead()
-//                && rpPrediction.isPredictRawFileRead()
+                && rpPrediction.isPredictRawFileRead()
                 && (checkForRssiNonNull(rssi) != null);
     }
 
@@ -57,10 +57,10 @@ public class CCFourLMRT extends ConnectedCar {
         if (isInitialized()) {
             standardPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone(), lockStatus);
 //                earPrediction.setRssi(i, rssi[i], 0, THRESHOLD_DIST_AWAY_EAR, comValid, lockStatus);
-//                rpPrediction.setRssi(i, rssi[i], 0, SdkPreferencesHelper.getInstance().getThresholdDistAwayStandard(), lockStatus);
+            rpPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone(), lockStatus);
             standardPrediction.predict(N_VOTE_SHORT);
 //            earPrediction.predict(N_VOTE_LONG);
-//            rpPrediction.predict(N_VOTE_VERY_LONG);
+            rpPrediction.predict(N_VOTE_LONG);
         }
     }
 
@@ -75,7 +75,7 @@ public class CCFourLMRT extends ConnectedCar {
                         THRESHOLD_PROB_LOCK2UNLOCK, THRESHOLD_PROB_UNLOCK2LOCK, PASSIVE_ENTRY_ORIENTED);
             }
 //            earPrediction.calculatePredictionEar(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
-//            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
+            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
 
