@@ -301,10 +301,10 @@ public class InblueProtocolManager {
     public byte[] getPacketFourPayload(PointF predictionCoord, double distance) {
         byte[] payloadSix = new byte[3];
         if (predictionCoord != null) {
-            payloadSix[0] = (byte) predictionCoord.x;
-            payloadSix[1] = (byte) predictionCoord.y;
+            payloadSix[0] = (byte) (predictionCoord.x * 10);
+            payloadSix[1] = (byte) (predictionCoord.y * 10);
         }
-        payloadSix[2] = (byte) distance;
+        payloadSix[2] = (byte) (distance * 10);
         return payloadSix;
     }
 
