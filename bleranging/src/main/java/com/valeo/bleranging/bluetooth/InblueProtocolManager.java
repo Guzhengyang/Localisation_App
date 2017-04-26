@@ -138,7 +138,7 @@ public class InblueProtocolManager {
             case ConnectedCarFactory.TYPE_3_A:
                 payloadThree |= 0x05;
                 break;
-            case ConnectedCarFactory.TYPE_4_A:
+            case ConnectedCarFactory.TYPE_4_B:
                 payloadThree |= 0x04;
                 break;
             case ConnectedCarFactory.TYPE_5_A:
