@@ -174,8 +174,6 @@ public class DebugFragment extends Fragment implements DebugListener {
                 break;
             case PREDICTION_OUTSIDE:
                 lock_area.setColor(Color.RED);
-                remote_parking_area.setColor(Color.RED);
-                thatcham_area.setColor(Color.RED);
                 unlock_area_left.setColor(Color.RED);
                 unlock_area_back.setColor(Color.RED);
                 unlock_area_right.setColor(Color.RED);
