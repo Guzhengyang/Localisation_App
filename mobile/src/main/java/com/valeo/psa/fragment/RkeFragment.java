@@ -33,27 +33,6 @@ import static com.valeo.bleranging.BleRangingHelper.RKE_USE_TIMEOUT;
  */
 public class RkeFragment extends Fragment implements RkeListener {
     private final Handler mHandler = new Handler();
-    private final View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                PSALogs.d("DragDrop", "ACTION_DOWN");
-                final ClipData dragData = ClipData.newPlainText((CharSequence) view.getTag(), (CharSequence) view.getTag());
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    PSALogs.d("DragDrop", "startDragAndDrop");
-                    view.startDragAndDrop(dragData, shadowBuilder, view, 0);
-                } else {
-                    PSALogs.d("DragDrop", "startDrag");
-                    view.startDrag(dragData, shadowBuilder, view, 0);
-                }
-                view.setVisibility(View.INVISIBLE);
-                return true;
-            } else {
-                return false;
-            }
-        }
-    };
     private boolean isDragging = false;
     private boolean updateAfterDragStops = false;
     private boolean savedLockStatus = false;
@@ -75,6 +54,32 @@ public class RkeFragment extends Fragment implements RkeListener {
     private ImageView start_button_second_wave;
     private CarDoorStatus carDoorStatus;
     private RkeFragmentActionListener mListener;
+    private final View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                PSALogs.d("DragDrop", "ACTION_DOWN");
+                if (mListener != null && mListener.isRKEButtonClickable()) {
+                    PSALogs.d("DragDrop", "isRKEButtonClickable = " + mListener.isRKEButtonClickable() + " before startDrag");
+                    final ClipData dragData = ClipData.newPlainText((CharSequence) view.getTag(), (CharSequence) view.getTag());
+                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        PSALogs.d("DragDrop", "startDragAndDrop");
+                        view.startDragAndDrop(dragData, shadowBuilder, view, 0);
+                    } else {
+                        PSALogs.d("DragDrop", "startDrag");
+                        view.startDrag(dragData, shadowBuilder, view, 0);
+                    }
+                    view.setVisibility(View.INVISIBLE);
+                } else {
+                    PSALogs.d("DragDrop", "isRKEButtonClickable is FALSE before startDrag");
+                }
+                return true;
+            } else {
+                return false;
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -106,6 +111,7 @@ public class RkeFragment extends Fragment implements RkeListener {
     }
 
     private void placeSelectorOver(View view) {
+        PSALogs.d("DragDrop", "placeSelectorOver " + view.getId());
         hideOldSelection();
         // Show the selected view
         ((FrameLayout) view).getChildAt(0).setVisibility(View.VISIBLE);
@@ -226,7 +232,9 @@ public class RkeFragment extends Fragment implements RkeListener {
 
     private void rkeAction(CarDoorStatus mCarDoorStatus, View view, boolean enableStartAnimation,
                            boolean lockCar) {
+        PSALogs.d("DragDrop", "rkeAction");
         if (mListener.isRKEButtonClickable()) {
+            PSALogs.d("DragDrop", "isRKEButtonClickable is TRUE");
             rke_loading_progress_bar.setVisibility(View.VISIBLE);
             carDoorStatus = mCarDoorStatus;
             placeSelectorOver(view);
@@ -238,6 +246,8 @@ public class RkeFragment extends Fragment implements RkeListener {
                     rke_loading_progress_bar.setVisibility(View.GONE);
                 }
             }, RKE_USE_TIMEOUT);
+        } else {
+            PSALogs.d("DragDrop", "isRKEButtonClickable is FALSE");
         }
     }
 

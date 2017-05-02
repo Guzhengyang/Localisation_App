@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:layout_gravity="fill_vertical"
     tools:context=".activity.MainActivity"
-    tools:showIn="@layout/psa_activity_main">
+    tools:showIn="@layout/main_fragment">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <FrameLayout
-            android:id="@+id/chessboard_rl"
+            android:id="@+id/debug_rl"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -30,12 +30,12 @@
             app:layout_constraintTop_toBottomOf="@id/door_status_switcher" />
 
         <FrameLayout
-            android:id="@+id/debug_rl"
+            android:id="@+id/chessboard_rl"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/chessboard_rl" />
+            app:layout_constraintTop_toBottomOf="@id/debug_rl" />
 
         <FrameLayout
             android:id="@+id/accuracy_rl"
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/debug_rl" />
+            app:layout_constraintTop_toBottomOf="@id/chessboard_rl" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/control_trunk_windows_lights"
