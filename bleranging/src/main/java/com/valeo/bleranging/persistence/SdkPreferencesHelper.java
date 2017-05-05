@@ -242,6 +242,14 @@ public final class SdkPreferencesHelper {
         return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_rear_right_pref_name), BLE_ADDRESS_REAR_RIGHT);
     }
 
+    public Boolean isCalibrated() {
+        return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.is_calibrated_pref_name), false);
+    }
+
+    public void setIsCalibrated(boolean value) {
+        saveBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.is_calibrated_pref_name), value);
+    }
+
     public Boolean isPrintInsideEnabled() {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.print_inside_enabled_pref_name), false);
     }

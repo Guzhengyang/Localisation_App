@@ -29,6 +29,10 @@
             android:title="@string/pref_com_simulation_enabled" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:key="@string/is_calibrated_pref_name"
+            android:title="@string/pref_is_calibrated" />
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="@string/security_wal_enabled_pref_name"
             android:title="@string/pref_security_wal_enabled" />
         <CheckBoxPreference

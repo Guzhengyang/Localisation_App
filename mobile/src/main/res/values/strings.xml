@@ -85,6 +85,8 @@
     <string name="pref_car_forced_trame">Car forced trame</string>
     <string name="pref_com_simulation_enabled">Enable communication simulation</string>
     <string name="pref_com_simulation_enabled_summary">Simulate phone communication</string>
+    <string name="pref_is_calibrated">Enable first run calibration</string>
+    <string name="pref_is_calibrated_summary">Activate calibration as if it was the first run</string>
     <string name="pref_security_wal_enabled">Enable security WAL</string>
     <string name="pref_security_wal_enabled_summary">Activate walk away locking</string>
     <string name="pref_are_beacons_inside">Are beacons inside</string>
@@ -242,4 +244,11 @@
     <string name="algo_machine_learning">ML</string>
     <string name="algo_unknown">\?</string>
     <string name="slider_button_description">slider button</string>
+    <string name="calibration">calibration</string>
+    <string name="calibration_info">Welcome in this app !\nIt\'s the first time you open it \nso please watch and apply the following steps to start using it.</string>
+    <string name="imageview_with_consigne">imageview with consigne</string>
+    <string name="calibration_consigne">Go alone inside the car in the driver\'s seat.\nPlace the smartphone on the passenger seat like shown on the picture above.\nThen, when you are ready, click the button under.</string>
+    <string name="start_calibration_button">Start smartphone calibration</string>
+    <string name="calibration_done">Calibration DONE</string>
+    <string name="welcome_to_the_future">Welcome to the future !</string>
 </resources>

@@ -33,6 +33,7 @@ import com.valeo.bleranging.utils.LogFileUtils;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 import com.valeo.psa.fragment.AccuracyFragment;
+import com.valeo.psa.fragment.CalibrationDialogFragment;
 import com.valeo.psa.fragment.ChessBoardFragment;
 import com.valeo.psa.fragment.DebugFragment;
 import com.valeo.psa.fragment.MainFragment;
@@ -95,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
 //            Toast.makeText(this, getString(R.string.set_security_lock), Toast.LENGTH_LONG).show();
 //        }
 //        showAuthenticationScreen();
+        if (!SdkPreferencesHelper.getInstance().isCalibrated()) {
+            new CalibrationDialogFragment().show(getSupportFragmentManager(), getString(R.string.calibration));
+        }
     }
 
     private void setFragments() {
