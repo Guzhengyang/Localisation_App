@@ -97,7 +97,11 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
 //        }
 //        showAuthenticationScreen();
         if (!SdkPreferencesHelper.getInstance().isCalibrated()) {
-            new CalibrationDialogFragment().show(getSupportFragmentManager(), getString(R.string.calibration));
+            final Bundle bundleArgs1 = new Bundle();
+            bundleArgs1.putSerializable("bleRangingHelper", mBleRangingHelper);
+            final CalibrationDialogFragment calibrationDialogFragment = new CalibrationDialogFragment();
+            calibrationDialogFragment.setArguments(bundleArgs1);
+            calibrationDialogFragment.show(getSupportFragmentManager(), getString(R.string.calibration));
         }
     }
 

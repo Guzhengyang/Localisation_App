@@ -548,6 +548,10 @@ public class AlgoManager implements SensorEventListener {
         return deltaLinAcc;
     }
 
+    public boolean isSmartphoneFrozen() {
+        return smartphoneIsFrozen;
+    }
+
     public boolean getRearmWelcome() {
         return rearmWelcome.get();
     }

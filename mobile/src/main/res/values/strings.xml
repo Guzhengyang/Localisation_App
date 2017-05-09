@@ -251,4 +251,7 @@
     <string name="start_calibration_button">Start smartphone calibration</string>
     <string name="calibration_done">Calibration DONE</string>
     <string name="welcome_to_the_future">Welcome to the future !</string>
+    <string name="count_off_information">Do not move AND do not touch the smartphone\n until the process is completed.</string>
+    <string name="count_off_remaining_time">Remaining time : \n %d</string>
+    <string name="smartphone_moved">You moved the smartphone, trying again in 2 seconds...</string>
 </resources>
