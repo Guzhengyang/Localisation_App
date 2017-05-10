@@ -245,13 +245,13 @@
     <string name="algo_unknown">\?</string>
     <string name="slider_button_description">slider button</string>
     <string name="calibration">calibration</string>
-    <string name="calibration_info">Welcome in this app !\nIt\'s the first time you open it \nso please watch and apply the following steps to start using it.</string>
+    <string name="calibration_info">Welcome in this app !\nIt\'s the first time you have opened it \nso please watch and apply the following steps to start using it.</string>
     <string name="imageview_with_consigne">imageview with consigne</string>
     <string name="calibration_consigne">Go alone inside the car in the driver\'s seat.\nPlace the smartphone on the passenger seat like shown on the picture above.\nThen, when you are ready, click the button under.</string>
     <string name="start_calibration_button">Start smartphone calibration</string>
     <string name="calibration_done">Calibration DONE</string>
     <string name="welcome_to_the_future">Welcome to the future !</string>
     <string name="count_off_information">Do not move AND do not touch the smartphone\n until the process is completed.</string>
-    <string name="count_off_remaining_time">Remaining time : \n %d</string>
-    <string name="smartphone_moved">You moved the smartphone, trying again in 2 seconds...</string>
+    <string name="count_off_remaining_time_empty">Remaining time : \n</string>
+    <string name="smartphone_moved">You have moved the smartphone, trying again in 2 seconds…</string>
 </resources>

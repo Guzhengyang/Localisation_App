@@ -12,7 +12,7 @@ import android.widget.Button;
 
 import com.valeo.psa.R;
 import com.valeo.psa.adapter.CalibrationAdapter;
-import com.valeo.psa.interfaces.CalibrationDialogFragmentListener;
+import com.valeo.psa.interfaces.ConsigneContainerFragmentListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,8 @@ import java.util.List;
  * Created by l-avaratha on 09/05/2017
  */
 
-public class ConsigneContainerFragment extends Fragment implements CalibrationDialogFragmentListener {
-    public CalibrationDialogFragmentListener calibrationDialogFragmentListener = null;
+public class ConsigneContainerFragment extends Fragment implements ConsigneContainerFragmentListener {
+    public ConsigneContainerFragmentListener consigneContainerFragmentListener = null;
 
     public ConsigneContainerFragment() {
     }
@@ -55,7 +55,7 @@ public class ConsigneContainerFragment extends Fragment implements CalibrationDi
 
     public void onAttachToParentFragment(Fragment fragment) {
         try {
-            calibrationDialogFragmentListener = (CalibrationDialogFragmentListener) fragment;
+            consigneContainerFragmentListener = (ConsigneContainerFragmentListener) fragment;
         } catch (ClassCastException e) {
             throw new ClassCastException(fragment.toString()
                     + " must implement CalibrationDialogFragmentListener");
@@ -64,8 +64,8 @@ public class ConsigneContainerFragment extends Fragment implements CalibrationDi
 
     @Override
     public void switchToCountOff(boolean switchToCountOff) {
-        if (calibrationDialogFragmentListener != null) {
-            calibrationDialogFragmentListener.switchToCountOff(switchToCountOff);
+        if (consigneContainerFragmentListener != null) {
+            consigneContainerFragmentListener.switchToCountOff(switchToCountOff);
         }
     }
 
@@ -90,7 +90,7 @@ public class ConsigneContainerFragment extends Fragment implements CalibrationDi
 
     public static class FragmentTwoConsigne extends Fragment {
         public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
-        public CalibrationDialogFragmentListener calibrationDialogFragmentListener2 = null;
+        public ConsigneContainerFragmentListener consigneContainerFragmentListener2 = null;
         private int item;
         private Button start_calibration_button;
 
@@ -111,7 +111,7 @@ public class ConsigneContainerFragment extends Fragment implements CalibrationDi
 
         public void onAttachToParentFragment(Fragment fragment) {
             try {
-                calibrationDialogFragmentListener2 = (CalibrationDialogFragmentListener) fragment;
+                consigneContainerFragmentListener2 = (ConsigneContainerFragmentListener) fragment;
             } catch (ClassCastException e) {
                 throw new ClassCastException(fragment.toString()
                         + " must implement CalibrationDialogFragmentListener 2");
@@ -125,7 +125,7 @@ public class ConsigneContainerFragment extends Fragment implements CalibrationDi
             start_calibration_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    calibrationDialogFragmentListener2.switchToCountOff(true);
+                    consigneContainerFragmentListener2.switchToCountOff(true);
                 }
             });
             return rootView;

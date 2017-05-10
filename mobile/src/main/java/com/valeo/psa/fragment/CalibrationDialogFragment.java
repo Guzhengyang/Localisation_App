@@ -1,5 +1,6 @@
 package com.valeo.psa.fragment;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,14 +12,18 @@ import android.view.ViewGroup;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 import com.valeo.psa.interfaces.CalibrationDialogFragmentListener;
+import com.valeo.psa.interfaces.ConsigneContainerFragmentListener;
+import com.valeo.psa.interfaces.CountOffFragmentListener;
 
 /**
  * Created by l-avaratha on 05/05/2017
  */
 
-public class CalibrationDialogFragment extends DialogFragment implements CalibrationDialogFragmentListener {
+public class CalibrationDialogFragment extends DialogFragment implements
+        ConsigneContainerFragmentListener, CountOffFragmentListener {
     private ConsigneContainerFragment consigneContainerFragment;
     private CountOffFragment countOffFragment;
+    private CalibrationDialogFragmentListener calibrationDialogFragmentListener;
 
     public CalibrationDialogFragment() {
     }
@@ -30,7 +35,6 @@ public class CalibrationDialogFragment extends DialogFragment implements Calibra
         View rootView = inflater.inflate(R.layout.calibration_fragment, container, false);
         consigneContainerFragment = new ConsigneContainerFragment();
         countOffFragment = new CountOffFragment();
-        countOffFragment.setArguments(getArguments());
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.calibration_container, consigneContainerFragment).commit();
         return rootView;
@@ -53,5 +57,19 @@ public class CalibrationDialogFragment extends DialogFragment implements Calibra
         }
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        calibrationDialogFragmentListener = (CalibrationDialogFragmentListener) context;
+    }
 
+    @Override
+    public void dismissDialog() {
+        getDialog().dismiss();
+    }
+
+    @Override
+    public boolean isFrozen() {
+        return calibrationDialogFragmentListener.isFrozen();
+    }
 }

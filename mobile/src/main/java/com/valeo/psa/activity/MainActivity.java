@@ -40,12 +40,14 @@ import com.valeo.psa.fragment.MainFragment;
 import com.valeo.psa.fragment.NfcFragment;
 import com.valeo.psa.fragment.RkeFragment;
 import com.valeo.psa.fragment.StartFragment;
+import com.valeo.psa.interfaces.CalibrationDialogFragmentListener;
 
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements BleRangingListener,
         RkeFragment.RkeFragmentActionListener, AccuracyFragment.AccuracyFragmentActionListener,
-        StartFragment.StartFragmentActionListener, MainFragment.MainFragmentActionListener {
+        StartFragment.StartFragmentActionListener, MainFragment.MainFragmentActionListener,
+        CalibrationDialogFragmentListener {
     private static final String TAG = MainActivity.class.getName();
     private static final int RESULT_SETTINGS = 20;
     private static final int REQUEST_ENABLE_BT = 25117;
@@ -97,10 +99,8 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
 //        }
 //        showAuthenticationScreen();
         if (!SdkPreferencesHelper.getInstance().isCalibrated()) {
-            final Bundle bundleArgs1 = new Bundle();
-            bundleArgs1.putSerializable("bleRangingHelper", mBleRangingHelper);
             final CalibrationDialogFragment calibrationDialogFragment = new CalibrationDialogFragment();
-            calibrationDialogFragment.setArguments(bundleArgs1);
+            calibrationDialogFragment.setCancelable(false);
             calibrationDialogFragment.show(getSupportFragmentManager(), getString(R.string.calibration));
         }
     }
@@ -444,5 +444,10 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
             showHideFragment(startFragment);
             showHideFragment(mainFragment);
         }
+    }
+
+    @Override
+    public boolean isFrozen() {
+        return mBleRangingHelper.isSmartphoneFrozen();
     }
 }
