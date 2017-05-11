@@ -450,4 +450,9 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     public boolean isFrozen() {
         return mBleRangingHelper.isSmartphoneFrozen();
     }
+
+    @Override
+    public boolean isConnected() {
+        return mBleRangingHelper.isFullyConnected();
+    }
 }

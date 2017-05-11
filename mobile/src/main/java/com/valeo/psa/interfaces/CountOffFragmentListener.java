@@ -8,4 +8,6 @@ public interface CountOffFragmentListener {
     void dismissDialog();
 
     boolean isFrozen();
+
+    boolean isConnected();
 }

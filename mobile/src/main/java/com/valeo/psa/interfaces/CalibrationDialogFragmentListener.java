@@ -6,4 +6,6 @@ package com.valeo.psa.interfaces;
 
 public interface CalibrationDialogFragmentListener {
     boolean isFrozen();
+
+    boolean isConnected();
 }

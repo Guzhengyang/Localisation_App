@@ -72,4 +72,9 @@ public class CalibrationDialogFragment extends DialogFragment implements
     public boolean isFrozen() {
         return calibrationDialogFragmentListener.isFrozen();
     }
+
+    @Override
+    public boolean isConnected() {
+        return calibrationDialogFragmentListener.isConnected();
+    }
 }
