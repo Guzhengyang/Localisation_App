@@ -99,9 +99,7 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
 //        }
 //        showAuthenticationScreen();
         if (!SdkPreferencesHelper.getInstance().isCalibrated()) {
-            final CalibrationDialogFragment calibrationDialogFragment = new CalibrationDialogFragment();
-            calibrationDialogFragment.setCancelable(false);
-            calibrationDialogFragment.show(getSupportFragmentManager(), getString(R.string.calibration));
+            new CalibrationDialogFragment().show(getSupportFragmentManager(), getString(R.string.calibration));
         }
     }
 
@@ -454,5 +452,10 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     @Override
     public boolean isConnected() {
         return mBleRangingHelper.isFullyConnected();
+    }
+
+    @Override
+    public void setSmartphoneOffset() {
+        mBleRangingHelper.setSmartphoneOffset();
     }
 }

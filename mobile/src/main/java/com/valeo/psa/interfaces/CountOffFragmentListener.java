@@ -7,6 +7,8 @@ package com.valeo.psa.interfaces;
 public interface CountOffFragmentListener {
     void dismissDialog();
 
+    void setSmartphoneOffset();
+
     boolean isFrozen();
 
     boolean isConnected();

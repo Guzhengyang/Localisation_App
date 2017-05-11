@@ -9,11 +9,11 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/imageView_consigne"
+            android:id="@+id/imageView_instruction"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
-            android:contentDescription="@string/imageview_with_consigne"
+            android:contentDescription="@string/imageview_with_instruction"
             app:layout_constraintDimensionRatio="H,1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -21,19 +21,19 @@
             app:srcCompat="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color" />
 
         <TextView
-            android:id="@+id/calibration_consigne"
+            android:id="@+id/calibration_instruction"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="16dp"
-            android:text="@string/calibration_consigne"
+            android:text="@string/calibration_instruction"
             android:textAlignment="center"
             android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/start_calibration_button"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageView_consigne" />
+            app:layout_constraintTop_toBottomOf="@id/imageView_instruction" />
 
         <Button
             android:id="@+id/start_calibration_button"
@@ -47,7 +47,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/calibration_consigne" />
+            app:layout_constraintTop_toBottomOf="@id/calibration_instruction" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>

@@ -12,16 +12,16 @@ import android.view.ViewGroup;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 import com.valeo.psa.interfaces.CalibrationDialogFragmentListener;
-import com.valeo.psa.interfaces.ConsigneContainerFragmentListener;
 import com.valeo.psa.interfaces.CountOffFragmentListener;
+import com.valeo.psa.interfaces.InstructionContainerFragmentListener;
 
 /**
  * Created by l-avaratha on 05/05/2017
  */
 
 public class CalibrationDialogFragment extends DialogFragment implements
-        ConsigneContainerFragmentListener, CountOffFragmentListener {
-    private ConsigneContainerFragment consigneContainerFragment;
+        InstructionContainerFragmentListener, CountOffFragmentListener {
+    private InstructionContainerFragment instructionContainerFragment;
     private CountOffFragment countOffFragment;
     private CalibrationDialogFragmentListener calibrationDialogFragmentListener;
 
@@ -33,10 +33,10 @@ public class CalibrationDialogFragment extends DialogFragment implements
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.calibration_fragment, container, false);
-        consigneContainerFragment = new ConsigneContainerFragment();
+        instructionContainerFragment = new InstructionContainerFragment();
         countOffFragment = new CountOffFragment();
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.calibration_container, consigneContainerFragment).commit();
+                .replace(R.id.calibration_container, instructionContainerFragment).commit();
         return rootView;
     }
 
@@ -53,7 +53,7 @@ public class CalibrationDialogFragment extends DialogFragment implements
                     .replace(R.id.calibration_container, countOffFragment).commit();
         } else {
             getChildFragmentManager().beginTransaction()
-                    .replace(R.id.calibration_container, consigneContainerFragment).commit();
+                    .replace(R.id.calibration_container, instructionContainerFragment).commit();
         }
     }
 
@@ -76,5 +76,10 @@ public class CalibrationDialogFragment extends DialogFragment implements
     @Override
     public boolean isConnected() {
         return calibrationDialogFragmentListener.isConnected();
+    }
+
+    @Override
+    public void setSmartphoneOffset() {
+        calibrationDialogFragmentListener.setSmartphoneOffset();
     }
 }

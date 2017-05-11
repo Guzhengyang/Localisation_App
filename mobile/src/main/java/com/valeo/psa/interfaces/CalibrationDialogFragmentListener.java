@@ -8,4 +8,6 @@ public interface CalibrationDialogFragmentListener {
     boolean isFrozen();
 
     boolean isConnected();
+
+    void setSmartphoneOffset();
 }

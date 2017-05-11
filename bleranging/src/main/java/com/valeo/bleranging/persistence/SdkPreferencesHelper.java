@@ -13,6 +13,7 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIE
  * Constants file for SharedPrefs
  */
 public final class SdkPreferencesHelper {
+    public final static int DEFAULT_CALIBRATION_TRUNK_RSSI = -70;
     public final static int OFFSET_SMARTPHONE = 0;
     public final static int THRESHOLD_LOCK = -80;
     public final static int OFFSET_HYSTERESIS_LOCK = 2;

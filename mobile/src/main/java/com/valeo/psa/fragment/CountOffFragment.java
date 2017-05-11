@@ -12,7 +12,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
-import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.SoundUtils;
 import com.valeo.psa.R;
@@ -29,50 +28,6 @@ public class CountOffFragment extends Fragment {
     private CountOffFragmentListener countOffFragmentListener;
     private Handler mHandler;
     private int mCounter;
-    private Animation fade_in;
-    private Animation fade_out;
-    private final Runnable timerRunner = new Runnable() {
-        @Override
-        public void run() {
-            if (!countOffFragmentListener.isConnected()) {
-                setCountOffText(count_off_title, getString(R.string.waiting_for_connection));
-                setCountOffText(count_off_value, "");
-                mHandler.removeCallbacksAndMessages(null);
-                count_off_launched = false;
-                mCounter = 10;
-                mHandler.postDelayed(checkIfFrozenRunnable, 1500);
-                return;
-            }
-            if (countOffFragmentListener.isFrozen()) {
-                count_off_value.startAnimation(fade_out);
-                setCountOffText(count_off_title, getString(R.string.count_off_remaining_time_empty));
-                setCountOffText(count_off_value, String.valueOf(mCounter--));
-                count_off_value.startAnimation(fade_in);
-                if (mCounter == -1) {
-                    setCountOffText(count_off_title, "");
-                    setCountOffText(count_off_value, getString(R.string.calibration_done));
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            SdkPreferencesHelper.getInstance().setIsCalibrated(true);
-                            countOffFragmentListener.dismissDialog();
-                            SoundUtils.makeNoise(getContext(), mHandler,
-                                    ToneGenerator.TONE_CDMA_HIGH_PBX_SLS, 100);
-                        }
-                    }, 3000);
-                    return;
-                }
-                mHandler.postDelayed(this, 1000);
-            } else {
-                setCountOffText(count_off_title, getString(R.string.smartphone_moved));
-                setCountOffText(count_off_value, "");
-                mHandler.removeCallbacksAndMessages(null);
-                count_off_launched = false;
-                mCounter = 10;
-                mHandler.postDelayed(checkIfFrozenRunnable, 1500);
-            }
-        }
-    };
     private final Runnable checkIfFrozenRunnable = new Runnable() {
         @Override
         public void run() {
@@ -82,16 +37,54 @@ public class CountOffFragment extends Fragment {
                     mCounter = 10;
                     mHandler.postDelayed(timerRunner, 1000);
                 } else if (!countOffFragmentListener.isConnected()) {
-                    setCountOffText(count_off_title, getString(R.string.waiting_for_connection));
-                    setCountOffText(count_off_value, "");
+                    setCountOffText(R.string.waiting_for_connection, R.string.empty_string);
                     mHandler.postDelayed(this, 1000);
                 } else if (!countOffFragmentListener.isFrozen()) {
-                    setCountOffText(count_off_title, getString(R.string.smartphone_moved));
-                    setCountOffText(count_off_value, "");
+                    setCountOffText(R.string.smartphone_moved, R.string.empty_string);
                     mHandler.postDelayed(this, 1000);
                 }
             } else {
                 PSALogs.d("frag", "count_off already launched");
+            }
+        }
+    };
+    private Animation fade_in;
+    private Animation fade_out;
+    private final Runnable timerRunner = new Runnable() {
+        @Override
+        public void run() {
+            if (!countOffFragmentListener.isConnected()) {
+                setCountOffText(R.string.waiting_for_connection, R.string.empty_string);
+                mHandler.removeCallbacksAndMessages(null);
+                count_off_launched = false;
+                mCounter = 10;
+                mHandler.postDelayed(checkIfFrozenRunnable, 1500);
+                return;
+            }
+            if (countOffFragmentListener.isFrozen()) {
+                count_off_value.startAnimation(fade_out);
+                setCountOffText(R.string.count_off_remaining_time_empty, String.valueOf(mCounter--));
+                count_off_value.startAnimation(fade_in);
+                if (mCounter == -1) {
+                    setCountOffText(R.string.empty_string, R.string.calibration_done);
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            countOffFragmentListener.setSmartphoneOffset();
+                            countOffFragmentListener.dismissDialog();
+                            SoundUtils.makeNoise(getContext(), mHandler,
+                                    ToneGenerator.TONE_CDMA_HIGH_PBX_SLS, 100);
+                        }
+                    }, 3000);
+                    return;
+                }
+                mHandler.postDelayed(this, 1000);
+            } else {
+                setCountOffText(R.string.smartphone_moved, R.string.empty_string);
+                mHandler.removeCallbacksAndMessages(null);
+                count_off_launched = false;
+                mCounter = 10;
+                mHandler.postDelayed(checkIfFrozenRunnable, 1500);
             }
         }
     };
@@ -132,12 +125,25 @@ public class CountOffFragment extends Fragment {
         }
     }
 
-    private void setCountOffText(final TextView textView, final String text) {
+    private void setCountOffText(final int resIdTitle, final int resIdValue) {
         if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    textView.setText(text);
+                    count_off_title.setText(resIdTitle);
+                    count_off_value.setText(resIdValue);
+                }
+            });
+        }
+    }
+
+    private void setCountOffText(final int resIdTitle, final String stringValue) {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    count_off_title.setText(resIdTitle);
+                    count_off_value.setText(stringValue);
                 }
             });
         }

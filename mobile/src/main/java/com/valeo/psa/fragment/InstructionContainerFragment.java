@@ -12,7 +12,7 @@ import android.widget.Button;
 
 import com.valeo.psa.R;
 import com.valeo.psa.adapter.CalibrationAdapter;
-import com.valeo.psa.interfaces.ConsigneContainerFragmentListener;
+import com.valeo.psa.interfaces.InstructionContainerFragmentListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,16 +21,16 @@ import java.util.List;
  * Created by l-avaratha on 09/05/2017
  */
 
-public class ConsigneContainerFragment extends Fragment implements ConsigneContainerFragmentListener {
-    public ConsigneContainerFragmentListener consigneContainerFragmentListener = null;
+public class InstructionContainerFragment extends Fragment implements InstructionContainerFragmentListener {
+    public InstructionContainerFragmentListener instructionContainerFragmentListener = null;
 
-    public ConsigneContainerFragment() {
+    public InstructionContainerFragment() {
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.consigne_container_fragment, container, false);
+        View rootView = inflater.inflate(R.layout.instruction_container_fragment, container, false);
         final ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.view_pager);
         final List<Fragment> fragments = getFragments();
         final CalibrationAdapter calibrationAdapter = new CalibrationAdapter(getChildFragmentManager(), fragments);
@@ -43,7 +43,7 @@ public class ConsigneContainerFragment extends Fragment implements ConsigneConta
     private List<Fragment> getFragments() {
         final List<Fragment> fragmentList = new ArrayList<>();
         fragmentList.add(FragmentOneInfo.newInstance("Info", 1));
-        fragmentList.add(FragmentTwoConsigne.newInstance("Consigne", 2));
+        fragmentList.add(FragmentTwoInstruction.newInstance("Instruction", 2));
         return fragmentList;
     }
 
@@ -55,17 +55,17 @@ public class ConsigneContainerFragment extends Fragment implements ConsigneConta
 
     public void onAttachToParentFragment(Fragment fragment) {
         try {
-            consigneContainerFragmentListener = (ConsigneContainerFragmentListener) fragment;
+            instructionContainerFragmentListener = (InstructionContainerFragmentListener) fragment;
         } catch (ClassCastException e) {
             throw new ClassCastException(fragment.toString()
-                    + " must implement CalibrationDialogFragmentListener");
+                    + " must implement InstructionContainerFragmentListener");
         }
     }
 
     @Override
     public void switchToCountOff(boolean switchToCountOff) {
-        if (consigneContainerFragmentListener != null) {
-            consigneContainerFragmentListener.switchToCountOff(switchToCountOff);
+        if (instructionContainerFragmentListener != null) {
+            instructionContainerFragmentListener.switchToCountOff(switchToCountOff);
         }
     }
 
@@ -88,14 +88,14 @@ public class ConsigneContainerFragment extends Fragment implements ConsigneConta
         }
     }
 
-    public static class FragmentTwoConsigne extends Fragment {
+    public static class FragmentTwoInstruction extends Fragment {
         public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
-        public ConsigneContainerFragmentListener consigneContainerFragmentListener2 = null;
+        public InstructionContainerFragmentListener instructionContainerFragmentListener2 = null;
         private int item;
         private Button start_calibration_button;
 
-        public static FragmentTwoConsigne newInstance(String message, int item) {
-            FragmentTwoConsigne f = new FragmentTwoConsigne();
+        public static FragmentTwoInstruction newInstance(String message, int item) {
+            FragmentTwoInstruction f = new FragmentTwoInstruction();
             Bundle bdl = new Bundle(item);
             f.item = item;
             bdl.putString(EXTRA_MESSAGE, message);
@@ -111,21 +111,21 @@ public class ConsigneContainerFragment extends Fragment implements ConsigneConta
 
         public void onAttachToParentFragment(Fragment fragment) {
             try {
-                consigneContainerFragmentListener2 = (ConsigneContainerFragmentListener) fragment;
+                instructionContainerFragmentListener2 = (InstructionContainerFragmentListener) fragment;
             } catch (ClassCastException e) {
                 throw new ClassCastException(fragment.toString()
-                        + " must implement CalibrationDialogFragmentListener 2");
+                        + " must implement InstructionContainerFragmentListener 2");
             }
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            final View rootView = inflater.inflate(R.layout.consigne_fragment, container, false);
+            final View rootView = inflater.inflate(R.layout.instruction_fragment, container, false);
             start_calibration_button = (Button) rootView.findViewById(R.id.start_calibration_button);
             start_calibration_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    consigneContainerFragmentListener2.switchToCountOff(true);
+                    instructionContainerFragmentListener2.switchToCountOff(true);
                 }
             });
             return rootView;
