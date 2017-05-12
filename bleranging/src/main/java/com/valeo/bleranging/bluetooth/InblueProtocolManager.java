@@ -125,37 +125,39 @@ public class InblueProtocolManager {
      */
     private byte getPayloadThirdByte() {
         byte payloadThree = (byte) 0;
-        switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
-            case ConnectedCarFactory.TYPE_6_A:
-                payloadThree |= 0x08;
-                break;
-            case ConnectedCarFactory.TYPE_2_A:
-                payloadThree |= 0x07;
-                break;
-            case ConnectedCarFactory.TYPE_2_B:
-                payloadThree |= 0x06;
-                break;
-            case ConnectedCarFactory.TYPE_3_A:
-                payloadThree |= 0x05;
-                break;
-            case ConnectedCarFactory.TYPE_4_B:
-                payloadThree |= 0x04;
-                break;
-            case ConnectedCarFactory.TYPE_5_A:
-                payloadThree |= 0x03;
-                break;
-            case ConnectedCarFactory.TYPE_7_A:
-                payloadThree |= 0x02;
-                break;
-            case ConnectedCarFactory.TYPE_8_A:
-                payloadThree |= 0x01;
-                break;
-            default:
-                payloadThree |= 0x00;
-                break;
-        }
-        if (isInRemoteParkingArea) {
-            payloadThree |= 0x10;
+        if (SdkPreferencesHelper.getInstance().isCalibrated()) {
+            switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
+                case ConnectedCarFactory.TYPE_6_A:
+                    payloadThree |= 0x08;
+                    break;
+                case ConnectedCarFactory.TYPE_2_A:
+                    payloadThree |= 0x07;
+                    break;
+                case ConnectedCarFactory.TYPE_2_B:
+                    payloadThree |= 0x06;
+                    break;
+                case ConnectedCarFactory.TYPE_3_A:
+                    payloadThree |= 0x05;
+                    break;
+                case ConnectedCarFactory.TYPE_4_B:
+                    payloadThree |= 0x04;
+                    break;
+                case ConnectedCarFactory.TYPE_5_A:
+                    payloadThree |= 0x03;
+                    break;
+                case ConnectedCarFactory.TYPE_7_A:
+                    payloadThree |= 0x02;
+                    break;
+                case ConnectedCarFactory.TYPE_8_A:
+                    payloadThree |= 0x01;
+                    break;
+                default:
+                    payloadThree |= 0x00;
+                    break;
+            }
+            if (isInRemoteParkingArea) {
+                payloadThree |= 0x10;
+            }
         }
         return payloadThree;
     }
@@ -168,60 +170,62 @@ public class InblueProtocolManager {
      */
     private byte getPayloadFourthByte(boolean isRKE, String prediction) {
         byte payloadFour = (byte) 0;
-        switch (prediction) {
-            case PREDICTION_LOCK:
-                payloadFour |= 0x06;
-                break;
-            case PREDICTION_TRUNK:
-                payloadFour |= 0x04;
-                break;
-            case PREDICTION_START:
-                payloadFour |= 0x01;
-                break;
-            case PREDICTION_LEFT:
-                payloadFour |= 0x03;
-                break;
-            case PREDICTION_RIGHT:
-                payloadFour |= 0x02;
-                break;
-            case PREDICTION_BACK:
-                payloadFour |= 0x05;
-                break;
-            case PREDICTION_FRONT:
-                payloadFour |= 0x09;
-                break;
-            case PREDICTION_INSIDE:
-                payloadFour |= 0x10;
-                break;
-            case PREDICTION_OUTSIDE:
-                payloadFour |= 0x11;
-                break;
-            case PREDICTION_START_FL:
-                payloadFour |= 0x12;
-                break;
-            case PREDICTION_START_FR:
-                payloadFour |= 0x13;
-                break;
-            case PREDICTION_START_RL:
-                payloadFour |= 0x14;
-                break;
-            case PREDICTION_START_RR:
-                payloadFour |= 0x15;
-                break;
-            case PREDICTION_ROOF:
-                payloadFour |= 0x16;
-                break;
-            case PREDICTION_INTERNAL:
-                payloadFour |= 0x17;
-                break;
-            case PREDICTION_ACCESS:
-                payloadFour |= 0x18;
-                break;
-            case PREDICTION_EXTERNAL:
-                payloadFour |= 0x19;
-                break;
-            default:
-                break;
+        if (SdkPreferencesHelper.getInstance().isCalibrated()) {
+            switch (prediction) {
+                case PREDICTION_LOCK:
+                    payloadFour |= 0x06;
+                    break;
+                case PREDICTION_TRUNK:
+                    payloadFour |= 0x04;
+                    break;
+                case PREDICTION_START:
+                    payloadFour |= 0x01;
+                    break;
+                case PREDICTION_LEFT:
+                    payloadFour |= 0x03;
+                    break;
+                case PREDICTION_RIGHT:
+                    payloadFour |= 0x02;
+                    break;
+                case PREDICTION_BACK:
+                    payloadFour |= 0x05;
+                    break;
+                case PREDICTION_FRONT:
+                    payloadFour |= 0x09;
+                    break;
+                case PREDICTION_INSIDE:
+                    payloadFour |= 0x10;
+                    break;
+                case PREDICTION_OUTSIDE:
+                    payloadFour |= 0x11;
+                    break;
+                case PREDICTION_START_FL:
+                    payloadFour |= 0x12;
+                    break;
+                case PREDICTION_START_FR:
+                    payloadFour |= 0x13;
+                    break;
+                case PREDICTION_START_RL:
+                    payloadFour |= 0x14;
+                    break;
+                case PREDICTION_START_RR:
+                    payloadFour |= 0x15;
+                    break;
+                case PREDICTION_ROOF:
+                    payloadFour |= 0x16;
+                    break;
+                case PREDICTION_INTERNAL:
+                    payloadFour |= 0x17;
+                    break;
+                case PREDICTION_ACCESS:
+                    payloadFour |= 0x18;
+                    break;
+                case PREDICTION_EXTERNAL:
+                    payloadFour |= 0x19;
+                    break;
+                default:
+                    break;
+            }
         }
         if (isRKE) {
             payloadFour |= isLockedToSend ? 0x08 : 0x07;
@@ -236,39 +240,41 @@ public class InblueProtocolManager {
      */
     private byte getPayloadFifthByte(boolean isRKE, String prediction) {
         byte payloadFive = (byte) 0;
-        payloadFive |= isThatcham ? 0x08 : 0x00;
-        if (isWelcomeRequested) {
-            payloadFive |= 0x40;
-        }
-        if (isStartRequested) {
-            payloadFive |= 0x04;
-        } else if (prediction.equalsIgnoreCase(PREDICTION_BACK)) {
-            payloadFive |= 0x80;
-        }
-        switch (carBase) {
-            case BASE_1:
-                payloadFive |= 0x30; // Full PSU, lock and unlock activated 0011 0000
-                break;
-            case ConnectedCarFactory.BASE_2:
-                if (isLockedToSend && !isLockedFromTrx) {
-                    payloadFive |= 0x01; // WAL, lock command sent when car is unlocked
-                } else {
-                    payloadFive |= 0x00;
-                }
-                payloadFive |= 0x20; // Unlock PSU activated 0010 0000
-                break;
-            case ConnectedCarFactory.BASE_3:
-                payloadFive |= isLockedToSend ? 0x01 : 0x02;
-                // WAL & UIR, PSU deactivated 0000 0000
-                break;
-            case ConnectedCarFactory.BASE_4:
-                if (!isLockedToSend && isLockedFromTrx) {
-                    payloadFive |= 0x02; // UIR, unlock command sent when car is locked
-                } else {
-                    payloadFive |= 0x00;
-                }
-                payloadFive |= 0x10; // Lock PSU activated 0001 0000
-                break;
+        if (SdkPreferencesHelper.getInstance().isCalibrated()) {
+            payloadFive |= isThatcham ? 0x08 : 0x00;
+            if (isWelcomeRequested) {
+                payloadFive |= 0x40;
+            }
+            if (isStartRequested) {
+                payloadFive |= 0x04;
+            } else if (prediction.equalsIgnoreCase(PREDICTION_BACK)) {
+                payloadFive |= 0x80;
+            }
+            switch (carBase) {
+                case BASE_1:
+                    payloadFive |= 0x30; // Full PSU, lock and unlock activated 0011 0000
+                    break;
+                case ConnectedCarFactory.BASE_2:
+                    if (isLockedToSend && !isLockedFromTrx) {
+                        payloadFive |= 0x01; // WAL, lock command sent when car is unlocked
+                    } else {
+                        payloadFive |= 0x00;
+                    }
+                    payloadFive |= 0x20; // Unlock PSU activated 0010 0000
+                    break;
+                case ConnectedCarFactory.BASE_3:
+                    payloadFive |= isLockedToSend ? 0x01 : 0x02;
+                    // WAL & UIR, PSU deactivated 0000 0000
+                    break;
+                case ConnectedCarFactory.BASE_4:
+                    if (!isLockedToSend && isLockedFromTrx) {
+                        payloadFive |= 0x02; // UIR, unlock command sent when car is locked
+                    } else {
+                        payloadFive |= 0x00;
+                    }
+                    payloadFive |= 0x10; // Lock PSU activated 0001 0000
+                    break;
+            }
         }
         if (isRKE) {
             payloadFive |= isLockedToSend ? 0x01 : 0x02;
