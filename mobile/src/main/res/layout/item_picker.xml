@@ -17,17 +17,14 @@
         android:id="@+id/iconName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="9dp"
-        app:layout_constraintBottom_toBottomOf="@id/iconRadio"
+        app:layout_constraintBaseline_toBaselineOf="@id/iconRadio"
         app:layout_constraintLeft_toRightOf="@id/iconRadio"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/iconRadio" />
+        app:layout_constraintRight_toRightOf="parent" />
 
     <ImageView
         android:id="@+id/iconImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="9dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="9dp"
         android:contentDescription="@string/car_model_type"
         app:layout_constraintBottom_toBottomOf="parent"

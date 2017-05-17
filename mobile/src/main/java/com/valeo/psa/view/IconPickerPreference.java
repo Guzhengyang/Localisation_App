@@ -35,13 +35,13 @@ import static java.util.Arrays.asList;
 public class IconPickerPreference extends ListPreference {
 
     private Context context;
-    private ImageView icon;
     private CharSequence[] iconFile;
     private CharSequence[] iconName;
     private List<IconItem> icons;
     private SharedPreferences sharedPreferences;
     private Resources resources;
     private String selectedIconFile, defaultIconFile;
+    private ImageView icon;
     private TextView summary;
 
     public IconPickerPreference(Context context, AttributeSet attrs) {
@@ -87,9 +87,9 @@ public class IconPickerPreference extends ListPreference {
         String selectedIconId = sharedPreferences.getString(context.
                 getString(R.string.connected_car_type_pref_name), ConnectedCarFactory.TYPE_4_B);
         selectedIconFile = getIconFileFromId(selectedIconId, defaultIconFile);
-        icon = (ImageView) view.findViewById(R.id.iconSelected);
+        icon = (ImageView) view.findViewById(R.id.ic_selected);
         updateIcon();
-        summary = (TextView) view.findViewById(android.R.id.summary);
+        summary = (TextView) view.findViewById(R.id.ic_summary);
         summary.setText(getEntry(selectedIconFile));
     }
 

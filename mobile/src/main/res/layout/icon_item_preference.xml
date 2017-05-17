@@ -8,31 +8,31 @@
         android:id="@+android:id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        app:layout_constraintBottom_toTopOf="@android:id/summary"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@android:id/summary"
+        android:id="@+id/ic_summary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="27dp"
-        android:text="@string/default_summary"
+        android:layout_marginStart="16dp"
+        android:text="@string/ic_default_summary"
         android:textAppearance="?android:attr/textAppearanceSmall"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@android:id/title" />
 
     <ImageView
-        android:id="@+id/iconSelected"
+        android:id="@+id/ic_selected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="32dp"
         android:contentDescription="@string/car_model_type"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ic_summary" />
 
 </android.support.constraint.ConstraintLayout>

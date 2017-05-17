@@ -237,7 +237,7 @@
     <string name="welcome_notif_title">ADML100%Smartphone</string>
     <string name="welcome_notif_message">Welcome !</string>
 
-    <string name="default_summary">Select a configuration</string>
+    <string name="ic_default_summary">Select a configuration</string>
     <string name="icon_default">car_8</string>
     <string name="please_wait">Please wait…</string>
     <string name="algo_standard">SD</string>
