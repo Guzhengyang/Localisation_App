@@ -218,16 +218,16 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     }
 
     public void showHideFragment(final Fragment fragment) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        if (fragment.isHidden()) {
-            ft.show(fragment);
-            PSALogs.d("hidden", "Show");
-        } else {
-            ft.hide(fragment);
-            PSALogs.d("Shown", "Hide");
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+            if (fragment.isHidden()) {
+                ft.show(fragment);
+            } else {
+                ft.hide(fragment);
+            }
+            ft.commit();
         }
-        ft.commit();
     }
 
     /**
@@ -387,6 +387,16 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
                 LogFileUtils.writeFirstColumnLogs();
             }
             mBleRangingHelper.initializeConnectedCar();
+        }
+        if (chessboardFragment != null) {
+            if (SdkPreferencesHelper.getInstance().getConnectedCarType()
+                    .equalsIgnoreCase(ConnectedCarFactory.TYPE_8_A)) {
+                if (chessboardFragment.isHidden()) {
+                    showHideFragment(chessboardFragment); // show chessboardFragment
+                }
+            } else if (!chessboardFragment.isHidden()) {
+                showHideFragment(chessboardFragment); // hide chessboardFragment
+            }
         }
         setActivityTitle();
     }
