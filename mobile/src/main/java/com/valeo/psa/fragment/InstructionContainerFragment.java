@@ -44,6 +44,7 @@ public class InstructionContainerFragment extends Fragment implements Instructio
         final List<Fragment> fragmentList = new ArrayList<>();
         fragmentList.add(FragmentOneInfo.newInstance("Info", 1));
         fragmentList.add(FragmentTwoInstruction.newInstance("Instruction", 2));
+        fragmentList.add(FragmentThreeLaunchCalibration.newInstance("Launcher", 3));
         return fragmentList;
     }
 
@@ -90,12 +91,31 @@ public class InstructionContainerFragment extends Fragment implements Instructio
 
     public static class FragmentTwoInstruction extends Fragment {
         public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
+        private int item;
+
+        public static FragmentTwoInstruction newInstance(String message, int item) {
+            FragmentTwoInstruction f = new FragmentTwoInstruction();
+            Bundle bdl = new Bundle(item);
+            f.item = item;
+            bdl.putString(EXTRA_MESSAGE, message);
+            f.setArguments(bdl);
+            return f;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.instruction_fragment, container, false);
+        }
+    }
+
+    public static class FragmentThreeLaunchCalibration extends Fragment {
+        public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
         public InstructionContainerFragmentListener instructionContainerFragmentListener2 = null;
         private int item;
         private Button start_calibration_button;
 
-        public static FragmentTwoInstruction newInstance(String message, int item) {
-            FragmentTwoInstruction f = new FragmentTwoInstruction();
+        public static FragmentThreeLaunchCalibration newInstance(String message, int item) {
+            FragmentThreeLaunchCalibration f = new FragmentThreeLaunchCalibration();
             Bundle bdl = new Bundle(item);
             f.item = item;
             bdl.putString(EXTRA_MESSAGE, message);
@@ -120,7 +140,7 @@ public class InstructionContainerFragment extends Fragment implements Instructio
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            final View rootView = inflater.inflate(R.layout.instruction_fragment, container, false);
+            final View rootView = inflater.inflate(R.layout.launch_calibration_fragment, container, false);
             start_calibration_button = (Button) rootView.findViewById(R.id.start_calibration_button);
             start_calibration_button.setOnClickListener(new View.OnClickListener() {
                 @Override
