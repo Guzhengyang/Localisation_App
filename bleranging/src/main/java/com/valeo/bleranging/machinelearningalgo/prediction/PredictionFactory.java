@@ -93,11 +93,11 @@ public class PredictionFactory {
                 case TYPE_4_B:
                     switch (predictionType) {
                         case PREDICTION_STANDARD:
-                            return new PredictionZone(mContext, ZONE_H2O_4_B_IN, rowDataKeySetFactory(TYPE_4_B), predictionType);
+                            return new PredictionZone(mContext, ZONE_H2O_4_B_OUT_START, rowDataKeySetFactory(TYPE_4_B), predictionType);
                         case PREDICTION_RP:
-                            return new PredictionZone(mContext, ZONE_H2O_4_B_IN, rowDataKeySetFactory(TYPE_4_B), predictionType);
+                            return new PredictionZone(mContext, ZONE_H2O_4_B_OUT_RP, rowDataKeySetFactory(TYPE_4_B), predictionType);
                         case PREDICTION_EAR:
-                            return new PredictionZone(mContext, ZONE_H2O_4_B_IN, rowDataKeySetFactory(TYPE_4_B), predictionType);
+                            return new PredictionZone(mContext, ZONE_H2O_4_B_OUT, rowDataKeySetFactory(TYPE_4_B), predictionType);
                     }
                     break;
                 case TYPE_5_A:
