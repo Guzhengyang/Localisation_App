@@ -71,7 +71,7 @@ public class AlgoManager implements SensorEventListener {
     private final Handler mHandlerThatchamTimeOut;
     private final Handler mLockStatusChangedHandler;
     private final Handler mIsFrozenTimeOutHandler;
-    private final ArrayList<Double> lAccHistoric = new ArrayList<>(SdkPreferencesHelper.getInstance().getLinAccSize());
+    private final ArrayList<Double> lAccHistoric;
     private final float R[] = new float[9];
     private final float I[] = new float[9];
     private final float orientation[] = new float[3];
@@ -229,6 +229,7 @@ public class AlgoManager implements SensorEventListener {
         this.mLockStatusChangedHandler = new Handler();
         this.mIsFrozenTimeOutHandler = new Handler();
         this.accuracyCounterHMap = new HashMap<>();
+        this.lAccHistoric = new ArrayList<>();
         SensorManager senSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         Sensor senProximity = senSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         Sensor magnetometer = senSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);

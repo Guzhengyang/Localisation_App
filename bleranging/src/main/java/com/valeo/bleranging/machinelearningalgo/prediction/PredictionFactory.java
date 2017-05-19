@@ -83,7 +83,7 @@ public class PredictionFactory {
         if (areInside) {
             switch (carType) {
                 case TYPE_2_A:
-                    return new PredictionZone(mContext, ZONE_H2O_2_A_IN, rowDataKeySetFactory(TYPE_2_A), predictionType);
+                    return new PredictionZone(mContext, ZONE_H2O_2_A_OUT, rowDataKeySetFactory(TYPE_2_A), predictionType);
                 case TYPE_2_B:
                     return new PredictionZone(mContext, ZONE_H2O_2_B_IN, rowDataKeySetFactory(TYPE_2_B), predictionType);
                 case TYPE_3_A:

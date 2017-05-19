@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -477,14 +478,18 @@ public class PredictionZone {
         protected Void doInBackground(String... elements) {
             try {
                 messageBuilder.append("start AsyncPredictionInit\n");
+                PSALogs.d("init", "start AsyncPredictionInit\n");
                 hex.genmodel.GenModel rawModel = (hex.genmodel.GenModel) Class.forName(elements[0]).newInstance();
                 messageBuilder.append("newInstance rawModel... done\n");
+                PSALogs.d("init", "newInstance rawModel... done\n");
                 modelWrapper = new EasyPredictModelWrapper(rawModel);
                 messageBuilder.append("new EasyPredictModelWrapper... done\n");
+                PSALogs.d("init", "new EasyPredictModelWrapper... done\n");
                 arePredictRawFileRead = true;
             } catch (Exception e) {
                 e.printStackTrace();
                 messageBuilder.append(e.toString());
+                PSALogs.d("init", e.toString());
                 arePredictRawFileRead = false;
             }
             return null;
@@ -495,6 +500,7 @@ public class PredictionZone {
             super.onPostExecute(aVoid);
             if (!arePredictRawFileRead) {
                 messageBuilder.append("Init for Random Forest... failed\n");
+                PSALogs.d("init", "Init for Random Forest... failed\n");
             }
             Toast.makeText(mContext, messageBuilder.toString(), Toast.LENGTH_LONG).show();
         }
