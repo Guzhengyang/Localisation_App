@@ -7,14 +7,12 @@ android {
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 25
-        multiDexEnabled true
         return void
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            multiDexKeepFile file('multidex-config.txt')
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -27,5 +25,4 @@ dependencies {
     compile 'com.google.android.gms:play-services-cast-framework:10.2.4'
     compile 'com.android.support:mediarouter-v7:25.3.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:multidex:1.0.1'
 }

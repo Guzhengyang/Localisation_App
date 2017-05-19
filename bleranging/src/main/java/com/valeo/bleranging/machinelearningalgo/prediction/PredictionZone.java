@@ -472,24 +472,19 @@ public class PredictionZone {
     }
 
     private class AsyncPredictionInit extends AsyncTask<String, Void, Void> {
-        private StringBuilder messageBuilder = new StringBuilder();
 
         @Override
         protected Void doInBackground(String... elements) {
             try {
-                messageBuilder.append("start AsyncPredictionInit\n");
-                PSALogs.d("init", "start AsyncPredictionInit\n");
+                PSALogs.d("init2", "start AsyncPredictionInit\n");
                 hex.genmodel.GenModel rawModel = (hex.genmodel.GenModel) Class.forName(elements[0]).newInstance();
-                messageBuilder.append("newInstance rawModel... done\n");
-                PSALogs.d("init", "newInstance rawModel... done\n");
+                PSALogs.d("init2", "newInstance rawModel... done\n");
                 modelWrapper = new EasyPredictModelWrapper(rawModel);
-                messageBuilder.append("new EasyPredictModelWrapper... done\n");
-                PSALogs.d("init", "new EasyPredictModelWrapper... done\n");
+                PSALogs.d("init2", "new EasyPredictModelWrapper... done\n");
                 arePredictRawFileRead = true;
             } catch (Exception e) {
                 e.printStackTrace();
-                messageBuilder.append(e.toString());
-                PSALogs.d("init", e.toString());
+                PSALogs.e("init2", e.toString());
                 arePredictRawFileRead = false;
             }
             return null;
@@ -499,10 +494,9 @@ public class PredictionZone {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (!arePredictRawFileRead) {
-                messageBuilder.append("Init for Random Forest... failed\n");
-                PSALogs.d("init", "Init for Random Forest... failed\n");
+                Toast.makeText(mContext, "Init for Random Forest... failed", Toast.LENGTH_LONG).show();
+                PSALogs.w("init2", "Init for Random Forest... failed\n");
             }
-            Toast.makeText(mContext, messageBuilder.toString(), Toast.LENGTH_LONG).show();
         }
     }
 }

@@ -1,13 +1,9 @@
-com/valeo/bleranging/machinelearningalgo/prediction/model/FourOutRP.class
-com/valeo/bleranging/machinelearningalgo/prediction/model/FourOutStart.class
-com/valeo/bleranging/machinelearningalgo/prediction/model/TwoOutStart.class
 com/valeo/bleranging/machinelearningalgo/prediction/model/EightIn.class
-com/valeo/bleranging/machinelearningalgo/prediction/model/EightInThatcham.class
 com/valeo/bleranging/machinelearningalgo/prediction/model/EightOut.class
 com/valeo/bleranging/machinelearningalgo/prediction/model/EightOutRP.class
 com/valeo/bleranging/machinelearningalgo/prediction/model/EightOutThatcham.class
-com/valeo/bleranging/machinelearningalgo/prediction/model/FourOut.class
-com/valeo/bleranging/machinelearningalgo/prediction/model/FourOutThatcham.class
+com/valeo/bleranging/machinelearningalgo/prediction/model/FourInStart.class
+com/valeo/bleranging/machinelearningalgo/prediction/model/FourOutRP.class
+com/valeo/bleranging/machinelearningalgo/prediction/model/FourOutStart.class
 com/valeo/bleranging/machinelearningalgo/prediction/model/MLP4Clf.class
-com/valeo/bleranging/machinelearningalgo/prediction/model/SixIn.class
-com/valeo/bleranging/machinelearningalgo/prediction/model/SixInThatcham.class
+com/valeo/bleranging/machinelearningalgo/prediction/model/TwoOutStart.class
