@@ -107,7 +107,10 @@ public class LogFileUtils {
     public static void appendRssiLogs(int rssiLeftOriginal, int rssiMiddleOriginal, int rssiRightOriginal, int rssiTrunkOriginal,
                                       int rssiFrontLeftOriginal, int rssiFrontRightOriginal,
                                       int rssiRearLeftOriginal, int rssiRearRightOriginal, int rssiBackOriginal,
-                                      float orientationX, float orientationY, float orientationZ, double acceleration,
+                                      float orientationX, float orientationY, float orientationZ,
+                                      float gravityX, float gravityY, float gravityZ,
+                                      float geomagneticX, float geomagneticY, float geomagneticZ,
+                                      double acceleration,
                                       boolean isActiveLeft, boolean isActiveMiddle, boolean isActiveRight, boolean isActiveTrunk,
                                       boolean isActiveFrontLeft, boolean isActiveFrontRight,
                                       boolean isActiveRearLeft, boolean isActiveRearRight, boolean isActiveBack,
@@ -127,13 +130,22 @@ public class LogFileUtils {
                                       int antennaTrunk, int antennaFrontLeft, int antennaFrontRight,
                                       int antennaRearLeft, int antennaRearRight, int antennaBack) {
         final String comma = ";";
-        String log = rssiLeftOriginal + comma + rssiMiddleOriginal + comma + rssiRightOriginal + comma + rssiTrunkOriginal + comma +
-                rssiFrontLeftOriginal + comma + rssiFrontRightOriginal + comma + rssiRearLeftOriginal + comma + rssiRearRightOriginal + comma + rssiBackOriginal + comma +
-                orientationX + comma + orientationY + comma + orientationZ + comma + acceleration + comma +
-                booleanToString(isActiveLeft) + comma + booleanToString(isActiveMiddle) + comma + booleanToString(isActiveRight) + comma + booleanToString(isActiveTrunk) + comma +
+        String log = rssiLeftOriginal + comma + rssiMiddleOriginal + comma +
+                rssiRightOriginal + comma + rssiTrunkOriginal + comma +
+                rssiFrontLeftOriginal + comma + rssiFrontRightOriginal + comma +
+                rssiRearLeftOriginal + comma + rssiRearRightOriginal + comma +
+                rssiBackOriginal + comma +
+                orientationX + comma + orientationY + comma + orientationZ + comma +
+                gravityX + comma + gravityY + comma + gravityZ + comma +
+                geomagneticX + comma + geomagneticY + comma + geomagneticZ + comma +
+                acceleration + comma +
+                booleanToString(isActiveLeft) + comma + booleanToString(isActiveMiddle) + comma +
+                booleanToString(isActiveRight) + comma + booleanToString(isActiveTrunk) + comma +
                 booleanToString(isActiveFrontLeft) + comma + booleanToString(isActiveFrontRight) + comma +
-                booleanToString(isActiveRearLeft) + comma + booleanToString(isActiveRearRight) + comma + booleanToString(isActiveBack) + comma +
-                booleanToString(isSmartphoneInPocket) + comma + booleanToString(isLockStatusChangedTimerExpired) + comma;
+                booleanToString(isActiveRearLeft) + comma + booleanToString(isActiveRearRight) + comma +
+                booleanToString(isActiveBack) + comma +
+                booleanToString(isSmartphoneInPocket) + comma +
+                booleanToString(isLockStatusChangedTimerExpired) + comma;
         if (lockStatus) {
             log += "5" + comma;
         } else {
@@ -312,7 +324,10 @@ public class LogFileUtils {
                 + "RSSI LEFT_ORIGIN;RSSI MIDDLE_ORIGIN;RSSI RIGHT_ORIGIN;"
                 + "RSSI TRUNK_ORIGIN;RSSI FRONTLEFT_ORIGIN;RSSI FRONTRIGHT_ORIGIN;"
                 + "RSSI REARLEFT_ORIGIN;RSSI REARRIGHT_ORIGIN;RSSI BACK_ORIGIN;"
-                + "ORIENTATION_X;ORIENTATION_Y;ORIENTATION_Z;ACCELERATION;"
+                + "ORIENTATION_X;ORIENTATION_Y;ORIENTATION_Z;"
+                + "GRAVITY_X;GRAVITY_Y;GRAVITY_Z;"
+                + "GEOMAGNETIC_X;GEOMAGNETIC_Y;GEOMAGNETIC_Z;"
+                + "ACCELERATION;"
                 + "LEFT_IS_ACTIVE;MIDDLE_IS_ACTIVE;RIGHT_IS_ACTIVE;"
                 + "TRUNK_IS_ACTIVE;FRONTLEFT_IS_ACTIVE;FRONTRIGHT_IS_ACTIVE;"
                 + "REARLEFT_IS_ACTIVE;REARRIGHT_IS_ACTIVE;BACK_IS_ACTIVE;"

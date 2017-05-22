@@ -140,8 +140,8 @@ public class AlgoManager implements SensorEventListener {
         }
     };
     private boolean isFrozenRunnableAlreadyLaunched = false;
-    private float[] mGravity;
-    private float[] mGeomagnetic;
+    private float[] mGravity = new float[3];
+    private float[] mGeomagnetic = new float[3];
     private boolean isAbortRunning = false;
     private final Runnable abortCommandRunner = new Runnable() {
         @Override
@@ -543,6 +543,14 @@ public class AlgoManager implements SensorEventListener {
 
     public float[] getOrientation() {
         return orientation;
+    }
+
+    public float[] getGravity() {
+        return mGravity;
+    }
+
+    public float[] getGeomagnetic() {
+        return mGeomagnetic;
     }
 
     public double getAcceleration() {
