@@ -1,4 +1,3 @@
-package com.valeo.bleranging.machinelearningalgo.prediction.model;
 /*
   Licensed under the Apache License, Version 2.0
     http://www.apache.org/licenses/LICENSE-2.0.html
@@ -41,12 +40,12 @@ public class EightOutRP extends GenModel {
       /* Rectifier */ EightOutRP_Weight_2.VALUES,
       /* Softmax */ EightOutRP_Weight_3.VALUES
     };
-  // Names of columns used by model.
-  public static final String[] NAMES = NamesHolder_EightOutRP.VALUES;
-  // Number of output classes included in training data response column.
-  public static final int NCLASSES = 2;
-  // Column domains. The last array contains domain of response column.
-  public static final String[][] DOMAINS = new String[][] {
+    // Names of columns used by model.
+    public static final String[] NAMES = NamesHolder_EightOutRP.VALUES;
+    // Number of output classes included in training data response column.
+    public static final int NCLASSES = 2;
+    // Column domains. The last array contains domain of response column.
+    public static final String[][] DOMAINS = new String[][]{
     /* RSSI LEFT_ORIGIN */ null,
     /* RSSI MIDDLE_ORIGIN */ null,
     /* RSSI RIGHT_ORIGIN */ null,
@@ -56,11 +55,11 @@ public class EightOutRP extends GenModel {
     /* RSSI REARLEFT_ORIGIN */ null,
     /* RSSI REARRIGHT_ORIGIN */ null,
     /* class */ EightOutRP_ColInfo_8.VALUES
-  };
-  // Prior class distribution
-  public static final double[] PRIOR_CLASS_DISTRIB = {0.6666666666666666,0.3333333333333333};
-  // Class distribution used for model building
-  public static final double[] MODEL_CLASS_DISTRIB = null;
+    };
+    // Prior class distribution
+    public static final double[] PRIOR_CLASS_DISTRIB = {0.6666666666666666, 0.3333333333333333};
+    // Class distribution used for model building
+    public static final double[] MODEL_CLASS_DISTRIB = null;
     // Thread-local storage for input neuron activation values.
     final double[] NUMS = new double[8];
     // Thread-local storage for neuron activation values.
@@ -70,7 +69,10 @@ public class EightOutRP extends GenModel {
       /* Rectifier */ EightOutRP_Activation_2.VALUES,
       /* Softmax */ EightOutRP_Activation_3.VALUES
     };
-  public EightOutRP() { super(NAMES,DOMAINS); }
+
+    public EightOutRP() {
+        super(NAMES, DOMAINS);
+    }
 
     public hex.ModelCategory getModelCategory() {
         return hex.ModelCategory.Binomial;
@@ -92,79 +94,79 @@ public class EightOutRP extends GenModel {
         return Long.toString(687261280021928046L);
     }
 
-  // Pass in data in a double[], pre-aligned to the Model's requirements.
-  // Jam predictions into the preds[] array; preds[0] is reserved for the
-  // main prediction (class for classifiers or value for regression),
-  // and remaining columns hold a probability distribution for classifiers.
-  public final double[] score0( double[] data, double[] preds ) {
-    java.util.Arrays.fill(preds,0);
-      java.util.Arrays.fill(NUMS, 0);
-      int i = 0, ncats = 0;
-      final int n = data.length;
-      for (; i < n; ++i) {
-          NUMS[i] = Double.isNaN(data[i]) ? 0 : (data[i] - NORMSUB.VALUES[i]) * NORMMUL.VALUES[i];
-      }
-      java.util.Arrays.fill(ACTIVATION[0], 0);
-      for (i = 0; i < NUMS.length; ++i) {
-          ACTIVATION[0][CATOFFSETS[CATOFFSETS.length - 1] + i] = Double.isNaN(NUMS[i]) ? 0 : NUMS[i];
-      }
-      for (i = 1; i < ACTIVATION.length; ++i) {
-          java.util.Arrays.fill(ACTIVATION[i], 0);
-          int cols = ACTIVATION[i - 1].length;
-          int rows = ACTIVATION[i].length;
-          int extra = cols - cols % 8;
-          int multiple = (cols / 8) * 8 - 1;
-          int idx = 0;
-          float[] a = WEIGHT[i];
-          double[] x = ACTIVATION[i - 1];
-          double[] y = BIAS[i];
-          double[] res = ACTIVATION[i];
-          for (int row = 0; row < rows; ++row) {
-              double psum0 = 0, psum1 = 0, psum2 = 0, psum3 = 0, psum4 = 0, psum5 = 0, psum6 = 0, psum7 = 0;
-              for (int col = 0; col < multiple; col += 8) {
-                  int off = idx + col;
-                  psum0 += a[off] * x[col];
-                  psum1 += a[off + 1] * x[col + 1];
-                  psum2 += a[off + 2] * x[col + 2];
-                  psum3 += a[off + 3] * x[col + 3];
-                  psum4 += a[off + 4] * x[col + 4];
-                  psum5 += a[off + 5] * x[col + 5];
-                  psum6 += a[off + 6] * x[col + 6];
-                  psum7 += a[off + 7] * x[col + 7];
-              }
-              res[row] += psum0 + psum1 + psum2 + psum3;
-              res[row] += psum4 + psum5 + psum6 + psum7;
-              for (int col = extra; col < cols; col++)
-                  res[row] += a[idx + col] * x[col];
-              res[row] += y[row];
-              idx += cols;
-          }
-          if (i < ACTIVATION.length - 1) {
-              for (int r = 0; r < ACTIVATION[i].length; ++r) {
-                  ACTIVATION[i][r] = Math.max(0, ACTIVATION[i][r]);
-              }
-          }
-          if (i == ACTIVATION.length - 1) {
-              double max = ACTIVATION[i][0];
-              for (int r = 1; r < ACTIVATION[i].length; r++) {
-                  if (ACTIVATION[i][r] > max) max = ACTIVATION[i][r];
-              }
-              double scale = 0;
-              for (int r = 0; r < ACTIVATION[i].length; r++) {
-                  ACTIVATION[i][r] = Math.exp(ACTIVATION[i][r] - max);
-                  scale += ACTIVATION[i][r];
-              }
-              for (int r = 0; r < ACTIVATION[i].length; r++) {
-                  if (Double.isNaN(ACTIVATION[i][r]))
-                      throw new RuntimeException("Numerical instability, predicted NaN.");
-                  ACTIVATION[i][r] /= scale;
-                  preds[r + 1] = ACTIVATION[i][r];
-              }
-          }
-      }
-      preds[0] = hex.genmodel.GenModel.getPrediction(preds, PRIOR_CLASS_DISTRIB, data, 0.5238492151000058);
-    return preds;
-  }
+    // Pass in data in a double[], pre-aligned to the Model's requirements.
+    // Jam predictions into the preds[] array; preds[0] is reserved for the
+    // main prediction (class for classifiers or value for regression),
+    // and remaining columns hold a probability distribution for classifiers.
+    public final double[] score0(double[] data, double[] preds) {
+        java.util.Arrays.fill(preds, 0);
+        java.util.Arrays.fill(NUMS, 0);
+        int i = 0, ncats = 0;
+        final int n = data.length;
+        for (; i < n; ++i) {
+            NUMS[i] = Double.isNaN(data[i]) ? 0 : (data[i] - NORMSUB.VALUES[i]) * NORMMUL.VALUES[i];
+        }
+        java.util.Arrays.fill(ACTIVATION[0], 0);
+        for (i = 0; i < NUMS.length; ++i) {
+            ACTIVATION[0][CATOFFSETS[CATOFFSETS.length - 1] + i] = Double.isNaN(NUMS[i]) ? 0 : NUMS[i];
+        }
+        for (i = 1; i < ACTIVATION.length; ++i) {
+            java.util.Arrays.fill(ACTIVATION[i], 0);
+            int cols = ACTIVATION[i - 1].length;
+            int rows = ACTIVATION[i].length;
+            int extra = cols - cols % 8;
+            int multiple = (cols / 8) * 8 - 1;
+            int idx = 0;
+            float[] a = WEIGHT[i];
+            double[] x = ACTIVATION[i - 1];
+            double[] y = BIAS[i];
+            double[] res = ACTIVATION[i];
+            for (int row = 0; row < rows; ++row) {
+                double psum0 = 0, psum1 = 0, psum2 = 0, psum3 = 0, psum4 = 0, psum5 = 0, psum6 = 0, psum7 = 0;
+                for (int col = 0; col < multiple; col += 8) {
+                    int off = idx + col;
+                    psum0 += a[off] * x[col];
+                    psum1 += a[off + 1] * x[col + 1];
+                    psum2 += a[off + 2] * x[col + 2];
+                    psum3 += a[off + 3] * x[col + 3];
+                    psum4 += a[off + 4] * x[col + 4];
+                    psum5 += a[off + 5] * x[col + 5];
+                    psum6 += a[off + 6] * x[col + 6];
+                    psum7 += a[off + 7] * x[col + 7];
+                }
+                res[row] += psum0 + psum1 + psum2 + psum3;
+                res[row] += psum4 + psum5 + psum6 + psum7;
+                for (int col = extra; col < cols; col++)
+                    res[row] += a[idx + col] * x[col];
+                res[row] += y[row];
+                idx += cols;
+            }
+            if (i < ACTIVATION.length - 1) {
+                for (int r = 0; r < ACTIVATION[i].length; ++r) {
+                    ACTIVATION[i][r] = Math.max(0, ACTIVATION[i][r]);
+                }
+            }
+            if (i == ACTIVATION.length - 1) {
+                double max = ACTIVATION[i][0];
+                for (int r = 1; r < ACTIVATION[i].length; r++) {
+                    if (ACTIVATION[i][r] > max) max = ACTIVATION[i][r];
+                }
+                double scale = 0;
+                for (int r = 0; r < ACTIVATION[i].length; r++) {
+                    ACTIVATION[i][r] = Math.exp(ACTIVATION[i][r] - max);
+                    scale += ACTIVATION[i][r];
+                }
+                for (int r = 0; r < ACTIVATION[i].length; r++) {
+                    if (Double.isNaN(ACTIVATION[i][r]))
+                        throw new RuntimeException("Numerical instability, predicted NaN.");
+                    ACTIVATION[i][r] /= scale;
+                    preds[r + 1] = ACTIVATION[i][r];
+                }
+            }
+        }
+        preds[0] = hex.genmodel.GenModel.getPrediction(preds, PRIOR_CLASS_DISTRIB, data, 0.5238492151000058);
+        return preds;
+    }
 
     static class NORMMUL implements java.io.Serializable {
         public static final double[] VALUES = new double[8];
@@ -185,7 +187,7 @@ public class EightOutRP extends GenModel {
                 sa[7] = 0.12438495413828723;
             }
         }
-}
+    }
 
     static class NORMSUB implements java.io.Serializable {
         public static final double[] VALUES = new double[8];
@@ -206,685 +208,684 @@ public class EightOutRP extends GenModel {
                 sa[7] = -82.01;
             }
         }
-}
-}
+    }
 
-// Neuron activation values for Input layer
-class EightOutRP_Activation_0 implements java.io.Serializable {
-    public static final double[] VALUES = new double[8];
+    // Neuron activation values for Input layer
+    static class EightOutRP_Activation_0 implements java.io.Serializable {
+        public static final double[] VALUES = new double[8];
 
-    static {
-        EightOutRP_Activation_0_0.fill(VALUES);
-  }
-
-    static final class EightOutRP_Activation_0_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.0;
-            sa[1] = 0.0;
-            sa[2] = 0.0;
-            sa[3] = 0.0;
-            sa[4] = 0.0;
-            sa[5] = 0.0;
-            sa[6] = 0.0;
-            sa[7] = 0.0;
+        static {
+            EightOutRP_Activation_0_0.fill(VALUES);
         }
-  }
-}
 
-// Neuron activation values for Rectifier layer
-class EightOutRP_Activation_1 implements java.io.Serializable {
-    public static final double[] VALUES = new double[16];
-
-    static {
-        EightOutRP_Activation_1_0.fill(VALUES);
-  }
-
-    static final class EightOutRP_Activation_1_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.0;
-            sa[1] = 0.0;
-            sa[2] = 0.0;
-            sa[3] = 0.0;
-            sa[4] = 0.0;
-            sa[5] = 0.0;
-            sa[6] = 0.0;
-            sa[7] = 0.0;
-            sa[8] = 0.0;
-            sa[9] = 0.0;
-            sa[10] = 0.0;
-            sa[11] = 0.0;
-            sa[12] = 0.0;
-            sa[13] = 0.0;
-            sa[14] = 0.0;
-            sa[15] = 0.0;
+        static final class EightOutRP_Activation_0_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.0;
+                sa[1] = 0.0;
+                sa[2] = 0.0;
+                sa[3] = 0.0;
+                sa[4] = 0.0;
+                sa[5] = 0.0;
+                sa[6] = 0.0;
+                sa[7] = 0.0;
+            }
         }
-  }
-}
+    }
 
-// Neuron activation values for Rectifier layer
-class EightOutRP_Activation_2 implements java.io.Serializable {
-    public static final double[] VALUES = new double[16];
+    // Neuron activation values for Rectifier layer
+    static class EightOutRP_Activation_1 implements java.io.Serializable {
+        public static final double[] VALUES = new double[16];
 
-    static {
-        EightOutRP_Activation_2_0.fill(VALUES);
-  }
-
-    static final class EightOutRP_Activation_2_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.0;
-            sa[1] = 0.0;
-            sa[2] = 0.0;
-            sa[3] = 0.0;
-            sa[4] = 0.0;
-            sa[5] = 0.0;
-            sa[6] = 0.0;
-            sa[7] = 0.0;
-            sa[8] = 0.0;
-            sa[9] = 0.0;
-            sa[10] = 0.0;
-            sa[11] = 0.0;
-            sa[12] = 0.0;
-            sa[13] = 0.0;
-            sa[14] = 0.0;
-            sa[15] = 0.0;
+        static {
+            EightOutRP_Activation_1_0.fill(VALUES);
         }
-  }
-}
 
-// Neuron activation values for Softmax layer
-class EightOutRP_Activation_3 implements java.io.Serializable {
-    public static final double[] VALUES = new double[2];
-
-    static {
-        EightOutRP_Activation_3_0.fill(VALUES);
-  }
-
-    static final class EightOutRP_Activation_3_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.0;
-            sa[1] = 0.0;
+        static final class EightOutRP_Activation_1_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.0;
+                sa[1] = 0.0;
+                sa[2] = 0.0;
+                sa[3] = 0.0;
+                sa[4] = 0.0;
+                sa[5] = 0.0;
+                sa[6] = 0.0;
+                sa[7] = 0.0;
+                sa[8] = 0.0;
+                sa[9] = 0.0;
+                sa[10] = 0.0;
+                sa[11] = 0.0;
+                sa[12] = 0.0;
+                sa[13] = 0.0;
+                sa[14] = 0.0;
+                sa[15] = 0.0;
+            }
         }
-  }
-}
+    }
 
-// Neuron bias values for Input layer
-class EightOutRP_Bias_0 implements java.io.Serializable {
-    public static final double[] VALUES = null;
-}
+    // Neuron activation values for Rectifier layer
+    static class EightOutRP_Activation_2 implements java.io.Serializable {
+        public static final double[] VALUES = new double[16];
 
-// Neuron bias values for Rectifier layer
-class EightOutRP_Bias_1 implements java.io.Serializable {
-    public static final double[] VALUES = new double[16];
-
-    static {
-        EightOutRP_Bias_1_0.fill(VALUES);
-  }
-
-    static final class EightOutRP_Bias_1_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.9632864349747758;
-            sa[1] = 0.6424142707540405;
-            sa[2] = 0.6391968673899928;
-            sa[3] = 0.7404188713408254;
-            sa[4] = 0.5933245183680487;
-            sa[5] = 0.8426219831385289;
-            sa[6] = 1.1872268082986712;
-            sa[7] = 0.7150559844144927;
-            sa[8] = 0.7679172749698998;
-            sa[9] = 0.279358171828868;
-            sa[10] = -0.06005069146098412;
-            sa[11] = 0.14321762249242503;
-            sa[12] = 0.5768035733259936;
-            sa[13] = 0.6557414948383534;
-            sa[14] = 0.8207504714891417;
-            sa[15] = 0.4164728321716366;
+        static {
+            EightOutRP_Activation_2_0.fill(VALUES);
         }
-  }
-}
 
-// Neuron bias values for Rectifier layer
-class EightOutRP_Bias_2 implements java.io.Serializable {
-    public static final double[] VALUES = new double[16];
-
-    static {
-        EightOutRP_Bias_2_0.fill(VALUES);
-  }
-
-    static final class EightOutRP_Bias_2_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 1.0616774557715132;
-            sa[1] = 1.1888494311005233;
-            sa[2] = 0.9590602595643407;
-            sa[3] = 0.879196119766167;
-            sa[4] = 0.9151481581594527;
-            sa[5] = 0.6332206849337976;
-            sa[6] = 0.9664836198323368;
-            sa[7] = 1.357307285956599;
-            sa[8] = 1.0393726442253735;
-            sa[9] = 1.2026884637955269;
-            sa[10] = 0.6354596064971247;
-            sa[11] = 1.1496060549140532;
-            sa[12] = 1.1205005258680139;
-            sa[13] = 1.1175066455748381;
-            sa[14] = 1.1511845369547298;
-            sa[15] = 0.8019342345528856;
+        static final class EightOutRP_Activation_2_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.0;
+                sa[1] = 0.0;
+                sa[2] = 0.0;
+                sa[3] = 0.0;
+                sa[4] = 0.0;
+                sa[5] = 0.0;
+                sa[6] = 0.0;
+                sa[7] = 0.0;
+                sa[8] = 0.0;
+                sa[9] = 0.0;
+                sa[10] = 0.0;
+                sa[11] = 0.0;
+                sa[12] = 0.0;
+                sa[13] = 0.0;
+                sa[14] = 0.0;
+                sa[15] = 0.0;
+            }
         }
-  }
-}
+    }
 
-// Neuron bias values for Softmax layer
-class EightOutRP_Bias_3 implements java.io.Serializable {
-    public static final double[] VALUES = new double[2];
+    // Neuron activation values for Softmax layer
+    static class EightOutRP_Activation_3 implements java.io.Serializable {
+        public static final double[] VALUES = new double[2];
 
-    static {
-        EightOutRP_Bias_3_0.fill(VALUES);
-  }
-
-    static final class EightOutRP_Bias_3_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.12307606122386264;
-            sa[1] = -0.12206182608626075;
+        static {
+            EightOutRP_Activation_3_0.fill(VALUES);
         }
-  }
-}
 
-class EightOutRP_Weight_0 implements java.io.Serializable {
-    public static final float[] VALUES = null;
-}
-
-// Neuron weights connecting Input and Rectifier layer
-class EightOutRP_Weight_1 implements java.io.Serializable {
-    public static final float[] VALUES = new float[128];
-
-    static {
-        EightOutRP_Weight_1_0.fill(VALUES);
-  }
-
-    static final class EightOutRP_Weight_1_0 implements java.io.Serializable {
-        static final void fill(float[] sa) {
-            sa[0] = -0.46363878f;
-            sa[1] = 0.16595246f;
-            sa[2] = -0.16484356f;
-            sa[3] = 0.14427942f;
-            sa[4] = 0.08738869f;
-            sa[5] = -0.08364704f;
-            sa[6] = -0.18083546f;
-            sa[7] = -0.13107559f;
-            sa[8] = 0.19921629f;
-            sa[9] = 0.19183226f;
-            sa[10] = 0.014561154f;
-            sa[11] = 0.06399948f;
-            sa[12] = -0.3442138f;
-            sa[13] = -0.20530282f;
-            sa[14] = 0.36477274f;
-            sa[15] = -0.22837755f;
-            sa[16] = -0.61632794f;
-            sa[17] = -0.29005927f;
-            sa[18] = -0.050882123f;
-            sa[19] = -0.25376147f;
-            sa[20] = 0.30952817f;
-            sa[21] = 0.13665614f;
-            sa[22] = 0.6368696f;
-            sa[23] = 0.010405027f;
-            sa[24] = -0.18657194f;
-            sa[25] = -0.3069716f;
-            sa[26] = -0.5058978f;
-            sa[27] = -0.64703333f;
-            sa[28] = -0.05978283f;
-            sa[29] = 0.050306216f;
-            sa[30] = 0.09531403f;
-            sa[31] = 0.5533409f;
-            sa[32] = 0.5719735f;
-            sa[33] = -0.062635906f;
-            sa[34] = 0.26497144f;
-            sa[35] = -0.6694609f;
-            sa[36] = 0.13700308f;
-            sa[37] = 0.1849822f;
-            sa[38] = 6.7751046E-4f;
-            sa[39] = -0.117279425f;
-            sa[40] = 0.11307764f;
-            sa[41] = -0.5584055f;
-            sa[42] = -0.13143653f;
-            sa[43] = -0.11906694f;
-            sa[44] = 0.124783464f;
-            sa[45] = 0.3438972f;
-            sa[46] = -0.09077412f;
-            sa[47] = -0.036227327f;
-            sa[48] = -0.14768781f;
-            sa[49] = -0.6356174f;
-            sa[50] = 0.19186494f;
-            sa[51] = 0.112962715f;
-            sa[52] = 0.035887096f;
-            sa[53] = -0.502266f;
-            sa[54] = -0.40043157f;
-            sa[55] = 0.04892147f;
-            sa[56] = 0.035374075f;
-            sa[57] = 0.1958618f;
-            sa[58] = 0.3465891f;
-            sa[59] = 0.12660277f;
-            sa[60] = -0.33162433f;
-            sa[61] = -0.26503277f;
-            sa[62] = 0.08943698f;
-            sa[63] = 0.2810282f;
-            sa[64] = -0.012799011f;
-            sa[65] = 0.5076507f;
-            sa[66] = -0.4713367f;
-            sa[67] = -0.6649148f;
-            sa[68] = 0.33180887f;
-            sa[69] = -0.22719716f;
-            sa[70] = -0.19449255f;
-            sa[71] = -0.10895264f;
-            sa[72] = 0.16043258f;
-            sa[73] = 0.19887711f;
-            sa[74] = 0.30976868f;
-            sa[75] = -0.3932467f;
-            sa[76] = 0.42716628f;
-            sa[77] = 0.27511045f;
-            sa[78] = -0.21046858f;
-            sa[79] = -0.022081181f;
-            sa[80] = 0.26471618f;
-            sa[81] = -0.02034025f;
-            sa[82] = -0.20078973f;
-            sa[83] = -0.052279815f;
-            sa[84] = 0.32509422f;
-            sa[85] = -0.58444977f;
-            sa[86] = 0.48376563f;
-            sa[87] = -0.35078543f;
-            sa[88] = 0.1399035f;
-            sa[89] = -0.046234615f;
-            sa[90] = 0.20579259f;
-            sa[91] = -0.17553326f;
-            sa[92] = -0.9963033f;
-            sa[93] = -0.3618646f;
-            sa[94] = 0.34039396f;
-            sa[95] = 0.66965806f;
-            sa[96] = 0.26329646f;
-            sa[97] = -0.02529531f;
-            sa[98] = 0.3295415f;
-            sa[99] = -0.06280592f;
-            sa[100] = 0.0329416f;
-            sa[101] = -0.08148818f;
-            sa[102] = -0.40053606f;
-            sa[103] = 0.76087976f;
-            sa[104] = 0.013582125f;
-            sa[105] = 0.85510224f;
-            sa[106] = 0.16081277f;
-            sa[107] = -0.41252074f;
-            sa[108] = 0.25088665f;
-            sa[109] = 0.2632284f;
-            sa[110] = 0.46277273f;
-            sa[111] = 0.27412984f;
-            sa[112] = 0.30125716f;
-            sa[113] = -0.50778675f;
-            sa[114] = -0.11228698f;
-            sa[115] = -0.3238835f;
-            sa[116] = 0.16299981f;
-            sa[117] = 0.38206637f;
-            sa[118] = -0.30351034f;
-            sa[119] = 0.3269135f;
-            sa[120] = 0.48244843f;
-            sa[121] = -0.3583324f;
-            sa[122] = 0.5848691f;
-            sa[123] = -0.022178331f;
-            sa[124] = 0.36327043f;
-            sa[125] = 0.20194367f;
-            sa[126] = -0.13028638f;
-            sa[127] = -0.7110637f;
+        static final class EightOutRP_Activation_3_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.0;
+                sa[1] = 0.0;
+            }
         }
-  }
-}
+    }
 
-// Neuron weights connecting Rectifier and Rectifier layer
-class EightOutRP_Weight_2 implements java.io.Serializable {
-    public static final float[] VALUES = new float[256];
+    // Neuron bias values for Input layer
+    static class EightOutRP_Bias_0 implements java.io.Serializable {
+        public static final double[] VALUES = null;
+    }
 
-    static {
-        EightOutRP_Weight_2_0.fill(VALUES);
-  }
+    // Neuron bias values for Rectifier layer
+    static class EightOutRP_Bias_1 implements java.io.Serializable {
+        public static final double[] VALUES = new double[16];
 
-    static final class EightOutRP_Weight_2_0 implements java.io.Serializable {
-        static final void fill(float[] sa) {
-            sa[0] = 0.37711105f;
-            sa[1] = 0.51126605f;
-            sa[2] = 0.37279558f;
-            sa[3] = -0.3372847f;
-            sa[4] = 0.29955864f;
-            sa[5] = 0.012320772f;
-            sa[6] = 0.26895073f;
-            sa[7] = -0.4639157f;
-            sa[8] = 0.32260838f;
-            sa[9] = -0.14339794f;
-            sa[10] = -0.59937763f;
-            sa[11] = -0.2513095f;
-            sa[12] = -0.009127117f;
-            sa[13] = 0.18166213f;
-            sa[14] = -0.41120848f;
-            sa[15] = 0.074493304f;
-            sa[16] = 0.21064909f;
-            sa[17] = 0.41178167f;
-            sa[18] = 0.6704925f;
-            sa[19] = -0.11882144f;
-            sa[20] = -0.023555052f;
-            sa[21] = 0.019744342f;
-            sa[22] = 0.28300506f;
-            sa[23] = -0.48247617f;
-            sa[24] = 0.13242629f;
-            sa[25] = -0.53619856f;
-            sa[26] = -0.43464422f;
-            sa[27] = 0.11984764f;
-            sa[28] = -0.24999706f;
-            sa[29] = -0.080890305f;
-            sa[30] = 0.30819336f;
-            sa[31] = 0.2547f;
-            sa[32] = 0.5449697f;
-            sa[33] = 0.023884745f;
-            sa[34] = 0.12828575f;
-            sa[35] = -0.39410385f;
-            sa[36] = 0.1260617f;
-            sa[37] = -0.13101795f;
-            sa[38] = -0.8872177f;
-            sa[39] = 0.4609176f;
-            sa[40] = 0.352101f;
-            sa[41] = 0.3470755f;
-            sa[42] = 0.53968096f;
-            sa[43] = -0.7153139f;
-            sa[44] = -0.7797461f;
-            sa[45] = 0.376302f;
-            sa[46] = 0.23932856f;
-            sa[47] = -0.067239426f;
-            sa[48] = 0.21012376f;
-            sa[49] = 0.14026393f;
-            sa[50] = -0.24676624f;
-            sa[51] = 0.3083191f;
-            sa[52] = -0.5886795f;
-            sa[53] = -0.35973436f;
-            sa[54] = -0.33743578f;
-            sa[55] = -0.10875769f;
-            sa[56] = 0.25328222f;
-            sa[57] = 0.51255995f;
-            sa[58] = 0.5340602f;
-            sa[59] = 0.40196514f;
-            sa[60] = 0.12872325f;
-            sa[61] = 6.901843E-4f;
-            sa[62] = -0.22069556f;
-            sa[63] = 0.31055182f;
-            sa[64] = 0.09076454f;
-            sa[65] = -0.33974746f;
-            sa[66] = -0.33567363f;
-            sa[67] = -0.59091717f;
-            sa[68] = -0.4697594f;
-            sa[69] = 0.1096523f;
-            sa[70] = -0.23839176f;
-            sa[71] = 0.20968416f;
-            sa[72] = 0.3324123f;
-            sa[73] = 0.19575475f;
-            sa[74] = -1.1412951f;
-            sa[75] = 0.15440346f;
-            sa[76] = -0.29590982f;
-            sa[77] = -0.17500335f;
-            sa[78] = -0.08695079f;
-            sa[79] = 0.42744303f;
-            sa[80] = -1.028607f;
-            sa[81] = -0.1694206f;
-            sa[82] = 0.17969353f;
-            sa[83] = -0.18722463f;
-            sa[84] = -0.18725374f;
-            sa[85] = -0.8314132f;
-            sa[86] = 0.41055068f;
-            sa[87] = 0.47710666f;
-            sa[88] = -0.7632759f;
-            sa[89] = -0.069473684f;
-            sa[90] = 0.054431267f;
-            sa[91] = -0.07486609f;
-            sa[92] = 0.29826978f;
-            sa[93] = 0.2877582f;
-            sa[94] = -0.2875236f;
-            sa[95] = 0.8075226f;
-            sa[96] = 0.03456322f;
-            sa[97] = -0.33813584f;
-            sa[98] = -0.80942553f;
-            sa[99] = 0.18535121f;
-            sa[100] = -0.2817939f;
-            sa[101] = -0.018604985f;
-            sa[102] = 0.21152015f;
-            sa[103] = -0.05960426f;
-            sa[104] = -0.5981342f;
-            sa[105] = -0.05374568f;
-            sa[106] = -0.4523722f;
-            sa[107] = -0.100997634f;
-            sa[108] = 0.079946585f;
-            sa[109] = -0.35192317f;
-            sa[110] = 0.096492805f;
-            sa[111] = -0.31862897f;
-            sa[112] = 0.085695565f;
-            sa[113] = 0.4289353f;
-            sa[114] = -0.5850187f;
-            sa[115] = -0.7201071f;
-            sa[116] = 0.26251495f;
-            sa[117] = 0.21469311f;
-            sa[118] = -0.028260576f;
-            sa[119] = 0.06019043f;
-            sa[120] = -0.23708814f;
-            sa[121] = -0.053510185f;
-            sa[122] = 0.021517375f;
-            sa[123] = -0.08336228f;
-            sa[124] = 0.3502436f;
-            sa[125] = 0.22995624f;
-            sa[126] = 0.06929616f;
-            sa[127] = -0.33895501f;
-            sa[128] = 0.16563483f;
-            sa[129] = -0.3866952f;
-            sa[130] = 0.5886549f;
-            sa[131] = -0.31190082f;
-            sa[132] = 0.52598476f;
-            sa[133] = -0.28495726f;
-            sa[134] = 0.45413312f;
-            sa[135] = 0.46265447f;
-            sa[136] = -0.40899113f;
-            sa[137] = 0.6266721f;
-            sa[138] = 0.34969062f;
-            sa[139] = -0.16355419f;
-            sa[140] = -0.43320182f;
-            sa[141] = -1.0434182f;
-            sa[142] = -0.39765555f;
-            sa[143] = 0.19183174f;
-            sa[144] = -0.5053474f;
-            sa[145] = -0.52723444f;
-            sa[146] = -0.40794164f;
-            sa[147] = 0.24732132f;
-            sa[148] = 0.6188032f;
-            sa[149] = 0.2702213f;
-            sa[150] = 0.6122653f;
-            sa[151] = 0.31064284f;
-            sa[152] = -0.25147542f;
-            sa[153] = 0.4850547f;
-            sa[154] = 0.22269414f;
-            sa[155] = -0.40458587f;
-            sa[156] = -0.08507978f;
-            sa[157] = -0.53099626f;
-            sa[158] = 0.37338644f;
-            sa[159] = -0.12680586f;
-            sa[160] = -0.6250405f;
-            sa[161] = 0.15189904f;
-            sa[162] = -0.046126902f;
-            sa[163] = 0.6963516f;
-            sa[164] = -0.3617647f;
-            sa[165] = 0.17046599f;
-            sa[166] = -0.67415094f;
-            sa[167] = 0.36597988f;
-            sa[168] = -0.48493192f;
-            sa[169] = 0.5459729f;
-            sa[170] = 0.29952848f;
-            sa[171] = -0.31104103f;
-            sa[172] = -0.4748421f;
-            sa[173] = 0.28153104f;
-            sa[174] = 0.1118943f;
-            sa[175] = 0.15175723f;
-            sa[176] = 0.26369384f;
-            sa[177] = 0.08407772f;
-            sa[178] = -0.04545538f;
-            sa[179] = -0.15053926f;
-            sa[180] = 0.751193f;
-            sa[181] = 0.26713082f;
-            sa[182] = 0.30862138f;
-            sa[183] = -0.21431838f;
-            sa[184] = -0.025132267f;
-            sa[185] = -0.16961865f;
-            sa[186] = 0.21112287f;
-            sa[187] = -0.25067255f;
-            sa[188] = -0.05837161f;
-            sa[189] = 0.3994693f;
-            sa[190] = -0.3395902f;
-            sa[191] = 0.20465745f;
-            sa[192] = 0.37507433f;
-            sa[193] = 0.40001255f;
-            sa[194] = 0.42584553f;
-            sa[195] = -0.28365296f;
-            sa[196] = 0.50982434f;
-            sa[197] = 0.123788044f;
-            sa[198] = 0.5330688f;
-            sa[199] = -0.4068733f;
-            sa[200] = 0.23266609f;
-            sa[201] = 0.18347609f;
-            sa[202] = -0.33309543f;
-            sa[203] = 0.07004905f;
-            sa[204] = -0.040648285f;
-            sa[205] = 0.49751583f;
-            sa[206] = 0.074355826f;
-            sa[207] = -0.15130708f;
-            sa[208] = 0.36154038f;
-            sa[209] = 0.16288397f;
-            sa[210] = 0.20271187f;
-            sa[211] = -0.5665133f;
-            sa[212] = 0.09877274f;
-            sa[213] = 0.51520896f;
-            sa[214] = 0.27986798f;
-            sa[215] = -0.7519169f;
-            sa[216] = 0.2678218f;
-            sa[217] = -0.03298394f;
-            sa[218] = -0.2606959f;
-            sa[219] = 0.12620772f;
-            sa[220] = 0.1966734f;
-            sa[221] = 0.22296715f;
-            sa[222] = 0.2877623f;
-            sa[223] = 0.072809465f;
-            sa[224] = -0.07015531f;
-            sa[225] = 0.055323973f;
-            sa[226] = 0.29203588f;
-            sa[227] = -0.044261765f;
-            sa[228] = 0.7214783f;
-            sa[229] = 0.3046885f;
-            sa[230] = 0.046442732f;
-            sa[231] = 0.062087193f;
-            sa[232] = 0.25457394f;
-            sa[233] = -0.55902946f;
-            sa[234] = -0.41671228f;
-            sa[235] = -0.2879414f;
-            sa[236] = -0.071799725f;
-            sa[237] = 0.0439434f;
-            sa[238] = -0.29993027f;
-            sa[239] = 0.06431942f;
-            sa[240] = 0.1839956f;
-            sa[241] = 0.15675615f;
-            sa[242] = 0.1338886f;
-            sa[243] = 0.14823711f;
-            sa[244] = -0.15977184f;
-            sa[245] = 0.07508317f;
-            sa[246] = -0.36037123f;
-            sa[247] = 0.5505598f;
-            sa[248] = -0.14978059f;
-            sa[249] = 0.2847967f;
-            sa[250] = 0.31140044f;
-            sa[251] = -0.112062894f;
-            sa[252] = -0.040084668f;
-            sa[253] = 0.21676913f;
-            sa[254] = -0.31412026f;
-            sa[255] = -0.05682163f;
+        static {
+            EightOutRP_Bias_1_0.fill(VALUES);
         }
-  }
-}
 
-// Neuron weights connecting Rectifier and Softmax layer
-class EightOutRP_Weight_3 implements java.io.Serializable {
-    public static final float[] VALUES = new float[32];
-
-    static {
-        EightOutRP_Weight_3_0.fill(VALUES);
-  }
-
-    static final class EightOutRP_Weight_3_0 implements java.io.Serializable {
-        static final void fill(float[] sa) {
-            sa[0] = -1.1994332f;
-            sa[1] = 1.9533963f;
-            sa[2] = -1.9716347f;
-            sa[3] = -2.063793f;
-            sa[4] = -0.99176615f;
-            sa[5] = -2.4969187f;
-            sa[6] = 2.2116f;
-            sa[7] = 0.5078467f;
-            sa[8] = -1.7756894f;
-            sa[9] = -1.0227757f;
-            sa[10] = -1.631817f;
-            sa[11] = 0.26114053f;
-            sa[12] = -0.02672574f;
-            sa[13] = -1.8522738f;
-            sa[14] = -0.57253397f;
-            sa[15] = 0.9805106f;
-            sa[16] = -1.391279f;
-            sa[17] = -1.5008048f;
-            sa[18] = 1.6188211f;
-            sa[19] = 0.45412877f;
-            sa[20] = 2.5627694f;
-            sa[21] = 2.17694f;
-            sa[22] = -2.4218347f;
-            sa[23] = -1.1450013f;
-            sa[24] = 1.9184942f;
-            sa[25] = 1.5935189f;
-            sa[26] = 1.4040841f;
-            sa[27] = -2.324198f;
-            sa[28] = -1.2872287f;
-            sa[29] = -2.2402596f;
-            sa[30] = -1.3385856f;
-            sa[31] = 1.6051667f;
+        static final class EightOutRP_Bias_1_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.9632864349747758;
+                sa[1] = 0.6424142707540405;
+                sa[2] = 0.6391968673899928;
+                sa[3] = 0.7404188713408254;
+                sa[4] = 0.5933245183680487;
+                sa[5] = 0.8426219831385289;
+                sa[6] = 1.1872268082986712;
+                sa[7] = 0.7150559844144927;
+                sa[8] = 0.7679172749698998;
+                sa[9] = 0.279358171828868;
+                sa[10] = -0.06005069146098412;
+                sa[11] = 0.14321762249242503;
+                sa[12] = 0.5768035733259936;
+                sa[13] = 0.6557414948383534;
+                sa[14] = 0.8207504714891417;
+                sa[15] = 0.4164728321716366;
+            }
         }
-  }
-}
+    }
 
-// The class representing training column names
-class NamesHolder_EightOutRP implements java.io.Serializable {
-    public static final String[] VALUES = new String[8];
+    // Neuron bias values for Rectifier layer
+    static class EightOutRP_Bias_2 implements java.io.Serializable {
+        public static final double[] VALUES = new double[16];
 
-    static {
-        NamesHolder_EightOutRP_0.fill(VALUES);
-  }
-
-    static final class NamesHolder_EightOutRP_0 implements java.io.Serializable {
-        static final void fill(String[] sa) {
-            sa[0] = "RSSI LEFT_ORIGIN";
-            sa[1] = "RSSI MIDDLE_ORIGIN";
-            sa[2] = "RSSI RIGHT_ORIGIN";
-            sa[3] = "RSSI TRUNK_ORIGIN";
-            sa[4] = "RSSI FRONTLEFT_ORIGIN";
-            sa[5] = "RSSI FRONTRIGHT_ORIGIN";
-            sa[6] = "RSSI REARLEFT_ORIGIN";
-            sa[7] = "RSSI REARRIGHT_ORIGIN";
+        static {
+            EightOutRP_Bias_2_0.fill(VALUES);
         }
-  }
-}
 
-// The class representing column class
-class EightOutRP_ColInfo_8 implements java.io.Serializable {
-    public static final String[] VALUES = new String[2];
-
-    static {
-        EightOutRP_ColInfo_8_0.fill(VALUES);
-  }
-
-    static final class EightOutRP_ColInfo_8_0 implements java.io.Serializable {
-        static final void fill(String[] sa) {
-            sa[0] = "far";
-            sa[1] = "near";
+        static final class EightOutRP_Bias_2_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 1.0616774557715132;
+                sa[1] = 1.1888494311005233;
+                sa[2] = 0.9590602595643407;
+                sa[3] = 0.879196119766167;
+                sa[4] = 0.9151481581594527;
+                sa[5] = 0.6332206849337976;
+                sa[6] = 0.9664836198323368;
+                sa[7] = 1.357307285956599;
+                sa[8] = 1.0393726442253735;
+                sa[9] = 1.2026884637955269;
+                sa[10] = 0.6354596064971247;
+                sa[11] = 1.1496060549140532;
+                sa[12] = 1.1205005258680139;
+                sa[13] = 1.1175066455748381;
+                sa[14] = 1.1511845369547298;
+                sa[15] = 0.8019342345528856;
+            }
         }
-  }
-}
+    }
 
+    // Neuron bias values for Softmax layer
+    static class EightOutRP_Bias_3 implements java.io.Serializable {
+        public static final double[] VALUES = new double[2];
+
+        static {
+            EightOutRP_Bias_3_0.fill(VALUES);
+        }
+
+        static final class EightOutRP_Bias_3_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.12307606122386264;
+                sa[1] = -0.12206182608626075;
+            }
+        }
+    }
+
+    static class EightOutRP_Weight_0 implements java.io.Serializable {
+        public static final float[] VALUES = null;
+    }
+
+    // Neuron weights connecting Input and Rectifier layer
+    static class EightOutRP_Weight_1 implements java.io.Serializable {
+        public static final float[] VALUES = new float[128];
+
+        static {
+            EightOutRP_Weight_1_0.fill(VALUES);
+        }
+
+        static final class EightOutRP_Weight_1_0 implements java.io.Serializable {
+            static final void fill(float[] sa) {
+                sa[0] = -0.46363878f;
+                sa[1] = 0.16595246f;
+                sa[2] = -0.16484356f;
+                sa[3] = 0.14427942f;
+                sa[4] = 0.08738869f;
+                sa[5] = -0.08364704f;
+                sa[6] = -0.18083546f;
+                sa[7] = -0.13107559f;
+                sa[8] = 0.19921629f;
+                sa[9] = 0.19183226f;
+                sa[10] = 0.014561154f;
+                sa[11] = 0.06399948f;
+                sa[12] = -0.3442138f;
+                sa[13] = -0.20530282f;
+                sa[14] = 0.36477274f;
+                sa[15] = -0.22837755f;
+                sa[16] = -0.61632794f;
+                sa[17] = -0.29005927f;
+                sa[18] = -0.050882123f;
+                sa[19] = -0.25376147f;
+                sa[20] = 0.30952817f;
+                sa[21] = 0.13665614f;
+                sa[22] = 0.6368696f;
+                sa[23] = 0.010405027f;
+                sa[24] = -0.18657194f;
+                sa[25] = -0.3069716f;
+                sa[26] = -0.5058978f;
+                sa[27] = -0.64703333f;
+                sa[28] = -0.05978283f;
+                sa[29] = 0.050306216f;
+                sa[30] = 0.09531403f;
+                sa[31] = 0.5533409f;
+                sa[32] = 0.5719735f;
+                sa[33] = -0.062635906f;
+                sa[34] = 0.26497144f;
+                sa[35] = -0.6694609f;
+                sa[36] = 0.13700308f;
+                sa[37] = 0.1849822f;
+                sa[38] = 6.7751046E-4f;
+                sa[39] = -0.117279425f;
+                sa[40] = 0.11307764f;
+                sa[41] = -0.5584055f;
+                sa[42] = -0.13143653f;
+                sa[43] = -0.11906694f;
+                sa[44] = 0.124783464f;
+                sa[45] = 0.3438972f;
+                sa[46] = -0.09077412f;
+                sa[47] = -0.036227327f;
+                sa[48] = -0.14768781f;
+                sa[49] = -0.6356174f;
+                sa[50] = 0.19186494f;
+                sa[51] = 0.112962715f;
+                sa[52] = 0.035887096f;
+                sa[53] = -0.502266f;
+                sa[54] = -0.40043157f;
+                sa[55] = 0.04892147f;
+                sa[56] = 0.035374075f;
+                sa[57] = 0.1958618f;
+                sa[58] = 0.3465891f;
+                sa[59] = 0.12660277f;
+                sa[60] = -0.33162433f;
+                sa[61] = -0.26503277f;
+                sa[62] = 0.08943698f;
+                sa[63] = 0.2810282f;
+                sa[64] = -0.012799011f;
+                sa[65] = 0.5076507f;
+                sa[66] = -0.4713367f;
+                sa[67] = -0.6649148f;
+                sa[68] = 0.33180887f;
+                sa[69] = -0.22719716f;
+                sa[70] = -0.19449255f;
+                sa[71] = -0.10895264f;
+                sa[72] = 0.16043258f;
+                sa[73] = 0.19887711f;
+                sa[74] = 0.30976868f;
+                sa[75] = -0.3932467f;
+                sa[76] = 0.42716628f;
+                sa[77] = 0.27511045f;
+                sa[78] = -0.21046858f;
+                sa[79] = -0.022081181f;
+                sa[80] = 0.26471618f;
+                sa[81] = -0.02034025f;
+                sa[82] = -0.20078973f;
+                sa[83] = -0.052279815f;
+                sa[84] = 0.32509422f;
+                sa[85] = -0.58444977f;
+                sa[86] = 0.48376563f;
+                sa[87] = -0.35078543f;
+                sa[88] = 0.1399035f;
+                sa[89] = -0.046234615f;
+                sa[90] = 0.20579259f;
+                sa[91] = -0.17553326f;
+                sa[92] = -0.9963033f;
+                sa[93] = -0.3618646f;
+                sa[94] = 0.34039396f;
+                sa[95] = 0.66965806f;
+                sa[96] = 0.26329646f;
+                sa[97] = -0.02529531f;
+                sa[98] = 0.3295415f;
+                sa[99] = -0.06280592f;
+                sa[100] = 0.0329416f;
+                sa[101] = -0.08148818f;
+                sa[102] = -0.40053606f;
+                sa[103] = 0.76087976f;
+                sa[104] = 0.013582125f;
+                sa[105] = 0.85510224f;
+                sa[106] = 0.16081277f;
+                sa[107] = -0.41252074f;
+                sa[108] = 0.25088665f;
+                sa[109] = 0.2632284f;
+                sa[110] = 0.46277273f;
+                sa[111] = 0.27412984f;
+                sa[112] = 0.30125716f;
+                sa[113] = -0.50778675f;
+                sa[114] = -0.11228698f;
+                sa[115] = -0.3238835f;
+                sa[116] = 0.16299981f;
+                sa[117] = 0.38206637f;
+                sa[118] = -0.30351034f;
+                sa[119] = 0.3269135f;
+                sa[120] = 0.48244843f;
+                sa[121] = -0.3583324f;
+                sa[122] = 0.5848691f;
+                sa[123] = -0.022178331f;
+                sa[124] = 0.36327043f;
+                sa[125] = 0.20194367f;
+                sa[126] = -0.13028638f;
+                sa[127] = -0.7110637f;
+            }
+        }
+    }
+
+    // Neuron weights connecting Rectifier and Rectifier layer
+    static class EightOutRP_Weight_2 implements java.io.Serializable {
+        public static final float[] VALUES = new float[256];
+
+        static {
+            EightOutRP_Weight_2_0.fill(VALUES);
+        }
+
+        static final class EightOutRP_Weight_2_0 implements java.io.Serializable {
+            static final void fill(float[] sa) {
+                sa[0] = 0.37711105f;
+                sa[1] = 0.51126605f;
+                sa[2] = 0.37279558f;
+                sa[3] = -0.3372847f;
+                sa[4] = 0.29955864f;
+                sa[5] = 0.012320772f;
+                sa[6] = 0.26895073f;
+                sa[7] = -0.4639157f;
+                sa[8] = 0.32260838f;
+                sa[9] = -0.14339794f;
+                sa[10] = -0.59937763f;
+                sa[11] = -0.2513095f;
+                sa[12] = -0.009127117f;
+                sa[13] = 0.18166213f;
+                sa[14] = -0.41120848f;
+                sa[15] = 0.074493304f;
+                sa[16] = 0.21064909f;
+                sa[17] = 0.41178167f;
+                sa[18] = 0.6704925f;
+                sa[19] = -0.11882144f;
+                sa[20] = -0.023555052f;
+                sa[21] = 0.019744342f;
+                sa[22] = 0.28300506f;
+                sa[23] = -0.48247617f;
+                sa[24] = 0.13242629f;
+                sa[25] = -0.53619856f;
+                sa[26] = -0.43464422f;
+                sa[27] = 0.11984764f;
+                sa[28] = -0.24999706f;
+                sa[29] = -0.080890305f;
+                sa[30] = 0.30819336f;
+                sa[31] = 0.2547f;
+                sa[32] = 0.5449697f;
+                sa[33] = 0.023884745f;
+                sa[34] = 0.12828575f;
+                sa[35] = -0.39410385f;
+                sa[36] = 0.1260617f;
+                sa[37] = -0.13101795f;
+                sa[38] = -0.8872177f;
+                sa[39] = 0.4609176f;
+                sa[40] = 0.352101f;
+                sa[41] = 0.3470755f;
+                sa[42] = 0.53968096f;
+                sa[43] = -0.7153139f;
+                sa[44] = -0.7797461f;
+                sa[45] = 0.376302f;
+                sa[46] = 0.23932856f;
+                sa[47] = -0.067239426f;
+                sa[48] = 0.21012376f;
+                sa[49] = 0.14026393f;
+                sa[50] = -0.24676624f;
+                sa[51] = 0.3083191f;
+                sa[52] = -0.5886795f;
+                sa[53] = -0.35973436f;
+                sa[54] = -0.33743578f;
+                sa[55] = -0.10875769f;
+                sa[56] = 0.25328222f;
+                sa[57] = 0.51255995f;
+                sa[58] = 0.5340602f;
+                sa[59] = 0.40196514f;
+                sa[60] = 0.12872325f;
+                sa[61] = 6.901843E-4f;
+                sa[62] = -0.22069556f;
+                sa[63] = 0.31055182f;
+                sa[64] = 0.09076454f;
+                sa[65] = -0.33974746f;
+                sa[66] = -0.33567363f;
+                sa[67] = -0.59091717f;
+                sa[68] = -0.4697594f;
+                sa[69] = 0.1096523f;
+                sa[70] = -0.23839176f;
+                sa[71] = 0.20968416f;
+                sa[72] = 0.3324123f;
+                sa[73] = 0.19575475f;
+                sa[74] = -1.1412951f;
+                sa[75] = 0.15440346f;
+                sa[76] = -0.29590982f;
+                sa[77] = -0.17500335f;
+                sa[78] = -0.08695079f;
+                sa[79] = 0.42744303f;
+                sa[80] = -1.028607f;
+                sa[81] = -0.1694206f;
+                sa[82] = 0.17969353f;
+                sa[83] = -0.18722463f;
+                sa[84] = -0.18725374f;
+                sa[85] = -0.8314132f;
+                sa[86] = 0.41055068f;
+                sa[87] = 0.47710666f;
+                sa[88] = -0.7632759f;
+                sa[89] = -0.069473684f;
+                sa[90] = 0.054431267f;
+                sa[91] = -0.07486609f;
+                sa[92] = 0.29826978f;
+                sa[93] = 0.2877582f;
+                sa[94] = -0.2875236f;
+                sa[95] = 0.8075226f;
+                sa[96] = 0.03456322f;
+                sa[97] = -0.33813584f;
+                sa[98] = -0.80942553f;
+                sa[99] = 0.18535121f;
+                sa[100] = -0.2817939f;
+                sa[101] = -0.018604985f;
+                sa[102] = 0.21152015f;
+                sa[103] = -0.05960426f;
+                sa[104] = -0.5981342f;
+                sa[105] = -0.05374568f;
+                sa[106] = -0.4523722f;
+                sa[107] = -0.100997634f;
+                sa[108] = 0.079946585f;
+                sa[109] = -0.35192317f;
+                sa[110] = 0.096492805f;
+                sa[111] = -0.31862897f;
+                sa[112] = 0.085695565f;
+                sa[113] = 0.4289353f;
+                sa[114] = -0.5850187f;
+                sa[115] = -0.7201071f;
+                sa[116] = 0.26251495f;
+                sa[117] = 0.21469311f;
+                sa[118] = -0.028260576f;
+                sa[119] = 0.06019043f;
+                sa[120] = -0.23708814f;
+                sa[121] = -0.053510185f;
+                sa[122] = 0.021517375f;
+                sa[123] = -0.08336228f;
+                sa[124] = 0.3502436f;
+                sa[125] = 0.22995624f;
+                sa[126] = 0.06929616f;
+                sa[127] = -0.33895501f;
+                sa[128] = 0.16563483f;
+                sa[129] = -0.3866952f;
+                sa[130] = 0.5886549f;
+                sa[131] = -0.31190082f;
+                sa[132] = 0.52598476f;
+                sa[133] = -0.28495726f;
+                sa[134] = 0.45413312f;
+                sa[135] = 0.46265447f;
+                sa[136] = -0.40899113f;
+                sa[137] = 0.6266721f;
+                sa[138] = 0.34969062f;
+                sa[139] = -0.16355419f;
+                sa[140] = -0.43320182f;
+                sa[141] = -1.0434182f;
+                sa[142] = -0.39765555f;
+                sa[143] = 0.19183174f;
+                sa[144] = -0.5053474f;
+                sa[145] = -0.52723444f;
+                sa[146] = -0.40794164f;
+                sa[147] = 0.24732132f;
+                sa[148] = 0.6188032f;
+                sa[149] = 0.2702213f;
+                sa[150] = 0.6122653f;
+                sa[151] = 0.31064284f;
+                sa[152] = -0.25147542f;
+                sa[153] = 0.4850547f;
+                sa[154] = 0.22269414f;
+                sa[155] = -0.40458587f;
+                sa[156] = -0.08507978f;
+                sa[157] = -0.53099626f;
+                sa[158] = 0.37338644f;
+                sa[159] = -0.12680586f;
+                sa[160] = -0.6250405f;
+                sa[161] = 0.15189904f;
+                sa[162] = -0.046126902f;
+                sa[163] = 0.6963516f;
+                sa[164] = -0.3617647f;
+                sa[165] = 0.17046599f;
+                sa[166] = -0.67415094f;
+                sa[167] = 0.36597988f;
+                sa[168] = -0.48493192f;
+                sa[169] = 0.5459729f;
+                sa[170] = 0.29952848f;
+                sa[171] = -0.31104103f;
+                sa[172] = -0.4748421f;
+                sa[173] = 0.28153104f;
+                sa[174] = 0.1118943f;
+                sa[175] = 0.15175723f;
+                sa[176] = 0.26369384f;
+                sa[177] = 0.08407772f;
+                sa[178] = -0.04545538f;
+                sa[179] = -0.15053926f;
+                sa[180] = 0.751193f;
+                sa[181] = 0.26713082f;
+                sa[182] = 0.30862138f;
+                sa[183] = -0.21431838f;
+                sa[184] = -0.025132267f;
+                sa[185] = -0.16961865f;
+                sa[186] = 0.21112287f;
+                sa[187] = -0.25067255f;
+                sa[188] = -0.05837161f;
+                sa[189] = 0.3994693f;
+                sa[190] = -0.3395902f;
+                sa[191] = 0.20465745f;
+                sa[192] = 0.37507433f;
+                sa[193] = 0.40001255f;
+                sa[194] = 0.42584553f;
+                sa[195] = -0.28365296f;
+                sa[196] = 0.50982434f;
+                sa[197] = 0.123788044f;
+                sa[198] = 0.5330688f;
+                sa[199] = -0.4068733f;
+                sa[200] = 0.23266609f;
+                sa[201] = 0.18347609f;
+                sa[202] = -0.33309543f;
+                sa[203] = 0.07004905f;
+                sa[204] = -0.040648285f;
+                sa[205] = 0.49751583f;
+                sa[206] = 0.074355826f;
+                sa[207] = -0.15130708f;
+                sa[208] = 0.36154038f;
+                sa[209] = 0.16288397f;
+                sa[210] = 0.20271187f;
+                sa[211] = -0.5665133f;
+                sa[212] = 0.09877274f;
+                sa[213] = 0.51520896f;
+                sa[214] = 0.27986798f;
+                sa[215] = -0.7519169f;
+                sa[216] = 0.2678218f;
+                sa[217] = -0.03298394f;
+                sa[218] = -0.2606959f;
+                sa[219] = 0.12620772f;
+                sa[220] = 0.1966734f;
+                sa[221] = 0.22296715f;
+                sa[222] = 0.2877623f;
+                sa[223] = 0.072809465f;
+                sa[224] = -0.07015531f;
+                sa[225] = 0.055323973f;
+                sa[226] = 0.29203588f;
+                sa[227] = -0.044261765f;
+                sa[228] = 0.7214783f;
+                sa[229] = 0.3046885f;
+                sa[230] = 0.046442732f;
+                sa[231] = 0.062087193f;
+                sa[232] = 0.25457394f;
+                sa[233] = -0.55902946f;
+                sa[234] = -0.41671228f;
+                sa[235] = -0.2879414f;
+                sa[236] = -0.071799725f;
+                sa[237] = 0.0439434f;
+                sa[238] = -0.29993027f;
+                sa[239] = 0.06431942f;
+                sa[240] = 0.1839956f;
+                sa[241] = 0.15675615f;
+                sa[242] = 0.1338886f;
+                sa[243] = 0.14823711f;
+                sa[244] = -0.15977184f;
+                sa[245] = 0.07508317f;
+                sa[246] = -0.36037123f;
+                sa[247] = 0.5505598f;
+                sa[248] = -0.14978059f;
+                sa[249] = 0.2847967f;
+                sa[250] = 0.31140044f;
+                sa[251] = -0.112062894f;
+                sa[252] = -0.040084668f;
+                sa[253] = 0.21676913f;
+                sa[254] = -0.31412026f;
+                sa[255] = -0.05682163f;
+            }
+        }
+    }
+
+    // Neuron weights connecting Rectifier and Softmax layer
+    static class EightOutRP_Weight_3 implements java.io.Serializable {
+        public static final float[] VALUES = new float[32];
+
+        static {
+            EightOutRP_Weight_3_0.fill(VALUES);
+        }
+
+        static final class EightOutRP_Weight_3_0 implements java.io.Serializable {
+            static final void fill(float[] sa) {
+                sa[0] = -1.1994332f;
+                sa[1] = 1.9533963f;
+                sa[2] = -1.9716347f;
+                sa[3] = -2.063793f;
+                sa[4] = -0.99176615f;
+                sa[5] = -2.4969187f;
+                sa[6] = 2.2116f;
+                sa[7] = 0.5078467f;
+                sa[8] = -1.7756894f;
+                sa[9] = -1.0227757f;
+                sa[10] = -1.631817f;
+                sa[11] = 0.26114053f;
+                sa[12] = -0.02672574f;
+                sa[13] = -1.8522738f;
+                sa[14] = -0.57253397f;
+                sa[15] = 0.9805106f;
+                sa[16] = -1.391279f;
+                sa[17] = -1.5008048f;
+                sa[18] = 1.6188211f;
+                sa[19] = 0.45412877f;
+                sa[20] = 2.5627694f;
+                sa[21] = 2.17694f;
+                sa[22] = -2.4218347f;
+                sa[23] = -1.1450013f;
+                sa[24] = 1.9184942f;
+                sa[25] = 1.5935189f;
+                sa[26] = 1.4040841f;
+                sa[27] = -2.324198f;
+                sa[28] = -1.2872287f;
+                sa[29] = -2.2402596f;
+                sa[30] = -1.3385856f;
+                sa[31] = 1.6051667f;
+            }
+        }
+    }
+
+    // The class representing training column names
+    static class NamesHolder_EightOutRP implements java.io.Serializable {
+        public static final String[] VALUES = new String[8];
+
+        static {
+            NamesHolder_EightOutRP_0.fill(VALUES);
+        }
+
+        static final class NamesHolder_EightOutRP_0 implements java.io.Serializable {
+            static final void fill(String[] sa) {
+                sa[0] = "RSSI LEFT_ORIGIN";
+                sa[1] = "RSSI MIDDLE_ORIGIN";
+                sa[2] = "RSSI RIGHT_ORIGIN";
+                sa[3] = "RSSI TRUNK_ORIGIN";
+                sa[4] = "RSSI FRONTLEFT_ORIGIN";
+                sa[5] = "RSSI FRONTRIGHT_ORIGIN";
+                sa[6] = "RSSI REARLEFT_ORIGIN";
+                sa[7] = "RSSI REARRIGHT_ORIGIN";
+            }
+        }
+    }
+
+    // The class representing column class
+    static class EightOutRP_ColInfo_8 implements java.io.Serializable {
+        public static final String[] VALUES = new String[2];
+
+        static {
+            EightOutRP_ColInfo_8_0.fill(VALUES);
+        }
+
+        static final class EightOutRP_ColInfo_8_0 implements java.io.Serializable {
+            static final void fill(String[] sa) {
+                sa[0] = "far";
+                sa[1] = "near";
+            }
+        }
+    }
+}

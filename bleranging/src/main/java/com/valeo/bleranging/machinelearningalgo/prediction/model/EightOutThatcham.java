@@ -1,4 +1,3 @@
-package com.valeo.bleranging.machinelearningalgo.prediction.model;
 /*
   Licensed under the Apache License, Version 2.0
     http://www.apache.org/licenses/LICENSE-2.0.html
@@ -41,12 +40,12 @@ public class EightOutThatcham extends GenModel {
       /* Rectifier */ EightOutThatcham_Weight_2.VALUES,
       /* Softmax */ EightOutThatcham_Weight_3.VALUES
     };
-  // Names of columns used by model.
-  public static final String[] NAMES = NamesHolder_EightOutThatcham.VALUES;
-  // Number of output classes included in training data response column.
-  public static final int NCLASSES = 7;
-  // Column domains. The last array contains domain of response column.
-  public static final String[][] DOMAINS = new String[][] {
+    // Names of columns used by model.
+    public static final String[] NAMES = NamesHolder_EightOutThatcham.VALUES;
+    // Number of output classes included in training data response column.
+    public static final int NCLASSES = 7;
+    // Column domains. The last array contains domain of response column.
+    public static final String[][] DOMAINS = new String[][]{
     /* RSSI LEFT_ORIGIN */ null,
     /* RSSI MIDDLE_ORIGIN */ null,
     /* RSSI RIGHT_ORIGIN */ null,
@@ -56,11 +55,11 @@ public class EightOutThatcham extends GenModel {
     /* RSSI REARLEFT_ORIGIN */ null,
     /* RSSI REARRIGHT_ORIGIN */ null,
     /* class */ EightOutThatcham_ColInfo_8.VALUES
-  };
-  // Prior class distribution
-  public static final double[] PRIOR_CLASS_DISTRIB = {0.14285714285714285, 0.14285714285714285, 0.14285714285714285, 0.14285714285714285, 0.14285714285714285, 0.17857142857142858, 0.10714285714285714};
-  // Class distribution used for model building
-  public static final double[] MODEL_CLASS_DISTRIB = null;
+    };
+    // Prior class distribution
+    public static final double[] PRIOR_CLASS_DISTRIB = {0.14285714285714285, 0.14285714285714285, 0.14285714285714285, 0.14285714285714285, 0.14285714285714285, 0.17857142857142858, 0.10714285714285714};
+    // Class distribution used for model building
+    public static final double[] MODEL_CLASS_DISTRIB = null;
     // Thread-local storage for input neuron activation values.
     final double[] NUMS = new double[8];
     // Thread-local storage for neuron activation values.
@@ -70,7 +69,10 @@ public class EightOutThatcham extends GenModel {
       /* Rectifier */ EightOutThatcham_Activation_2.VALUES,
       /* Softmax */ EightOutThatcham_Activation_3.VALUES
     };
-  public EightOutThatcham() { super(NAMES,DOMAINS); }
+
+    public EightOutThatcham() {
+        super(NAMES, DOMAINS);
+    }
 
     public hex.ModelCategory getModelCategory() {
         return hex.ModelCategory.Multinomial;
@@ -92,79 +94,79 @@ public class EightOutThatcham extends GenModel {
         return Long.toString(5748399203342819752L);
     }
 
-  // Pass in data in a double[], pre-aligned to the Model's requirements.
-  // Jam predictions into the preds[] array; preds[0] is reserved for the
-  // main prediction (class for classifiers or value for regression),
-  // and remaining columns hold a probability distribution for classifiers.
-  public final double[] score0( double[] data, double[] preds ) {
-    java.util.Arrays.fill(preds,0);
-      java.util.Arrays.fill(NUMS, 0);
-      int i = 0, ncats = 0;
-      final int n = data.length;
-      for (; i < n; ++i) {
-          NUMS[i] = Double.isNaN(data[i]) ? 0 : (data[i] - NORMSUB.VALUES[i]) * NORMMUL.VALUES[i];
-      }
-      java.util.Arrays.fill(ACTIVATION[0], 0);
-      for (i = 0; i < NUMS.length; ++i) {
-          ACTIVATION[0][CATOFFSETS[CATOFFSETS.length - 1] + i] = Double.isNaN(NUMS[i]) ? 0 : NUMS[i];
-      }
-      for (i = 1; i < ACTIVATION.length; ++i) {
-          java.util.Arrays.fill(ACTIVATION[i], 0);
-          int cols = ACTIVATION[i - 1].length;
-          int rows = ACTIVATION[i].length;
-          int extra = cols - cols % 8;
-          int multiple = (cols / 8) * 8 - 1;
-          int idx = 0;
-          float[] a = WEIGHT[i];
-          double[] x = ACTIVATION[i - 1];
-          double[] y = BIAS[i];
-          double[] res = ACTIVATION[i];
-          for (int row = 0; row < rows; ++row) {
-              double psum0 = 0, psum1 = 0, psum2 = 0, psum3 = 0, psum4 = 0, psum5 = 0, psum6 = 0, psum7 = 0;
-              for (int col = 0; col < multiple; col += 8) {
-                  int off = idx + col;
-                  psum0 += a[off] * x[col];
-                  psum1 += a[off + 1] * x[col + 1];
-                  psum2 += a[off + 2] * x[col + 2];
-                  psum3 += a[off + 3] * x[col + 3];
-                  psum4 += a[off + 4] * x[col + 4];
-                  psum5 += a[off + 5] * x[col + 5];
-                  psum6 += a[off + 6] * x[col + 6];
-                  psum7 += a[off + 7] * x[col + 7];
-              }
-              res[row] += psum0 + psum1 + psum2 + psum3;
-              res[row] += psum4 + psum5 + psum6 + psum7;
-              for (int col = extra; col < cols; col++)
-                  res[row] += a[idx + col] * x[col];
-              res[row] += y[row];
-              idx += cols;
-          }
-          if (i < ACTIVATION.length - 1) {
-              for (int r = 0; r < ACTIVATION[i].length; ++r) {
-                  ACTIVATION[i][r] = Math.max(0, ACTIVATION[i][r]);
-              }
-          }
-          if (i == ACTIVATION.length - 1) {
-              double max = ACTIVATION[i][0];
-              for (int r = 1; r < ACTIVATION[i].length; r++) {
-                  if (ACTIVATION[i][r] > max) max = ACTIVATION[i][r];
-              }
-              double scale = 0;
-              for (int r = 0; r < ACTIVATION[i].length; r++) {
-                  ACTIVATION[i][r] = Math.exp(ACTIVATION[i][r] - max);
-                  scale += ACTIVATION[i][r];
-              }
-              for (int r = 0; r < ACTIVATION[i].length; r++) {
-                  if (Double.isNaN(ACTIVATION[i][r]))
-                      throw new RuntimeException("Numerical instability, predicted NaN.");
-                  ACTIVATION[i][r] /= scale;
-                  preds[r + 1] = ACTIVATION[i][r];
-              }
-          }
-      }
-    preds[0] = hex.genmodel.GenModel.getPrediction(preds, PRIOR_CLASS_DISTRIB, data, 0.5);
-    return preds;
-  }
+    // Pass in data in a double[], pre-aligned to the Model's requirements.
+    // Jam predictions into the preds[] array; preds[0] is reserved for the
+    // main prediction (class for classifiers or value for regression),
+    // and remaining columns hold a probability distribution for classifiers.
+    public final double[] score0(double[] data, double[] preds) {
+        java.util.Arrays.fill(preds, 0);
+        java.util.Arrays.fill(NUMS, 0);
+        int i = 0, ncats = 0;
+        final int n = data.length;
+        for (; i < n; ++i) {
+            NUMS[i] = Double.isNaN(data[i]) ? 0 : (data[i] - NORMSUB.VALUES[i]) * NORMMUL.VALUES[i];
+        }
+        java.util.Arrays.fill(ACTIVATION[0], 0);
+        for (i = 0; i < NUMS.length; ++i) {
+            ACTIVATION[0][CATOFFSETS[CATOFFSETS.length - 1] + i] = Double.isNaN(NUMS[i]) ? 0 : NUMS[i];
+        }
+        for (i = 1; i < ACTIVATION.length; ++i) {
+            java.util.Arrays.fill(ACTIVATION[i], 0);
+            int cols = ACTIVATION[i - 1].length;
+            int rows = ACTIVATION[i].length;
+            int extra = cols - cols % 8;
+            int multiple = (cols / 8) * 8 - 1;
+            int idx = 0;
+            float[] a = WEIGHT[i];
+            double[] x = ACTIVATION[i - 1];
+            double[] y = BIAS[i];
+            double[] res = ACTIVATION[i];
+            for (int row = 0; row < rows; ++row) {
+                double psum0 = 0, psum1 = 0, psum2 = 0, psum3 = 0, psum4 = 0, psum5 = 0, psum6 = 0, psum7 = 0;
+                for (int col = 0; col < multiple; col += 8) {
+                    int off = idx + col;
+                    psum0 += a[off] * x[col];
+                    psum1 += a[off + 1] * x[col + 1];
+                    psum2 += a[off + 2] * x[col + 2];
+                    psum3 += a[off + 3] * x[col + 3];
+                    psum4 += a[off + 4] * x[col + 4];
+                    psum5 += a[off + 5] * x[col + 5];
+                    psum6 += a[off + 6] * x[col + 6];
+                    psum7 += a[off + 7] * x[col + 7];
+                }
+                res[row] += psum0 + psum1 + psum2 + psum3;
+                res[row] += psum4 + psum5 + psum6 + psum7;
+                for (int col = extra; col < cols; col++)
+                    res[row] += a[idx + col] * x[col];
+                res[row] += y[row];
+                idx += cols;
+            }
+            if (i < ACTIVATION.length - 1) {
+                for (int r = 0; r < ACTIVATION[i].length; ++r) {
+                    ACTIVATION[i][r] = Math.max(0, ACTIVATION[i][r]);
+                }
+            }
+            if (i == ACTIVATION.length - 1) {
+                double max = ACTIVATION[i][0];
+                for (int r = 1; r < ACTIVATION[i].length; r++) {
+                    if (ACTIVATION[i][r] > max) max = ACTIVATION[i][r];
+                }
+                double scale = 0;
+                for (int r = 0; r < ACTIVATION[i].length; r++) {
+                    ACTIVATION[i][r] = Math.exp(ACTIVATION[i][r] - max);
+                    scale += ACTIVATION[i][r];
+                }
+                for (int r = 0; r < ACTIVATION[i].length; r++) {
+                    if (Double.isNaN(ACTIVATION[i][r]))
+                        throw new RuntimeException("Numerical instability, predicted NaN.");
+                    ACTIVATION[i][r] /= scale;
+                    preds[r + 1] = ACTIVATION[i][r];
+                }
+            }
+        }
+        preds[0] = hex.genmodel.GenModel.getPrediction(preds, PRIOR_CLASS_DISTRIB, data, 0.5);
+        return preds;
+    }
 
     static class NORMMUL implements java.io.Serializable {
         public static final double[] VALUES = new double[8];
@@ -185,7 +187,7 @@ public class EightOutThatcham extends GenModel {
                 sa[7] = 0.09691855636080617;
             }
         }
-}
+    }
 
     static class NORMSUB implements java.io.Serializable {
         public static final double[] VALUES = new double[8];
@@ -206,780 +208,780 @@ public class EightOutThatcham extends GenModel {
                 sa[7] = -79.031875;
             }
         }
-}
-}
+    }
 
-// Neuron activation values for Input layer
-class EightOutThatcham_Activation_0 implements java.io.Serializable {
-    public static final double[] VALUES = new double[8];
 
-    static {
-        EightOutThatcham_Activation_0_0.fill(VALUES);
-  }
+    // Neuron activation values for Input layer
+    static class EightOutThatcham_Activation_0 implements java.io.Serializable {
+        public static final double[] VALUES = new double[8];
 
-    static final class EightOutThatcham_Activation_0_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.0;
-            sa[1] = 0.0;
-            sa[2] = 0.0;
-            sa[3] = 0.0;
-            sa[4] = 0.0;
-            sa[5] = 0.0;
-            sa[6] = 0.0;
-            sa[7] = 0.0;
+        static {
+            EightOutThatcham_Activation_0_0.fill(VALUES);
         }
-  }
-}
 
-// Neuron activation values for Rectifier layer
-class EightOutThatcham_Activation_1 implements java.io.Serializable {
-    public static final double[] VALUES = new double[16];
-
-    static {
-        EightOutThatcham_Activation_1_0.fill(VALUES);
-  }
-
-    static final class EightOutThatcham_Activation_1_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.0;
-            sa[1] = 0.0;
-            sa[2] = 0.0;
-            sa[3] = 0.0;
-            sa[4] = 0.0;
-            sa[5] = 0.0;
-            sa[6] = 0.0;
-            sa[7] = 0.0;
-            sa[8] = 0.0;
-            sa[9] = 0.0;
-            sa[10] = 0.0;
-            sa[11] = 0.0;
-            sa[12] = 0.0;
-            sa[13] = 0.0;
-            sa[14] = 0.0;
-            sa[15] = 0.0;
+        static final class EightOutThatcham_Activation_0_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.0;
+                sa[1] = 0.0;
+                sa[2] = 0.0;
+                sa[3] = 0.0;
+                sa[4] = 0.0;
+                sa[5] = 0.0;
+                sa[6] = 0.0;
+                sa[7] = 0.0;
+            }
         }
-  }
-}
+    }
 
-// Neuron activation values for Rectifier layer
-class EightOutThatcham_Activation_2 implements java.io.Serializable {
-    public static final double[] VALUES = new double[16];
+    // Neuron activation values for Rectifier layer
+    static class EightOutThatcham_Activation_1 implements java.io.Serializable {
+        public static final double[] VALUES = new double[16];
 
-    static {
-        EightOutThatcham_Activation_2_0.fill(VALUES);
-  }
-
-    static final class EightOutThatcham_Activation_2_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.0;
-            sa[1] = 0.0;
-            sa[2] = 0.0;
-            sa[3] = 0.0;
-            sa[4] = 0.0;
-            sa[5] = 0.0;
-            sa[6] = 0.0;
-            sa[7] = 0.0;
-            sa[8] = 0.0;
-            sa[9] = 0.0;
-            sa[10] = 0.0;
-            sa[11] = 0.0;
-            sa[12] = 0.0;
-            sa[13] = 0.0;
-            sa[14] = 0.0;
-            sa[15] = 0.0;
+        static {
+            EightOutThatcham_Activation_1_0.fill(VALUES);
         }
-  }
-}
 
-// Neuron activation values for Softmax layer
-class EightOutThatcham_Activation_3 implements java.io.Serializable {
-    public static final double[] VALUES = new double[7];
-
-    static {
-        EightOutThatcham_Activation_3_0.fill(VALUES);
-  }
-
-    static final class EightOutThatcham_Activation_3_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.0;
-            sa[1] = 0.0;
-            sa[2] = 0.0;
-            sa[3] = 0.0;
-            sa[4] = 0.0;
-            sa[5] = 0.0;
-            sa[6] = 0.0;
+        static final class EightOutThatcham_Activation_1_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.0;
+                sa[1] = 0.0;
+                sa[2] = 0.0;
+                sa[3] = 0.0;
+                sa[4] = 0.0;
+                sa[5] = 0.0;
+                sa[6] = 0.0;
+                sa[7] = 0.0;
+                sa[8] = 0.0;
+                sa[9] = 0.0;
+                sa[10] = 0.0;
+                sa[11] = 0.0;
+                sa[12] = 0.0;
+                sa[13] = 0.0;
+                sa[14] = 0.0;
+                sa[15] = 0.0;
+            }
         }
-  }
-}
+    }
 
-// Neuron bias values for Input layer
-class EightOutThatcham_Bias_0 implements java.io.Serializable {
-    public static final double[] VALUES = null;
-}
+    // Neuron activation values for Rectifier layer
+    static class EightOutThatcham_Activation_2 implements java.io.Serializable {
+        public static final double[] VALUES = new double[16];
 
-// Neuron bias values for Rectifier layer
-class EightOutThatcham_Bias_1 implements java.io.Serializable {
-    public static final double[] VALUES = new double[16];
-
-    static {
-        EightOutThatcham_Bias_1_0.fill(VALUES);
-  }
-
-    static final class EightOutThatcham_Bias_1_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 1.1458679845844462;
-            sa[1] = 0.5493446311981953;
-            sa[2] = 0.6951027774345714;
-            sa[3] = 0.08445471245221702;
-            sa[4] = 0.46520323332628405;
-            sa[5] = 0.7666390225283318;
-            sa[6] = 0.9040370514718912;
-            sa[7] = 0.6334077385734166;
-            sa[8] = 0.13330342259708297;
-            sa[9] = 0.4137618513373169;
-            sa[10] = 0.38907356293953144;
-            sa[11] = 1.1012243730968314;
-            sa[12] = 0.796521690483686;
-            sa[13] = 1.080386768214338;
-            sa[14] = 0.8122060321308776;
-            sa[15] = 0.4596309894178504;
+        static {
+            EightOutThatcham_Activation_2_0.fill(VALUES);
         }
-  }
-}
 
-// Neuron bias values for Rectifier layer
-class EightOutThatcham_Bias_2 implements java.io.Serializable {
-    public static final double[] VALUES = new double[16];
-
-    static {
-        EightOutThatcham_Bias_2_0.fill(VALUES);
-  }
-
-    static final class EightOutThatcham_Bias_2_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 1.2546304828884665;
-            sa[1] = 0.4839565502831537;
-            sa[2] = 1.642353379986033;
-            sa[3] = 1.025704236667667;
-            sa[4] = 1.1184367625242935;
-            sa[5] = 1.5515219530671862;
-            sa[6] = 0.8387270814680943;
-            sa[7] = 1.1309071048236297;
-            sa[8] = 1.007632482267282;
-            sa[9] = 1.4670547127281015;
-            sa[10] = 0.602464023066603;
-            sa[11] = 0.840597668737258;
-            sa[12] = 1.4464006627309984;
-            sa[13] = 1.400187330877851;
-            sa[14] = 1.2407229574799108;
-            sa[15] = 0.8135007383369603;
+        static final class EightOutThatcham_Activation_2_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.0;
+                sa[1] = 0.0;
+                sa[2] = 0.0;
+                sa[3] = 0.0;
+                sa[4] = 0.0;
+                sa[5] = 0.0;
+                sa[6] = 0.0;
+                sa[7] = 0.0;
+                sa[8] = 0.0;
+                sa[9] = 0.0;
+                sa[10] = 0.0;
+                sa[11] = 0.0;
+                sa[12] = 0.0;
+                sa[13] = 0.0;
+                sa[14] = 0.0;
+                sa[15] = 0.0;
+            }
         }
-  }
-}
+    }
 
-// Neuron bias values for Softmax layer
-class EightOutThatcham_Bias_3 implements java.io.Serializable {
-    public static final double[] VALUES = new double[7];
+    // Neuron activation values for Softmax layer
+    static class EightOutThatcham_Activation_3 implements java.io.Serializable {
+        public static final double[] VALUES = new double[7];
 
-    static {
-        EightOutThatcham_Bias_3_0.fill(VALUES);
-  }
-
-    static final class EightOutThatcham_Bias_3_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = -0.020486646148540698;
-            sa[1] = 0.15107925578815196;
-            sa[2] = 0.291010800771604;
-            sa[3] = 0.3635680343603834;
-            sa[4] = 0.05004345156044124;
-            sa[5] = 0.09284471580154093;
-            sa[6] = 0.029781158513222553;
+        static {
+            EightOutThatcham_Activation_3_0.fill(VALUES);
         }
-  }
-}
 
-class EightOutThatcham_Weight_0 implements java.io.Serializable {
-    public static final float[] VALUES = null;
-}
-
-// Neuron weights connecting Input and Rectifier layer
-class EightOutThatcham_Weight_1 implements java.io.Serializable {
-    public static final float[] VALUES = new float[128];
-
-    static {
-        EightOutThatcham_Weight_1_0.fill(VALUES);
-  }
-
-    static final class EightOutThatcham_Weight_1_0 implements java.io.Serializable {
-        static final void fill(float[] sa) {
-            sa[0] = -0.15684f;
-            sa[1] = -0.56353176f;
-            sa[2] = -0.08486281f;
-            sa[3] = -0.011273748f;
-            sa[4] = -0.0084615825f;
-            sa[5] = 0.07867388f;
-            sa[6] = 0.3728882f;
-            sa[7] = 0.8422947f;
-            sa[8] = 0.73093385f;
-            sa[9] = 0.09307456f;
-            sa[10] = 0.0131081445f;
-            sa[11] = 0.077337265f;
-            sa[12] = 0.53017247f;
-            sa[13] = 0.36234275f;
-            sa[14] = 0.6464361f;
-            sa[15] = -0.4969467f;
-            sa[16] = -0.049663283f;
-            sa[17] = -0.27274576f;
-            sa[18] = -0.1341385f;
-            sa[19] = -0.612343f;
-            sa[20] = -0.025901841f;
-            sa[21] = 0.52696097f;
-            sa[22] = -0.23695263f;
-            sa[23] = -0.54119647f;
-            sa[24] = 0.10676337f;
-            sa[25] = 0.053954486f;
-            sa[26] = -0.18487237f;
-            sa[27] = 0.23860352f;
-            sa[28] = 0.13641429f;
-            sa[29] = 0.4890733f;
-            sa[30] = -0.3195454f;
-            sa[31] = -1.5886359f;
-            sa[32] = 0.2897037f;
-            sa[33] = -0.1166697f;
-            sa[34] = -0.7167626f;
-            sa[35] = 0.40733725f;
-            sa[36] = -0.38255945f;
-            sa[37] = -0.02382247f;
-            sa[38] = 0.27658263f;
-            sa[39] = -0.1321225f;
-            sa[40] = -0.23335254f;
-            sa[41] = -0.2192627f;
-            sa[42] = -0.5311471f;
-            sa[43] = -0.3242951f;
-            sa[44] = -0.5977483f;
-            sa[45] = -0.0057133567f;
-            sa[46] = 0.039491367f;
-            sa[47] = 0.1655807f;
-            sa[48] = -0.14258593f;
-            sa[49] = 1.0232297f;
-            sa[50] = 1.3216658f;
-            sa[51] = 0.79355764f;
-            sa[52] = 0.6058223f;
-            sa[53] = 0.64279395f;
-            sa[54] = -0.7180688f;
-            sa[55] = 0.12214021f;
-            sa[56] = -0.65915644f;
-            sa[57] = 0.41100535f;
-            sa[58] = 0.46092257f;
-            sa[59] = -0.14396508f;
-            sa[60] = 0.5125819f;
-            sa[61] = -0.35257053f;
-            sa[62] = -0.36626276f;
-            sa[63] = 0.097711034f;
-            sa[64] = 0.17865472f;
-            sa[65] = 0.64349174f;
-            sa[66] = -0.336654f;
-            sa[67] = 1.6782594f;
-            sa[68] = -0.41877773f;
-            sa[69] = -0.56591076f;
-            sa[70] = 0.03986673f;
-            sa[71] = -0.16697325f;
-            sa[72] = -0.2575309f;
-            sa[73] = 0.3703372f;
-            sa[74] = -0.42372775f;
-            sa[75] = -0.32852894f;
-            sa[76] = 0.5609062f;
-            sa[77] = -0.6852152f;
-            sa[78] = 0.111358546f;
-            sa[79] = -0.41521266f;
-            sa[80] = 0.54740685f;
-            sa[81] = -0.5084881f;
-            sa[82] = 0.8039398f;
-            sa[83] = 0.41541192f;
-            sa[84] = -0.30920166f;
-            sa[85] = -0.17660494f;
-            sa[86] = -0.040711757f;
-            sa[87] = -0.51255876f;
-            sa[88] = -1.2866479f;
-            sa[89] = -0.24493511f;
-            sa[90] = 0.6790163f;
-            sa[91] = -0.55593336f;
-            sa[92] = -0.4827821f;
-            sa[93] = 0.35560894f;
-            sa[94] = -0.3084846f;
-            sa[95] = 0.36705172f;
-            sa[96] = -0.058482707f;
-            sa[97] = -0.15759724f;
-            sa[98] = 0.51171166f;
-            sa[99] = -0.1963844f;
-            sa[100] = 0.47104266f;
-            sa[101] = 0.6018597f;
-            sa[102] = 0.35793465f;
-            sa[103] = 0.20425116f;
-            sa[104] = -0.7351465f;
-            sa[105] = 0.27148122f;
-            sa[106] = -0.6331478f;
-            sa[107] = -0.22329187f;
-            sa[108] = 0.5234435f;
-            sa[109] = -0.13632163f;
-            sa[110] = -0.12177573f;
-            sa[111] = -0.06953045f;
-            sa[112] = 0.03599006f;
-            sa[113] = 0.6782778f;
-            sa[114] = 0.21960588f;
-            sa[115] = -0.09115825f;
-            sa[116] = 0.34300077f;
-            sa[117] = 0.4891521f;
-            sa[118] = -0.15671244f;
-            sa[119] = -0.7376677f;
-            sa[120] = 0.67177755f;
-            sa[121] = -0.9719744f;
-            sa[122] = -0.0096513005f;
-            sa[123] = -0.2061743f;
-            sa[124] = 0.52575517f;
-            sa[125] = -0.29551032f;
-            sa[126] = 0.60717195f;
-            sa[127] = -0.2419284f;
+        static final class EightOutThatcham_Activation_3_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.0;
+                sa[1] = 0.0;
+                sa[2] = 0.0;
+                sa[3] = 0.0;
+                sa[4] = 0.0;
+                sa[5] = 0.0;
+                sa[6] = 0.0;
+            }
         }
-  }
-}
+    }
 
-// Neuron weights connecting Rectifier and Rectifier layer
-class EightOutThatcham_Weight_2 implements java.io.Serializable {
-    public static final float[] VALUES = new float[256];
+    // Neuron bias values for Input layer
+    static class EightOutThatcham_Bias_0 implements java.io.Serializable {
+        public static final double[] VALUES = null;
+    }
 
-    static {
-        EightOutThatcham_Weight_2_0.fill(VALUES);
-  }
+    // Neuron bias values for Rectifier layer
+    static class EightOutThatcham_Bias_1 implements java.io.Serializable {
+        public static final double[] VALUES = new double[16];
 
-    static final class EightOutThatcham_Weight_2_0 implements java.io.Serializable {
-        static final void fill(float[] sa) {
-            sa[0] = 0.8568732f;
-            sa[1] = -0.16660431f;
-            sa[2] = 0.23189507f;
-            sa[3] = -0.5021668f;
-            sa[4] = 0.14579463f;
-            sa[5] = 0.20746018f;
-            sa[6] = -0.56678545f;
-            sa[7] = 0.28713843f;
-            sa[8] = 0.5756431f;
-            sa[9] = -0.1300525f;
-            sa[10] = 0.06671714f;
-            sa[11] = 0.20927365f;
-            sa[12] = 0.5379228f;
-            sa[13] = -0.50431585f;
-            sa[14] = 0.09486112f;
-            sa[15] = 0.81915474f;
-            sa[16] = 0.20723781f;
-            sa[17] = 0.47087005f;
-            sa[18] = 0.5583684f;
-            sa[19] = -0.28587374f;
-            sa[20] = -0.49362534f;
-            sa[21] = -0.07028648f;
-            sa[22] = -0.58527f;
-            sa[23] = 0.6172034f;
-            sa[24] = 0.8441257f;
-            sa[25] = 0.08064561f;
-            sa[26] = -0.31030956f;
-            sa[27] = -0.39560714f;
-            sa[28] = 0.28910747f;
-            sa[29] = 0.5333197f;
-            sa[30] = -0.37196535f;
-            sa[31] = -0.48537064f;
-            sa[32] = -0.45357564f;
-            sa[33] = -0.23655914f;
-            sa[34] = 0.6973273f;
-            sa[35] = -0.1533953f;
-            sa[36] = 0.31856033f;
-            sa[37] = -0.1515809f;
-            sa[38] = 0.27134618f;
-            sa[39] = 0.50009495f;
-            sa[40] = 0.25972152f;
-            sa[41] = 0.95962656f;
-            sa[42] = -0.6293149f;
-            sa[43] = 0.18676303f;
-            sa[44] = 0.88716686f;
-            sa[45] = 0.5201549f;
-            sa[46] = 0.038976807f;
-            sa[47] = 0.016308334f;
-            sa[48] = -0.18541114f;
-            sa[49] = -0.50714886f;
-            sa[50] = 0.38942432f;
-            sa[51] = 0.44609356f;
-            sa[52] = 0.40522107f;
-            sa[53] = 0.86262065f;
-            sa[54] = 0.18333402f;
-            sa[55] = -0.6139604f;
-            sa[56] = -0.23874259f;
-            sa[57] = -0.5859389f;
-            sa[58] = 0.5067476f;
-            sa[59] = 0.60714406f;
-            sa[60] = 0.031202838f;
-            sa[61] = -0.44025317f;
-            sa[62] = -0.17154247f;
-            sa[63] = 0.28700018f;
-            sa[64] = -0.3715491f;
-            sa[65] = 0.8080908f;
-            sa[66] = 0.46415707f;
-            sa[67] = 0.009732392f;
-            sa[68] = -0.0528287f;
-            sa[69] = -0.15378958f;
-            sa[70] = -1.31183f;
-            sa[71] = -0.3804993f;
-            sa[72] = -1.353377f;
-            sa[73] = 0.20951103f;
-            sa[74] = 0.012450687f;
-            sa[75] = -0.39013326f;
-            sa[76] = -0.27151966f;
-            sa[77] = 0.7149357f;
-            sa[78] = 0.043618236f;
-            sa[79] = 0.530006f;
-            sa[80] = 0.8799053f;
-            sa[81] = 0.1586325f;
-            sa[82] = -0.40472722f;
-            sa[83] = 0.40599173f;
-            sa[84] = 0.32875973f;
-            sa[85] = 0.8386434f;
-            sa[86] = 0.6017152f;
-            sa[87] = -0.2826075f;
-            sa[88] = 0.5524319f;
-            sa[89] = -0.049157746f;
-            sa[90] = 0.5730214f;
-            sa[91] = 0.8679035f;
-            sa[92] = -0.26257336f;
-            sa[93] = 0.68517274f;
-            sa[94] = 0.68158007f;
-            sa[95] = -0.63506776f;
-            sa[96] = 0.27278796f;
-            sa[97] = 0.1590376f;
-            sa[98] = 0.28516588f;
-            sa[99] = -0.8871892f;
-            sa[100] = 0.5402436f;
-            sa[101] = 0.050637875f;
-            sa[102] = 0.013453927f;
-            sa[103] = 1.0836287f;
-            sa[104] = -0.2179536f;
-            sa[105] = -0.109585255f;
-            sa[106] = -0.40418175f;
-            sa[107] = -0.8634538f;
-            sa[108] = -0.480644f;
-            sa[109] = 0.450258f;
-            sa[110] = -0.9571588f;
-            sa[111] = 0.06602857f;
-            sa[112] = 0.02035686f;
-            sa[113] = 0.28039822f;
-            sa[114] = -0.8212607f;
-            sa[115] = -0.31542966f;
-            sa[116] = -0.1136349f;
-            sa[117] = 0.00338679f;
-            sa[118] = -0.14060327f;
-            sa[119] = 0.33507398f;
-            sa[120] = -0.33442274f;
-            sa[121] = -0.06855498f;
-            sa[122] = 0.07931556f;
-            sa[123] = -0.48663673f;
-            sa[124] = -0.016537776f;
-            sa[125] = 0.9688974f;
-            sa[126] = 0.35127228f;
-            sa[127] = -0.87088597f;
-            sa[128] = 0.007839411f;
-            sa[129] = 0.7221919f;
-            sa[130] = -0.085725084f;
-            sa[131] = -0.07914578f;
-            sa[132] = 0.6498067f;
-            sa[133] = 0.44348398f;
-            sa[134] = 0.88443714f;
-            sa[135] = 0.13069907f;
-            sa[136] = -0.41577753f;
-            sa[137] = 0.23067433f;
-            sa[138] = 0.65103394f;
-            sa[139] = 0.5045016f;
-            sa[140] = -0.6004944f;
-            sa[141] = -0.45501736f;
-            sa[142] = 0.37597662f;
-            sa[143] = -0.53058535f;
-            sa[144] = 0.38619918f;
-            sa[145] = -0.107779115f;
-            sa[146] = -0.24497807f;
-            sa[147] = -0.16788977f;
-            sa[148] = 1.4407643f;
-            sa[149] = 0.13990109f;
-            sa[150] = 0.1235422f;
-            sa[151] = -0.19194154f;
-            sa[152] = 0.17202465f;
-            sa[153] = 0.65095073f;
-            sa[154] = 0.6421368f;
-            sa[155] = 0.9982668f;
-            sa[156] = 0.10757604f;
-            sa[157] = -0.79533464f;
-            sa[158] = -0.011328023f;
-            sa[159] = -0.203923f;
-            sa[160] = -0.07878414f;
-            sa[161] = 0.36337334f;
-            sa[162] = 0.72112817f;
-            sa[163] = 0.08209072f;
-            sa[164] = 0.3099984f;
-            sa[165] = -0.6256341f;
-            sa[166] = 0.118904166f;
-            sa[167] = 0.8249989f;
-            sa[168] = 0.8818582f;
-            sa[169] = -0.18283696f;
-            sa[170] = 1.1967092f;
-            sa[171] = -0.00248429f;
-            sa[172] = -0.19829269f;
-            sa[173] = 0.69346046f;
-            sa[174] = -0.1910576f;
-            sa[175] = 0.47488886f;
-            sa[176] = 0.24376555f;
-            sa[177] = 0.7734806f;
-            sa[178] = -1.6940838f;
-            sa[179] = -0.19752644f;
-            sa[180] = -0.20586038f;
-            sa[181] = 0.4182875f;
-            sa[182] = 0.2482358f;
-            sa[183] = -0.4908482f;
-            sa[184] = 0.68441015f;
-            sa[185] = -0.04528531f;
-            sa[186] = -0.09572584f;
-            sa[187] = 0.03867046f;
-            sa[188] = 0.08490375f;
-            sa[189] = -1.0906936f;
-            sa[190] = -1.2894651f;
-            sa[191] = -0.19914639f;
-            sa[192] = 1.077024f;
-            sa[193] = 0.29877955f;
-            sa[194] = -0.40069225f;
-            sa[195] = -0.2854042f;
-            sa[196] = 0.28139883f;
-            sa[197] = -0.10392081f;
-            sa[198] = -0.041976083f;
-            sa[199] = 0.13678509f;
-            sa[200] = 0.9376484f;
-            sa[201] = -0.16905709f;
-            sa[202] = 0.35157448f;
-            sa[203] = 0.15690832f;
-            sa[204] = 0.12427834f;
-            sa[205] = -0.26721108f;
-            sa[206] = 0.6118868f;
-            sa[207] = 0.072299086f;
-            sa[208] = 0.53106153f;
-            sa[209] = 1.142232f;
-            sa[210] = -0.39768136f;
-            sa[211] = -0.21426964f;
-            sa[212] = -0.019149432f;
-            sa[213] = 0.8092459f;
-            sa[214] = -0.0674468f;
-            sa[215] = 0.28919065f;
-            sa[216] = -0.36919641f;
-            sa[217] = 0.05507727f;
-            sa[218] = 0.14519452f;
-            sa[219] = -0.52533823f;
-            sa[220] = -0.7797772f;
-            sa[221] = -0.3469264f;
-            sa[222] = 0.707302f;
-            sa[223] = 0.22048683f;
-            sa[224] = 0.40220046f;
-            sa[225] = -0.26338372f;
-            sa[226] = 0.378941f;
-            sa[227] = 0.035129223f;
-            sa[228] = 0.080655344f;
-            sa[229] = -0.1535705f;
-            sa[230] = 0.056610875f;
-            sa[231] = 0.20500518f;
-            sa[232] = -0.7027465f;
-            sa[233] = 0.24649948f;
-            sa[234] = -0.9937859f;
-            sa[235] = -0.32199737f;
-            sa[236] = 0.18675499f;
-            sa[237] = 0.38015142f;
-            sa[238] = 0.17305438f;
-            sa[239] = 0.0851966f;
-            sa[240] = 0.3915514f;
-            sa[241] = 0.62735f;
-            sa[242] = -0.25380194f;
-            sa[243] = 0.19216307f;
-            sa[244] = -0.4652849f;
-            sa[245] = 0.4789506f;
-            sa[246] = -0.51497793f;
-            sa[247] = 0.88295037f;
-            sa[248] = 0.11018504f;
-            sa[249] = -0.56116253f;
-            sa[250] = 0.19306365f;
-            sa[251] = -0.21494582f;
-            sa[252] = -0.5699773f;
-            sa[253] = -0.09165525f;
-            sa[254] = 0.34703144f;
-            sa[255] = -0.8866698f;
+        static {
+            EightOutThatcham_Bias_1_0.fill(VALUES);
         }
-  }
-}
 
-// Neuron weights connecting Rectifier and Softmax layer
-class EightOutThatcham_Weight_3 implements java.io.Serializable {
-    public static final float[] VALUES = new float[112];
-
-    static {
-        EightOutThatcham_Weight_3_0.fill(VALUES);
-  }
-
-    static final class EightOutThatcham_Weight_3_0 implements java.io.Serializable {
-        static final void fill(float[] sa) {
-            sa[0] = 1.8105798f;
-            sa[1] = 1.2026879f;
-            sa[2] = -1.8645366f;
-            sa[3] = 0.8214963f;
-            sa[4] = -1.7661586f;
-            sa[5] = 1.3240327f;
-            sa[6] = 0.72478366f;
-            sa[7] = -2.7864592f;
-            sa[8] = -0.20963545f;
-            sa[9] = 0.10122594f;
-            sa[10] = -2.8350737f;
-            sa[11] = 1.324861f;
-            sa[12] = 0.5096909f;
-            sa[13] = 2.5890663f;
-            sa[14] = -2.1981077f;
-            sa[15] = 2.7384748f;
-            sa[16] = 0.47537506f;
-            sa[17] = 1.2307333f;
-            sa[18] = 0.019732285f;
-            sa[19] = 0.656762f;
-            sa[20] = 0.67488813f;
-            sa[21] = -0.8388997f;
-            sa[22] = -0.21847102f;
-            sa[23] = 0.028322222f;
-            sa[24] = -0.40349135f;
-            sa[25] = -2.6458068f;
-            sa[26] = 2.5212069f;
-            sa[27] = -1.9208627f;
-            sa[28] = -1.3015349f;
-            sa[29] = -1.1329155f;
-            sa[30] = 1.4084613f;
-            sa[31] = 2.7894194f;
-            sa[32] = 1.1263647f;
-            sa[33] = -0.7882585f;
-            sa[34] = 2.2839458f;
-            sa[35] = -1.3883547f;
-            sa[36] = -0.7832809f;
-            sa[37] = -1.9435848f;
-            sa[38] = 2.2743073f;
-            sa[39] = 0.1887072f;
-            sa[40] = 0.63544184f;
-            sa[41] = 1.0058342f;
-            sa[42] = 1.4525685f;
-            sa[43] = -2.8347023f;
-            sa[44] = 0.7001996f;
-            sa[45] = 2.2519982f;
-            sa[46] = -2.105691f;
-            sa[47] = -3.455372f;
-            sa[48] = 2.1804142f;
-            sa[49] = -3.5894427f;
-            sa[50] = 1.3137832f;
-            sa[51] = -0.18200329f;
-            sa[52] = 1.8979901f;
-            sa[53] = 0.2704809f;
-            sa[54] = -1.3157085f;
-            sa[55] = -1.0763187f;
-            sa[56] = -1.2347815f;
-            sa[57] = 1.1091903f;
-            sa[58] = -1.7925823f;
-            sa[59] = -1.7764307f;
-            sa[60] = 0.94852734f;
-            sa[61] = 0.8279741f;
-            sa[62] = 1.7111917f;
-            sa[63] = -4.098287f;
-            sa[64] = -2.4018362f;
-            sa[65] = -1.157263f;
-            sa[66] = 0.17795916f;
-            sa[67] = 1.6564876f;
-            sa[68] = 0.30654815f;
-            sa[69] = 0.56338805f;
-            sa[70] = -0.4371159f;
-            sa[71] = -1.2820692f;
-            sa[72] = 2.1179495f;
-            sa[73] = 2.4738526f;
-            sa[74] = -0.30209896f;
-            sa[75] = -2.8697383f;
-            sa[76] = -1.6865107f;
-            sa[77] = -0.9489491f;
-            sa[78] = -2.0423155f;
-            sa[79] = -2.0394492f;
-            sa[80] = -1.7230911f;
-            sa[81] = -0.23028848f;
-            sa[82] = -1.2676866f;
-            sa[83] = -2.2610915f;
-            sa[84] = -0.22042125f;
-            sa[85] = 2.2562182f;
-            sa[86] = -0.07248238f;
-            sa[87] = 3.8626714f;
-            sa[88] = 1.1267186f;
-            sa[89] = -0.8535371f;
-            sa[90] = 0.7824602f;
-            sa[91] = -1.6263969f;
-            sa[92] = 1.0763052f;
-            sa[93] = 1.4489481f;
-            sa[94] = -2.1593065f;
-            sa[95] = 2.8134048f;
-            sa[96] = 1.5730311f;
-            sa[97] = 0.6305025f;
-            sa[98] = 2.4241266f;
-            sa[99] = -3.3230355f;
-            sa[100] = -1.5251545f;
-            sa[101] = -0.7908291f;
-            sa[102] = -1.6851833f;
-            sa[103] = -2.3930774f;
-            sa[104] = -1.5633608f;
-            sa[105] = 1.8691401f;
-            sa[106] = 0.94791883f;
-            sa[107] = 0.29040995f;
-            sa[108] = 2.0384517f;
-            sa[109] = -2.544098f;
-            sa[110] = -3.9406412f;
-            sa[111] = -2.4350886f;
+        static final class EightOutThatcham_Bias_1_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 1.1458679845844462;
+                sa[1] = 0.5493446311981953;
+                sa[2] = 0.6951027774345714;
+                sa[3] = 0.08445471245221702;
+                sa[4] = 0.46520323332628405;
+                sa[5] = 0.7666390225283318;
+                sa[6] = 0.9040370514718912;
+                sa[7] = 0.6334077385734166;
+                sa[8] = 0.13330342259708297;
+                sa[9] = 0.4137618513373169;
+                sa[10] = 0.38907356293953144;
+                sa[11] = 1.1012243730968314;
+                sa[12] = 0.796521690483686;
+                sa[13] = 1.080386768214338;
+                sa[14] = 0.8122060321308776;
+                sa[15] = 0.4596309894178504;
+            }
         }
-  }
-}
+    }
 
-// The class representing training column names
-class NamesHolder_EightOutThatcham implements java.io.Serializable {
-    public static final String[] VALUES = new String[8];
+    // Neuron bias values for Rectifier layer
+    static class EightOutThatcham_Bias_2 implements java.io.Serializable {
+        public static final double[] VALUES = new double[16];
 
-    static {
-        NamesHolder_EightOutThatcham_0.fill(VALUES);
-  }
-
-    static final class NamesHolder_EightOutThatcham_0 implements java.io.Serializable {
-        static final void fill(String[] sa) {
-            sa[0] = "RSSI LEFT_ORIGIN";
-            sa[1] = "RSSI MIDDLE_ORIGIN";
-            sa[2] = "RSSI RIGHT_ORIGIN";
-            sa[3] = "RSSI TRUNK_ORIGIN";
-            sa[4] = "RSSI FRONTLEFT_ORIGIN";
-            sa[5] = "RSSI FRONTRIGHT_ORIGIN";
-            sa[6] = "RSSI REARLEFT_ORIGIN";
-            sa[7] = "RSSI REARRIGHT_ORIGIN";
+        static {
+            EightOutThatcham_Bias_2_0.fill(VALUES);
         }
-  }
-}
 
-// The class representing column class
-class EightOutThatcham_ColInfo_8 implements java.io.Serializable {
-    public static final String[] VALUES = new String[7];
-
-    static {
-        EightOutThatcham_ColInfo_8_0.fill(VALUES);
-  }
-
-    static final class EightOutThatcham_ColInfo_8_0 implements java.io.Serializable {
-        static final void fill(String[] sa) {
-            sa[0] = "back";
-            sa[1] = "front";
-            sa[2] = "left";
-            sa[3] = "lock";
-            sa[4] = "right";
-            sa[5] = "start";
-            sa[6] = "trunk";
+        static final class EightOutThatcham_Bias_2_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 1.2546304828884665;
+                sa[1] = 0.4839565502831537;
+                sa[2] = 1.642353379986033;
+                sa[3] = 1.025704236667667;
+                sa[4] = 1.1184367625242935;
+                sa[5] = 1.5515219530671862;
+                sa[6] = 0.8387270814680943;
+                sa[7] = 1.1309071048236297;
+                sa[8] = 1.007632482267282;
+                sa[9] = 1.4670547127281015;
+                sa[10] = 0.602464023066603;
+                sa[11] = 0.840597668737258;
+                sa[12] = 1.4464006627309984;
+                sa[13] = 1.400187330877851;
+                sa[14] = 1.2407229574799108;
+                sa[15] = 0.8135007383369603;
+            }
         }
-  }
-}
+    }
 
+    // Neuron bias values for Softmax layer
+    static class EightOutThatcham_Bias_3 implements java.io.Serializable {
+        public static final double[] VALUES = new double[7];
+
+        static {
+            EightOutThatcham_Bias_3_0.fill(VALUES);
+        }
+
+        static final class EightOutThatcham_Bias_3_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = -0.020486646148540698;
+                sa[1] = 0.15107925578815196;
+                sa[2] = 0.291010800771604;
+                sa[3] = 0.3635680343603834;
+                sa[4] = 0.05004345156044124;
+                sa[5] = 0.09284471580154093;
+                sa[6] = 0.029781158513222553;
+            }
+        }
+    }
+
+    static class EightOutThatcham_Weight_0 implements java.io.Serializable {
+        public static final float[] VALUES = null;
+    }
+
+    // Neuron weights connecting Input and Rectifier layer
+    static class EightOutThatcham_Weight_1 implements java.io.Serializable {
+        public static final float[] VALUES = new float[128];
+
+        static {
+            EightOutThatcham_Weight_1_0.fill(VALUES);
+        }
+
+        static final class EightOutThatcham_Weight_1_0 implements java.io.Serializable {
+            static final void fill(float[] sa) {
+                sa[0] = -0.15684f;
+                sa[1] = -0.56353176f;
+                sa[2] = -0.08486281f;
+                sa[3] = -0.011273748f;
+                sa[4] = -0.0084615825f;
+                sa[5] = 0.07867388f;
+                sa[6] = 0.3728882f;
+                sa[7] = 0.8422947f;
+                sa[8] = 0.73093385f;
+                sa[9] = 0.09307456f;
+                sa[10] = 0.0131081445f;
+                sa[11] = 0.077337265f;
+                sa[12] = 0.53017247f;
+                sa[13] = 0.36234275f;
+                sa[14] = 0.6464361f;
+                sa[15] = -0.4969467f;
+                sa[16] = -0.049663283f;
+                sa[17] = -0.27274576f;
+                sa[18] = -0.1341385f;
+                sa[19] = -0.612343f;
+                sa[20] = -0.025901841f;
+                sa[21] = 0.52696097f;
+                sa[22] = -0.23695263f;
+                sa[23] = -0.54119647f;
+                sa[24] = 0.10676337f;
+                sa[25] = 0.053954486f;
+                sa[26] = -0.18487237f;
+                sa[27] = 0.23860352f;
+                sa[28] = 0.13641429f;
+                sa[29] = 0.4890733f;
+                sa[30] = -0.3195454f;
+                sa[31] = -1.5886359f;
+                sa[32] = 0.2897037f;
+                sa[33] = -0.1166697f;
+                sa[34] = -0.7167626f;
+                sa[35] = 0.40733725f;
+                sa[36] = -0.38255945f;
+                sa[37] = -0.02382247f;
+                sa[38] = 0.27658263f;
+                sa[39] = -0.1321225f;
+                sa[40] = -0.23335254f;
+                sa[41] = -0.2192627f;
+                sa[42] = -0.5311471f;
+                sa[43] = -0.3242951f;
+                sa[44] = -0.5977483f;
+                sa[45] = -0.0057133567f;
+                sa[46] = 0.039491367f;
+                sa[47] = 0.1655807f;
+                sa[48] = -0.14258593f;
+                sa[49] = 1.0232297f;
+                sa[50] = 1.3216658f;
+                sa[51] = 0.79355764f;
+                sa[52] = 0.6058223f;
+                sa[53] = 0.64279395f;
+                sa[54] = -0.7180688f;
+                sa[55] = 0.12214021f;
+                sa[56] = -0.65915644f;
+                sa[57] = 0.41100535f;
+                sa[58] = 0.46092257f;
+                sa[59] = -0.14396508f;
+                sa[60] = 0.5125819f;
+                sa[61] = -0.35257053f;
+                sa[62] = -0.36626276f;
+                sa[63] = 0.097711034f;
+                sa[64] = 0.17865472f;
+                sa[65] = 0.64349174f;
+                sa[66] = -0.336654f;
+                sa[67] = 1.6782594f;
+                sa[68] = -0.41877773f;
+                sa[69] = -0.56591076f;
+                sa[70] = 0.03986673f;
+                sa[71] = -0.16697325f;
+                sa[72] = -0.2575309f;
+                sa[73] = 0.3703372f;
+                sa[74] = -0.42372775f;
+                sa[75] = -0.32852894f;
+                sa[76] = 0.5609062f;
+                sa[77] = -0.6852152f;
+                sa[78] = 0.111358546f;
+                sa[79] = -0.41521266f;
+                sa[80] = 0.54740685f;
+                sa[81] = -0.5084881f;
+                sa[82] = 0.8039398f;
+                sa[83] = 0.41541192f;
+                sa[84] = -0.30920166f;
+                sa[85] = -0.17660494f;
+                sa[86] = -0.040711757f;
+                sa[87] = -0.51255876f;
+                sa[88] = -1.2866479f;
+                sa[89] = -0.24493511f;
+                sa[90] = 0.6790163f;
+                sa[91] = -0.55593336f;
+                sa[92] = -0.4827821f;
+                sa[93] = 0.35560894f;
+                sa[94] = -0.3084846f;
+                sa[95] = 0.36705172f;
+                sa[96] = -0.058482707f;
+                sa[97] = -0.15759724f;
+                sa[98] = 0.51171166f;
+                sa[99] = -0.1963844f;
+                sa[100] = 0.47104266f;
+                sa[101] = 0.6018597f;
+                sa[102] = 0.35793465f;
+                sa[103] = 0.20425116f;
+                sa[104] = -0.7351465f;
+                sa[105] = 0.27148122f;
+                sa[106] = -0.6331478f;
+                sa[107] = -0.22329187f;
+                sa[108] = 0.5234435f;
+                sa[109] = -0.13632163f;
+                sa[110] = -0.12177573f;
+                sa[111] = -0.06953045f;
+                sa[112] = 0.03599006f;
+                sa[113] = 0.6782778f;
+                sa[114] = 0.21960588f;
+                sa[115] = -0.09115825f;
+                sa[116] = 0.34300077f;
+                sa[117] = 0.4891521f;
+                sa[118] = -0.15671244f;
+                sa[119] = -0.7376677f;
+                sa[120] = 0.67177755f;
+                sa[121] = -0.9719744f;
+                sa[122] = -0.0096513005f;
+                sa[123] = -0.2061743f;
+                sa[124] = 0.52575517f;
+                sa[125] = -0.29551032f;
+                sa[126] = 0.60717195f;
+                sa[127] = -0.2419284f;
+            }
+        }
+    }
+
+    // Neuron weights connecting Rectifier and Rectifier layer
+    static class EightOutThatcham_Weight_2 implements java.io.Serializable {
+        public static final float[] VALUES = new float[256];
+
+        static {
+            EightOutThatcham_Weight_2_0.fill(VALUES);
+        }
+
+        static final class EightOutThatcham_Weight_2_0 implements java.io.Serializable {
+            static final void fill(float[] sa) {
+                sa[0] = 0.8568732f;
+                sa[1] = -0.16660431f;
+                sa[2] = 0.23189507f;
+                sa[3] = -0.5021668f;
+                sa[4] = 0.14579463f;
+                sa[5] = 0.20746018f;
+                sa[6] = -0.56678545f;
+                sa[7] = 0.28713843f;
+                sa[8] = 0.5756431f;
+                sa[9] = -0.1300525f;
+                sa[10] = 0.06671714f;
+                sa[11] = 0.20927365f;
+                sa[12] = 0.5379228f;
+                sa[13] = -0.50431585f;
+                sa[14] = 0.09486112f;
+                sa[15] = 0.81915474f;
+                sa[16] = 0.20723781f;
+                sa[17] = 0.47087005f;
+                sa[18] = 0.5583684f;
+                sa[19] = -0.28587374f;
+                sa[20] = -0.49362534f;
+                sa[21] = -0.07028648f;
+                sa[22] = -0.58527f;
+                sa[23] = 0.6172034f;
+                sa[24] = 0.8441257f;
+                sa[25] = 0.08064561f;
+                sa[26] = -0.31030956f;
+                sa[27] = -0.39560714f;
+                sa[28] = 0.28910747f;
+                sa[29] = 0.5333197f;
+                sa[30] = -0.37196535f;
+                sa[31] = -0.48537064f;
+                sa[32] = -0.45357564f;
+                sa[33] = -0.23655914f;
+                sa[34] = 0.6973273f;
+                sa[35] = -0.1533953f;
+                sa[36] = 0.31856033f;
+                sa[37] = -0.1515809f;
+                sa[38] = 0.27134618f;
+                sa[39] = 0.50009495f;
+                sa[40] = 0.25972152f;
+                sa[41] = 0.95962656f;
+                sa[42] = -0.6293149f;
+                sa[43] = 0.18676303f;
+                sa[44] = 0.88716686f;
+                sa[45] = 0.5201549f;
+                sa[46] = 0.038976807f;
+                sa[47] = 0.016308334f;
+                sa[48] = -0.18541114f;
+                sa[49] = -0.50714886f;
+                sa[50] = 0.38942432f;
+                sa[51] = 0.44609356f;
+                sa[52] = 0.40522107f;
+                sa[53] = 0.86262065f;
+                sa[54] = 0.18333402f;
+                sa[55] = -0.6139604f;
+                sa[56] = -0.23874259f;
+                sa[57] = -0.5859389f;
+                sa[58] = 0.5067476f;
+                sa[59] = 0.60714406f;
+                sa[60] = 0.031202838f;
+                sa[61] = -0.44025317f;
+                sa[62] = -0.17154247f;
+                sa[63] = 0.28700018f;
+                sa[64] = -0.3715491f;
+                sa[65] = 0.8080908f;
+                sa[66] = 0.46415707f;
+                sa[67] = 0.009732392f;
+                sa[68] = -0.0528287f;
+                sa[69] = -0.15378958f;
+                sa[70] = -1.31183f;
+                sa[71] = -0.3804993f;
+                sa[72] = -1.353377f;
+                sa[73] = 0.20951103f;
+                sa[74] = 0.012450687f;
+                sa[75] = -0.39013326f;
+                sa[76] = -0.27151966f;
+                sa[77] = 0.7149357f;
+                sa[78] = 0.043618236f;
+                sa[79] = 0.530006f;
+                sa[80] = 0.8799053f;
+                sa[81] = 0.1586325f;
+                sa[82] = -0.40472722f;
+                sa[83] = 0.40599173f;
+                sa[84] = 0.32875973f;
+                sa[85] = 0.8386434f;
+                sa[86] = 0.6017152f;
+                sa[87] = -0.2826075f;
+                sa[88] = 0.5524319f;
+                sa[89] = -0.049157746f;
+                sa[90] = 0.5730214f;
+                sa[91] = 0.8679035f;
+                sa[92] = -0.26257336f;
+                sa[93] = 0.68517274f;
+                sa[94] = 0.68158007f;
+                sa[95] = -0.63506776f;
+                sa[96] = 0.27278796f;
+                sa[97] = 0.1590376f;
+                sa[98] = 0.28516588f;
+                sa[99] = -0.8871892f;
+                sa[100] = 0.5402436f;
+                sa[101] = 0.050637875f;
+                sa[102] = 0.013453927f;
+                sa[103] = 1.0836287f;
+                sa[104] = -0.2179536f;
+                sa[105] = -0.109585255f;
+                sa[106] = -0.40418175f;
+                sa[107] = -0.8634538f;
+                sa[108] = -0.480644f;
+                sa[109] = 0.450258f;
+                sa[110] = -0.9571588f;
+                sa[111] = 0.06602857f;
+                sa[112] = 0.02035686f;
+                sa[113] = 0.28039822f;
+                sa[114] = -0.8212607f;
+                sa[115] = -0.31542966f;
+                sa[116] = -0.1136349f;
+                sa[117] = 0.00338679f;
+                sa[118] = -0.14060327f;
+                sa[119] = 0.33507398f;
+                sa[120] = -0.33442274f;
+                sa[121] = -0.06855498f;
+                sa[122] = 0.07931556f;
+                sa[123] = -0.48663673f;
+                sa[124] = -0.016537776f;
+                sa[125] = 0.9688974f;
+                sa[126] = 0.35127228f;
+                sa[127] = -0.87088597f;
+                sa[128] = 0.007839411f;
+                sa[129] = 0.7221919f;
+                sa[130] = -0.085725084f;
+                sa[131] = -0.07914578f;
+                sa[132] = 0.6498067f;
+                sa[133] = 0.44348398f;
+                sa[134] = 0.88443714f;
+                sa[135] = 0.13069907f;
+                sa[136] = -0.41577753f;
+                sa[137] = 0.23067433f;
+                sa[138] = 0.65103394f;
+                sa[139] = 0.5045016f;
+                sa[140] = -0.6004944f;
+                sa[141] = -0.45501736f;
+                sa[142] = 0.37597662f;
+                sa[143] = -0.53058535f;
+                sa[144] = 0.38619918f;
+                sa[145] = -0.107779115f;
+                sa[146] = -0.24497807f;
+                sa[147] = -0.16788977f;
+                sa[148] = 1.4407643f;
+                sa[149] = 0.13990109f;
+                sa[150] = 0.1235422f;
+                sa[151] = -0.19194154f;
+                sa[152] = 0.17202465f;
+                sa[153] = 0.65095073f;
+                sa[154] = 0.6421368f;
+                sa[155] = 0.9982668f;
+                sa[156] = 0.10757604f;
+                sa[157] = -0.79533464f;
+                sa[158] = -0.011328023f;
+                sa[159] = -0.203923f;
+                sa[160] = -0.07878414f;
+                sa[161] = 0.36337334f;
+                sa[162] = 0.72112817f;
+                sa[163] = 0.08209072f;
+                sa[164] = 0.3099984f;
+                sa[165] = -0.6256341f;
+                sa[166] = 0.118904166f;
+                sa[167] = 0.8249989f;
+                sa[168] = 0.8818582f;
+                sa[169] = -0.18283696f;
+                sa[170] = 1.1967092f;
+                sa[171] = -0.00248429f;
+                sa[172] = -0.19829269f;
+                sa[173] = 0.69346046f;
+                sa[174] = -0.1910576f;
+                sa[175] = 0.47488886f;
+                sa[176] = 0.24376555f;
+                sa[177] = 0.7734806f;
+                sa[178] = -1.6940838f;
+                sa[179] = -0.19752644f;
+                sa[180] = -0.20586038f;
+                sa[181] = 0.4182875f;
+                sa[182] = 0.2482358f;
+                sa[183] = -0.4908482f;
+                sa[184] = 0.68441015f;
+                sa[185] = -0.04528531f;
+                sa[186] = -0.09572584f;
+                sa[187] = 0.03867046f;
+                sa[188] = 0.08490375f;
+                sa[189] = -1.0906936f;
+                sa[190] = -1.2894651f;
+                sa[191] = -0.19914639f;
+                sa[192] = 1.077024f;
+                sa[193] = 0.29877955f;
+                sa[194] = -0.40069225f;
+                sa[195] = -0.2854042f;
+                sa[196] = 0.28139883f;
+                sa[197] = -0.10392081f;
+                sa[198] = -0.041976083f;
+                sa[199] = 0.13678509f;
+                sa[200] = 0.9376484f;
+                sa[201] = -0.16905709f;
+                sa[202] = 0.35157448f;
+                sa[203] = 0.15690832f;
+                sa[204] = 0.12427834f;
+                sa[205] = -0.26721108f;
+                sa[206] = 0.6118868f;
+                sa[207] = 0.072299086f;
+                sa[208] = 0.53106153f;
+                sa[209] = 1.142232f;
+                sa[210] = -0.39768136f;
+                sa[211] = -0.21426964f;
+                sa[212] = -0.019149432f;
+                sa[213] = 0.8092459f;
+                sa[214] = -0.0674468f;
+                sa[215] = 0.28919065f;
+                sa[216] = -0.36919641f;
+                sa[217] = 0.05507727f;
+                sa[218] = 0.14519452f;
+                sa[219] = -0.52533823f;
+                sa[220] = -0.7797772f;
+                sa[221] = -0.3469264f;
+                sa[222] = 0.707302f;
+                sa[223] = 0.22048683f;
+                sa[224] = 0.40220046f;
+                sa[225] = -0.26338372f;
+                sa[226] = 0.378941f;
+                sa[227] = 0.035129223f;
+                sa[228] = 0.080655344f;
+                sa[229] = -0.1535705f;
+                sa[230] = 0.056610875f;
+                sa[231] = 0.20500518f;
+                sa[232] = -0.7027465f;
+                sa[233] = 0.24649948f;
+                sa[234] = -0.9937859f;
+                sa[235] = -0.32199737f;
+                sa[236] = 0.18675499f;
+                sa[237] = 0.38015142f;
+                sa[238] = 0.17305438f;
+                sa[239] = 0.0851966f;
+                sa[240] = 0.3915514f;
+                sa[241] = 0.62735f;
+                sa[242] = -0.25380194f;
+                sa[243] = 0.19216307f;
+                sa[244] = -0.4652849f;
+                sa[245] = 0.4789506f;
+                sa[246] = -0.51497793f;
+                sa[247] = 0.88295037f;
+                sa[248] = 0.11018504f;
+                sa[249] = -0.56116253f;
+                sa[250] = 0.19306365f;
+                sa[251] = -0.21494582f;
+                sa[252] = -0.5699773f;
+                sa[253] = -0.09165525f;
+                sa[254] = 0.34703144f;
+                sa[255] = -0.8866698f;
+            }
+        }
+    }
+
+    // Neuron weights connecting Rectifier and Softmax layer
+    static class EightOutThatcham_Weight_3 implements java.io.Serializable {
+        public static final float[] VALUES = new float[112];
+
+        static {
+            EightOutThatcham_Weight_3_0.fill(VALUES);
+        }
+
+        static final class EightOutThatcham_Weight_3_0 implements java.io.Serializable {
+            static final void fill(float[] sa) {
+                sa[0] = 1.8105798f;
+                sa[1] = 1.2026879f;
+                sa[2] = -1.8645366f;
+                sa[3] = 0.8214963f;
+                sa[4] = -1.7661586f;
+                sa[5] = 1.3240327f;
+                sa[6] = 0.72478366f;
+                sa[7] = -2.7864592f;
+                sa[8] = -0.20963545f;
+                sa[9] = 0.10122594f;
+                sa[10] = -2.8350737f;
+                sa[11] = 1.324861f;
+                sa[12] = 0.5096909f;
+                sa[13] = 2.5890663f;
+                sa[14] = -2.1981077f;
+                sa[15] = 2.7384748f;
+                sa[16] = 0.47537506f;
+                sa[17] = 1.2307333f;
+                sa[18] = 0.019732285f;
+                sa[19] = 0.656762f;
+                sa[20] = 0.67488813f;
+                sa[21] = -0.8388997f;
+                sa[22] = -0.21847102f;
+                sa[23] = 0.028322222f;
+                sa[24] = -0.40349135f;
+                sa[25] = -2.6458068f;
+                sa[26] = 2.5212069f;
+                sa[27] = -1.9208627f;
+                sa[28] = -1.3015349f;
+                sa[29] = -1.1329155f;
+                sa[30] = 1.4084613f;
+                sa[31] = 2.7894194f;
+                sa[32] = 1.1263647f;
+                sa[33] = -0.7882585f;
+                sa[34] = 2.2839458f;
+                sa[35] = -1.3883547f;
+                sa[36] = -0.7832809f;
+                sa[37] = -1.9435848f;
+                sa[38] = 2.2743073f;
+                sa[39] = 0.1887072f;
+                sa[40] = 0.63544184f;
+                sa[41] = 1.0058342f;
+                sa[42] = 1.4525685f;
+                sa[43] = -2.8347023f;
+                sa[44] = 0.7001996f;
+                sa[45] = 2.2519982f;
+                sa[46] = -2.105691f;
+                sa[47] = -3.455372f;
+                sa[48] = 2.1804142f;
+                sa[49] = -3.5894427f;
+                sa[50] = 1.3137832f;
+                sa[51] = -0.18200329f;
+                sa[52] = 1.8979901f;
+                sa[53] = 0.2704809f;
+                sa[54] = -1.3157085f;
+                sa[55] = -1.0763187f;
+                sa[56] = -1.2347815f;
+                sa[57] = 1.1091903f;
+                sa[58] = -1.7925823f;
+                sa[59] = -1.7764307f;
+                sa[60] = 0.94852734f;
+                sa[61] = 0.8279741f;
+                sa[62] = 1.7111917f;
+                sa[63] = -4.098287f;
+                sa[64] = -2.4018362f;
+                sa[65] = -1.157263f;
+                sa[66] = 0.17795916f;
+                sa[67] = 1.6564876f;
+                sa[68] = 0.30654815f;
+                sa[69] = 0.56338805f;
+                sa[70] = -0.4371159f;
+                sa[71] = -1.2820692f;
+                sa[72] = 2.1179495f;
+                sa[73] = 2.4738526f;
+                sa[74] = -0.30209896f;
+                sa[75] = -2.8697383f;
+                sa[76] = -1.6865107f;
+                sa[77] = -0.9489491f;
+                sa[78] = -2.0423155f;
+                sa[79] = -2.0394492f;
+                sa[80] = -1.7230911f;
+                sa[81] = -0.23028848f;
+                sa[82] = -1.2676866f;
+                sa[83] = -2.2610915f;
+                sa[84] = -0.22042125f;
+                sa[85] = 2.2562182f;
+                sa[86] = -0.07248238f;
+                sa[87] = 3.8626714f;
+                sa[88] = 1.1267186f;
+                sa[89] = -0.8535371f;
+                sa[90] = 0.7824602f;
+                sa[91] = -1.6263969f;
+                sa[92] = 1.0763052f;
+                sa[93] = 1.4489481f;
+                sa[94] = -2.1593065f;
+                sa[95] = 2.8134048f;
+                sa[96] = 1.5730311f;
+                sa[97] = 0.6305025f;
+                sa[98] = 2.4241266f;
+                sa[99] = -3.3230355f;
+                sa[100] = -1.5251545f;
+                sa[101] = -0.7908291f;
+                sa[102] = -1.6851833f;
+                sa[103] = -2.3930774f;
+                sa[104] = -1.5633608f;
+                sa[105] = 1.8691401f;
+                sa[106] = 0.94791883f;
+                sa[107] = 0.29040995f;
+                sa[108] = 2.0384517f;
+                sa[109] = -2.544098f;
+                sa[110] = -3.9406412f;
+                sa[111] = -2.4350886f;
+            }
+        }
+    }
+
+    // The class representing training column names
+    static class NamesHolder_EightOutThatcham implements java.io.Serializable {
+        public static final String[] VALUES = new String[8];
+
+        static {
+            NamesHolder_EightOutThatcham_0.fill(VALUES);
+        }
+
+        static final class NamesHolder_EightOutThatcham_0 implements java.io.Serializable {
+            static final void fill(String[] sa) {
+                sa[0] = "RSSI LEFT_ORIGIN";
+                sa[1] = "RSSI MIDDLE_ORIGIN";
+                sa[2] = "RSSI RIGHT_ORIGIN";
+                sa[3] = "RSSI TRUNK_ORIGIN";
+                sa[4] = "RSSI FRONTLEFT_ORIGIN";
+                sa[5] = "RSSI FRONTRIGHT_ORIGIN";
+                sa[6] = "RSSI REARLEFT_ORIGIN";
+                sa[7] = "RSSI REARRIGHT_ORIGIN";
+            }
+        }
+    }
+
+    // The class representing column class
+    static class EightOutThatcham_ColInfo_8 implements java.io.Serializable {
+        public static final String[] VALUES = new String[7];
+
+        static {
+            EightOutThatcham_ColInfo_8_0.fill(VALUES);
+        }
+
+        static final class EightOutThatcham_ColInfo_8_0 implements java.io.Serializable {
+            static final void fill(String[] sa) {
+                sa[0] = "back";
+                sa[1] = "front";
+                sa[2] = "left";
+                sa[3] = "lock";
+                sa[4] = "right";
+                sa[5] = "start";
+                sa[6] = "trunk";
+            }
+        }
+    }
+}

@@ -1,4 +1,3 @@
-package com.valeo.bleranging.machinelearningalgo.prediction.model;
 /*
   Licensed under the Apache License, Version 2.0
     http://www.apache.org/licenses/LICENSE-2.0.html
@@ -180,7 +179,7 @@ public class FourOutStart extends GenModel {
                 sa[3] = 0.07477302431151898;
             }
         }
-}
+    }
 
     static class NORMSUB implements java.io.Serializable {
         public static final double[] VALUES = new double[4];
@@ -198,612 +197,611 @@ public class FourOutStart extends GenModel {
             }
         }
     }
-}
 
-// Neuron activation values for Input layer
-class FourOutStart_Activation_0 implements java.io.Serializable {
-    public static final double[] VALUES = new double[4];
+    // Neuron activation values for Input layer
+    static class FourOutStart_Activation_0 implements java.io.Serializable {
+        public static final double[] VALUES = new double[4];
 
-    static {
-        FourOutStart_Activation_0_0.fill(VALUES);
+        static {
+            FourOutStart_Activation_0_0.fill(VALUES);
+        }
+
+        static final class FourOutStart_Activation_0_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.0;
+                sa[1] = 0.0;
+                sa[2] = 0.0;
+                sa[3] = 0.0;
+            }
+        }
     }
 
-    static final class FourOutStart_Activation_0_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.0;
-            sa[1] = 0.0;
-            sa[2] = 0.0;
-            sa[3] = 0.0;
-    }
-    }
-}
+    // Neuron activation values for Rectifier layer
+    static class FourOutStart_Activation_1 implements java.io.Serializable {
+        public static final double[] VALUES = new double[16];
 
-// Neuron activation values for Rectifier layer
-class FourOutStart_Activation_1 implements java.io.Serializable {
-    public static final double[] VALUES = new double[16];
+        static {
+            FourOutStart_Activation_1_0.fill(VALUES);
+        }
 
-    static {
-        FourOutStart_Activation_1_0.fill(VALUES);
+        static final class FourOutStart_Activation_1_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.0;
+                sa[1] = 0.0;
+                sa[2] = 0.0;
+                sa[3] = 0.0;
+                sa[4] = 0.0;
+                sa[5] = 0.0;
+                sa[6] = 0.0;
+                sa[7] = 0.0;
+                sa[8] = 0.0;
+                sa[9] = 0.0;
+                sa[10] = 0.0;
+                sa[11] = 0.0;
+                sa[12] = 0.0;
+                sa[13] = 0.0;
+                sa[14] = 0.0;
+                sa[15] = 0.0;
+            }
+        }
     }
 
-    static final class FourOutStart_Activation_1_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.0;
-            sa[1] = 0.0;
-            sa[2] = 0.0;
-            sa[3] = 0.0;
-            sa[4] = 0.0;
-            sa[5] = 0.0;
-            sa[6] = 0.0;
-            sa[7] = 0.0;
-            sa[8] = 0.0;
-            sa[9] = 0.0;
-            sa[10] = 0.0;
-            sa[11] = 0.0;
-            sa[12] = 0.0;
-            sa[13] = 0.0;
-            sa[14] = 0.0;
-            sa[15] = 0.0;
+    // Neuron activation values for Rectifier layer
+    static class FourOutStart_Activation_2 implements java.io.Serializable {
+        public static final double[] VALUES = new double[16];
+
+        static {
+            FourOutStart_Activation_2_0.fill(VALUES);
+        }
+
+        static final class FourOutStart_Activation_2_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.0;
+                sa[1] = 0.0;
+                sa[2] = 0.0;
+                sa[3] = 0.0;
+                sa[4] = 0.0;
+                sa[5] = 0.0;
+                sa[6] = 0.0;
+                sa[7] = 0.0;
+                sa[8] = 0.0;
+                sa[9] = 0.0;
+                sa[10] = 0.0;
+                sa[11] = 0.0;
+                sa[12] = 0.0;
+                sa[13] = 0.0;
+                sa[14] = 0.0;
+                sa[15] = 0.0;
+            }
+        }
+    }
+
+    // Neuron activation values for Softmax layer
+    static class FourOutStart_Activation_3 implements java.io.Serializable {
+        public static final double[] VALUES = new double[2];
+
+        static {
+            FourOutStart_Activation_3_0.fill(VALUES);
+        }
+
+        static final class FourOutStart_Activation_3_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.0;
+                sa[1] = 0.0;
+            }
+        }
+    }
+
+    // Neuron bias values for Input layer
+    static class FourOutStart_Bias_0 implements java.io.Serializable {
+        public static final double[] VALUES = null;
+    }
+
+    // Neuron bias values for Rectifier layer
+    static class FourOutStart_Bias_1 implements java.io.Serializable {
+        public static final double[] VALUES = new double[16];
+
+        static {
+            FourOutStart_Bias_1_0.fill(VALUES);
+        }
+
+        static final class FourOutStart_Bias_1_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.6663082187386062;
+                sa[1] = 0.4807231513724246;
+                sa[2] = 0.45976172758677997;
+                sa[3] = 0.4116378075128101;
+                sa[4] = 0.7390423248173461;
+                sa[5] = 0.3577876665773915;
+                sa[6] = 0.8085775928031019;
+                sa[7] = 0.30577958820943185;
+                sa[8] = 0.8860541123878859;
+                sa[9] = 0.17295872116873245;
+                sa[10] = 0.5145177324464801;
+                sa[11] = 0.6221268701541488;
+                sa[12] = 0.1762183575103035;
+                sa[13] = 0.3623818947092488;
+                sa[14] = 0.7369296558495672;
+                sa[15] = 0.22368850659357037;
+            }
+        }
+    }
+
+    // Neuron bias values for Rectifier layer
+    static class FourOutStart_Bias_2 implements java.io.Serializable {
+        public static final double[] VALUES = new double[16];
+
+        static {
+            FourOutStart_Bias_2_0.fill(VALUES);
+        }
+
+        static final class FourOutStart_Bias_2_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.9458704047786253;
+                sa[1] = 0.983939983578459;
+                sa[2] = 0.5173233183226456;
+                sa[3] = 0.8696391728086582;
+                sa[4] = 0.8924051413931247;
+                sa[5] = 0.9765501848671693;
+                sa[6] = 0.8598976518170417;
+                sa[7] = 0.9382001601291852;
+                sa[8] = 1.317037362901176;
+                sa[9] = 0.9736046392599396;
+                sa[10] = 0.9223172234152118;
+                sa[11] = 1.247594887968597;
+                sa[12] = 0.6975042320234052;
+                sa[13] = 1.1327688275037937;
+                sa[14] = 0.8246819597399474;
+                sa[15] = 1.0026011112094564;
+            }
+        }
+    }
+
+    // Neuron bias values for Softmax layer
+    static class FourOutStart_Bias_3 implements java.io.Serializable {
+        public static final double[] VALUES = new double[2];
+
+        static {
+            FourOutStart_Bias_3_0.fill(VALUES);
+        }
+
+        static final class FourOutStart_Bias_3_0 implements java.io.Serializable {
+            static final void fill(double[] sa) {
+                sa[0] = 0.014398010879654824;
+                sa[1] = 0.017646534029206226;
+            }
+        }
+    }
+
+    static class FourOutStart_Weight_0 implements java.io.Serializable {
+        public static final float[] VALUES = null;
+    }
+
+    // Neuron weights connecting Input and Rectifier layer
+    static class FourOutStart_Weight_1 implements java.io.Serializable {
+        public static final float[] VALUES = new float[64];
+
+        static {
+            FourOutStart_Weight_1_0.fill(VALUES);
+        }
+
+        static final class FourOutStart_Weight_1_0 implements java.io.Serializable {
+            static final void fill(float[] sa) {
+                sa[0] = 0.10255092f;
+                sa[1] = 0.3513692f;
+                sa[2] = 0.08228646f;
+                sa[3] = -1.0279945f;
+                sa[4] = -0.30035722f;
+                sa[5] = -0.9167202f;
+                sa[6] = -0.30499506f;
+                sa[7] = 0.39808977f;
+                sa[8] = 0.13536607f;
+                sa[9] = 0.033674385f;
+                sa[10] = 0.029942602f;
+                sa[11] = 1.1402216f;
+                sa[12] = 0.5475006f;
+                sa[13] = -0.23704371f;
+                sa[14] = -0.6662331f;
+                sa[15] = -0.0032241184f;
+                sa[16] = -0.12871999f;
+                sa[17] = -0.22357048f;
+                sa[18] = 1.0707699f;
+                sa[19] = 0.7929872f;
+                sa[20] = -0.2645107f;
+                sa[21] = 0.9143992f;
+                sa[22] = 0.3062822f;
+                sa[23] = 0.30278724f;
+                sa[24] = 0.00928957f;
+                sa[25] = 0.21422847f;
+                sa[26] = -0.17573974f;
+                sa[27] = 1.1700894f;
+                sa[28] = -0.9088182f;
+                sa[29] = 0.2167566f;
+                sa[30] = 0.03599561f;
+                sa[31] = 0.043896098f;
+                sa[32] = 0.39780712f;
+                sa[33] = -0.6528919f;
+                sa[34] = -0.20787205f;
+                sa[35] = -0.74016047f;
+                sa[36] = -0.435104f;
+                sa[37] = -0.35461316f;
+                sa[38] = 0.2363324f;
+                sa[39] = 0.10074472f;
+                sa[40] = 0.6150463f;
+                sa[41] = 0.08771271f;
+                sa[42] = 0.13572933f;
+                sa[43] = -0.17730792f;
+                sa[44] = -0.16484532f;
+                sa[45] = -0.08559937f;
+                sa[46] = 0.99639237f;
+                sa[47] = 0.5475344f;
+                sa[48] = -0.4135163f;
+                sa[49] = -0.5659688f;
+                sa[50] = 0.0490112f;
+                sa[51] = 0.05911984f;
+                sa[52] = 0.7536716f;
+                sa[53] = 0.016441297f;
+                sa[54] = -0.3978438f;
+                sa[55] = -0.5153686f;
+                sa[56] = 0.048571043f;
+                sa[57] = -0.48686138f;
+                sa[58] = 0.14040115f;
+                sa[59] = -0.4394916f;
+                sa[60] = 0.44285643f;
+                sa[61] = -1.3581004f;
+                sa[62] = -0.33776686f;
+                sa[63] = 0.91583073f;
+            }
+        }
+    }
+
+    // Neuron weights connecting Rectifier and Rectifier layer
+    static class FourOutStart_Weight_2 implements java.io.Serializable {
+        public static final float[] VALUES = new float[256];
+
+        static {
+            FourOutStart_Weight_2_0.fill(VALUES);
+        }
+
+        static final class FourOutStart_Weight_2_0 implements java.io.Serializable {
+            static final void fill(float[] sa) {
+                sa[0] = 0.31865782f;
+                sa[1] = -0.17259748f;
+                sa[2] = -0.088067405f;
+                sa[3] = -0.29942906f;
+                sa[4] = 0.4330194f;
+                sa[5] = -0.28242138f;
+                sa[6] = 0.32158288f;
+                sa[7] = -0.38528043f;
+                sa[8] = -0.045558657f;
+                sa[9] = -0.17846748f;
+                sa[10] = -0.70480055f;
+                sa[11] = -0.30387992f;
+                sa[12] = -0.14236884f;
+                sa[13] = 0.30364755f;
+                sa[14] = -0.4870142f;
+                sa[15] = 0.26964667f;
+                sa[16] = 0.13344905f;
+                sa[17] = 0.34193033f;
+                sa[18] = -0.796622f;
+                sa[19] = 0.62991387f;
+                sa[20] = -0.44377178f;
+                sa[21] = 0.26801798f;
+                sa[22] = -1.6306078f;
+                sa[23] = 0.6785243f;
+                sa[24] = -0.11820831f;
+                sa[25] = 0.7880652f;
+                sa[26] = 0.5686728f;
+                sa[27] = 0.17308664f;
+                sa[28] = 1.6202068f;
+                sa[29] = -0.32455978f;
+                sa[30] = 0.24279585f;
+                sa[31] = 0.70224273f;
+                sa[32] = 0.5806227f;
+                sa[33] = -0.23724242f;
+                sa[34] = -0.13947925f;
+                sa[35] = -0.5259237f;
+                sa[36] = 0.32125655f;
+                sa[37] = -0.24219395f;
+                sa[38] = 0.092747614f;
+                sa[39] = -0.04401686f;
+                sa[40] = -0.37384066f;
+                sa[41] = -0.3863146f;
+                sa[42] = -0.21122628f;
+                sa[43] = 0.24117036f;
+                sa[44] = -0.057761535f;
+                sa[45] = 0.33592114f;
+                sa[46] = -0.82460046f;
+                sa[47] = -0.025474733f;
+                sa[48] = 0.44566926f;
+                sa[49] = -0.037021983f;
+                sa[50] = -0.40116394f;
+                sa[51] = -0.20747352f;
+                sa[52] = 0.33711255f;
+                sa[53] = -1.0317137f;
+                sa[54] = 0.5014108f;
+                sa[55] = -0.7175507f;
+                sa[56] = -0.07477005f;
+                sa[57] = 0.060146324f;
+                sa[58] = -0.21942365f;
+                sa[59] = 0.3789169f;
+                sa[60] = -0.1590559f;
+                sa[61] = -0.019431561f;
+                sa[62] = -0.6189539f;
+                sa[63] = 0.21207374f;
+                sa[64] = -0.43136266f;
+                sa[65] = 0.70544606f;
+                sa[66] = -0.28826833f;
+                sa[67] = -0.21505763f;
+                sa[68] = 0.4241226f;
+                sa[69] = -0.12657669f;
+                sa[70] = -0.27675125f;
+                sa[71] = 0.021263357f;
+                sa[72] = -0.042359814f;
+                sa[73] = 0.3334343f;
+                sa[74] = 0.054530013f;
+                sa[75] = 0.2721811f;
+                sa[76] = 0.24925224f;
+                sa[77] = -1.4995611f;
+                sa[78] = -0.11768263f;
+                sa[79] = -0.7350283f;
+                sa[80] = -1.157314f;
+                sa[81] = 0.21167926f;
+                sa[82] = -0.1977726f;
+                sa[83] = 0.6312255f;
+                sa[84] = -0.3999975f;
+                sa[85] = 0.78441226f;
+                sa[86] = -0.34057567f;
+                sa[87] = 0.2863491f;
+                sa[88] = 0.039171167f;
+                sa[89] = -0.0572571f;
+                sa[90] = 0.59408414f;
+                sa[91] = -0.23394135f;
+                sa[92] = 0.20067266f;
+                sa[93] = -0.25064796f;
+                sa[94] = 0.8740865f;
+                sa[95] = 0.06208784f;
+                sa[96] = -0.23096044f;
+                sa[97] = -0.11129223f;
+                sa[98] = -0.23581623f;
+                sa[99] = 0.81056297f;
+                sa[100] = -0.26944923f;
+                sa[101] = 0.77799034f;
+                sa[102] = -0.18282694f;
+                sa[103] = 0.014738181f;
+                sa[104] = -0.12003531f;
+                sa[105] = 0.45402142f;
+                sa[106] = 0.02501501f;
+                sa[107] = -0.55467016f;
+                sa[108] = 0.6462251f;
+                sa[109] = -0.19619583f;
+                sa[110] = 0.3756735f;
+                sa[111] = -0.16759849f;
+                sa[112] = -1.220934f;
+                sa[113] = 0.43265626f;
+                sa[114] = -0.07191201f;
+                sa[115] = 0.27077818f;
+                sa[116] = -0.06453283f;
+                sa[117] = 0.9106348f;
+                sa[118] = -0.57675666f;
+                sa[119] = -0.25926837f;
+                sa[120] = 0.48004845f;
+                sa[121] = 0.60324365f;
+                sa[122] = 0.6427107f;
+                sa[123] = -0.3960432f;
+                sa[124] = 0.074106365f;
+                sa[125] = -0.4694708f;
+                sa[126] = 0.57638615f;
+                sa[127] = -0.23991786f;
+                sa[128] = 0.512705f;
+                sa[129] = 0.13388959f;
+                sa[130] = -0.07260018f;
+                sa[131] = -0.041095696f;
+                sa[132] = 0.17029035f;
+                sa[133] = -0.55305284f;
+                sa[134] = 0.7179175f;
+                sa[135] = -0.0816431f;
+                sa[136] = -0.4225582f;
+                sa[137] = -0.17585398f;
+                sa[138] = -0.6416794f;
+                sa[139] = 0.32158157f;
+                sa[140] = -0.099788055f;
+                sa[141] = 0.31189367f;
+                sa[142] = -0.23332873f;
+                sa[143] = 0.31693056f;
+                sa[144] = -1.2504847f;
+                sa[145] = 0.42523646f;
+                sa[146] = 0.24665485f;
+                sa[147] = 0.5149255f;
+                sa[148] = -0.3610652f;
+                sa[149] = 0.54054034f;
+                sa[150] = 0.40109494f;
+                sa[151] = -0.33398947f;
+                sa[152] = 0.471267f;
+                sa[153] = -0.2965037f;
+                sa[154] = 0.4713903f;
+                sa[155] = -0.6304958f;
+                sa[156] = -0.15980089f;
+                sa[157] = -0.26129916f;
+                sa[158] = 0.41256088f;
+                sa[159] = 0.2340012f;
+                sa[160] = -1.2270231f;
+                sa[161] = 0.53641236f;
+                sa[162] = -0.41151658f;
+                sa[163] = 0.30808637f;
+                sa[164] = -0.20974697f;
+                sa[165] = 0.943326f;
+                sa[166] = -0.2600751f;
+                sa[167] = 0.14083207f;
+                sa[168] = 0.38748077f;
+                sa[169] = 0.55589414f;
+                sa[170] = 0.6568486f;
+                sa[171] = -0.3340154f;
+                sa[172] = 0.31788373f;
+                sa[173] = -0.2440955f;
+                sa[174] = 0.7811365f;
+                sa[175] = -0.31099397f;
+                sa[176] = 0.49760672f;
+                sa[177] = 0.30716014f;
+                sa[178] = -0.21612237f;
+                sa[179] = -0.4049603f;
+                sa[180] = 0.02450257f;
+                sa[181] = -1.0421298f;
+                sa[182] = 0.3372435f;
+                sa[183] = -0.21636906f;
+                sa[184] = 0.21797928f;
+                sa[185] = -0.6849666f;
+                sa[186] = -0.11271833f;
+                sa[187] = -0.10214602f;
+                sa[188] = -0.87946486f;
+                sa[189] = -0.16328225f;
+                sa[190] = -0.17156117f;
+                sa[191] = -0.49263284f;
+                sa[192] = 0.41762057f;
+                sa[193] = -0.7386794f;
+                sa[194] = 0.45938134f;
+                sa[195] = 0.3946816f;
+                sa[196] = -0.27347362f;
+                sa[197] = 0.085765265f;
+                sa[198] = 0.057925466f;
+                sa[199] = -0.29584596f;
+                sa[200] = -0.43099454f;
+                sa[201] = -0.8592443f;
+                sa[202] = -0.33769116f;
+                sa[203] = -0.019311666f;
+                sa[204] = -0.968095f;
+                sa[205] = 0.10191317f;
+                sa[206] = -0.63575226f;
+                sa[207] = 0.081949085f;
+                sa[208] = -0.028469468f;
+                sa[209] = -0.32735944f;
+                sa[210] = 0.099071406f;
+                sa[211] = -0.54732174f;
+                sa[212] = 0.25964552f;
+                sa[213] = -0.865075f;
+                sa[214] = 0.066468455f;
+                sa[215] = -0.56150967f;
+                sa[216] = 0.5122704f;
+                sa[217] = -0.29517695f;
+                sa[218] = -0.34475994f;
+                sa[219] = -0.1341568f;
+                sa[220] = -0.89136344f;
+                sa[221] = 0.2091518f;
+                sa[222] = 0.21625535f;
+                sa[223] = -0.8312644f;
+                sa[224] = 0.12647994f;
+                sa[225] = 0.2955674f;
+                sa[226] = 0.48114616f;
+                sa[227] = -0.4563128f;
+                sa[228] = 0.113458954f;
+                sa[229] = -0.18373889f;
+                sa[230] = 0.32784352f;
+                sa[231] = 0.025755318f;
+                sa[232] = -0.13252446f;
+                sa[233] = -0.42385995f;
+                sa[234] = -0.11781359f;
+                sa[235] = 0.3454854f;
+                sa[236] = -0.3764519f;
+                sa[237] = 0.348253f;
+                sa[238] = -0.71969104f;
+                sa[239] = 0.089023486f;
+                sa[240] = 0.0822225f;
+                sa[241] = -0.8846358f;
+                sa[242] = -0.07433534f;
+                sa[243] = 0.23748006f;
+                sa[244] = -0.38315272f;
+                sa[245] = 0.00955204f;
+                sa[246] = 0.38470963f;
+                sa[247] = 0.06433069f;
+                sa[248] = -0.09283952f;
+                sa[249] = -0.40871248f;
+                sa[250] = 0.025580725f;
+                sa[251] = -0.16731305f;
+                sa[252] = -1.2986419f;
+                sa[253] = -0.1201871f;
+                sa[254] = -0.46922144f;
+                sa[255] = -0.9283375f;
+            }
+        }
+    }
+
+    // Neuron weights connecting Rectifier and Softmax layer
+    static class FourOutStart_Weight_3 implements java.io.Serializable {
+        public static final float[] VALUES = new float[32];
+
+        static {
+            FourOutStart_Weight_3_0.fill(VALUES);
+        }
+
+        static final class FourOutStart_Weight_3_0 implements java.io.Serializable {
+            static final void fill(float[] sa) {
+                sa[0] = -0.29749727f;
+                sa[1] = -3.4103682f;
+                sa[2] = 0.67301196f;
+                sa[3] = 2.201041f;
+                sa[4] = -1.607899f;
+                sa[5] = -0.9181869f;
+                sa[6] = -0.7508377f;
+                sa[7] = -1.0120995f;
+                sa[8] = 0.7005839f;
+                sa[9] = -2.372551f;
+                sa[10] = -1.586809f;
+                sa[11] = 1.8451465f;
+                sa[12] = 2.4095037f;
+                sa[13] = 0.17256583f;
+                sa[14] = 2.0099404f;
+                sa[15] = 1.4237895f;
+                sa[16] = -0.7671515f;
+                sa[17] = -0.27451825f;
+                sa[18] = -1.1359109f;
+                sa[19] = 0.27480313f;
+                sa[20] = 1.3109691f;
+                sa[21] = 1.1708528f;
+                sa[22] = -1.0299757f;
+                sa[23] = 1.5707284f;
+                sa[24] = -1.6445243f;
+                sa[25] = 0.90565985f;
+                sa[26] = 0.419404f;
+                sa[27] = -0.1315234f;
+                sa[28] = -1.2382387f;
+                sa[29] = -1.6571248f;
+                sa[30] = 0.59061307f;
+                sa[31] = -2.5951443f;
+            }
+        }
+    }
+
+    // The class representing training column names
+    static class NamesHolder_FourOutStart implements java.io.Serializable {
+        public static final String[] VALUES = new String[4];
+
+        static {
+            NamesHolder_FourOutStart_0.fill(VALUES);
+        }
+
+        static final class NamesHolder_FourOutStart_0 implements java.io.Serializable {
+            static final void fill(String[] sa) {
+                sa[0] = "RSSI LEFT_ORIGIN";
+                sa[1] = "RSSI MIDDLE_ORIGIN";
+                sa[2] = "RSSI RIGHT_ORIGIN";
+                sa[3] = "RSSI TRUNK_ORIGIN";
+            }
+        }
+    }
+
+    // The class representing column class
+    static class FourOutStart_ColInfo_4 implements java.io.Serializable {
+        public static final String[] VALUES = new String[2];
+
+        static {
+            FourOutStart_ColInfo_4_0.fill(VALUES);
+        }
+
+        static final class FourOutStart_ColInfo_4_0 implements java.io.Serializable {
+            static final void fill(String[] sa) {
+                sa[0] = "inside";
+                sa[1] = "outside";
+            }
         }
     }
 }
-
-// Neuron activation values for Rectifier layer
-class FourOutStart_Activation_2 implements java.io.Serializable {
-    public static final double[] VALUES = new double[16];
-
-    static {
-        FourOutStart_Activation_2_0.fill(VALUES);
-    }
-
-    static final class FourOutStart_Activation_2_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.0;
-            sa[1] = 0.0;
-            sa[2] = 0.0;
-            sa[3] = 0.0;
-            sa[4] = 0.0;
-            sa[5] = 0.0;
-            sa[6] = 0.0;
-            sa[7] = 0.0;
-            sa[8] = 0.0;
-            sa[9] = 0.0;
-            sa[10] = 0.0;
-            sa[11] = 0.0;
-            sa[12] = 0.0;
-            sa[13] = 0.0;
-            sa[14] = 0.0;
-            sa[15] = 0.0;
-        }
-    }
-}
-
-// Neuron activation values for Softmax layer
-class FourOutStart_Activation_3 implements java.io.Serializable {
-    public static final double[] VALUES = new double[2];
-
-    static {
-        FourOutStart_Activation_3_0.fill(VALUES);
-    }
-
-    static final class FourOutStart_Activation_3_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.0;
-            sa[1] = 0.0;
-        }
-    }
-}
-
-// Neuron bias values for Input layer
-class FourOutStart_Bias_0 implements java.io.Serializable {
-    public static final double[] VALUES = null;
-}
-
-// Neuron bias values for Rectifier layer
-class FourOutStart_Bias_1 implements java.io.Serializable {
-    public static final double[] VALUES = new double[16];
-
-    static {
-        FourOutStart_Bias_1_0.fill(VALUES);
-    }
-
-    static final class FourOutStart_Bias_1_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.6663082187386062;
-            sa[1] = 0.4807231513724246;
-            sa[2] = 0.45976172758677997;
-            sa[3] = 0.4116378075128101;
-            sa[4] = 0.7390423248173461;
-            sa[5] = 0.3577876665773915;
-            sa[6] = 0.8085775928031019;
-            sa[7] = 0.30577958820943185;
-            sa[8] = 0.8860541123878859;
-            sa[9] = 0.17295872116873245;
-            sa[10] = 0.5145177324464801;
-            sa[11] = 0.6221268701541488;
-            sa[12] = 0.1762183575103035;
-            sa[13] = 0.3623818947092488;
-            sa[14] = 0.7369296558495672;
-            sa[15] = 0.22368850659357037;
-        }
-    }
-}
-
-// Neuron bias values for Rectifier layer
-class FourOutStart_Bias_2 implements java.io.Serializable {
-    public static final double[] VALUES = new double[16];
-
-    static {
-        FourOutStart_Bias_2_0.fill(VALUES);
-    }
-
-    static final class FourOutStart_Bias_2_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.9458704047786253;
-            sa[1] = 0.983939983578459;
-            sa[2] = 0.5173233183226456;
-            sa[3] = 0.8696391728086582;
-            sa[4] = 0.8924051413931247;
-            sa[5] = 0.9765501848671693;
-            sa[6] = 0.8598976518170417;
-            sa[7] = 0.9382001601291852;
-            sa[8] = 1.317037362901176;
-            sa[9] = 0.9736046392599396;
-            sa[10] = 0.9223172234152118;
-            sa[11] = 1.247594887968597;
-            sa[12] = 0.6975042320234052;
-            sa[13] = 1.1327688275037937;
-            sa[14] = 0.8246819597399474;
-            sa[15] = 1.0026011112094564;
-        }
-    }
-}
-
-// Neuron bias values for Softmax layer
-class FourOutStart_Bias_3 implements java.io.Serializable {
-    public static final double[] VALUES = new double[2];
-
-    static {
-        FourOutStart_Bias_3_0.fill(VALUES);
-    }
-
-    static final class FourOutStart_Bias_3_0 implements java.io.Serializable {
-        static final void fill(double[] sa) {
-            sa[0] = 0.014398010879654824;
-            sa[1] = 0.017646534029206226;
-        }
-    }
-}
-
-class FourOutStart_Weight_0 implements java.io.Serializable {
-    public static final float[] VALUES = null;
-}
-
-// Neuron weights connecting Input and Rectifier layer
-class FourOutStart_Weight_1 implements java.io.Serializable {
-    public static final float[] VALUES = new float[64];
-
-    static {
-        FourOutStart_Weight_1_0.fill(VALUES);
-    }
-
-    static final class FourOutStart_Weight_1_0 implements java.io.Serializable {
-        static final void fill(float[] sa) {
-            sa[0] = 0.10255092f;
-            sa[1] = 0.3513692f;
-            sa[2] = 0.08228646f;
-            sa[3] = -1.0279945f;
-            sa[4] = -0.30035722f;
-            sa[5] = -0.9167202f;
-            sa[6] = -0.30499506f;
-            sa[7] = 0.39808977f;
-            sa[8] = 0.13536607f;
-            sa[9] = 0.033674385f;
-            sa[10] = 0.029942602f;
-            sa[11] = 1.1402216f;
-            sa[12] = 0.5475006f;
-            sa[13] = -0.23704371f;
-            sa[14] = -0.6662331f;
-            sa[15] = -0.0032241184f;
-            sa[16] = -0.12871999f;
-            sa[17] = -0.22357048f;
-            sa[18] = 1.0707699f;
-            sa[19] = 0.7929872f;
-            sa[20] = -0.2645107f;
-            sa[21] = 0.9143992f;
-            sa[22] = 0.3062822f;
-            sa[23] = 0.30278724f;
-            sa[24] = 0.00928957f;
-            sa[25] = 0.21422847f;
-            sa[26] = -0.17573974f;
-            sa[27] = 1.1700894f;
-            sa[28] = -0.9088182f;
-            sa[29] = 0.2167566f;
-            sa[30] = 0.03599561f;
-            sa[31] = 0.043896098f;
-            sa[32] = 0.39780712f;
-            sa[33] = -0.6528919f;
-            sa[34] = -0.20787205f;
-            sa[35] = -0.74016047f;
-            sa[36] = -0.435104f;
-            sa[37] = -0.35461316f;
-            sa[38] = 0.2363324f;
-            sa[39] = 0.10074472f;
-            sa[40] = 0.6150463f;
-            sa[41] = 0.08771271f;
-            sa[42] = 0.13572933f;
-            sa[43] = -0.17730792f;
-            sa[44] = -0.16484532f;
-            sa[45] = -0.08559937f;
-            sa[46] = 0.99639237f;
-            sa[47] = 0.5475344f;
-            sa[48] = -0.4135163f;
-            sa[49] = -0.5659688f;
-            sa[50] = 0.0490112f;
-            sa[51] = 0.05911984f;
-            sa[52] = 0.7536716f;
-            sa[53] = 0.016441297f;
-            sa[54] = -0.3978438f;
-            sa[55] = -0.5153686f;
-            sa[56] = 0.048571043f;
-            sa[57] = -0.48686138f;
-            sa[58] = 0.14040115f;
-            sa[59] = -0.4394916f;
-            sa[60] = 0.44285643f;
-            sa[61] = -1.3581004f;
-            sa[62] = -0.33776686f;
-            sa[63] = 0.91583073f;
-        }
-    }
-}
-
-// Neuron weights connecting Rectifier and Rectifier layer
-class FourOutStart_Weight_2 implements java.io.Serializable {
-    public static final float[] VALUES = new float[256];
-
-    static {
-        FourOutStart_Weight_2_0.fill(VALUES);
-    }
-
-    static final class FourOutStart_Weight_2_0 implements java.io.Serializable {
-        static final void fill(float[] sa) {
-            sa[0] = 0.31865782f;
-            sa[1] = -0.17259748f;
-            sa[2] = -0.088067405f;
-            sa[3] = -0.29942906f;
-            sa[4] = 0.4330194f;
-            sa[5] = -0.28242138f;
-            sa[6] = 0.32158288f;
-            sa[7] = -0.38528043f;
-            sa[8] = -0.045558657f;
-            sa[9] = -0.17846748f;
-            sa[10] = -0.70480055f;
-            sa[11] = -0.30387992f;
-            sa[12] = -0.14236884f;
-            sa[13] = 0.30364755f;
-            sa[14] = -0.4870142f;
-            sa[15] = 0.26964667f;
-            sa[16] = 0.13344905f;
-            sa[17] = 0.34193033f;
-            sa[18] = -0.796622f;
-            sa[19] = 0.62991387f;
-            sa[20] = -0.44377178f;
-            sa[21] = 0.26801798f;
-            sa[22] = -1.6306078f;
-            sa[23] = 0.6785243f;
-            sa[24] = -0.11820831f;
-            sa[25] = 0.7880652f;
-            sa[26] = 0.5686728f;
-            sa[27] = 0.17308664f;
-            sa[28] = 1.6202068f;
-            sa[29] = -0.32455978f;
-            sa[30] = 0.24279585f;
-            sa[31] = 0.70224273f;
-            sa[32] = 0.5806227f;
-            sa[33] = -0.23724242f;
-            sa[34] = -0.13947925f;
-            sa[35] = -0.5259237f;
-            sa[36] = 0.32125655f;
-            sa[37] = -0.24219395f;
-            sa[38] = 0.092747614f;
-            sa[39] = -0.04401686f;
-            sa[40] = -0.37384066f;
-            sa[41] = -0.3863146f;
-            sa[42] = -0.21122628f;
-            sa[43] = 0.24117036f;
-            sa[44] = -0.057761535f;
-            sa[45] = 0.33592114f;
-            sa[46] = -0.82460046f;
-            sa[47] = -0.025474733f;
-            sa[48] = 0.44566926f;
-            sa[49] = -0.037021983f;
-            sa[50] = -0.40116394f;
-            sa[51] = -0.20747352f;
-            sa[52] = 0.33711255f;
-            sa[53] = -1.0317137f;
-            sa[54] = 0.5014108f;
-            sa[55] = -0.7175507f;
-            sa[56] = -0.07477005f;
-            sa[57] = 0.060146324f;
-            sa[58] = -0.21942365f;
-            sa[59] = 0.3789169f;
-            sa[60] = -0.1590559f;
-            sa[61] = -0.019431561f;
-            sa[62] = -0.6189539f;
-            sa[63] = 0.21207374f;
-            sa[64] = -0.43136266f;
-            sa[65] = 0.70544606f;
-            sa[66] = -0.28826833f;
-            sa[67] = -0.21505763f;
-            sa[68] = 0.4241226f;
-            sa[69] = -0.12657669f;
-            sa[70] = -0.27675125f;
-            sa[71] = 0.021263357f;
-            sa[72] = -0.042359814f;
-            sa[73] = 0.3334343f;
-            sa[74] = 0.054530013f;
-            sa[75] = 0.2721811f;
-            sa[76] = 0.24925224f;
-            sa[77] = -1.4995611f;
-            sa[78] = -0.11768263f;
-            sa[79] = -0.7350283f;
-            sa[80] = -1.157314f;
-            sa[81] = 0.21167926f;
-            sa[82] = -0.1977726f;
-            sa[83] = 0.6312255f;
-            sa[84] = -0.3999975f;
-            sa[85] = 0.78441226f;
-            sa[86] = -0.34057567f;
-            sa[87] = 0.2863491f;
-            sa[88] = 0.039171167f;
-            sa[89] = -0.0572571f;
-            sa[90] = 0.59408414f;
-            sa[91] = -0.23394135f;
-            sa[92] = 0.20067266f;
-            sa[93] = -0.25064796f;
-            sa[94] = 0.8740865f;
-            sa[95] = 0.06208784f;
-            sa[96] = -0.23096044f;
-            sa[97] = -0.11129223f;
-            sa[98] = -0.23581623f;
-            sa[99] = 0.81056297f;
-            sa[100] = -0.26944923f;
-            sa[101] = 0.77799034f;
-            sa[102] = -0.18282694f;
-            sa[103] = 0.014738181f;
-            sa[104] = -0.12003531f;
-            sa[105] = 0.45402142f;
-            sa[106] = 0.02501501f;
-            sa[107] = -0.55467016f;
-            sa[108] = 0.6462251f;
-            sa[109] = -0.19619583f;
-            sa[110] = 0.3756735f;
-            sa[111] = -0.16759849f;
-            sa[112] = -1.220934f;
-            sa[113] = 0.43265626f;
-            sa[114] = -0.07191201f;
-            sa[115] = 0.27077818f;
-            sa[116] = -0.06453283f;
-            sa[117] = 0.9106348f;
-            sa[118] = -0.57675666f;
-            sa[119] = -0.25926837f;
-            sa[120] = 0.48004845f;
-            sa[121] = 0.60324365f;
-            sa[122] = 0.6427107f;
-            sa[123] = -0.3960432f;
-            sa[124] = 0.074106365f;
-            sa[125] = -0.4694708f;
-            sa[126] = 0.57638615f;
-            sa[127] = -0.23991786f;
-            sa[128] = 0.512705f;
-            sa[129] = 0.13388959f;
-            sa[130] = -0.07260018f;
-            sa[131] = -0.041095696f;
-            sa[132] = 0.17029035f;
-            sa[133] = -0.55305284f;
-            sa[134] = 0.7179175f;
-            sa[135] = -0.0816431f;
-            sa[136] = -0.4225582f;
-            sa[137] = -0.17585398f;
-            sa[138] = -0.6416794f;
-            sa[139] = 0.32158157f;
-            sa[140] = -0.099788055f;
-            sa[141] = 0.31189367f;
-            sa[142] = -0.23332873f;
-            sa[143] = 0.31693056f;
-            sa[144] = -1.2504847f;
-            sa[145] = 0.42523646f;
-            sa[146] = 0.24665485f;
-            sa[147] = 0.5149255f;
-            sa[148] = -0.3610652f;
-            sa[149] = 0.54054034f;
-            sa[150] = 0.40109494f;
-            sa[151] = -0.33398947f;
-            sa[152] = 0.471267f;
-            sa[153] = -0.2965037f;
-            sa[154] = 0.4713903f;
-            sa[155] = -0.6304958f;
-            sa[156] = -0.15980089f;
-            sa[157] = -0.26129916f;
-            sa[158] = 0.41256088f;
-            sa[159] = 0.2340012f;
-            sa[160] = -1.2270231f;
-            sa[161] = 0.53641236f;
-            sa[162] = -0.41151658f;
-            sa[163] = 0.30808637f;
-            sa[164] = -0.20974697f;
-            sa[165] = 0.943326f;
-            sa[166] = -0.2600751f;
-            sa[167] = 0.14083207f;
-            sa[168] = 0.38748077f;
-            sa[169] = 0.55589414f;
-            sa[170] = 0.6568486f;
-            sa[171] = -0.3340154f;
-            sa[172] = 0.31788373f;
-            sa[173] = -0.2440955f;
-            sa[174] = 0.7811365f;
-            sa[175] = -0.31099397f;
-            sa[176] = 0.49760672f;
-            sa[177] = 0.30716014f;
-            sa[178] = -0.21612237f;
-            sa[179] = -0.4049603f;
-            sa[180] = 0.02450257f;
-            sa[181] = -1.0421298f;
-            sa[182] = 0.3372435f;
-            sa[183] = -0.21636906f;
-            sa[184] = 0.21797928f;
-            sa[185] = -0.6849666f;
-            sa[186] = -0.11271833f;
-            sa[187] = -0.10214602f;
-            sa[188] = -0.87946486f;
-            sa[189] = -0.16328225f;
-            sa[190] = -0.17156117f;
-            sa[191] = -0.49263284f;
-            sa[192] = 0.41762057f;
-            sa[193] = -0.7386794f;
-            sa[194] = 0.45938134f;
-            sa[195] = 0.3946816f;
-            sa[196] = -0.27347362f;
-            sa[197] = 0.085765265f;
-            sa[198] = 0.057925466f;
-            sa[199] = -0.29584596f;
-            sa[200] = -0.43099454f;
-            sa[201] = -0.8592443f;
-            sa[202] = -0.33769116f;
-            sa[203] = -0.019311666f;
-            sa[204] = -0.968095f;
-            sa[205] = 0.10191317f;
-            sa[206] = -0.63575226f;
-            sa[207] = 0.081949085f;
-            sa[208] = -0.028469468f;
-            sa[209] = -0.32735944f;
-            sa[210] = 0.099071406f;
-            sa[211] = -0.54732174f;
-            sa[212] = 0.25964552f;
-            sa[213] = -0.865075f;
-            sa[214] = 0.066468455f;
-            sa[215] = -0.56150967f;
-            sa[216] = 0.5122704f;
-            sa[217] = -0.29517695f;
-            sa[218] = -0.34475994f;
-            sa[219] = -0.1341568f;
-            sa[220] = -0.89136344f;
-            sa[221] = 0.2091518f;
-            sa[222] = 0.21625535f;
-            sa[223] = -0.8312644f;
-            sa[224] = 0.12647994f;
-            sa[225] = 0.2955674f;
-            sa[226] = 0.48114616f;
-            sa[227] = -0.4563128f;
-            sa[228] = 0.113458954f;
-            sa[229] = -0.18373889f;
-            sa[230] = 0.32784352f;
-            sa[231] = 0.025755318f;
-            sa[232] = -0.13252446f;
-            sa[233] = -0.42385995f;
-            sa[234] = -0.11781359f;
-            sa[235] = 0.3454854f;
-            sa[236] = -0.3764519f;
-            sa[237] = 0.348253f;
-            sa[238] = -0.71969104f;
-            sa[239] = 0.089023486f;
-            sa[240] = 0.0822225f;
-            sa[241] = -0.8846358f;
-            sa[242] = -0.07433534f;
-            sa[243] = 0.23748006f;
-            sa[244] = -0.38315272f;
-            sa[245] = 0.00955204f;
-            sa[246] = 0.38470963f;
-            sa[247] = 0.06433069f;
-            sa[248] = -0.09283952f;
-            sa[249] = -0.40871248f;
-            sa[250] = 0.025580725f;
-            sa[251] = -0.16731305f;
-            sa[252] = -1.2986419f;
-            sa[253] = -0.1201871f;
-            sa[254] = -0.46922144f;
-            sa[255] = -0.9283375f;
-        }
-    }
-}
-
-// Neuron weights connecting Rectifier and Softmax layer
-class FourOutStart_Weight_3 implements java.io.Serializable {
-    public static final float[] VALUES = new float[32];
-
-    static {
-        FourOutStart_Weight_3_0.fill(VALUES);
-    }
-
-    static final class FourOutStart_Weight_3_0 implements java.io.Serializable {
-        static final void fill(float[] sa) {
-            sa[0] = -0.29749727f;
-            sa[1] = -3.4103682f;
-            sa[2] = 0.67301196f;
-            sa[3] = 2.201041f;
-            sa[4] = -1.607899f;
-            sa[5] = -0.9181869f;
-            sa[6] = -0.7508377f;
-            sa[7] = -1.0120995f;
-            sa[8] = 0.7005839f;
-            sa[9] = -2.372551f;
-            sa[10] = -1.586809f;
-            sa[11] = 1.8451465f;
-            sa[12] = 2.4095037f;
-            sa[13] = 0.17256583f;
-            sa[14] = 2.0099404f;
-            sa[15] = 1.4237895f;
-            sa[16] = -0.7671515f;
-            sa[17] = -0.27451825f;
-            sa[18] = -1.1359109f;
-            sa[19] = 0.27480313f;
-            sa[20] = 1.3109691f;
-            sa[21] = 1.1708528f;
-            sa[22] = -1.0299757f;
-            sa[23] = 1.5707284f;
-            sa[24] = -1.6445243f;
-            sa[25] = 0.90565985f;
-            sa[26] = 0.419404f;
-            sa[27] = -0.1315234f;
-            sa[28] = -1.2382387f;
-            sa[29] = -1.6571248f;
-            sa[30] = 0.59061307f;
-            sa[31] = -2.5951443f;
-        }
-    }
-}
-
-// The class representing training column names
-class NamesHolder_FourOutStart implements java.io.Serializable {
-    public static final String[] VALUES = new String[4];
-
-    static {
-        NamesHolder_FourOutStart_0.fill(VALUES);
-    }
-
-    static final class NamesHolder_FourOutStart_0 implements java.io.Serializable {
-        static final void fill(String[] sa) {
-            sa[0] = "RSSI LEFT_ORIGIN";
-            sa[1] = "RSSI MIDDLE_ORIGIN";
-            sa[2] = "RSSI RIGHT_ORIGIN";
-            sa[3] = "RSSI TRUNK_ORIGIN";
-        }
-    }
-}
-
-// The class representing column class
-class FourOutStart_ColInfo_4 implements java.io.Serializable {
-    public static final String[] VALUES = new String[2];
-
-    static {
-        FourOutStart_ColInfo_4_0.fill(VALUES);
-    }
-
-    static final class FourOutStart_ColInfo_4_0 implements java.io.Serializable {
-        static final void fill(String[] sa) {
-            sa[0] = "inside";
-            sa[1] = "outside";
-        }
-    }
-}
-
