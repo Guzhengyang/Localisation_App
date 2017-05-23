@@ -49,6 +49,7 @@
     <string name="VIN">VF3ATTENTDS180704</string>
     <string name="VIN2">VF3ATTENTDS180705</string>
     <string name="VIN3">VF3ATTENTDS180706</string>
+    <string name="VIN4">VF3ATTENTDS180707</string>
     <string name="permision_available">permission granted</string>
     <string name="permissions_not_granted">permissions not granted</string>
     <string name="mail">Email address</string>
