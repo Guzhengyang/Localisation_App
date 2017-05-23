@@ -273,19 +273,21 @@ public class RkeFragment extends Fragment implements RkeListener {
             savedLockStatus = lockStatus;
             PSALogs.d("DragDrop", "call updateCarDoorStatus when user was dragging, to apply savedLockStatus " + savedLockStatus);
         } else {
-            if (lockStatus) {
-                PSALogs.d("NIH rearm", "update lock");
-                car_door_status.setText(getString(R.string.vehicle_locked));
-                carDoorStatus = CarDoorStatus.LOCKED;
-                placeSelectorOver(frame_vehicle_locked);
-                startButtonAnimation(false);
-            } else {
-                PSALogs.d("NIH rearm", "update unlock");
-                car_door_status.setText(getString(R.string.vehicle_unlocked));
-                carDoorStatus = CarDoorStatus.UNLOCKED;
-                placeSelectorOver(frame_vehicle_unlocked);
-                // animation waves start_button
-                startButtonAnimation(true);
+            if (isAdded()) {
+                if (lockStatus) {
+                    PSALogs.d("NIH rearm", "update lock");
+                    car_door_status.setText(getString(R.string.vehicle_locked));
+                    carDoorStatus = CarDoorStatus.LOCKED;
+                    placeSelectorOver(frame_vehicle_locked);
+                    startButtonAnimation(false);
+                } else {
+                    PSALogs.d("NIH rearm", "update unlock");
+                    car_door_status.setText(getString(R.string.vehicle_unlocked));
+                    carDoorStatus = CarDoorStatus.UNLOCKED;
+                    placeSelectorOver(frame_vehicle_unlocked);
+                    // animation waves start_button
+                    startButtonAnimation(true);
+                }
             }
         }
         mListener.updateCarDrawable();
