@@ -30,6 +30,26 @@ public class TextUtils {
     }
 
     /**
+     * Print the bytes of a tab of bytes
+     * @param bytesTab the byte tab to print
+     * @return the string representation of the tab of bytes
+     */
+    public static String printAddressBytes(byte[] bytesTab) {
+        if (bytesTab != null && bytesTab.length > 0) {
+            StringBuilder sb = new StringBuilder((bytesTab.length * 3) - 1);
+            for (int i = 0; i < bytesTab.length; i++) {
+                byte b = bytesTab[i];
+                sb.append(String.format("%02X", b));
+                if (i < bytesTab.length) {
+                    sb.append(":");
+                }
+            }
+            return sb.toString();
+        }
+        return "";
+    }
+
+    /**
      * Color a text with different color if the boolean is true or false
      * @param active the boolean to check to get the right color
      * @param text the text to color

@@ -18,9 +18,9 @@ public class Trx {
     private final String trxName;
     private final List<Antenna> antennaList;
     private final SparseIntArray antennaIdArray;
+    private String trxAddress;
     private Antenna currentAntenna;
     private int carRssi;
-    private Antenna.BLEChannel carChannel;
 
     public Trx(int trxNumber, String trxName) {
         this.trxNumber = trxNumber;
@@ -110,11 +110,9 @@ public class Trx {
     /**
      * Save the car rssi and ble channel
      * @param rssi the rssi to save
-     * @param bleChannel the ble channel of the received rssi
      */
-    public void saveCarRssi(final int rssi, final Antenna.BLEChannel bleChannel) {
+    public void saveCarRssi(final int rssi) {
         this.carRssi = rssi;
-        this.carChannel = bleChannel;
     }
 
     /**
@@ -168,7 +166,11 @@ public class Trx {
         return carRssi;
     }
 
-    public Antenna.BLEChannel getCarChannel() {
-        return carChannel;
+    public String getTrxAddress() {
+        return trxAddress;
+    }
+
+    public void setTrxAddress(String trxAddress) {
+        this.trxAddress = trxAddress;
     }
 }

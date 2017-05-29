@@ -106,11 +106,19 @@ public abstract class ConnectedCar {
      *
      * @param trxNumber  the trx that sent the signal
      * @param rssi       the rssi value to save
-     * @param bleChannel the ble Channel
+     * @param address    the trx mac address to compare
      */
-    public void saveCarRssi(final int trxNumber, final int rssi, final Antenna.BLEChannel bleChannel) {
+    public void saveCarRssi(final int trxNumber, final int rssi, final String address) {
         if (trxLinkedHMap.get(trxNumber) != null) {
-            trxLinkedHMap.get(trxNumber).saveCarRssi(rssi, bleChannel);
+            if (trxLinkedHMap.get(trxNumber).getTrxAddress() == null
+                    && trxLinkedHMap.get(trxNumber).getTrxAddress().isEmpty()) {
+                trxLinkedHMap.get(trxNumber).setTrxAddress(address);
+            }
+            if (trxLinkedHMap.get(trxNumber).getTrxAddress().equalsIgnoreCase(address)) {
+                trxLinkedHMap.get(trxNumber).saveCarRssi(rssi);
+            } else {
+                PSALogs.d("NIH", "trx address do not match the saved address");
+            }
         } else {
             PSALogs.d("NIH", "trx is null, cannot save car rssi");
         }
@@ -356,20 +364,6 @@ public abstract class ConnectedCar {
             return standardPrediction.getRssi();
         }
         return null;
-    }
-
-    public int getCarRssi(int trxNumber) {
-        if (trxLinkedHMap != null) {
-            return trxLinkedHMap.get(trxNumber).getCarRssi();
-        }
-        return 0;
-    }
-
-    public Antenna.BLEChannel getCarChannel(int trxNumber) {
-        if (trxLinkedHMap != null) {
-            return trxLinkedHMap.get(trxNumber).getCarChannel();
-        }
-        return Antenna.BLEChannel.UNKNOWN;
     }
 
     public int getTrxNumber(String address) {

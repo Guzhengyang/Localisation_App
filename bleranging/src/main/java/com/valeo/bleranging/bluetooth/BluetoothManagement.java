@@ -336,8 +336,8 @@ public class BluetoothManagement {
         }
     }
 
-    public void sendPackets(final byte[] byteToSend, final byte[] byteReceived
-            , final byte[] dist, final byte[] rssi, final byte[] coordAndDistance) {
+    public void sendPackets(final byte[] byteToSend, final byte[] byteReceived,
+                            final byte[] dist, final byte[] rssi, final byte[] coordAndDistance) {
         if (byteToSend != null) {
             mBluetoothLeService.sendPackets(Arrays.copyOf(byteToSend, 6)); // TODO send byteToSend when trx is ready to received it completely
             if (byteReceived != null) {
