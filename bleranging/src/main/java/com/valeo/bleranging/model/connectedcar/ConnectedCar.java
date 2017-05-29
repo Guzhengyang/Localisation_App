@@ -106,21 +106,34 @@ public abstract class ConnectedCar {
      *
      * @param trxNumber  the trx that sent the signal
      * @param rssi       the rssi value to save
-     * @param address    the trx mac address to compare
      */
-    public void saveCarRssi(final int trxNumber, final int rssi, final String address) {
+    public void saveCarRssi(final int trxNumber, final int rssi) {
+        if (trxLinkedHMap.get(trxNumber) != null) {
+            trxLinkedHMap.get(trxNumber).saveCarRssi(rssi);
+        } else {
+            PSALogs.d("NIH", "trx is null, cannot save car rssi");
+        }
+    }
+
+    /**
+     * Save an incoming rssi from car
+     *
+     * @param trxNumber the trx that sent the signal
+     * @param address   the trx mac address to save
+     */
+    public void saveCarAddress(final int trxNumber, final String address) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             if (trxLinkedHMap.get(trxNumber).getTrxAddress() == null
                     && trxLinkedHMap.get(trxNumber).getTrxAddress().isEmpty()) {
                 trxLinkedHMap.get(trxNumber).setTrxAddress(address);
             }
             if (trxLinkedHMap.get(trxNumber).getTrxAddress().equalsIgnoreCase(address)) {
-                trxLinkedHMap.get(trxNumber).saveCarRssi(rssi);
+                PSALogs.d("NIH", "trx address match the saved address");
             } else {
                 PSALogs.d("NIH", "trx address do not match the saved address");
             }
         } else {
-            PSALogs.d("NIH", "trx is null, cannot save car rssi");
+            PSALogs.d("NIH", "trx is null, cannot save car address");
         }
     }
 
