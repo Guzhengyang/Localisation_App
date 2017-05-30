@@ -270,7 +270,7 @@ public class MainFragment extends Fragment implements MyRecyclerAdapter.OnStartD
         resultList.add(new Car(R.mipmap.car_model_ds5, "1", getString(R.string.ds5), getString(R.string.VIN), "car_one"));
         resultList.add(new Car(R.mipmap.car_model_ds5_2, "2", getString(R.string.ds5_2), getString(R.string.VIN2), "car_two"));
         resultList.add(new Car(R.mipmap.car_model_ds5_3, "3", getString(R.string.ds5_3), getString(R.string.VIN3), "car_yagi"));
-        resultList.add(new Car(R.mipmap.car_model_ds5_2, "4", getString(R.string.ds5_2), getString(R.string.VIN4), "car_three"));
+        resultList.add(new Car(R.mipmap.car_model_ds5_2, "4", getString(R.string.ds5_4), getString(R.string.VIN4), "car_three"));
         return resultList;
     }
 

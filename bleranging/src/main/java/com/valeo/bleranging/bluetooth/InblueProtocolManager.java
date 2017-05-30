@@ -31,29 +31,29 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.BASE_1
  * Temporary class providing methods to handle 'New' Inblue BLE protocol
  */
 public class InblueProtocolManager {
-    private final static int MAX_BLE_TRAME_BYTE = 13;
-    private final static String[] MAC_ADDRESSES = {
-            SdkPreferencesHelper.getInstance().getTrxAddressLeft(),
-            SdkPreferencesHelper.getInstance().getTrxAddressMiddle(),
-            SdkPreferencesHelper.getInstance().getTrxAddressRight(),
-            SdkPreferencesHelper.getInstance().getTrxAddressTrunk(),
-            SdkPreferencesHelper.getInstance().getTrxAddressBack(),
-            SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft(),
-            SdkPreferencesHelper.getInstance().getTrxAddressFrontRight(),
-            SdkPreferencesHelper.getInstance().getTrxAddressRearLeft(),
-            SdkPreferencesHelper.getInstance().getTrxAddressRearRight()
-    };
-    private final static byte[] TRX_NUMBERS = {
-            ConnectedCarFactory.NUMBER_TRX_LEFT,
-            ConnectedCarFactory.NUMBER_TRX_MIDDLE,
-            ConnectedCarFactory.NUMBER_TRX_RIGHT,
-            ConnectedCarFactory.NUMBER_TRX_TRUNK,
-            ConnectedCarFactory.NUMBER_TRX_BACK,
-            ConnectedCarFactory.NUMBER_TRX_FRONT_LEFT,
-            ConnectedCarFactory.NUMBER_TRX_FRONT_RIGHT,
-            ConnectedCarFactory.NUMBER_TRX_REAR_LEFT,
-            ConnectedCarFactory.NUMBER_TRX_REAR_RIGHT
-    };
+    private final static int MAX_BLE_TRAME_BYTE = 6;
+    //    private final static String[] MAC_ADDRESSES = {
+//            SdkPreferencesHelper.getInstance().getTrxAddressLeft(),
+//            SdkPreferencesHelper.getInstance().getTrxAddressMiddle(),
+//            SdkPreferencesHelper.getInstance().getTrxAddressRight(),
+//            SdkPreferencesHelper.getInstance().getTrxAddressTrunk(),
+//            SdkPreferencesHelper.getInstance().getTrxAddressBack(),
+//            SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft(),
+//            SdkPreferencesHelper.getInstance().getTrxAddressFrontRight(),
+//            SdkPreferencesHelper.getInstance().getTrxAddressRearLeft(),
+//            SdkPreferencesHelper.getInstance().getTrxAddressRearRight()
+//    };
+//    private final static byte[] TRX_NUMBERS = {
+//            ConnectedCarFactory.NUMBER_TRX_LEFT,
+//            ConnectedCarFactory.NUMBER_TRX_MIDDLE,
+//            ConnectedCarFactory.NUMBER_TRX_RIGHT,
+//            ConnectedCarFactory.NUMBER_TRX_TRUNK,
+//            ConnectedCarFactory.NUMBER_TRX_BACK,
+//            ConnectedCarFactory.NUMBER_TRX_FRONT_LEFT,
+//            ConnectedCarFactory.NUMBER_TRX_FRONT_RIGHT,
+//            ConnectedCarFactory.NUMBER_TRX_REAR_LEFT,
+//            ConnectedCarFactory.NUMBER_TRX_REAR_RIGHT
+//    };
     private int packetOneCounter = 0;
     private boolean isStartRequested = false;
     private boolean isWelcomeRequested = false;
@@ -62,7 +62,7 @@ public class InblueProtocolManager {
     private boolean isThatcham = false;
     private boolean isInRemoteParkingArea = false;
     private String carBase;
-    private int count = 0;
+//    private int count = 0;
 
     public InblueProtocolManager() {
     }
@@ -134,15 +134,15 @@ public class InblueProtocolManager {
         payload[3] = getPayloadThirdByte();
         payload[4] = getPayloadFourthByte(isRKE, mAlgoManager.getPredictionPosition(connectedCar));
         payload[5] = getPayloadFifthByte(isRKE, mAlgoManager.getPredictionPosition(connectedCar));
-        if (count >= TRX_NUMBERS.length) {
-            count = 0;
-        }
-        payload[6] = TRX_NUMBERS[count];
-        String[] split = MAC_ADDRESSES[count].split(":");
-        for (int i = 0, splitLength = split.length; i < splitLength; i++) {
-            payload[i + 7] = (byte) Integer.parseInt(split[i], 16);
-        }
-        count++;
+//        if (count >= TRX_NUMBERS.length) {
+//            count = 0;
+//        }
+//        payload[6] = TRX_NUMBERS[count];
+//        String[] split = MAC_ADDRESSES[count].split(":");
+//        for (int i = 0, splitLength = split.length; i < splitLength; i++) {
+//            payload[i + 7] = (byte) Integer.parseInt(split[i], 16);
+//        }
+//        count++;
         packetOneCounter++;
         if (packetOneCounter > 65534) { // packetOneCounter > FF FE
             packetOneCounter = 0;

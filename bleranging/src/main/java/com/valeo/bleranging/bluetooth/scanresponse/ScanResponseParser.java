@@ -24,7 +24,7 @@ public class ScanResponseParser {
         int offset = 0;
         while (offset < (advertisedData.length - 2)) {
             int len = advertisedData[offset++];
-            if (len == 0)
+            if (len <= 0)
                 break;
             int type = advertisedData[offset++];
             switch (type) {
