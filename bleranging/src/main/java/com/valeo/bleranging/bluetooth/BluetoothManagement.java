@@ -339,9 +339,9 @@ public class BluetoothManagement {
     public void sendPackets(final byte[] byteToSend, final byte[] byteReceived,
                             final byte[] dist, final byte[] rssi, final byte[] coordAndDistance) {
         if (byteToSend != null) {
-            mBluetoothLeService.sendPackets(Arrays.copyOf(byteToSend, 6)); // TODO send byteToSend when trx is ready to received it completely
+            mBluetoothLeService.sendPackets(byteToSend);
             if (byteReceived != null) {
-                byte[] concatBytes = concatByte(Arrays.copyOf(byteToSend, 6), Arrays.copyOf(byteReceived, 6));
+                byte[] concatBytes = concatByte(byteToSend, Arrays.copyOf(byteReceived, 6));
                 byte[] data1 = concatByte(concatBytes, coordAndDistance);
                 byte[] data2 = concatByte(data1, dist);
                 boolean sendSuccess = sendToRemoteControl(data2);

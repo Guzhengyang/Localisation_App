@@ -124,7 +124,7 @@ public abstract class ConnectedCar {
     public void saveCarAddress(final int trxNumber, final String address) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             if (trxLinkedHMap.get(trxNumber).getTrxAddress() == null
-                    && trxLinkedHMap.get(trxNumber).getTrxAddress().isEmpty()) {
+                    || trxLinkedHMap.get(trxNumber).getTrxAddress().isEmpty()) {
                 trxLinkedHMap.get(trxNumber).setTrxAddress(address);
             }
             if (trxLinkedHMap.get(trxNumber).getTrxAddress().equalsIgnoreCase(address)) {
