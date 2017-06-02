@@ -328,6 +328,7 @@ public class BluetoothManagement {
         if (scanRecord != null) {
             PSALogs.d("catch_address", device.getAddress() + " " + SdkPreferencesHelper.getInstance().getTrxAddressConnectable());
             if (device.getAddress().equalsIgnoreCase(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())) {
+                //TODO Add condition to limit central scans to connection advertising
                 fireCentralScanResponseCatch(device, ScanResponseParser.parseCentralScanResponse(scanRecord));
             } else {
                 BeaconScanResponse beaconScanResponse = ScanResponseParser.parseBeaconScanResponse(scanRecord);

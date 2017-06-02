@@ -40,7 +40,7 @@ public class TextUtils {
             for (int i = 0; i < bytesTab.length; i++) {
                 byte b = bytesTab[i];
                 sb.append(String.format("%02X", b));
-                if (i < bytesTab.length) {
+                if (i < bytesTab.length - 1) {
                     sb.append(":");
                 }
             }
