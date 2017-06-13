@@ -494,8 +494,8 @@ public class PredictionZone {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (!arePredictRawFileRead) {
-                Toast.makeText(mContext, "Init for Random Forest... failed", Toast.LENGTH_LONG).show();
-                PSALogs.w("init2", "Init for Random Forest... failed\n");
+                Toast.makeText(mContext, "Init for Zone Model... failed", Toast.LENGTH_LONG).show();
+                PSALogs.w("init2", "Init for Zone Model... failed\n");
             }
         }
     }

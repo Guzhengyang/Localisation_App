@@ -27,13 +27,20 @@ public class PredictionFactory {
     public final static String PREDICTION_INSIDE = "inside_prediction";
     public final static String PREDICTION_RP = "rp_prediction";
     public final static String PREDICTION_EAR = "ear_prediction";
-    private final static String ZONE_2_A_IN = "TwoInStart";
-    private final static String ZONE_4_B_IN_START = "FourInStart";
-    private final static String ZONE_8_A_IN = "EightIn";
-    private final static String ZONE_4_B_OUT_RP = "FourOutRP";
-    private final static String ZONE_8_A_OUT_THATCHAM = "EightOutThatcham";
-    private final static String COORD_H2O_8_A_IN = "MLP4Clf";
-    private final static String COORD_H2O_8_A_OUT = "MLP4Clf";
+    //    models for 2 beacons
+    private final static String ZONE_2_A = "Two";
+
+    //    models for 4 beacons
+    private final static String ZONE_4_B_START = "FourStart";
+    private final static String ZONE_4_B = "Four";
+    private final static String ZONE_4_B_THATCHAM = "FourThatcham";
+    private final static String ZONE_4_B_RP = "FourRP";
+
+    //    models for 8 beacons
+    private final static String ZONE_8_A = "Eight";
+    private final static String ZONE_8_A_THATCHAM = "EightThatcham";
+    private final static String ZONE_8_A_RP = "EightRP";
+    private final static String COORD_8_A = "MLP4Clf";
 
 
     /**
@@ -42,15 +49,9 @@ public class PredictionFactory {
      * @return a coord prediction
      */
     public static PredictionCoord getPredictionCoord(Context mContext) {
-        boolean areInside = SdkPreferencesHelper.getInstance().getAreBeaconsInside();
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-
         if (carType.equalsIgnoreCase(TYPE_8_A)) {
-            if (areInside) {
-                return new PredictionCoord(mContext, COORD_H2O_8_A_IN, rowDataKeySetFactory(TYPE_8_A));
-            } else {
-                return new PredictionCoord(mContext, COORD_H2O_8_A_OUT, rowDataKeySetFactory(TYPE_8_A));
-            }
+            return new PredictionCoord(mContext, COORD_8_A, rowDataKeySetFactory(TYPE_8_A));
         }
         return null;
     }
@@ -67,9 +68,9 @@ public class PredictionFactory {
 //        boolean ifMiniPrediction = SdkPreferencesHelper.getInstance().isMiniPredictionUsed();
         switch (carType) {
             case TYPE_2_A:
-                return new PredictionZone(mContext, ZONE_2_A_IN, rowDataKeySetFactory(TYPE_2_A), predictionType);
+                return new PredictionZone(mContext, ZONE_2_A, rowDataKeySetFactory(TYPE_2_A), predictionType);
             case TYPE_2_B:
-                return new PredictionZone(mContext, ZONE_2_A_IN, rowDataKeySetFactory(TYPE_2_B), predictionType);
+                break;
             case TYPE_3_A:
                 break;
             case TYPE_4_A:
@@ -77,11 +78,9 @@ public class PredictionFactory {
             case TYPE_4_B:
                 switch (predictionType) {
                     case PREDICTION_STANDARD:
-                        return new PredictionZone(mContext, ZONE_4_B_IN_START, rowDataKeySetFactory(TYPE_4_B), predictionType);
+                        return new PredictionZone(mContext, ZONE_4_B_START, rowDataKeySetFactory(TYPE_4_B), predictionType);
                     case PREDICTION_RP:
-                        return new PredictionZone(mContext, ZONE_4_B_OUT_RP, rowDataKeySetFactory(TYPE_4_B), predictionType);
-                    case PREDICTION_EAR:
-                        return new PredictionZone(mContext, ZONE_4_B_IN_START, rowDataKeySetFactory(TYPE_4_B), predictionType);
+                        return new PredictionZone(mContext, ZONE_4_B_RP, rowDataKeySetFactory(TYPE_4_B), predictionType);
                 }
                 break;
             case TYPE_5_A:
@@ -94,14 +93,12 @@ public class PredictionFactory {
                 switch (predictionType) {
                     case PREDICTION_STANDARD:
                         if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
-                            return new PredictionZone(mContext, ZONE_8_A_OUT_THATCHAM, rowDataKeySetFactory(TYPE_8_A), predictionType);
+                            return new PredictionZone(mContext, ZONE_8_A_THATCHAM, rowDataKeySetFactory(TYPE_8_A), predictionType);
                         } else {
-                            return new PredictionZone(mContext, ZONE_8_A_IN, rowDataKeySetFactory(TYPE_8_A), predictionType);
+                            return new PredictionZone(mContext, ZONE_8_A, rowDataKeySetFactory(TYPE_8_A), predictionType);
                         }
-                    case PREDICTION_INSIDE:
-                        return new PredictionZone(mContext, ZONE_8_A_IN, rowDataKeySetFactory(TYPE_8_A), predictionType);
                     case PREDICTION_RP:
-                        return new PredictionZone(mContext, ZONE_8_A_IN, rowDataKeySetFactory(TYPE_8_A), predictionType);
+                        return new PredictionZone(mContext, ZONE_8_A, rowDataKeySetFactory(TYPE_8_A), predictionType);
                 }
                 break;
         }
