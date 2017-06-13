@@ -2,6 +2,9 @@ package com.valeo.bleranging.utils;
 
 import android.content.Context;
 
+import com.valeo.bleranging.bluetooth.InblueProtocolManager;
+import com.valeo.bleranging.machinelearningalgo.AlgoManager;
+import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.io.BufferedWriter;
@@ -11,6 +14,16 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_BACK;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_FRONT_LEFT;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_FRONT_RIGHT;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_LEFT;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_MIDDLE;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_REAR_LEFT;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_REAR_RIGHT;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_RIGHT;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_TRUNK;
 
 /**
  * Created by l-avaratha on 08/06/2016
@@ -62,19 +75,6 @@ public class LogFileUtils {
 
     /**
      * Create the string to write in the log file and add it
-     * @param rssiLeftOriginal the original left trx rssi
-     * @param rssiMiddleOriginal the original middle trx rssi
-     * @param rssiRightOriginal the original right trx rssi
-     * @param rssiBackOriginal the original back trx rssi
-     * @param rssiFrontLeftOriginal the original front left trx rssi
-     * @param rssiFrontRightOriginal the original front right trx rssi
-     * @param rssiRearLeftOriginal the original rear left trx rssi
-     * @param rssiRearRightOriginal the original rear right trx rssi
-     * @param isSmartphoneInPocket true if the smartphone is in pocket, false otherwise
-     * @param isLockStatusChangedTimerExpired true if the lock timeout is expired, false otherwise
-     * @param rearmLock true if the lock can be done, false otherwise
-     * @param rearmUnlock true if the unlock can be done, false otherwise
-     * @param rearmWelcome true if the welcome can be done, false otherwise
      * @param lockStatus true if the car is locked, false otherwise
      * @param welcomeByte equals 1 if welcome is activated, 0 otherwise
      * @param lockByte equals 1 if lock is activated, 0 otherwise
@@ -89,79 +89,51 @@ public class LogFileUtils {
      * @param approachSideByte equals 1 if right side, 0 if left side
      * @param approachRoadByte equals [1-6] for the road taken during test
      * @param recordByte equals 1 if record is activated, 0 otherwise
-     * @param rangingPrediction prediction from random forest algorithm
-     * @param lockFromTrx lock status from trx
-     * @param lockToSend lock status to send
-     * @param startAllowed true if start is allowed, false otherwise
-     * @param isThatcham true if thatcham, false otherwise
-     * @param channelLeft left trx ble channel
-     * @param channelMiddle middle trx ble channel
-     * @param channelRight right trx ble channel
-     * @param channelTrunk trunk trx ble channel
-     * @param channelFrontLeft front left trx ble channel
-     * @param channelFrontRight front right trx ble channel
-     * @param channelRearLeft rear left trx ble channel
-     * @param channelRearRight rear right trx ble channel
-     * @param channelBack back trx ble channel
      */
-    public static void appendRssiLogs(int rssiLeftOriginal, int rssiMiddleOriginal, int rssiRightOriginal, int rssiTrunkOriginal,
-                                      int rssiFrontLeftOriginal, int rssiFrontRightOriginal,
-                                      int rssiRearLeftOriginal, int rssiRearRightOriginal, int rssiBackOriginal,
-                                      float orientationX, float orientationY, float orientationZ,
-                                      float gravityX, float gravityY, float gravityZ,
-                                      float geomagneticX, float geomagneticY, float geomagneticZ,
-                                      double acceleration,
-                                      boolean isActiveLeft, boolean isActiveMiddle, boolean isActiveRight, boolean isActiveTrunk,
-                                      boolean isActiveFrontLeft, boolean isActiveFrontRight,
-                                      boolean isActiveRearLeft, boolean isActiveRearRight, boolean isActiveBack,
-                                      boolean isSmartphoneInPocket, boolean isLockStatusChangedTimerExpired,
-                                      boolean rearmLock, boolean rearmUnlock, boolean rearmWelcome, boolean lockStatus,
+    public static void appendRssiLogs(final ConnectedCar connectedCar, final AlgoManager mAlgoManager,
+                                      boolean lockStatus,
                                       byte welcomeByte, byte lockByte, byte startByte,
                                       byte leftAreaByte, byte rightAreaByte, byte backAreaByte,
                                       byte walkAwayByte, byte approachByte, byte leftTurnByte,
                                       byte rightTurnByte, byte approachSideByte, byte approachRoadByte,
-                                      byte recordByte, String rangingPrediction,
-                                      boolean lockFromTrx, boolean lockToSend, boolean startAllowed, boolean isThatcham,
-                                      String channelLeft, String channelMiddle, String channelRight, String channelTrunk,
-                                      String channelFrontLeft, String channelFrontRight,
-                                      String channelRearLeft, String channelRearRight,
-                                      String channelBack, int beepInt,
-                                      int antennaLeft, int antennaMiddle, int antennaRight,
-                                      int antennaTrunk, int antennaFrontLeft, int antennaFrontRight,
-                                      int antennaRearLeft, int antennaRearRight, int antennaBack) {
+                                      byte recordByte, final InblueProtocolManager mProtocolManager, int beepInt) {
         final String comma = ";";
-        String log = rssiLeftOriginal + comma + rssiMiddleOriginal + comma +
-                rssiRightOriginal + comma + rssiTrunkOriginal + comma +
-                rssiFrontLeftOriginal + comma + rssiFrontRightOriginal + comma +
-                rssiRearLeftOriginal + comma + rssiRearRightOriginal + comma +
-                rssiBackOriginal + comma +
-                orientationX + comma + orientationY + comma + orientationZ + comma +
-                gravityX + comma + gravityY + comma + gravityZ + comma +
-                geomagneticX + comma + geomagneticY + comma + geomagneticZ + comma +
-                acceleration + comma +
-                booleanToString(isActiveLeft) + comma + booleanToString(isActiveMiddle) + comma +
-                booleanToString(isActiveRight) + comma + booleanToString(isActiveTrunk) + comma +
-                booleanToString(isActiveFrontLeft) + comma + booleanToString(isActiveFrontRight) + comma +
-                booleanToString(isActiveRearLeft) + comma + booleanToString(isActiveRearRight) + comma +
-                booleanToString(isActiveBack) + comma +
-                booleanToString(isSmartphoneInPocket) + comma +
-                booleanToString(isLockStatusChangedTimerExpired) + comma;
+        String log = connectedCar.getCurrentOriginalRssi(NUMBER_TRX_LEFT) + comma +
+                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE) + comma +
+                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_RIGHT) + comma +
+                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_TRUNK) + comma +
+                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT) + comma +
+                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT) + comma +
+                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT) + comma +
+                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT) + comma +
+                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_BACK) + comma +
+                mAlgoManager.getOrientation()[0] + comma + mAlgoManager.getOrientation()[1] + comma + mAlgoManager.getOrientation()[2] + comma +
+                mAlgoManager.getGravity()[0] + comma + mAlgoManager.getGravity()[1] + comma + mAlgoManager.getGravity()[2] + comma +
+                mAlgoManager.getGeomagnetic()[0] + comma + mAlgoManager.getGeomagnetic()[1] + comma + mAlgoManager.getGeomagnetic()[2] + comma +
+                mAlgoManager.getAcceleration() + comma +
+                booleanToString(connectedCar.isActive(NUMBER_TRX_LEFT)) + comma + booleanToString(connectedCar.isActive(NUMBER_TRX_MIDDLE)) + comma +
+                booleanToString(connectedCar.isActive(NUMBER_TRX_RIGHT)) + comma + booleanToString(connectedCar.isActive(NUMBER_TRX_TRUNK)) + comma +
+                booleanToString(connectedCar.isActive(NUMBER_TRX_FRONT_LEFT)) + comma + booleanToString(connectedCar.isActive(NUMBER_TRX_FRONT_RIGHT)) + comma +
+                booleanToString(connectedCar.isActive(NUMBER_TRX_REAR_LEFT)) + comma + booleanToString(connectedCar.isActive(NUMBER_TRX_REAR_RIGHT)) + comma +
+                booleanToString(connectedCar.isActive(NUMBER_TRX_BACK)) + comma +
+                booleanToString(mAlgoManager.isSmartphoneInPocket()) + comma +
+                booleanToString(mAlgoManager.areLockActionsAvailable()) + comma;
         if (lockStatus) {
             log += "5" + comma;
         } else {
             log += "4" + comma;
         }
-        if (rearmLock) {
+        if (mAlgoManager.getRearmLock()) {
             log += "7" + comma;
         } else {
             log += "6" + comma;
         }
-        if (rearmUnlock) {
+        if (mAlgoManager.getRearmUnlock()) {
             log += "9" + comma;
         } else {
             log += "8" + comma;
         }
-        log += booleanToString(rearmWelcome) + comma + welcomeByte + comma;
+        log += booleanToString(mAlgoManager.getRearmWelcome()) + comma + welcomeByte + comma;
         if (lockByte == 1) {
             log += "3" + comma;
         } else {
@@ -195,16 +167,29 @@ public class LogFileUtils {
         }
         log += leftTurnByte + comma + rightTurnByte + comma
                 + approachSideByte + comma + approachRoadByte + comma
-                + recordByte + comma + rangingPrediction + comma
-                + booleanToString(lockFromTrx) + comma + booleanToString(lockToSend) + comma
-                + booleanToString(startAllowed) + comma + booleanToString(isThatcham) + comma
-                + channelLeft + comma + channelMiddle + comma + channelRight + comma
-                + channelTrunk + comma + channelFrontLeft + comma + channelFrontRight + comma
-                + channelRearLeft + comma + channelRearRight + comma
-                + channelBack + comma + beepInt + comma
-                + antennaLeft + comma + antennaMiddle + comma + antennaRight + comma
-                + antennaTrunk + comma + antennaFrontLeft + comma + antennaFrontRight + comma
-                + antennaRearLeft + comma + antennaRearRight + comma + antennaBack + comma;
+                + recordByte + comma + mAlgoManager.getPredictionPosition(connectedCar) + comma
+                + booleanToString(mProtocolManager.isLockedFromTrx()) + comma
+                + booleanToString(mProtocolManager.isLockedToSend()) + comma
+                + booleanToString(mProtocolManager.isStartRequested()) + comma
+                + booleanToString(mProtocolManager.isThatcham()) + comma
+                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_LEFT).toString() + comma
+                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_MIDDLE).toString() + comma
+                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_RIGHT).toString() + comma
+                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_TRUNK).toString() + comma
+                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_FRONT_LEFT).toString() + comma
+                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_FRONT_RIGHT).toString() + comma
+                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_REAR_LEFT).toString() + comma
+                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_REAR_RIGHT).toString() + comma
+                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_BACK).toString() + comma + beepInt + comma
+                + connectedCar.getCurrentAntennaId(NUMBER_TRX_LEFT) + comma
+                + connectedCar.getCurrentAntennaId(NUMBER_TRX_MIDDLE) + comma
+                + connectedCar.getCurrentAntennaId(NUMBER_TRX_RIGHT) + comma
+                + connectedCar.getCurrentAntennaId(NUMBER_TRX_TRUNK) + comma
+                + connectedCar.getCurrentAntennaId(NUMBER_TRX_FRONT_LEFT) + comma
+                + connectedCar.getCurrentAntennaId(NUMBER_TRX_FRONT_RIGHT) + comma
+                + connectedCar.getCurrentAntennaId(NUMBER_TRX_REAR_LEFT) + comma
+                + connectedCar.getCurrentAntennaId(NUMBER_TRX_REAR_RIGHT) + comma
+                + connectedCar.getCurrentAntennaId(NUMBER_TRX_BACK) + comma;
         appendTimestampToLog(log);
     }
 

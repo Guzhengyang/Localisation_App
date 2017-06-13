@@ -21,6 +21,7 @@
     <string name="ds5_2">DS 5 DC-917-NY E1</string>
     <string name="ds5_3">DS 5 EB-967-AK Yagi</string>
     <string name="ds5_4">DS 5 EB-967-AK Yagi E1</string>
+    <string name="ds5_5">DS 5 EB-967-AK Vivaldi</string>
     <string name="door_status_bg">door status bg</string>
     <string name="vehicle_locked">Vehicle locked</string>
     <string name="driver_s_door_unlocked">Driver\'s door unlocked</string>
@@ -51,6 +52,7 @@
     <string name="VIN2">VF3ATTENTDS180705</string>
     <string name="VIN3">VF3ATTENTDS180706</string>
     <string name="VIN4">VF3ATTENTDS180707</string>
+    <string name="VIN5">VF3ATTENTDS180708</string>
     <string name="permision_available">permission granted</string>
     <string name="permissions_not_granted">permissions not granted</string>
     <string name="mail">Email address</string>
