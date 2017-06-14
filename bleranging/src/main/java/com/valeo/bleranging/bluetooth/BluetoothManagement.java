@@ -138,6 +138,7 @@ public class BluetoothManagement {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
         intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(BluetoothLeServiceForRemoteControl.ACTION_DATA_AVAILABLE_REMOTE);
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED);
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTION_LOSS);
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
@@ -391,6 +392,13 @@ public class BluetoothManagement {
 
     public byte[] getBytesReceived() {
         return mBluetoothLeService.getReceiveQueue().poll();
+    }
+
+    public byte[] getRemoteBytes() {
+        if (mBluetoothLeServiceForRemoteControl.getReceiveQueue() != null) {
+            return mBluetoothLeServiceForRemoteControl.getReceiveQueue().poll();
+        }
+        return null;
     }
 
     public void addBluetoothManagementListener(BluetoothManagementListener listener) {
