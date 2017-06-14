@@ -30,55 +30,47 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     @Override
     public void readPredictionsRawFiles() {
-        coordPrediction = PredictionFactory.getPredictionCoord(mContext);
         standardPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_STANDARD);
-//        insidePrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_INSIDE);
-        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);
+        //        coordPrediction = PredictionFactory.getPredictionCoord(mContext);
+//        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);
     }
 
     @Override
     public void initPredictions() {
         if (isInitialized()) {
-            coordPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             standardPrediction.predict(N_VOTE_SHORT);
-//            insidePrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-//            insidePrediction.predict(N_VOTE_VERY_LONG);
-            rpPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-            rpPrediction.predict(N_VOTE_LONG);
+// coordPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+//            rpPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+//            rpPrediction.predict(N_VOTE_LONG);
         }
     }
 
     @Override
     public boolean isInitialized() {
-        return (coordPrediction != null
-                && coordPrediction.isPredictRawFileRead()
-                && standardPrediction != null
+        return (standardPrediction != null
                 && standardPrediction.isPredictRawFileRead()
-//                && insidePrediction != null
-                && rpPrediction != null
-//                && insidePrediction.isPredictRawFileRead()
-                && rpPrediction.isPredictRawFileRead()
+//                && coordPrediction != null
+//                && coordPrediction.isPredictRawFileRead()
+//                && rpPrediction != null
+//                && rpPrediction.isPredictRawFileRead()
                 && (checkForRssiNonNull(rssi) != null));
     }
 
     @Override
     public void setRssi(double[] rssi, boolean lockStatus) {
         if (isInitialized()) {
-            coordPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             standardPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone(), lockStatus);
-//                insidePrediction.setRssi(i, rssi[i], SdkPreferencesHelper.getInstance().getOffsetSmartphone(), THRESHOLD_DIST_AWAY_SLOW, lockStatus);
-            rpPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone(), lockStatus);
             standardPrediction.predict(N_VOTE_SHORT);
-//            insidePrediction.predict(N_VOTE_VERY_LONG);
-            rpPrediction.predict(N_VOTE_LONG);
+            //            coordPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            //            rpPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone(), lockStatus);
+//            rpPrediction.predict(N_VOTE_LONG);
         }
     }
 
     @Override
     public void calculatePrediction(float[] orientation) {
         if (isInitialized()) {
-            coordPrediction.calculatePredictionCoord(orientation);
             if (SdkPreferencesHelper.getInstance().getOpeningStrategy().equalsIgnoreCase(THATCHAM_ORIENTED)) {
                 standardPrediction.calculatePredictionStandard(SdkPreferencesHelper.getInstance().getThresholdProbStandard(),
                         THRESHOLD_PROB_LOCK2UNLOCK, THRESHOLD_PROB_UNLOCK2LOCK, THATCHAM_ORIENTED);
@@ -86,8 +78,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 standardPrediction.calculatePredictionStandard(SdkPreferencesHelper.getInstance().getThresholdProbStandard(),
                         THRESHOLD_PROB_LOCK2UNLOCK, THRESHOLD_PROB_UNLOCK2LOCK, PASSIVE_ENTRY_ORIENTED);
             }
-//            insidePrediction.calculatePredictionInside(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
-            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
+            //            coordPrediction.calculatePredictionCoord(orientation);
+//            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
 
@@ -97,7 +89,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             String result = "";
             result += SdkPreferencesHelper.getInstance().getOpeningStrategy() + "\n";
             result += standardPrediction.printDebug(FULL_LOC);
-            result += rpPrediction.printDebug(RP_LOC);
+//            result += rpPrediction.printDebug(RP_LOC);
             return result;
         }
         return "";
@@ -105,7 +97,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     @Override
     public String getPredictionPosition(boolean smartphoneIsInPocket) {
-        if (isInitialized()) {
+        if (standardPrediction != null && standardPrediction.isPredictRawFileRead()) {
             String result = standardPrediction.getPrediction();
             if (SdkPreferencesHelper.getInstance().isPrintInsideEnabled()
                     && result.equalsIgnoreCase(PREDICTION_START)) {
@@ -117,21 +109,21 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     }
 
     public PointF getPredictionCoord() {
-        if (isInitialized()) {
+        if (coordPrediction != null && coordPrediction.isPredictRawFileRead()) {
             return coordPrediction.getPredictionCoord();
         }
         return null;
     }
 
     public double getDist2Car() {
-        if (isInitialized()) {
+        if (coordPrediction != null && coordPrediction.isPredictRawFileRead()) {
             return coordPrediction.getDist2Car();
         }
         return 0f;
     }
 
     private String getInsidePrediction() {
-        if (isInitialized()) {
+        if (insidePrediction != null && insidePrediction.isPredictRawFileRead()) {
             return insidePrediction.getPrediction();
         }
         return BleRangingHelper.PREDICTION_UNKNOWN;

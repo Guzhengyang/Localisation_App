@@ -50,9 +50,9 @@ public class PredictionFactory {
      */
     public static PredictionCoord getPredictionCoord(Context mContext) {
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-        if (carType.equalsIgnoreCase(TYPE_8_A)) {
-            return new PredictionCoord(mContext, COORD_8_A, rowDataKeySetFactory(TYPE_8_A));
-        }
+//        if (carType.equalsIgnoreCase(TYPE_8_A)) {
+//            return new PredictionCoord(mContext, COORD_8_A, rowDataKeySetFactory(TYPE_8_A));
+//        }
         return null;
     }
 
