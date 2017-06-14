@@ -21,6 +21,7 @@ import com.valeo.bleranging.bluetooth.BluetoothManagement;
 import com.valeo.bleranging.bluetooth.BluetoothManagementListener;
 import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
+import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeServiceForRemoteControl;
 import com.valeo.bleranging.bluetooth.scanresponse.BeaconScanResponse;
 import com.valeo.bleranging.bluetooth.scanresponse.CentralScanResponse;
 import com.valeo.bleranging.listeners.BleRangingListener;
@@ -252,6 +253,7 @@ public class BleRangingHelper {
     private byte rightTurnByte = 0;
     private byte approachSideByte = 0;
     private byte approachRoadByte = 0;
+    private byte counterByte = 0;
     private byte recordByte = 0;
     private int beepInt = 0;
     private final Runnable beepRunner = new Runnable() {
@@ -280,11 +282,12 @@ public class BleRangingHelper {
                         newLockStatus, welcomeByte,
                         lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
                         walkAwayByte, approachByte, leftTurnByte, rightTurnByte,
-                        approachSideByte, approachRoadByte, recordByte,
+                        approachSideByte, approachRoadByte, recordByte, counterByte,
                         mProtocolManager,
                         beepInt);
                 beepInt = 0;
             }
+            PSALogs.d("counter", String.valueOf(counterByte));
             if (isFullyConnected()) {
                 mMainHandler.postDelayed(this, 105);
             }
@@ -300,6 +303,13 @@ public class BleRangingHelper {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
+            if (BluetoothLeServiceForRemoteControl.ACTION_DATA_AVAILABLE_REMOTE.equals(action)) {
+                final byte[] remoteByteReceived = mBluetoothManager.getRemoteBytes();
+                if (remoteByteReceived != null) {
+                    counterByte = remoteByteReceived[0];
+                    PSALogs.d("counter_value", String.valueOf(counterByte));
+                }
+            }
             if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 lock.writeLock().lock();
                 bytesReceived = mBluetoothManager.getBytesReceived();
@@ -849,6 +859,7 @@ public class BleRangingHelper {
             rightTurnByte = (byte) ((advertisedData[4] & (1 << 2)) >> 2);
             leftTurnByte = (byte) ((advertisedData[4] & (1 << 1)) >> 1);
             approachByte = (byte) (advertisedData[4] & 1);
+//            counterByte = advertisedData[5];
         }
     }
 

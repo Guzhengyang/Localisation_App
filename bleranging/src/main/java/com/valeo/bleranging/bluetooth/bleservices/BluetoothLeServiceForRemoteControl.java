@@ -22,14 +22,17 @@ import com.valeo.bleranging.bluetooth.SampleGattAttributes;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.TextUtils;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.UUID;
 
 /**
  * This class is a service for managing connection and data communication with a GATT server hosted on a given Bluetooth LE device.
  */
 public class BluetoothLeServiceForRemoteControl extends Service {
+    public final static String ACTION_DATA_AVAILABLE_REMOTE = "com.inblue.ACTION_DATA_AVAILABLE_REMOTE";
     //Bluetooth SERVICES and CHARACTERISTICS UUIDs
     private final static String VALEO_GENERIC_SERVICE = SampleGattAttributes.VALEO_REMOTE_CONTROL_GENERIC_SERVICE;
     private final static String VALEO_IN_CHARACTERISTIC = SampleGattAttributes.VALEO_REMOTE_CONTROL_IN_CHARACTERISTIC;
@@ -42,6 +45,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
     private boolean isConnecting = false;
     private boolean isBound = false;
     private int mPacketToWriteCount = 0;
+    private Deque<byte[]> mReceiveQueue;
 
     /* Handler to send action to main looper */
     private Handler mainHandler;
@@ -198,7 +202,9 @@ public class BluetoothLeServiceForRemoteControl extends Service {
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
             PSALogs.i("NIH_REMOTE", "onCharacteristicChanged(): " + Arrays.toString(characteristic.getValue()));
+            mReceiveQueue.add(characteristic.getValue());
             isFullyConnected = true;
+            broadcastUpdate(ACTION_DATA_AVAILABLE_REMOTE);
         }
 
         @Override
@@ -218,6 +224,24 @@ public class BluetoothLeServiceForRemoteControl extends Service {
 
     };
 
+    public Deque<byte[]> getReceiveQueue() {
+        return mReceiveQueue;
+    }
+
+    /**
+     * Send an action to the broadcast channel
+     *
+     * @param action the action to execute
+     */
+    private void broadcastUpdate(final String action) {
+        final Intent intent = new Intent(action);
+        sendBroadcast(intent);
+    }
+
+    private void init() {
+        mReceiveQueue = new ArrayDeque<>();
+    }
+
     public boolean isConnecting3() {
         return isConnecting;
     }
@@ -232,6 +256,7 @@ public class BluetoothLeServiceForRemoteControl extends Service {
 
     public void onCreate() {
         PSALogs.i("NIH_REMOTE", "BluetoothLeService.onCreate()");
+        init();
     }
 
     @Override

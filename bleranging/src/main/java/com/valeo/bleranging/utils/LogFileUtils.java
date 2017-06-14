@@ -96,7 +96,7 @@ public class LogFileUtils {
                                       byte leftAreaByte, byte rightAreaByte, byte backAreaByte,
                                       byte walkAwayByte, byte approachByte, byte leftTurnByte,
                                       byte rightTurnByte, byte approachSideByte, byte approachRoadByte,
-                                      byte recordByte, final InblueProtocolManager mProtocolManager, int beepInt) {
+                                      byte recordByte, byte counterByte, final InblueProtocolManager mProtocolManager, int beepInt) {
         final String comma = ";";
         String log = connectedCar.getCurrentOriginalRssi(NUMBER_TRX_LEFT) + comma +
                 connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE) + comma +
@@ -167,7 +167,8 @@ public class LogFileUtils {
         }
         log += leftTurnByte + comma + rightTurnByte + comma
                 + approachSideByte + comma + approachRoadByte + comma
-                + recordByte + comma + mAlgoManager.getPredictionPosition(connectedCar) + comma
+                + recordByte + comma + counterByte + comma
+                + mAlgoManager.getPredictionPosition(connectedCar) + comma
                 + booleanToString(mProtocolManager.isLockedFromTrx()) + comma
                 + booleanToString(mProtocolManager.isLockedToSend()) + comma
                 + booleanToString(mProtocolManager.isStartRequested()) + comma
@@ -320,7 +321,7 @@ public class LogFileUtils {
                 + "IS LOCK;REARM LOCK;REARM UNLOCK;"
                 + "REARM WELCOME;WELCOME FLAG;LOCK FLAG;START FLAG;LEFT AREA FLAG;RIGHT AREA FLAG;"
                 + "BACK AREA FLAG;WALK AWAY FLAG;APPROACH FLAG;LEFT TURN FLAG;"
-                + "RIGHT TURN FLAG;APPROACHSIDE FLAG;APPROACHROAD FLAG;RECORD FLAG;"
+                + "RIGHT TURN FLAG;APPROACHSIDE FLAG;APPROACHROAD FLAG;RECORD FLAG;COUNTER FLAG;"
                 + "PREDICTION;LOCK FROM TRX;LOCK TO SEND;START ALLOWED;IS THATCHAM;"
                 + "BLE CHANNEL LEFT;BLE CHANNEL MIDDLE;BLE CHANNEL RIGHT;BLE CHANNEL TRUNK;"
                 + "BLE CHANNEL FRONTLEFT;BLE CHANNEL FRONTRIGHT;"
