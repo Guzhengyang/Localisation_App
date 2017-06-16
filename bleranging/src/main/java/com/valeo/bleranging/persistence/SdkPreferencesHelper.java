@@ -31,6 +31,7 @@ public final class SdkPreferencesHelper {
     public final static int LIN_ACC_SIZE = 10;
     public final static float CORRECTION_LIN_ACC = 0.0f;
     public final static float FROZEN_THRESHOLD = 3.6f;
+    public final static int DEFAULT_MEASUREMENT_INTERVAL = 15000;
     public final static int DEFAULT_ACTIVE_SCAN_PERIOD = 3000;
     public final static int DEFAULT_INACTIVE_SCAN_PERIOD = 200;
     public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:2A:B8";
@@ -273,6 +274,10 @@ public final class SdkPreferencesHelper {
 
     public int getOneStepSize() {
         return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.one_step_size_pref_name), ONE_STEP_SIZE);
+    }
+
+    public int getMeasurementInterval() {
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.measurement_interval_pref_name), DEFAULT_MEASUREMENT_INTERVAL);
     }
 
     public int getActiveScanningPeriod() {

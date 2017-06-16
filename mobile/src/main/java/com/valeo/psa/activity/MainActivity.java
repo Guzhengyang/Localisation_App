@@ -47,7 +47,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity implements BleRangingListener,
         RkeFragment.RkeFragmentActionListener, AccuracyFragment.AccuracyFragmentActionListener,
         StartFragment.StartFragmentActionListener, MainFragment.MainFragmentActionListener,
-        CalibrationDialogFragmentListener {
+        CalibrationDialogFragmentListener, DebugFragment.DebugFragmentActionListener {
     private static final String TAG = MainActivity.class.getName();
     private static final int RESULT_SETTINGS = 20;
     private static final int REQUEST_ENABLE_BT = 25117;
@@ -467,5 +467,15 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     @Override
     public void setSmartphoneOffset() {
         mBleRangingHelper.setSmartphoneOffset();
+    }
+
+    @Override
+    public void incrementCounter() {
+        mBleRangingHelper.incrementCounter();
+    }
+
+    @Override
+    public String printCounter() {
+        return mBleRangingHelper.getCounter();
     }
 }

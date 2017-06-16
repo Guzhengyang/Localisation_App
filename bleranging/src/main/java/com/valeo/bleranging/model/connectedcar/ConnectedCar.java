@@ -95,9 +95,10 @@ public abstract class ConnectedCar {
      */
     public void saveRssi(int trxNumber, int rssi, byte antennaId, Antenna.BLEChannel bleChannel) {
         if (trxLinkedHMap.get(trxNumber) != null) {
+            PSALogs.d("NIH", "trx n°" + trxNumber + " rssi saved");
             trxLinkedHMap.get(trxNumber).saveRssi(rssi, true, antennaId, bleChannel);
         } else {
-            PSALogs.d("NIH", "trx is null, cannot save rssi");
+            PSALogs.d("NIH", "trx n°" + trxNumber + " is NULL, cannot save rssi");
         }
     }
 

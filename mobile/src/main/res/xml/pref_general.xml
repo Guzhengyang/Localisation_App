@@ -98,6 +98,10 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_timeout">
         <EditTextPreference
+            android:inputType="number"
+            android:key="@string/measurement_interval_pref_name"
+            android:title="@string/pref_measurement_interval" />
+        <EditTextPreference
             android:inputType="number|numberDecimal"
             android:key="@string/unlock_timeout_pref_name"
             android:title="@string/pref_unlock_timeout" />

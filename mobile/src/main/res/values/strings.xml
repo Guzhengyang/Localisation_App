@@ -29,6 +29,7 @@
     <string name="start_button">Start button</string>
     <string name="chessboard">Chessboard</string>
     <string name="rssi_localization">Rssi localization</string>
+    <string name="start_measurement_button">Start Measure</string>
     <string name="accuracy_zone_selection">Calculate accuracy for the zone : </string>
     <string name="start_accuracy_measure">Begin accuracy measure</string>
     <string name="stop_accuracy_measure">Stop measure</string>
@@ -161,6 +162,7 @@
     <string name="pref_nb_element">NUMBER OF ELEMENT</string>
     <string name="pref_nb_element_rssi_log_number">Rssi Log Number Element</string>
     <string name="pref_nb_element_rolling_average">Rolling Average Number Element</string>
+    <string name="pref_measurement_interval">Measurement Interval</string>
     <string name="pref_active_scanning_period">Active Scanning Period</string>
     <string name="pref_inactive_scanning_period">Inactive Scanning Period</string>
     <string name="pref_nb_element_start">Start Number Element</string>
