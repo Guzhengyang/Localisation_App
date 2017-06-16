@@ -37,6 +37,7 @@ import com.valeo.psa.fragment.CalibrationDialogFragment;
 import com.valeo.psa.fragment.ChessBoardFragment;
 import com.valeo.psa.fragment.DebugFragment;
 import com.valeo.psa.fragment.MainFragment;
+import com.valeo.psa.fragment.MeasureFragment;
 import com.valeo.psa.fragment.NfcFragment;
 import com.valeo.psa.fragment.RkeFragment;
 import com.valeo.psa.fragment.StartFragment;
@@ -47,7 +48,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity implements BleRangingListener,
         RkeFragment.RkeFragmentActionListener, AccuracyFragment.AccuracyFragmentActionListener,
         StartFragment.StartFragmentActionListener, MainFragment.MainFragmentActionListener,
-        CalibrationDialogFragmentListener, DebugFragment.DebugFragmentActionListener {
+        CalibrationDialogFragmentListener, MeasureFragment.MeasureFragmentActionListener {
     private static final String TAG = MainActivity.class.getName();
     private static final int RESULT_SETTINGS = 20;
     private static final int REQUEST_ENABLE_BT = 25117;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     private RkeFragment rkeFragment;
     private ChessBoardFragment chessboardFragment;
     private DebugFragment debugFragment;
+    private MeasureFragment measureFragment;
     private AccuracyFragment accuracyFragment;
     private StartFragment startFragment;
     private TextView activity_title;
@@ -88,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         setSupportActionBar(toolbar);
         setFonts();
         this.mBleRangingHelper = new BleRangingHelper(this, chessboardFragment, debugFragment,
-                rkeFragment, accuracyFragment);
+                measureFragment, rkeFragment, accuracyFragment);
         final Bundle bundleArgs = new Bundle();
         bundleArgs.putBoolean("lockStatus", mBleRangingHelper.getLockStatus());
         debugFragment.setArguments(bundleArgs);
@@ -108,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         rkeFragment = new RkeFragment();
         chessboardFragment = new ChessBoardFragment();
         debugFragment = new DebugFragment();
+        measureFragment = new MeasureFragment();
         accuracyFragment = new AccuracyFragment();
         final NfcFragment nfcFragment = new NfcFragment();
         startFragment = new StartFragment();
@@ -115,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         getSupportFragmentManager().beginTransaction().add(R.id.door_status_switcher, rkeFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.chessboard_rl, chessboardFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.debug_rl, debugFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.measure_rl, measureFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.accuracy_rl, accuracyFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.nfc_rl, nfcFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.start_rl, startFragment).commit();
@@ -470,8 +474,13 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     }
 
     @Override
-    public void incrementCounter() {
-        mBleRangingHelper.incrementCounter();
+    public void incrementCounter(String counterValue) {
+        mBleRangingHelper.incrementCounter(counterValue);
+    }
+
+    @Override
+    public void cancelCounter() {
+        mBleRangingHelper.cancelCounter();
     }
 
     @Override

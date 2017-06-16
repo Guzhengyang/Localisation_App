@@ -1,15 +1,10 @@
 package com.valeo.psa.fragment;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
-import android.media.ToneGenerator;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -17,14 +12,12 @@ import android.text.SpannedString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.valeo.bleranging.listeners.DebugListener;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.SoundUtils;
 import com.valeo.psa.R;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ACCESS;
@@ -70,9 +63,6 @@ public class DebugFragment extends Fragment implements DebugListener {
     private GradientDrawable thatcham_area;
     private GradientDrawable remote_parking_area;
     private TextView debug_info;
-    private DebugFragmentActionListener mListener;
-    private Button start_measurement;
-    private Handler mHandler;
     private Bundle bundle;
 
     @Override
@@ -90,25 +80,6 @@ public class DebugFragment extends Fragment implements DebugListener {
     private void setView(View rootView) {
         signalReceived = (ImageView) rootView.findViewById(R.id.signalReceived);
         debug_info = (TextView) rootView.findViewById(R.id.debug_info);
-        start_measurement = (Button) rootView.findViewById(R.id.start_measurement);
-        mHandler = new Handler(Looper.getMainLooper());
-        start_measurement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mListener != null && isAdded()) {
-                            start_measurement.setEnabled(false);
-                            mListener.incrementCounter();
-                            start_measurement.setText(mListener.printCounter());
-                            SoundUtils.makeNoise(getActivity(), mHandler, ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 100);
-                        }
-                        mHandler.postDelayed(this, SdkPreferencesHelper.getInstance().getMeasurementInterval());
-                    }
-                });
-            }
-        });
     }
 
     @Override
@@ -119,15 +90,6 @@ public class DebugFragment extends Fragment implements DebugListener {
             applyNewDrawable();
         }
     }
-
-    @Override
-    public void onAttach(Context mContext) {
-        super.onAttach(mContext);
-        if (mContext instanceof Activity) {
-            mListener = (DebugFragmentActionListener) mContext;
-        }
-    }
-
 
     @Override
     public void lightUpArea(String area) {
@@ -371,12 +333,6 @@ public class DebugFragment extends Fragment implements DebugListener {
         } else {
             return ContextCompat.getDrawable(getActivity(), isOpenChoice);
         }
-    }
-
-    public interface DebugFragmentActionListener {
-        void incrementCounter();
-
-        String printCounter();
     }
 
 }

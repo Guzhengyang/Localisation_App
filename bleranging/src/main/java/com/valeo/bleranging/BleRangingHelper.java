@@ -26,6 +26,7 @@ import com.valeo.bleranging.bluetooth.scanresponse.CentralScanResponse;
 import com.valeo.bleranging.listeners.BleRangingListener;
 import com.valeo.bleranging.listeners.ChessBoardListener;
 import com.valeo.bleranging.listeners.DebugListener;
+import com.valeo.bleranging.listeners.MeasureListener;
 import com.valeo.bleranging.listeners.RkeListener;
 import com.valeo.bleranging.listeners.SpinnerListener;
 import com.valeo.bleranging.machinelearningalgo.AlgoManager;
@@ -121,6 +122,7 @@ public class BleRangingHelper {
     private final ChessBoardListener chessBoardListener;
     private final DebugListener debugListener;
     private final RkeListener rkeListener;
+    private final MeasureListener measureListener;
     private final SpinnerListener spinnerListener;
     private final byte[] lastPacketIdNumber = new byte[2];
     private final Handler mMainHandler;
@@ -213,7 +215,85 @@ public class BleRangingHelper {
             mMainHandler.postDelayed(this, 105);
         }
     };
+    private final Runnable checkNewPacketsRunner = new Runnable() {
+        @Override
+        public void run() {
+            if (bytesReceived != null) {
+                lock.readLock().lock();
+                PSALogs.d("NIH", "checkNewPacketsRunnable " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
+                if ((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
+                    lock.readLock().unlock();
+                    PSALogs.w("NIH", "LAST_EQUALS_NEW_PACKETS_RECEIVED");
+                    PSALogs.i("restartConnection", "received packet have not changed in a second");
+                    restartConnection(false);
+                } else {
+                    lastPacketIdNumber[0] = bytesReceived[0];
+                    lastPacketIdNumber[1] = bytesReceived[1];
+                    lock.readLock().unlock();
+                    if (isFullyConnected()) {
+                        mMainHandler.postDelayed(this, 1000);
+                    }
+                }
+            } else {
+                PSALogs.w("NIH", "PACKETS_RECEIVED_ARE_NULL");
+                PSALogs.i("restartConnection", "received packet is null");
+                restartConnection(false);
+            }
+        }
+    };
     private int reconnectionCounter = 0;
+    private byte welcomeByte = 0;
+    private byte lockByte = 0;
+    private byte startByte = 0;
+    private byte leftAreaByte = 0;
+    private byte rightAreaByte = 0;
+    private byte backAreaByte = 0;
+    private byte walkAwayByte = 0;
+    private byte approachByte = 0;
+    private byte leftTurnByte = 0;
+    private byte rightTurnByte = 0;
+    private byte approachSideByte = 0;
+    private byte approachRoadByte = 0;
+    private byte counterByte = 0;
+    private byte savedCounterByte = 0;
+    private byte recordByte = 0;
+    private int beepInt = 0;
+    private final Runnable beepRunner = new Runnable() {
+        @Override
+        public void run() {
+            long delayedTime = 500;
+            if (SdkPreferencesHelper.getInstance().getUserSpeedEnabled()) {
+                beepInt = 1;
+                makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_LOW_SS, 100);
+                // interval time between each beep sound in milliseconds
+                delayedTime = Math.round(((SdkPreferencesHelper.getInstance().getOneStepSize() / 100.0f) / (SdkPreferencesHelper.getInstance().getWantedSpeed() / 3.6)) * 1000);
+            }
+            PSALogs.d("beep", "delayedTime " + delayedTime);
+            if (isFullyConnected()) {
+                mMainHandler.postDelayed(this, delayedTime);
+            }
+        }
+    };
+    private boolean alreadyStopped = false;
+    private boolean isLoggable = true;
+    private final Runnable logRunner = new Runnable() {
+        @Override
+        public void run() {
+            if (isLoggable) {
+                LogFileUtils.appendRssiLogs(connectedCar, mAlgoManager,
+                        newLockStatus, welcomeByte,
+                        lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
+                        walkAwayByte, approachByte, leftTurnByte, rightTurnByte,
+                        approachSideByte, approachRoadByte, recordByte, counterByte,
+                        mProtocolManager,
+                        beepInt);
+                beepInt = 0;
+            }
+            if (isFullyConnected()) {
+                mMainHandler.postDelayed(this, 105);
+            }
+        }
+    };
     /**
      * Handles various events fired by the Service.
      * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
@@ -293,86 +373,9 @@ public class BleRangingHelper {
             }
         }
     };
-    private byte welcomeByte = 0;
-    private byte lockByte = 0;
-    private byte startByte = 0;
-    private byte leftAreaByte = 0;
-    private byte rightAreaByte = 0;
-    private byte backAreaByte = 0;
-    private byte walkAwayByte = 0;
-    private byte approachByte = 0;
-    private byte leftTurnByte = 0;
-    private byte rightTurnByte = 0;
-    private byte approachSideByte = 0;
-    private byte approachRoadByte = 0;
-    private byte counterByte = 0;
-    private byte recordByte = 0;
-    private int beepInt = 0;
-    private final Runnable beepRunner = new Runnable() {
-        @Override
-        public void run() {
-            long delayedTime = 500;
-            if (SdkPreferencesHelper.getInstance().getUserSpeedEnabled()) {
-                beepInt = 1;
-                makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_LOW_SS, 100);
-                // interval time between each beep sound in milliseconds
-                delayedTime = Math.round(((SdkPreferencesHelper.getInstance().getOneStepSize() / 100.0f) / (SdkPreferencesHelper.getInstance().getWantedSpeed() / 3.6)) * 1000);
-            }
-            PSALogs.d("beep", "delayedTime " + delayedTime);
-            if (isFullyConnected()) {
-                mMainHandler.postDelayed(this, delayedTime);
-            }
-        }
-    };
-    private boolean alreadyStopped = false;
-    private boolean isLoggable = true;
-    private final Runnable logRunner = new Runnable() {
-        @Override
-        public void run() {
-            if (isLoggable) {
-                LogFileUtils.appendRssiLogs(connectedCar, mAlgoManager,
-                        newLockStatus, welcomeByte,
-                        lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
-                        walkAwayByte, approachByte, leftTurnByte, rightTurnByte,
-                        approachSideByte, approachRoadByte, recordByte, counterByte,
-                        mProtocolManager,
-                        beepInt);
-                beepInt = 0;
-            }
-            if (isFullyConnected()) {
-                mMainHandler.postDelayed(this, 105);
-            }
-        }
-    };
-    private final Runnable checkNewPacketsRunner = new Runnable() {
-        @Override
-        public void run() {
-            if (bytesReceived != null) {
-                lock.readLock().lock();
-                PSALogs.d("NIH", "checkNewPacketsRunnable " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
-                if ((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
-                    lock.readLock().unlock();
-                    PSALogs.w("NIH", "LAST_EQUALS_NEW_PACKETS_RECEIVED");
-                    PSALogs.i("restartConnection", "received packet have not changed in a second");
-                    restartConnection(false);
-                } else {
-                    lastPacketIdNumber[0] = bytesReceived[0];
-                    lastPacketIdNumber[1] = bytesReceived[1];
-                    lock.readLock().unlock();
-                    if (isFullyConnected()) {
-                        mMainHandler.postDelayed(this, 1000);
-                    }
-                }
-            } else {
-                PSALogs.w("NIH", "PACKETS_RECEIVED_ARE_NULL");
-                PSALogs.i("restartConnection", "received packet is null");
-                restartConnection(false);
-            }
-        }
-    };
 
     public BleRangingHelper(Context context, ChessBoardListener chessBoardListener,
-                            DebugListener debugListener,
+                            DebugListener debugListener, MeasureListener measureListener,
                             RkeListener rkeListener, SpinnerListener accuracyListener) {
         this.mContext = context;
         askForPermissions();
@@ -381,6 +384,7 @@ public class BleRangingHelper {
         this.chessBoardListener = chessBoardListener;
         this.debugListener = debugListener;
         this.rkeListener = rkeListener;
+        this.measureListener = measureListener;
         this.spinnerListener = accuracyListener;
         this.mProtocolManager = new InblueProtocolManager();
         this.mMainHandler = new Handler(Looper.getMainLooper());
@@ -1002,11 +1006,16 @@ public class BleRangingHelper {
         }
     }
 
-    public void incrementCounter() {
-        counterByte++;
+    public void incrementCounter(String counterValue) {
+        savedCounterByte = (byte) (Byte.valueOf(counterValue) + 1);
+        counterByte = savedCounterByte;
+    }
+
+    public void cancelCounter() {
+        counterByte = 0;
     }
 
     public String getCounter() {
-        return String.valueOf(counterByte);
+        return String.valueOf(savedCounterByte);
     }
 }
