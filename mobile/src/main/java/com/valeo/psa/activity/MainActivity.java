@@ -484,6 +484,11 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     }
 
     @Override
+    public void enableCounter() {
+        mBleRangingHelper.enableCounter();
+    }
+
+    @Override
     public String printCounter() {
         return mBleRangingHelper.getCounter();
     }

@@ -33,6 +33,7 @@
     <string name="measure_title_tv">Register rssi for the square n° </string>
     <string name="accuracy_zone_selection">Calculate accuracy for the zone : </string>
     <string name="start_measure">Start measure</string>
+    <string name="measuring">Measuring…</string>
     <string name="start_accuracy_measure">Begin accuracy measure</string>
     <string name="stop_accuracy_measure">Stop measure</string>
     <string name="accuracy_zone_result">The %1$s zone accuracy is %2$d %%</string>

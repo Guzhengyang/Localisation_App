@@ -67,19 +67,24 @@ public class MeasureFragment extends Fragment implements MeasureListener {
                         if (mListener != null && isAdded()) {
                             start_measurement.setEnabled(false);
                             measurement_index.setEnabled(false);
+                            start_measurement.setText(R.string.measuring);
+                            start_measurement.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
                             if (measurement_index.getText().toString().equals("0")) {
                                 mListener.incrementCounter("0");
                                 measurement_index.setText(mListener.printCounter());
                             }
+                            mListener.enableCounter();
                         }
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 if (mListener != null && isAdded()) {
                                     SoundUtils.makeNoise(getActivity(), mHandler, ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 100);
-                                    mListener.cancelCounter();
                                     mListener.incrementCounter(measurement_index.getText().toString());
                                     measurement_index.setText(mListener.printCounter());
+                                    start_measurement.setText(R.string.start_measure);
+                                    start_measurement.setBackgroundColor(getResources().getColor(android.R.color.holo_green_light));
+                                    mListener.cancelCounter();
                                     start_measurement.setEnabled(true);
                                     measurement_index.setEnabled(true);
                                 }
@@ -95,6 +100,8 @@ public class MeasureFragment extends Fragment implements MeasureListener {
         void incrementCounter(String counterValue);
 
         void cancelCounter();
+
+        void enableCounter();
 
         String printCounter();
     }
