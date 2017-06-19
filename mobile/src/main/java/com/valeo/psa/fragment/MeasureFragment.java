@@ -89,7 +89,7 @@ public class MeasureFragment extends Fragment implements MeasureListener {
                                     measurement_index.setEnabled(true);
                                 }
                             }
-                        }, SdkPreferencesHelper.getInstance().getMeasurementInterval());
+                        }, (SdkPreferencesHelper.getInstance().getMeasurementInterval() * 1000));
                     }
                 });
             }
