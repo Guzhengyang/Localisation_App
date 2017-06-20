@@ -59,7 +59,9 @@ public abstract class ConnectedCar {
     protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
     protected Context mContext;
     protected double[] rssi;
-    PredictionCoord coordPrediction;
+    PredictionCoord squarePrediction;
+    PredictionCoord pxPrediction;
+    PredictionCoord pyPrediction;
     PredictionZone standardPrediction;
     PredictionZone earPrediction;
     PredictionZone rpPrediction;
@@ -89,9 +91,9 @@ public abstract class ConnectedCar {
     /**
      * Save an incoming rssi
      *
-     * @param trxNumber   the trx that sent the signal
-     * @param rssi        the rssi value to save
-     * @param bleChannel  the ble Channel
+     * @param trxNumber  the trx that sent the signal
+     * @param rssi       the rssi value to save
+     * @param bleChannel the ble Channel
      */
     public void saveRssi(int trxNumber, int rssi, byte antennaId, Antenna.BLEChannel bleChannel) {
         if (trxLinkedHMap.get(trxNumber) != null) {
@@ -105,8 +107,8 @@ public abstract class ConnectedCar {
     /**
      * Save an incoming rssi from car
      *
-     * @param trxNumber  the trx that sent the signal
-     * @param rssi       the rssi value to save
+     * @param trxNumber the trx that sent the signal
+     * @param rssi      the rssi value to save
      */
     public void saveCarRssi(final int trxNumber, final int rssi) {
         if (trxLinkedHMap.get(trxNumber) != null) {
@@ -192,9 +194,9 @@ public abstract class ConnectedCar {
     /**
      * Create a string of header debug
      *
-     * @param bytesToSend            the bytes to send
-     * @param bytesReceived          the bytes received
-     * @param isFullyConnected       the boolean that determine if the smartphone is connected or not
+     * @param bytesToSend      the bytes to send
+     * @param bytesReceived    the bytes received
+     * @param isFullyConnected the boolean that determine if the smartphone is connected or not
      * @return the spannable string builder filled with the header
      */
     public SpannableStringBuilder createHeaderDebugData(final byte[] bytesToSend, final byte[] bytesReceived, boolean isFullyConnected) {
@@ -301,6 +303,7 @@ public abstract class ConnectedCar {
 
     /**
      * Set the rssi into the machine learning algorithm
+     *
      * @param rssi the array containing rssi from beacons
      */
     public abstract void setRssi(double[] rssi, boolean lockStatus);
@@ -312,6 +315,7 @@ public abstract class ConnectedCar {
 
     /**
      * Print debug info
+     *
      * @param smartphoneIsInPocket true if the smartphone is supposedly in the pocket, false otherwise
      * @return the debug information
      */
@@ -319,6 +323,7 @@ public abstract class ConnectedCar {
 
     /**
      * Get a prediction of position regarding the car
+     *
      * @param smartphoneIsInPocket true if the smartphone is supposedly in the pocket, false otherwise
      * @return the position prediction
      */
@@ -333,6 +338,7 @@ public abstract class ConnectedCar {
 
     /**
      * Get a prediction of proximity with the car
+     *
      * @return the proximity prediction
      */
     public String getPredictionProximity() {
@@ -344,6 +350,7 @@ public abstract class ConnectedCar {
 
     /**
      * Check if the array of rssi contains only non null value
+     *
      * @param mRssi the array of rssi to check
      * @return null if a value is equal to 0, the entire array otherwise
      */

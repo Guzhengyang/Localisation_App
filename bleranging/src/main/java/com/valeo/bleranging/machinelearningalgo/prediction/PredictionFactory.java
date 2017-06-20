@@ -17,6 +17,9 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_5
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_6_A;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_7_A;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_8_A;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_Clf;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_Px;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_Py;
 
 /**
  * Created by l-avaratha on 17/02/2017
@@ -37,10 +40,12 @@ public class PredictionFactory {
     private final static String ZONE_4_B_RP = "FourRP";
 
     //    models for 8 beacons
-    private final static String ZONE_8_A = "Eight";
+    private final static String ZONE_8_A_NORMAL = "EightNormal";
     private final static String ZONE_8_A_THATCHAM = "EightThatcham";
+    private final static String COORD_8_A_PX = "MLP4Px";
+    private final static String COORD_8_A_PY = "MLP4Py";
     private final static String ZONE_8_A_RP = "EightRP";
-    private final static String COORD_8_A = "MLP4Clf";
+    private final static String COORD_8_A_CLF = "MLP4Clf";
 
 
     /**
@@ -48,11 +53,17 @@ public class PredictionFactory {
      *
      * @return a coord prediction
      */
-    public static PredictionCoord getPredictionCoord(Context mContext) {
+    public static PredictionCoord getPredictionCoord(Context mContext, String modelType) {
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-//        if (carType.equalsIgnoreCase(TYPE_8_A)) {
-//            return new PredictionCoord(mContext, COORD_8_A, rowDataKeySetFactory(TYPE_8_A));
-//        }
+        if (carType.equalsIgnoreCase(TYPE_8_A)) {
+            if (modelType.equalsIgnoreCase(TYPE_Clf)) {
+                return new PredictionCoord(mContext, COORD_8_A_CLF, rowDataKeySetFactory(TYPE_8_A));
+            } else if (modelType.equalsIgnoreCase(TYPE_Px)) {
+                return new PredictionCoord(mContext, COORD_8_A_PX, rowDataKeySetFactory(TYPE_8_A));
+            } else if (modelType.equalsIgnoreCase(TYPE_Py)) {
+                return new PredictionCoord(mContext, COORD_8_A_PY, rowDataKeySetFactory(TYPE_8_A));
+            }
+        }
         return null;
     }
 
@@ -95,10 +106,10 @@ public class PredictionFactory {
                         if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
                             return new PredictionZone(mContext, ZONE_8_A_THATCHAM, rowDataKeySetFactory(TYPE_8_A), predictionType);
                         } else {
-                            return new PredictionZone(mContext, ZONE_8_A, rowDataKeySetFactory(TYPE_8_A), predictionType);
+                            return new PredictionZone(mContext, ZONE_8_A_NORMAL, rowDataKeySetFactory(TYPE_8_A), predictionType);
                         }
                     case PREDICTION_RP:
-                        return new PredictionZone(mContext, ZONE_8_A, rowDataKeySetFactory(TYPE_8_A), predictionType);
+                        return new PredictionZone(mContext, ZONE_8_A_NORMAL, rowDataKeySetFactory(TYPE_8_A), predictionType);
                 }
                 break;
         }

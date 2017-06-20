@@ -23,6 +23,9 @@ public class ConnectedCarFactory {
     public final static String TYPE_6_A = "sixFlFrMTRlRr";
     public final static String TYPE_7_A = "sevenFlFrLMRRlRr";
     public final static String TYPE_8_A = "eightFlFrLMRTRlRr";
+    public final static String TYPE_Clf = "MLP4Clf";
+    public final static String TYPE_Px = "MLP4Px";
+    public final static String TYPE_Py = "MLP4Py";
     public final static int NUMBER_TRX_FRONT_LEFT = 1;
     public final static int NUMBER_TRX_FRONT_RIGHT = 2;
     public final static int NUMBER_TRX_LEFT = 3;

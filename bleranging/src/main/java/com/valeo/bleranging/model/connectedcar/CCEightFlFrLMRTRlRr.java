@@ -31,7 +31,9 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public void readPredictionsRawFiles() {
         standardPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_STANDARD);
-        //        coordPrediction = PredictionFactory.getPredictionCoord(mContext);
+//        pxPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Px);
+//        pyPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Py);
+///       squarePrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Clf);
 //        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);
     }
 
@@ -40,7 +42,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         if (isInitialized()) {
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             standardPrediction.predict(N_VOTE_SHORT);
-// coordPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+//            squarePrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
 //            rpPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
 //            rpPrediction.predict(N_VOTE_LONG);
         }
@@ -50,8 +52,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     public boolean isInitialized() {
         return (standardPrediction != null
                 && standardPrediction.isPredictRawFileRead()
-//                && coordPrediction != null
-//                && coordPrediction.isPredictRawFileRead()
+//                && squarePrediction != null
+//                && squarePrediction.isPredictRawFileRead()
 //                && rpPrediction != null
 //                && rpPrediction.isPredictRawFileRead()
                 && (checkForRssiNonNull(rssi) != null));
@@ -62,7 +64,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         if (isInitialized()) {
             standardPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone(), lockStatus);
             standardPrediction.predict(N_VOTE_SHORT);
-            //            coordPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            //            squarePrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             //            rpPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone(), lockStatus);
 //            rpPrediction.predict(N_VOTE_LONG);
         }
@@ -78,7 +80,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 standardPrediction.calculatePredictionStandard(SdkPreferencesHelper.getInstance().getThresholdProbStandard(),
                         THRESHOLD_PROB_LOCK2UNLOCK, THRESHOLD_PROB_UNLOCK2LOCK, PASSIVE_ENTRY_ORIENTED);
             }
-            //            coordPrediction.calculatePredictionCoord(orientation);
+            //            squarePrediction.calculatePredictionCoord(orientation);
 //            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
@@ -109,15 +111,15 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     }
 
     public PointF getPredictionCoord() {
-        if (coordPrediction != null && coordPrediction.isPredictRawFileRead()) {
-            return coordPrediction.getPredictionCoord();
+        if (squarePrediction != null && squarePrediction.isPredictRawFileRead()) {
+            return squarePrediction.getPredictionCoord();
         }
         return null;
     }
 
     public double getDist2Car() {
-        if (coordPrediction != null && coordPrediction.isPredictRawFileRead()) {
-            return coordPrediction.getDist2Car();
+        if (squarePrediction != null && squarePrediction.isPredictRawFileRead()) {
+            return squarePrediction.getDist2Car();
         }
         return 0f;
     }
