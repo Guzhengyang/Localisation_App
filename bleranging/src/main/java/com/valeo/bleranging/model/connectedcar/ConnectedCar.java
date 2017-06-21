@@ -59,13 +59,11 @@ public abstract class ConnectedCar {
     protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
     protected Context mContext;
     protected double[] rssi;
-    PredictionCoord squarePrediction;
     PredictionCoord pxPrediction;
     PredictionCoord pyPrediction;
     PredictionZone standardPrediction;
     PredictionZone earPrediction;
     PredictionZone rpPrediction;
-    PredictionZone insidePrediction;
     boolean comValid = false;
     String lastModelUsed = STANDARD_LOC;
 

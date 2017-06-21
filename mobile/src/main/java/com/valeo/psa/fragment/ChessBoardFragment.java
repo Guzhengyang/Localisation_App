@@ -100,8 +100,9 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     private Bitmap placeUserOnChessBoard(final PointF point, final double dist) {
         final Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
-        PSALogs.d("chess", String.format(Locale.FRANCE, "coord : %.1f %.1f", point.x, (10 - point.y)));
-        chessboard_debug_info.setText(String.format(Locale.FRANCE, "coord : x = %.1f      y = %.1f    distance : %.1f", point.x, (10 - point.y), dist));
+        PSALogs.d("chess", String.format(Locale.FRANCE, "coord : %.1f %.1f", point.x, point.y));
+        chessboard_debug_info.setText(String.format(Locale.FRANCE, "coord : x = %.1f      y = %.1f    distance : %.1f", point.x, point.y, dist));
+        point.y = 10 - point.y;
         point.x *= stepX;
         point.y *= stepY;
         PSALogs.d("chess", String.format(Locale.FRANCE, "pixel : %.1f %.1f", point.x, point.y));

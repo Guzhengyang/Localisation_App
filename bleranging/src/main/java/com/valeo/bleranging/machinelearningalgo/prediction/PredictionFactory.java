@@ -47,11 +47,11 @@ public class PredictionFactory {
     private final static String ZONE_8_A_RP = "EightRP";
     private final static String COORD_8_A_CLF = "MLP4Clf";
 
-
-    /**
-     * Create and return a coord prediction
+    /***
      *
-     * @return a coord prediction
+     * @param mContext
+     * @param modelType classification or regression
+     * @return coord prediction
      */
     public static PredictionCoord getPredictionCoord(Context mContext, String modelType) {
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
@@ -68,9 +68,9 @@ public class PredictionFactory {
     }
 
     /**
-     * Create and return a zone prediction
-     *
-     * @return a zone prediction
+     * @param mContext
+     * @param predictionType PREDICTION_STANDARD for all the zones and PREDICTION_RP for near/far prediction
+     * @return zone prediction
      */
     public static PredictionZone getPredictionZone(Context mContext, String predictionType) {
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
@@ -109,13 +109,17 @@ public class PredictionFactory {
                             return new PredictionZone(mContext, ZONE_8_A_NORMAL, rowDataKeySetFactory(TYPE_8_A), predictionType);
                         }
                     case PREDICTION_RP:
-                        return new PredictionZone(mContext, ZONE_8_A_NORMAL, rowDataKeySetFactory(TYPE_8_A), predictionType);
+                        return new PredictionZone(mContext, ZONE_8_A_RP, rowDataKeySetFactory(TYPE_8_A), predictionType);
                 }
                 break;
         }
         return null;
     }
 
+    /**
+     * @param carType type of beacons to be used
+     * @return list for entry of ML algo
+     */
     private static List<String> rowDataKeySetFactory(String carType) {
         List<String> rowDataKeySet = new ArrayList<>();
         switch (carType) {

@@ -7,12 +7,16 @@ import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
-
 /**
  * Created by l-avaratha on 07/09/2016
  */
 public class CCEightFlFrLMRTRlRr extends ConnectedCar {
+
+    private static final int MAX_X = 11;
+    private static final int MAX_Y = 10;
+    private static final double THRESHOLD_DIST = 0.25;
+    private static double X1 = 3, X2 = 7, Y1 = 4, Y2 = 6;
+    private double coord_x, coord_y;
 
     public CCEightFlFrLMRTRlRr(Context mContext) {
         super(mContext);
@@ -31,9 +35,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public void readPredictionsRawFiles() {
         standardPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_STANDARD);
-//        pxPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Px);
-//        pyPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Py);
-///       squarePrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Clf);
+        pxPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Px);
+        pyPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Py);
 //        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);
     }
 
@@ -42,7 +45,10 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         if (isInitialized()) {
             standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             standardPrediction.predict(N_VOTE_SHORT);
-//            squarePrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            pxPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            pyPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            coord_x = pxPrediction.getPredictionCoord();
+            coord_y = pyPrediction.getPredictionCoord();
 //            rpPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
 //            rpPrediction.predict(N_VOTE_LONG);
         }
@@ -52,8 +58,10 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     public boolean isInitialized() {
         return (standardPrediction != null
                 && standardPrediction.isPredictRawFileRead()
-//                && squarePrediction != null
-//                && squarePrediction.isPredictRawFileRead()
+                && pxPrediction != null
+                && pxPrediction.isPredictRawFileRead()
+                && pyPrediction != null
+                && pyPrediction.isPredictRawFileRead()
 //                && rpPrediction != null
 //                && rpPrediction.isPredictRawFileRead()
                 && (checkForRssiNonNull(rssi) != null));
@@ -64,8 +72,9 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         if (isInitialized()) {
             standardPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone(), lockStatus);
             standardPrediction.predict(N_VOTE_SHORT);
-            //            squarePrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-            //            rpPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone(), lockStatus);
+            pxPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            pyPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+//            rpPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone(), lockStatus);
 //            rpPrediction.predict(N_VOTE_LONG);
         }
     }
@@ -80,7 +89,9 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 standardPrediction.calculatePredictionStandard(SdkPreferencesHelper.getInstance().getThresholdProbStandard(),
                         THRESHOLD_PROB_LOCK2UNLOCK, THRESHOLD_PROB_UNLOCK2LOCK, PASSIVE_ENTRY_ORIENTED);
             }
-            //            squarePrediction.calculatePredictionCoord(orientation);
+            pxPrediction.calculatePredictionCoord();
+            pyPrediction.calculatePredictionCoord();
+            correctCoord(pxPrediction.getPredictionCoord(), pyPrediction.getPredictionCoord(), THRESHOLD_DIST);
 //            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
@@ -101,33 +112,72 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     public String getPredictionPosition(boolean smartphoneIsInPocket) {
         if (standardPrediction != null && standardPrediction.isPredictRawFileRead()) {
             String result = standardPrediction.getPrediction();
-            if (SdkPreferencesHelper.getInstance().isPrintInsideEnabled()
-                    && result.equalsIgnoreCase(PREDICTION_START)) {
-                return getInsidePrediction();
-            }
             return result;
         }
         return BleRangingHelper.PREDICTION_UNKNOWN;
     }
 
     public PointF getPredictionCoord() {
-        if (squarePrediction != null && squarePrediction.isPredictRawFileRead()) {
-            return squarePrediction.getPredictionCoord();
+        if (pxPrediction != null && pxPrediction.isPredictRawFileRead() &&
+                pyPrediction != null && pyPrediction.isPredictRawFileRead()) {
+            return new PointF((float) coord_x, (float) coord_y);
         }
         return null;
     }
 
     public double getDist2Car() {
-        if (squarePrediction != null && squarePrediction.isPredictRawFileRead()) {
-            return squarePrediction.getDist2Car();
+        if (pxPrediction != null && pxPrediction.isPredictRawFileRead() &&
+                pyPrediction != null && pyPrediction.isPredictRawFileRead()) {
+            return calculateDist2Car();
         }
         return 0f;
     }
 
-    private String getInsidePrediction() {
-        if (insidePrediction != null && insidePrediction.isPredictRawFileRead()) {
-            return insidePrediction.getPrediction();
+    private double calculateDist2Car() {
+        double dist2car;
+        if ((coord_x < X1) & (coord_y < Y1)) {
+            dist2car = Math.sqrt((coord_x - X1) * (coord_x - X1) + (coord_y - Y1) * (coord_y - Y1));
+        } else if ((coord_x < X1) & (coord_y > Y2)) {
+            dist2car = Math.sqrt((coord_x - X1) * (coord_x - X1) + (coord_y - Y2) * (coord_y - Y2));
+        } else if ((coord_x > X2) & (coord_y < Y1)) {
+            dist2car = Math.sqrt((coord_x - X2) * (coord_x - X2) + (coord_y - Y1) * (coord_y - Y1));
+        } else if ((coord_x > X2) & (coord_y > Y2)) {
+            dist2car = Math.sqrt((coord_x - X2) * (coord_x - X2) + (coord_y - Y2) * (coord_y - Y2));
+        } else if ((coord_x < X1) & (coord_y > Y1) & (coord_y < Y2)) {
+            dist2car = X1 - coord_x;
+        } else if ((coord_x > X2) & (coord_y > Y1) & (coord_y < Y2)) {
+            dist2car = coord_x - X2;
+        } else if ((coord_y < Y1) & (coord_x > X1) & (coord_x < X2)) {
+            dist2car = Y1 - coord_y;
+        } else if ((coord_y > Y2) & (coord_x > X1) & (coord_x < X2)) {
+            dist2car = coord_y - Y2;
+        } else {
+            dist2car = -1;
         }
-        return BleRangingHelper.PREDICTION_UNKNOWN;
+        return dist2car;
+    }
+
+    private void correctCoord(double coord_x_new, double coord_y_new, double threshold_dist) {
+        double deltaX = coord_x_new - coord_x;
+        double deltaY = coord_y_new - coord_y;
+        double dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        if (dist > threshold_dist) {
+            double ratio = threshold_dist / dist;
+            coord_x = coord_x + deltaX * ratio;
+            coord_y = coord_y + deltaY * ratio;
+        } else {
+            coord_x = coord_x_new;
+            coord_y = coord_y_new;
+        }
+        if (coord_x > MAX_X) {
+            coord_x = MAX_X;
+        } else if (coord_x < 0) {
+            coord_x = 0;
+        }
+        if (coord_y > MAX_Y) {
+            coord_y = MAX_Y;
+        } else if (coord_y < 0) {
+            coord_y = 0;
+        }
     }
 }

@@ -19,9 +19,7 @@ import hex.genmodel.easy.RowData;
 import hex.genmodel.easy.prediction.BinomialModelPrediction;
 import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_EXTERNAL;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.PASSIVE_ENTRY_ORIENTED;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
@@ -38,7 +36,9 @@ public class PredictionZone {
     private List<Integer> predictions = new ArrayList<>();
     private double[] distribution;
     private double[] distance;
+    //    rssi used for algo entry
     private double[] rssi;
+    //    rssi after adding smartphone offset
     private double[] rssi_offset;
     private int prediction_old = -1;
     private Context mContext;
@@ -93,9 +93,7 @@ public class PredictionZone {
         this.distribution = new double[modelWrapper.getResponseDomainValues().length];
 //        find index of lock
         for (int i = 0; i < modelWrapper.getResponseDomainValues().length; i++) {
-            if (modelWrapper.getResponseDomainValues()[i].equalsIgnoreCase(PREDICTION_LOCK)
-                    || modelWrapper.getResponseDomainValues()[i].equalsIgnoreCase(PREDICTION_EXTERNAL)
-                    || modelWrapper.getResponseDomainValues()[i].equalsIgnoreCase(PREDICTION_OUTSIDE)) {
+            if (modelWrapper.getResponseDomainValues()[i].equalsIgnoreCase(PREDICTION_LOCK)) {
                 INDEX_LOCK = i;
                 break;
             }
@@ -105,7 +103,7 @@ public class PredictionZone {
             this.rssi[i] = rssi_offset[i];
             this.distance[i] = rssi2dist(this.rssi[i]);
         }
-        constructRowData(rssi);
+        constructRowData(this.rssi);
     }
 
     public void setRssi(double rssi[], int offset, boolean lockStatus) {
@@ -113,12 +111,8 @@ public class PredictionZone {
             for (int index = 0; index < rssi.length; index++) {
                 this.rssi_offset[index] = rssi[index] - offset;
                 if (prediction_old != -1) {
-                    // trx order : l, m, r, t, fl, fr, rl, rr
                     // Add lock hysteresis to all the trx
-                    if (this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
-                            this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE) |
-                            this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_EXTERNAL) |
-                            this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_FAR)) {
+                    if (this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
                         rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
                     }
                     // Add unlock hysteresis to all the trx
@@ -132,7 +126,6 @@ public class PredictionZone {
 //                rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
 //            }
                 }
-
                 this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
                 distance[index] = rssi2dist(this.rssi[index]);
             }
@@ -191,15 +184,6 @@ public class PredictionZone {
         return c / f / 4 / Math.PI * Math.pow(10, -(rssi - P) / 20);
     }
 
-    private double correctDistUnilateral(double dist_old, double dist_new, double threshold) {
-        double dist_correted;
-        if (dist_new < dist_old) {
-            dist_correted = dist_new;
-        } else {
-            dist_correted = Math.min(dist_new - dist_old, threshold) + dist_old;
-        }
-        return dist_correted;
-    }
 
     private double correctRssiUnilateral(double rssi_old, double rssi_new) {
         double rssi_correted;
@@ -228,10 +212,10 @@ public class PredictionZone {
     }
 
     //    4, 6, 8 beacons prediction
-    public void calculatePredictionStandard(double threshold_prob, double threshold_prob_lock2unlock, double threshold_prob_unlock2lock, String orientation) {
+    public void calculatePredictionStandard(double threshold_prob, double threshold_prob_lock2unlock, double threshold_prob_unlock2lock, String strategy) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
-            if (orientation.equals(THATCHAM_ORIENTED)) {
+            if (strategy.equals(THATCHAM_ORIENTED)) {
                 //                when no decision for lock is made, use threshold method
                 if (ifNoDecision2Lock(distribution, threshold_prob_unlock2lock)) {
                     if (if2Lock(rssi, SdkPreferencesHelper.getInstance().getThresholdLock())) {
@@ -267,7 +251,7 @@ public class PredictionZone {
                     prediction_old = temp_prediction;
                     return;
                 }
-            } else if (orientation.equals(PASSIVE_ENTRY_ORIENTED)) {
+            } else if (strategy.equals(PASSIVE_ENTRY_ORIENTED)) {
 //                when no decision for lock is made, use threshold method
                 if (ifNoDecision2Lock(distribution, threshold_prob_unlock2lock)) {
                     if (if2Lock(rssi, SdkPreferencesHelper.getInstance().getThresholdLock())) {
@@ -315,7 +299,6 @@ public class PredictionZone {
                 return;
             }
         }
-
     }
 
     public void calculatePredictionStart(double threshold_prob) {
@@ -354,15 +337,6 @@ public class PredictionZone {
                 prediction_old = temp_prediction;
                 return;
             }
-            if (compareDistribution(temp_prediction, threshold_prob)) {
-                prediction_old = temp_prediction;
-            }
-        }
-    }
-
-    public void calculatePredictionInside(double threshold_prob) {
-        if (checkOldPrediction()) {
-            int temp_prediction = most(predictions);
             if (compareDistribution(temp_prediction, threshold_prob)) {
                 prediction_old = temp_prediction;
             }
