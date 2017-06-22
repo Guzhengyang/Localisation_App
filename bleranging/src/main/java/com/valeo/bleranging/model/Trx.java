@@ -97,8 +97,8 @@ public class Trx {
             final Antenna tmpAntenna = getAntennaById(antennaId);
             if (tmpAntenna != null) {
                 currentAntenna = tmpAntenna;
-                PSALogs.d("antenna", currentAntenna.toString());
                 tmpAntenna.saveRssi(rssi, isRssiReceived, bleChannel);
+                PSALogs.d("antenna", tmpAntenna.toString());
             } else {
                 PSALogs.d("NIH", "tmpAntenna is null, cannot save rssi");
             }

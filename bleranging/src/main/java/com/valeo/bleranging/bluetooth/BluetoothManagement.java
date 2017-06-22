@@ -304,7 +304,7 @@ public class BluetoothManagement {
      * stack
      */
     public void suspendLeScan() {
-        scanLeDevice(false);
+        mBluetoothAdapterCompat.suspendLeScan(mLeScanCallbackMain);
     }
 
     /**
@@ -314,6 +314,20 @@ public class BluetoothManagement {
      * mecanism is resumed.
      */
     public void resumeLeScan() {
+        mBluetoothAdapterCompat.resumeLeScan(mLeScanCallbackMain);
+    }
+
+    /**
+     * This function stop scanning
+     */
+    public void stopLeScan() {
+        scanLeDevice(false);
+    }
+
+    /**
+     * This function start scanning
+     */
+    public void startLeScan() {
         scanLeDevice(true);
     }
 

@@ -146,7 +146,9 @@ public final class BluetoothAdapterCompat {
     public void suspendLeScan(final ScanCallbackCompat scanCallbackCompat) {
         PSALogs.w("NIH", "suspendLeScan()");
         ScanTask scanTask = mRunningDetections.get(scanCallbackCompat);
-        scanTask.suspend();
+        if (scanTask != null) {
+            scanTask.suspend();
+        }
     }
 
     /**
@@ -158,7 +160,9 @@ public final class BluetoothAdapterCompat {
     public void resumeLeScan(final ScanCallbackCompat scanCallbackCompat) {
         PSALogs.w("NIH", "resumeLeScan()");
         ScanTask scanTask = mRunningDetections.get(scanCallbackCompat);
-        scanTask.resume();
+        if (scanTask != null) {
+            scanTask.resume();
+        }
     }
 
     // endregion

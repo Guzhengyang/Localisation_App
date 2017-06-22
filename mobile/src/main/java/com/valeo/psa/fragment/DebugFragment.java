@@ -267,64 +267,66 @@ public class DebugFragment extends Fragment implements DebugListener {
 
     @Override
     public void updateCarDrawable(final boolean isLocked) {
-        layerDrawable = (LayerDrawable) ContextCompat.getDrawable(getActivity(), R.drawable.rssi_localization);
-        Drawable carDrawable;
-        switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
-            case ConnectedCarFactory.TYPE_2_A:
-                carDrawable = chooseCarDrawable(isLocked, R.drawable.car_2_a_close, R.drawable.car_2_a_open);
-                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                break;
-            case ConnectedCarFactory.TYPE_2_B:
-                carDrawable = chooseCarDrawable(isLocked, R.drawable.car_2_b_close, R.drawable.car_2_b_open);
-                trunk_area = null;
-                break;
-            case ConnectedCarFactory.TYPE_3_A:
-                carDrawable = chooseCarDrawable(isLocked, R.drawable.car_3_a_close, R.drawable.car_3_a_open);
-                trunk_area = null;
-                break;
-            case ConnectedCarFactory.TYPE_4_A:
-                carDrawable = chooseCarDrawable(isLocked, R.drawable.car_4_a_close, R.drawable.car_4_a_open);
-                trunk_area = null;
-                break;
-            case ConnectedCarFactory.TYPE_4_B:
-                carDrawable = chooseCarDrawable(isLocked, R.drawable.car_4_b_close, R.drawable.car_4_b_open);
-                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                break;
-            case ConnectedCarFactory.TYPE_5_A:
-                carDrawable = chooseCarDrawable(isLocked, R.drawable.car_5_close, R.drawable.car_5_open);
-                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                break;
-            case ConnectedCarFactory.TYPE_6_A:
-                carDrawable = chooseCarDrawable(isLocked, R.drawable.car_6_close, R.drawable.car_6_open);
-                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                break;
-            case ConnectedCarFactory.TYPE_7_A:
-                carDrawable = chooseCarDrawable(isLocked, R.drawable.car_7_close, R.drawable.car_7_open);
-                trunk_area = null;
-                break;
-            case ConnectedCarFactory.TYPE_8_A:
-                carDrawable = chooseCarDrawable(isLocked, R.drawable.car_8_close, R.drawable.car_8_open);
-                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                break;
-            default:
-                carDrawable = chooseCarDrawable(isLocked, R.drawable.car_8_close, R.drawable.car_8_open);
-                trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
-                break;
+        if (isAdded()) {
+            layerDrawable = (LayerDrawable) ContextCompat.getDrawable(getActivity(), R.drawable.rssi_localization);
+            Drawable carDrawable;
+            switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
+                case ConnectedCarFactory.TYPE_2_A:
+                    carDrawable = chooseCarDrawable(isLocked, R.drawable.car_2_a_close, R.drawable.car_2_a_open);
+                    trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
+                    break;
+                case ConnectedCarFactory.TYPE_2_B:
+                    carDrawable = chooseCarDrawable(isLocked, R.drawable.car_2_b_close, R.drawable.car_2_b_open);
+                    trunk_area = null;
+                    break;
+                case ConnectedCarFactory.TYPE_3_A:
+                    carDrawable = chooseCarDrawable(isLocked, R.drawable.car_3_a_close, R.drawable.car_3_a_open);
+                    trunk_area = null;
+                    break;
+                case ConnectedCarFactory.TYPE_4_A:
+                    carDrawable = chooseCarDrawable(isLocked, R.drawable.car_4_a_close, R.drawable.car_4_a_open);
+                    trunk_area = null;
+                    break;
+                case ConnectedCarFactory.TYPE_4_B:
+                    carDrawable = chooseCarDrawable(isLocked, R.drawable.car_4_b_close, R.drawable.car_4_b_open);
+                    trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
+                    break;
+                case ConnectedCarFactory.TYPE_5_A:
+                    carDrawable = chooseCarDrawable(isLocked, R.drawable.car_5_close, R.drawable.car_5_open);
+                    trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
+                    break;
+                case ConnectedCarFactory.TYPE_6_A:
+                    carDrawable = chooseCarDrawable(isLocked, R.drawable.car_6_close, R.drawable.car_6_open);
+                    trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
+                    break;
+                case ConnectedCarFactory.TYPE_7_A:
+                    carDrawable = chooseCarDrawable(isLocked, R.drawable.car_7_close, R.drawable.car_7_open);
+                    trunk_area = null;
+                    break;
+                case ConnectedCarFactory.TYPE_8_A:
+                    carDrawable = chooseCarDrawable(isLocked, R.drawable.car_8_close, R.drawable.car_8_open);
+                    trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
+                    break;
+                default:
+                    carDrawable = chooseCarDrawable(isLocked, R.drawable.car_8_close, R.drawable.car_8_open);
+                    trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
+                    break;
+            }
+            welcome_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.welcome_area);
+            start_area_fl = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_fl);
+            start_area_fr = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_fr);
+            start_area_rl = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_rl);
+            start_area_rr = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_rr);
+            lock_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.lock_area);
+            rooftop = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.rooftop);
+            unlock_area_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_left);
+            unlock_area_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_right);
+            unlock_area_back = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_back);
+            unlock_area_front = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front);
+            thatcham_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.thatcham_area);
+            remote_parking_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.remote_parking_area);
+            layerDrawable.setDrawableByLayerId(R.id.car_drawable, carDrawable);
         }
-        welcome_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.welcome_area);
-        start_area_fl = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_fl);
-        start_area_fr = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_fr);
-        start_area_rl = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_rl);
-        start_area_rr = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.start_area_rr);
-        lock_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.lock_area);
-        rooftop = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.rooftop);
-        unlock_area_left = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_left);
-        unlock_area_right = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_right);
-        unlock_area_back = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_back);
-        unlock_area_front = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.unlock_area_front);
-        thatcham_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.thatcham_area);
-        remote_parking_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.remote_parking_area);
-        layerDrawable.setDrawableByLayerId(R.id.car_drawable, carDrawable);
     }
 
     private Drawable chooseCarDrawable(boolean isLocked, int isCloseChoice, int isOpenChoice) {
