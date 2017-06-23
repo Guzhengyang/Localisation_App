@@ -244,6 +244,10 @@ public final class SdkPreferencesHelper {
         return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_rear_right_pref_name), BLE_ADDRESS_REAR_RIGHT);
     }
 
+    public Boolean isChannelLimited() {
+        return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.is_channel_limited_pref_name), false);
+    }
+
     public Boolean isCalibrated() {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.is_calibrated_pref_name), false);
     }

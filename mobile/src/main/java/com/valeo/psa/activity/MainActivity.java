@@ -390,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
                         SdkPreferencesHelper.getInstance().getWantedSpeed(), SdkPreferencesHelper.getInstance().getOneStepSize());
                 LogFileUtils.writeFirstColumnLogs();
             }
+            PSALogs.d("init2", "initializeConnectedCar\n");
             mBleRangingHelper.initializeConnectedCar();
         }
         if (chessboardFragment != null) {

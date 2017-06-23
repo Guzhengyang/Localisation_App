@@ -29,6 +29,10 @@
             android:title="@string/pref_com_simulation_enabled" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:key="@string/is_channel_limited_pref_name"
+            android:title="@string/pref_is_channel_limited" />
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="@string/is_calibrated_pref_name"
             android:title="@string/pref_is_calibrated" />
         <CheckBoxPreference

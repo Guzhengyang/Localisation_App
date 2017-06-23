@@ -173,7 +173,7 @@ public abstract class ConnectedCar {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getCurrentOriginalRssi();
         } else {
-            return 0;
+            return 2;
         }
     }
 
@@ -292,9 +292,11 @@ public abstract class ConnectedCar {
                 if (trxIterator.hasNext()) {
                     rssi[i] = getCurrentOriginalRssi(trxIterator.next().getTrxNumber());
                 } else {
-                    rssi[i] = 0;
+                    rssi[i] = 1;
                 }
             }
+        } else {
+            PSALogs.d("init2", "getRssiForRangingPrediction trxLinkedHMap is NULL\n");
         }
         return checkForRssiNonNull(rssi);
     }

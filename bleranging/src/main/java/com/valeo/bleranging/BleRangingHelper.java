@@ -184,6 +184,8 @@ public class BleRangingHelper {
             double[] rssi = connectedCar.getRssiForRangingPrediction();
             if (rssi != null) {
                 connectedCar.setRssi(rssi, newLockStatus);
+            } else {
+                PSALogs.d("init2", "setRssiForRangingPrediction is NULL\n");
             }
             mMainHandler.postDelayed(this, 105);
         }
@@ -215,84 +217,7 @@ public class BleRangingHelper {
             mMainHandler.postDelayed(this, 105);
         }
     };
-    private final Runnable checkNewPacketsRunner = new Runnable() {
-        @Override
-        public void run() {
-            if (bytesReceived != null) {
-                lock.readLock().lock();
-                PSALogs.d("NIH", "checkNewPacketsRunnable " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
-                if ((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
-                    lock.readLock().unlock();
-                    PSALogs.w("NIH", "LAST_EQUALS_NEW_PACKETS_RECEIVED");
-                    PSALogs.i("restartConnection", "received packet have not changed in a second");
-                    restartConnection(false);
-                } else {
-                    lastPacketIdNumber[0] = bytesReceived[0];
-                    lastPacketIdNumber[1] = bytesReceived[1];
-                    lock.readLock().unlock();
-                    if (isFullyConnected()) {
-                        mMainHandler.postDelayed(this, 1000);
-                    }
-                }
-            } else {
-                PSALogs.w("NIH", "PACKETS_RECEIVED_ARE_NULL");
-                PSALogs.i("restartConnection", "received packet is null");
-                restartConnection(false);
-            }
-        }
-    };
     private int reconnectionCounter = 0;
-    private byte welcomeByte = 0;
-    private byte lockByte = 0;
-    private byte startByte = 0;
-    private byte leftAreaByte = 0;
-    private byte rightAreaByte = 0;
-    private byte backAreaByte = 0;
-    private byte walkAwayByte = 0;
-    private byte approachByte = 0;
-    private byte leftTurnByte = 0;
-    private byte rightTurnByte = 0;
-    private byte approachSideByte = 0;
-    private byte approachRoadByte = 0;
-    private byte counterByte = 0;
-    private byte savedCounterByte = 0;
-    private byte recordByte = 0;
-    private int beepInt = 0;
-    private final Runnable beepRunner = new Runnable() {
-        @Override
-        public void run() {
-            long delayedTime = 500;
-            if (SdkPreferencesHelper.getInstance().getUserSpeedEnabled()) {
-                beepInt = 1;
-                makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_LOW_SS, 100);
-                // interval time between each beep sound in milliseconds
-                delayedTime = Math.round(((SdkPreferencesHelper.getInstance().getOneStepSize() / 100.0f) / (SdkPreferencesHelper.getInstance().getWantedSpeed() / 3.6)) * 1000);
-            }
-            if (isFullyConnected()) {
-                mMainHandler.postDelayed(this, delayedTime);
-            }
-        }
-    };
-    private boolean alreadyStopped = false;
-    private boolean isLoggable = true;
-    private final Runnable logRunner = new Runnable() {
-        @Override
-        public void run() {
-            if (isLoggable) {
-                LogFileUtils.appendRssiLogs(connectedCar, mAlgoManager,
-                        newLockStatus, welcomeByte,
-                        lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
-                        walkAwayByte, approachByte, leftTurnByte, rightTurnByte,
-                        approachSideByte, approachRoadByte, recordByte, counterByte,
-                        mProtocolManager,
-                        beepInt);
-                beepInt = 0;
-            }
-            if (isFullyConnected()) {
-                mMainHandler.postDelayed(this, 105);
-            }
-        }
-    };
     /**
      * Handles various events fired by the Service.
      * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
@@ -369,6 +294,83 @@ public class BleRangingHelper {
                 PSALogs.d("NIH", "TRX ACTION_GATT_CONNECTED");
                 bleRangingListener.updateBLEStatus();
                 mBluetoothManager.resumeLeScan();
+            }
+        }
+    };
+    private byte welcomeByte = 0;
+    private byte lockByte = 0;
+    private byte startByte = 0;
+    private byte leftAreaByte = 0;
+    private byte rightAreaByte = 0;
+    private byte backAreaByte = 0;
+    private byte walkAwayByte = 0;
+    private byte approachByte = 0;
+    private byte leftTurnByte = 0;
+    private byte rightTurnByte = 0;
+    private byte approachSideByte = 0;
+    private byte approachRoadByte = 0;
+    private byte counterByte = 0;
+    private byte savedCounterByte = 0;
+    private byte recordByte = 0;
+    private int beepInt = 0;
+    private final Runnable beepRunner = new Runnable() {
+        @Override
+        public void run() {
+            long delayedTime = 500;
+            if (SdkPreferencesHelper.getInstance().getUserSpeedEnabled()) {
+                beepInt = 1;
+                makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_LOW_SS, 100);
+                // interval time between each beep sound in milliseconds
+                delayedTime = Math.round(((SdkPreferencesHelper.getInstance().getOneStepSize() / 100.0f) / (SdkPreferencesHelper.getInstance().getWantedSpeed() / 3.6)) * 1000);
+            }
+            if (isFullyConnected()) {
+                mMainHandler.postDelayed(this, delayedTime);
+            }
+        }
+    };
+    private boolean alreadyStopped = false;
+    private boolean isLoggable = true;
+    private final Runnable logRunner = new Runnable() {
+        @Override
+        public void run() {
+            if (isLoggable) {
+                LogFileUtils.appendRssiLogs(connectedCar, mAlgoManager,
+                        newLockStatus, welcomeByte,
+                        lockByte, startByte, leftAreaByte, rightAreaByte, backAreaByte,
+                        walkAwayByte, approachByte, leftTurnByte, rightTurnByte,
+                        approachSideByte, approachRoadByte, recordByte, counterByte,
+                        mProtocolManager,
+                        beepInt);
+                beepInt = 0;
+            }
+            if (isFullyConnected()) {
+                mMainHandler.postDelayed(this, 105);
+            }
+        }
+    };
+    private final Runnable checkNewPacketsRunner = new Runnable() {
+        @Override
+        public void run() {
+            if (bytesReceived != null) {
+                lock.readLock().lock();
+                PSALogs.d("NIH", "checkNewPacketsRunnable " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
+                if ((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
+                    lock.readLock().unlock();
+                    PSALogs.w("NIH", "LAST_EQUALS_NEW_PACKETS_RECEIVED");
+                    PSALogs.i("restartConnection", "received packet have not changed in a second");
+                    restartConnection(false);
+                } else {
+                    lastPacketIdNumber[0] = bytesReceived[0];
+                    lastPacketIdNumber[1] = bytesReceived[1];
+                    lock.readLock().unlock();
+                    if (isFullyConnected()) {
+                        mMainHandler.postDelayed(this, 1000);
+                    }
+                }
+            } else {
+                PSALogs.w("NIH", "PACKETS_RECEIVED_ARE_NULL");
+                PSALogs.i("restartConnection", "received packet is null");
+                restartConnection(false);
             }
         }
     };
@@ -536,6 +538,23 @@ public class BleRangingHelper {
                 SdkPreferencesHelper.getInstance().setSecurityWALEnabled(true);
             }
             debugListener.updateCarDrawable(newLockStatus);
+        }
+        if (mMainHandler != null) {
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    PSALogs.d("init2", "readPredictionsRawFiles\n");
+                    if (connectedCar != null) connectedCar.readPredictionsRawFiles();
+                }
+            });
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (connectedCar.getRssiForRangingPrediction() == null) {
+                        mMainHandler.postDelayed(this, 500);
+                    }
+                }
+            });
         }
         chessBoardListener.applyNewDrawable();
     }
@@ -776,30 +795,33 @@ public class BleRangingHelper {
      */
     private void catchBeaconScanResponse(final BluetoothDevice device, int rssi, BeaconScanResponse beaconScanResponse, byte[] advertisedData) {
         if (device != null && beaconScanResponse != null) {
-            if (isFullyConnected()) {
+//            if (isFullyConnected()) {
                 int trxNumber = connectedCar.getTrxNumber(device.getAddress());
                 if (trxNumber != -1) {
-//                    if (alreadyStopped) {
-//                        PSALogs.d("bleChannel2 ", "not 37, do not parse scanResponse");
-//                        return;
-//                    }
-//                    Antenna.BLEChannel receivedBleChannel = getCurrentChannel(beaconScanResponse);
-//                    if (!receivedBleChannel.equals(Antenna.BLEChannel.BLE_CHANNEL_37)) { // if ble channel equals to 38, 39, unknown channel
-//                        alreadyStopped = true;
-//                        mBluetoothManager.stopLeScan();
-//                        PSALogs.d("bleChannel2 ", "not 37, stop scan");
-//                        mMainHandler.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                alreadyStopped = false;
-//                                mBluetoothManager.startLeScan();
-//                                PSALogs.d("bleChannel2 ", "not 37, restart scan after being stopped");
-//                            }
-//                        }, 200);
-//                        return;
-//                    }
-                    Antenna.BLEChannel receivedBleChannel = getCurrentChannel(beaconScanResponse);
-                    connectedCar.saveRssi(trxNumber, rssi, (byte) 0, receivedBleChannel); //TODO antennaId
+                    if (SdkPreferencesHelper.getInstance().isChannelLimited()) {
+                        if (alreadyStopped) {
+                            PSALogs.d("bleChannel2 ", "not 37, do not parse scanResponse");
+                            return;
+                        }
+                        final Antenna.BLEChannel receivedBleChannel = getCurrentChannel(beaconScanResponse);
+                        if (!receivedBleChannel.equals(Antenna.BLEChannel.BLE_CHANNEL_37)) { // if ble channel equals to 38, 39, unknown channel
+                            alreadyStopped = true;
+                            mBluetoothManager.stopLeScan();
+                            PSALogs.d("bleChannel2 ", "not 37, stop scan");
+                            mMainHandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    alreadyStopped = false;
+                                    mBluetoothManager.startLeScan();
+                                    PSALogs.d("bleChannel2 ", "not 37, restart scan after being stopped");
+                                }
+                            }, 200);
+                            return;
+                        }
+                    } else {
+                        final Antenna.BLEChannel receivedBleChannel = getCurrentChannel(beaconScanResponse);
+                        connectedCar.saveRssi(trxNumber, rssi, (byte) 0, receivedBleChannel); //TODO antennaId
+                    }
                     PSALogs.d("bleChannel " + trxNumber, "channel " + connectedCar.getCurrentBLEChannel(trxNumber) + " " + beaconScanResponse.getAdvertisingChannel());
                 } else {
                     if (SdkPreferencesHelper.getInstance().getTrxAddressConnectable().equalsIgnoreCase(device.getAddress())) {
@@ -832,13 +854,13 @@ public class BleRangingHelper {
                         PSALogs.d("NIH", "newConnectable coz advertising is null " + device.getAddress());
                     }
                 }
-            } else { // not connected after first connection has been established
-                PSALogs.i("NIH", "not connected");
-                if (isRestartAuthorized) {
-                    PSALogs.i("restartConnection", "not connected after first connection");
-                    reconnectAfterDisconnection();
-                }
-            }
+//            } else { // not connected after first connection has been established
+//                PSALogs.i("NIH", "not connected");
+//                if (isRestartAuthorized) {
+//                    PSALogs.i("restartConnection", "not connected after first connection");
+//                    reconnectAfterDisconnection();
+//                }
+//            }
         }
     }
 
@@ -905,17 +927,17 @@ public class BleRangingHelper {
             connectedCar.initializeTrx(newLockStatus);
         }
         if (mMainHandler != null) {
+//            mMainHandler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    if (connectedCar != null) connectedCar.readPredictionsRawFiles();
+//                }
+//            });
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (connectedCar != null) connectedCar.readPredictionsRawFiles();
-                }
-            });
-            mMainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (connectedCar != null && connectedCar.getRssiForRangingPrediction() != null
-                            && connectedCar.isInitialized()) {
+                    if (connectedCar != null && connectedCar.isInitialized()) {
+                        PSALogs.d("init2", "initPredictions\n");
                         connectedCar.initPredictions();
                         mMainHandler.post(logRunner);
                         mMainHandler.post(setRssiForRangingPrediction);
@@ -937,6 +959,7 @@ public class BleRangingHelper {
         lastPrintRooftop = SdkPreferencesHelper.getInstance().isPrintRooftopEnabled();
         lastMiniPredictionUsed = SdkPreferencesHelper.getInstance().isMiniPredictionUsed();
         connectedCar = ConnectedCarFactory.getConnectedCar(mContext, lastConnectedCarType);
+        PSALogs.d("init2", "createConnectedCar\n");
         String connectedCarBase = SdkPreferencesHelper.getInstance().getConnectedCarBase();
         mProtocolManager.setCarBase(connectedCarBase);
         if (connectedCarBase.equalsIgnoreCase(ConnectedCarFactory.BASE_2)

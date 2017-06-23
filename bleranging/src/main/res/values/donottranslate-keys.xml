@@ -100,6 +100,7 @@
     <string name="lin_acc_size_pref_name">"com.inblue.PREFERENCE_LIN_ACC_SIZE"</string>
     <string name="correction_lin_acc_pref_name">"com.inblue.PREFERENCE_CORRECTION_LIN_ACC"</string>
     <string name="frozen_threshold_pref_name">"com.inblue.PREFERENCE_FROZEN_THRESHOLD"</string>
+    <string name="is_channel_limited_pref_name">"com.inblue.PREFERENCE_IS_CHANNEL_LIMITED"</string>
     <string name="is_calibrated_pref_name">"com.inblue.PREFERENCE_IS_CALIBRATED"</string>
     <string name="print_inside_enabled_pref_name">"com.inblue.PREFERENCE_PRINT_INSIDE_ENABLED"</string>
     <string name="print_rooftop_enabled_pref_name">"com.inblue.PREFERENCE_PRINT_ROOFTOP_ENABLED"</string>

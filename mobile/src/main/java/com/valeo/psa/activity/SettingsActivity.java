@@ -425,6 +425,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private ListPreference connected_car_base;
         private ListPreference opening_orientation_type;
         private CheckBoxPreference com_simulation_enabled;
+        private CheckBoxPreference is_channel_limited;
         private CheckBoxPreference is_calibrated;
         private CheckBoxPreference security_wal_enabled;
         private CheckBoxPreference are_beacons_inside;
@@ -551,6 +552,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             connected_car_base = ((ListPreference) findPreference(getString(R.string.connected_car_base_pref_name)));
             opening_orientation_type = ((ListPreference) findPreference(getString(R.string.opening_orientation_type_pref_name)));
             com_simulation_enabled = ((CheckBoxPreference) findPreference(getString(R.string.com_simulation_enabled_pref_name)));
+            is_channel_limited = ((CheckBoxPreference) findPreference(getString(R.string.is_channel_limited_pref_name)));
             is_calibrated = ((CheckBoxPreference) findPreference(getString(R.string.is_calibrated_pref_name)));
             security_wal_enabled = ((CheckBoxPreference) findPreference(getString(R.string.security_wal_enabled_pref_name)));
             are_beacons_inside = ((CheckBoxPreference) findPreference(getString(R.string.are_beacons_inside_pref_name)));
@@ -583,6 +585,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         private void setDefaultValues() {
             com_simulation_enabled.setChecked(SdkPreferencesHelper.getInstance().getComSimulationEnabled());
+            is_channel_limited.setChecked(SdkPreferencesHelper.getInstance().isChannelLimited());
             is_calibrated.setChecked(SdkPreferencesHelper.getInstance().isCalibrated());
             security_wal_enabled.setChecked(SdkPreferencesHelper.getInstance().getSecurityWALEnabled());
             are_beacons_inside.setChecked(SdkPreferencesHelper.getInstance().getAreBeaconsInside());
@@ -616,10 +619,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // updated to reflect the new value, per the Android Design
         // guidelines.
         private void bindSummaries() {
-            bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_B);
+            bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_8_A);
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
             bindPreferenceSummaryToValue(opening_orientation_type, THATCHAM_ORIENTED);
             com_simulation_enabled.setSummary(R.string.pref_com_simulation_enabled_summary);
+            is_channel_limited.setSummary(R.string.pref_is_channel_limited_summary);
             is_calibrated.setSummary(R.string.pref_is_calibrated_summary);
             security_wal_enabled.setSummary(R.string.pref_security_wal_enabled_summary);
             are_beacons_inside.setSummary(R.string.pref_are_beacons_inside_summary);

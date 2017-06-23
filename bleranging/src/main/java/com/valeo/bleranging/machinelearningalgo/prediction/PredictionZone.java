@@ -155,7 +155,7 @@ public class PredictionZone {
                 result = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
             } else {
-                if (rssi.length == 8 | rssi.length == 6) {
+                if (rssi != null && (rssi.length == 8 | rssi.length == 6)) {
                     final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
                     label = modelPrediction.label;
                     result = modelPrediction.labelIndex;
@@ -427,15 +427,20 @@ public class PredictionZone {
     }
 
     private boolean ifNoDecision2Lock(double[] distribution, double threshold_prob_unlock2lock) {
-        return distribution[INDEX_LOCK] <= threshold_prob_unlock2lock;
+        if (distribution != null) {
+            return distribution[INDEX_LOCK] <= threshold_prob_unlock2lock;
+        }
+        return true;
     }
 
     private boolean if2Lock(double[] rssi, double threshold_rssi_lock) {
         boolean result = true;
-        for (int i = 0; i < rssi.length; i++) {
-            if (rssi[i] > threshold_rssi_lock) {
-                result = false;
-                break;
+        if (rssi != null) {
+            for (int i = 0; i < rssi.length; i++) {
+                if (rssi[i] > threshold_rssi_lock) {
+                    result = false;
+                    break;
+                }
             }
         }
         return result;
