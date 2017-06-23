@@ -1,6 +1,5 @@
 package com.valeo.psa.fragment;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
@@ -15,8 +14,8 @@ import android.os.Looper;
 import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,17 +24,16 @@ import android.widget.EditText;
 
 import com.valeo.bleranging.listeners.MeasureListener;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.SoundUtils;
 import com.valeo.psa.R;
-
-import static android.content.ContentValues.TAG;
 
 
 /**
  * Created by l-avaratha on 09/03/2017
  */
 
-@TargetApi(Build.VERSION_CODES.M)
+@RequiresApi(api = Build.VERSION_CODES.M)
 public class MeasureFragment extends Fragment implements MeasureListener {
     private EditText measurement_index;
     private MeasureFragmentActionListener mListener;
@@ -52,6 +50,7 @@ public class MeasureFragment extends Fragment implements MeasureListener {
         public void onTorchModeUnavailable(@NonNull String cameraId) {
             super.onTorchModeUnavailable(cameraId);
             if (cameraId.equals(mCameraId)) {
+                PSALogs.d("camera", "onTorchModeUnavailable");
                 mFlashAvailable = false;
                 mFlashEnabled = false;
             }
@@ -60,8 +59,9 @@ public class MeasureFragment extends Fragment implements MeasureListener {
         @Override
         public void onTorchModeChanged(@NonNull String cameraId, boolean enabled) {
             super.onTorchModeChanged(cameraId, enabled);
+            PSALogs.d("camera", "onTorchModeChanged " + enabled);
             mFlashAvailable = true;
-            mFlashEnabled = !enabled;
+            mFlashEnabled = enabled;
         }
     };
 
@@ -72,15 +72,6 @@ public class MeasureFragment extends Fragment implements MeasureListener {
         setView(rootView);
         setOnClickListeners();
         return rootView;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mCameraManager = (CameraManager) view.getContext().getSystemService(Context.CAMERA_SERVICE);
-            initialize();
-        }
     }
 
     @Override
@@ -140,10 +131,10 @@ public class MeasureFragment extends Fragment implements MeasureListener {
             }
         });
         flash_button.setOnClickListener(new View.OnClickListener() {
-            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                blink(50);
+                PSALogs.d("camera", "flash toggle");
+                blink(5);
             }
         });
     }
@@ -167,22 +158,34 @@ public class MeasureFragment extends Fragment implements MeasureListener {
     @Override
     public void onPause() {
         super.onPause();
-        mCameraManager.unregisterTorchCallback(mTorchCallback);
-        mCameraManager = null;
+        if (mCameraManager != null) {
+            mCameraManager.unregisterTorchCallback(mTorchCallback);
+            PSALogs.d("camera", "unregisterTorchCallback.");
+            mCameraManager = null;
+        }
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    public void initialize() {
-        try {
-            mCameraId = getCameraId();
-        } catch (Throwable e) {
-            Log.e(TAG, "Couldn't initialize.", e);
-            return;
-        }
+    @Override
+    public void onResume() {
+        super.onResume();
+        initialize();
+    }
 
-        if (mCameraId != null) {
-            ensureHandler();
-            mCameraManager.registerTorchCallback(mTorchCallback, mHandler);
+    public void initialize() {
+        if (isAdded()) {
+            mCameraManager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
+            try {
+                mCameraId = getCameraId();
+            } catch (Throwable e) {
+                PSALogs.e("camera", "Couldn't initialize \n" + e.toString());
+                return;
+            }
+            if (mCameraId != null) {
+                ensureHandler();
+                mCameraManager.registerTorchCallback(mTorchCallback, mHandler);
+                PSALogs.d("camera", "registerTorchCallback.");
+            }
+            PSALogs.d("camera", "initialized.");
         }
     }
 
@@ -191,9 +194,9 @@ public class MeasureFragment extends Fragment implements MeasureListener {
             HandlerThread thread = new HandlerThread("TorchRessources", Process.THREAD_PRIORITY_BACKGROUND);
             thread.start();
             mHandler = new Handler(thread.getLooper());
+            PSALogs.d("camera", "handler created");
         }
     }
-
 
     private String getCameraId() throws CameraAccessException {
         String[] ids = mCameraManager.getCameraIdList();
@@ -203,39 +206,50 @@ public class MeasureFragment extends Fragment implements MeasureListener {
             Integer lensFacing = c.get(CameraCharacteristics.LENS_FACING);
             if (flashAvailable != null && flashAvailable
                     && lensFacing != null && lensFacing == CameraCharacteristics.LENS_FACING_BACK) {
+                PSALogs.d("camera", "camera id " + id);
                 return id;
             }
         }
         return null;
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
     private boolean setTorchOn() {
         if (mFlashAvailable) {
             try {
+                if (mFlashEnabled) {
+                    PSALogs.d("camera", "Flash already enabled");
+                }
+                if (mCameraManager == null) {
+                    PSALogs.d("camera", "mCameraManager NULL");
+                }
                 if (!mFlashEnabled && mCameraManager != null) {
                     mCameraManager.setTorchMode(mCameraId, true);
+                    PSALogs.d("camera", "flash ON.");
                     return true;
                 }
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
         }
+        PSALogs.d("camera", "flash UNAVAILABLE.");
         return false;
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
     private boolean setTorchOff() {
         if (mFlashAvailable) {
             try {
                 if (mFlashEnabled && mCameraManager != null) {
                     mCameraManager.setTorchMode(mCameraId, false);
+                    PSALogs.d("camera", "flash OFF.");
                     return true;
+                } else {
+                    PSALogs.d("camera", "flash already disabled.");
                 }
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
         }
+        PSALogs.d("camera", "flash UNAVAILABLE.");
         return false;
     }
 
