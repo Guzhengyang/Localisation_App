@@ -361,10 +361,10 @@ public class BluetoothManagement {
                 byte[] data1 = concatByte(concatBytes, coordAndDistance);
                 byte[] data2 = concatByte(data1, dist);
                 boolean sendSuccess = sendToRemoteControl(data2);
-//        if (sendSuccess) {
-//            sendToRemoteControl(rssi);
-//        }
-                sendToPC(concatBytes);
+//                if (sendSuccess) {
+//                    sendToRemoteControl(rssi);
+//                }
+//                sendToPC(concatBytes);
             }
         }
     }
