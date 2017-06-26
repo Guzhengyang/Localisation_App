@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
@@ -114,7 +115,9 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         chessboardFragment = new ChessBoardFragment();
         debugFragment = new DebugFragment();
         testFragment = new TestFragment();
-        measureFragment = new MeasureFragment();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            measureFragment = new MeasureFragment();
+        }
         accuracyFragment = new AccuracyFragment();
         final NfcFragment nfcFragment = new NfcFragment();
         startFragment = new StartFragment();
@@ -123,7 +126,9 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         getSupportFragmentManager().beginTransaction().add(R.id.chessboard_rl, chessboardFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.debug_rl, debugFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.test_rl, testFragment).commit();
-        getSupportFragmentManager().beginTransaction().add(R.id.measure_rl, measureFragment).commit();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getSupportFragmentManager().beginTransaction().add(R.id.measure_rl, measureFragment).commit();
+        }
         getSupportFragmentManager().beginTransaction().add(R.id.accuracy_rl, accuracyFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.nfc_rl, nfcFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.start_rl, startFragment).commit();

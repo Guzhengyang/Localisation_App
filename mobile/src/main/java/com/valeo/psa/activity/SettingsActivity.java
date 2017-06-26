@@ -182,7 +182,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // updated to reflect the new value, per the Android Design
         // guidelines.
         private void bindSummaries() {
-            bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_4_B);
+            bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_8_A);
             bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
             user_speed_enabled.setSummary(R.string.pref_user_speed_enabled_summary);
             bindPreferenceSummaryToValue(wanted_speed, String.valueOf(SdkPreferencesHelper.WANTED_SPEED));

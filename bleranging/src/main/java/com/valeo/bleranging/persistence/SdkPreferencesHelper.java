@@ -90,7 +90,7 @@ public final class SdkPreferencesHelper {
     }
 
     public String getConnectedCarType() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_type_pref_name), ConnectedCarFactory.TYPE_4_B);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_type_pref_name), ConnectedCarFactory.TYPE_8_A);
     }
 
     public String getConnectedCarBase() {
