@@ -103,6 +103,10 @@
     <PreferenceCategory android:title="@string/pref_timeout">
         <EditTextPreference
             android:inputType="number"
+            android:key="@string/flash_frequency_pref_name"
+            android:title="@string/pref_flash_frequency" />
+        <EditTextPreference
+            android:inputType="number"
             android:key="@string/measurement_interval_pref_name"
             android:title="@string/pref_measurement_interval" />
         <EditTextPreference

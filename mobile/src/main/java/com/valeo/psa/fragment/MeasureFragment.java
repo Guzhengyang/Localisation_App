@@ -134,7 +134,7 @@ public class MeasureFragment extends Fragment implements MeasureListener {
             @Override
             public void onClick(View v) {
                 PSALogs.d("camera", "flash toggle");
-                blink(5);
+                blink(SdkPreferencesHelper.getInstance().getFlashFrequency());
             }
         });
     }

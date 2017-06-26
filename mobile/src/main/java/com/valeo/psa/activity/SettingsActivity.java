@@ -448,6 +448,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private CheckBoxPreference user_speed_enabled;
         private EditTextPreference wanted_speed;
         private EditTextPreference one_step_size;
+        private EditTextPreference flash_frequency;
         private EditTextPreference measurement_interval;
         private EditTextPreference active_scanning_period;
         private EditTextPreference inactive_scanning_period;
@@ -576,6 +577,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             user_speed_enabled = ((CheckBoxPreference) findPreference(getString(R.string.user_speed_enabled_pref_name)));
             wanted_speed = ((EditTextPreference) findPreference(getString(R.string.wanted_speed_pref_name)));
             one_step_size = ((EditTextPreference) findPreference(getString(R.string.one_step_size_pref_name)));
+            flash_frequency = ((EditTextPreference) findPreference(getString(R.string.flash_frequency_pref_name)));
             measurement_interval = ((EditTextPreference) findPreference(getString(R.string.measurement_interval_pref_name)));
             active_scanning_period = ((EditTextPreference) findPreference(getString(R.string.active_scanning_period_pref_name)));
             inactive_scanning_period = ((EditTextPreference) findPreference(getString(R.string.inactive_scanning_period_pref_name)));
@@ -609,6 +611,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             frozen_threshold.setText(frozen_threshold.getSummary().toString());
             wanted_speed.setText(wanted_speed.getSummary().toString());
             one_step_size.setText(one_step_size.getSummary().toString());
+            flash_frequency.setText(flash_frequency.getSummary().toString());
             measurement_interval.setText(measurement_interval.getSummary().toString());
             active_scanning_period.setText(active_scanning_period.getSummary().toString());
             inactive_scanning_period.setText(inactive_scanning_period.getSummary().toString());
@@ -647,6 +650,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             user_speed_enabled.setSummary(R.string.pref_user_speed_enabled_summary);
             bindPreferenceSummaryToValue(wanted_speed, String.valueOf(SdkPreferencesHelper.WANTED_SPEED));
             bindPreferenceSummaryToValue(one_step_size, String.valueOf(SdkPreferencesHelper.ONE_STEP_SIZE));
+            bindPreferenceSummaryToValue(flash_frequency, String.valueOf(SdkPreferencesHelper.DEFAULT_FLASH_FREQUENCY));
             bindPreferenceSummaryToValue(measurement_interval, String.valueOf(SdkPreferencesHelper.DEFAULT_MEASUREMENT_INTERVAL));
             bindPreferenceSummaryToValue(active_scanning_period, String.valueOf(SdkPreferencesHelper.DEFAULT_ACTIVE_SCAN_PERIOD));
             bindPreferenceSummaryToValue(inactive_scanning_period, String.valueOf(SdkPreferencesHelper.DEFAULT_INACTIVE_SCAN_PERIOD));
