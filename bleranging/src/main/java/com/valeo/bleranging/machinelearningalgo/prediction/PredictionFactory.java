@@ -41,7 +41,9 @@ public class PredictionFactory {
 
     //    models for 8 beacons
     private final static String ZONE_8_A_NORMAL = "EightNormal";
+    private final static String ZONE_8_A_NORMAL_MINI = "EightNormalMini";
     private final static String ZONE_8_A_THATCHAM = "EightThatcham";
+    private final static String ZONE_8_A_THATCHAM_MINI = "EightThatchamMini";
     private final static String COORD_8_A_PX = "MLP4Px";
     private final static String COORD_8_A_PY = "MLP4Py";
     private final static String ZONE_8_A_RP = "EightRP";
@@ -75,8 +77,7 @@ public class PredictionFactory {
     public static PredictionZone getPredictionZone(Context mContext, String predictionType) {
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
         String strategy = SdkPreferencesHelper.getInstance().getOpeningStrategy();
-//        boolean ifRoof = SdkPreferencesHelper.getInstance().isPrintRooftopEnabled();
-//        boolean ifMiniPrediction = SdkPreferencesHelper.getInstance().isMiniPredictionUsed();
+        boolean miniPrediction = SdkPreferencesHelper.getInstance().isMiniPredictionUsed();
         switch (carType) {
             case TYPE_2_A:
                 return new PredictionZone(mContext, ZONE_2_A, rowDataKeySetFactory(TYPE_2_A), predictionType);
@@ -103,10 +104,18 @@ public class PredictionFactory {
             case TYPE_8_A:
                 switch (predictionType) {
                     case PREDICTION_STANDARD:
-                        if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
-                            return new PredictionZone(mContext, ZONE_8_A_THATCHAM, rowDataKeySetFactory(TYPE_8_A), predictionType);
+                        if (miniPrediction) {
+                            if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
+                                return new PredictionZone(mContext, ZONE_8_A_THATCHAM_MINI, rowDataKeySetFactory(TYPE_8_A), predictionType);
+                            } else {
+                                return new PredictionZone(mContext, ZONE_8_A_NORMAL_MINI, rowDataKeySetFactory(TYPE_8_A), predictionType);
+                            }
                         } else {
-                            return new PredictionZone(mContext, ZONE_8_A_NORMAL, rowDataKeySetFactory(TYPE_8_A), predictionType);
+                            if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
+                                return new PredictionZone(mContext, ZONE_8_A_THATCHAM, rowDataKeySetFactory(TYPE_8_A), predictionType);
+                            } else {
+                                return new PredictionZone(mContext, ZONE_8_A_NORMAL, rowDataKeySetFactory(TYPE_8_A), predictionType);
+                            }
                         }
                     case PREDICTION_RP:
                         return new PredictionZone(mContext, ZONE_8_A_RP, rowDataKeySetFactory(TYPE_8_A), predictionType);
