@@ -139,16 +139,24 @@ public class MeasureFragment extends Fragment implements MeasureListener {
         });
     }
 
-    private void blink(long millisecondPeriod) {
+    private void blink(int nanoSecondPeriod) {
         String myString = "0101010101";
         for (int i = 0; i < myString.length(); i++) {
             if (myString.charAt(i) == '0') {
+                PSALogs.d("torch", "Flash ON");
+                long timestamp = System.nanoTime();
                 setTorchOn();
+                long timestampEnd = System.nanoTime();
+                PSALogs.d("torch", (timestampEnd - timestamp) + " ns");
             } else {
+                long timestamp = System.nanoTime();
                 setTorchOff();
+                long timestampEnd = System.nanoTime();
+                PSALogs.d("torch", "Flash OFF");
+                PSALogs.d("torch", (timestampEnd - timestamp) + " ns");
             }
             try {
-                Thread.sleep(millisecondPeriod);
+                Thread.sleep(0, nanoSecondPeriod);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -155,6 +155,7 @@ public class PredictionZone {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(mContext, e.getCause().toString(), Toast.LENGTH_LONG).show();
         } finally {
             if (predictions.size() == nVote) {
                 predictions.remove(0);
