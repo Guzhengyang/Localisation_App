@@ -43,13 +43,11 @@ public abstract class ConnectedCar {
     final static String EAR_HELD_LOC = "Ear held Localisation:";
     final static String RP_LOC = "RP Localisation:";
     final static String START_LOC = "Start Localisation:";
+    final static String FULL_LOC = "Full Localisation:";
     final static int N_VOTE_LONG = 5;
     final static int N_VOTE_SHORT = 3;
     final static double THRESHOLD_PROB_UNLOCK2LOCK = 0.5;
     final static double THRESHOLD_PROB_LOCK2UNLOCK = 0.9;
-    private final static int RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE = -60;
-    private final static int RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE = -55;
-    private final static int RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE = -75;
     final Handler mHandlerComValidTimeOut = new Handler();
     protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
     protected Context mContext;
@@ -65,19 +63,6 @@ public abstract class ConnectedCar {
 
     ConnectedCar(Context context) {
         this.mContext = context;
-    }
-
-    /**
-     * Initialize trx and antenna and their rssi historic with default value periph and central
-     *
-     * @param newLockStatus the lock status that determines which values to set
-     */
-    public void initializeTrx(boolean newLockStatus) {
-        if (newLockStatus) {
-            initializeTrx(RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE, RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE);
-        } else {
-            initializeTrx(RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE, RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE);
-        }
     }
 
     // COMPARE UTILS
@@ -238,24 +223,6 @@ public abstract class ConnectedCar {
         spannableStringBuilder.append('\n');
         spannableStringBuilder.append("-------------------------------------------------------------------------\n");
         return spannableStringBuilder;
-    }
-
-    /**
-     * Initialize trx and antenna and their rssi historic with default value periph and central
-     *
-     * @param historicDefaultValuePeriph  the peripheral trx default value
-     * @param historicDefaultValueCentral the central trx default value
-     */
-    private void initializeTrx(int historicDefaultValuePeriph, int historicDefaultValueCentral) {
-        if (trxLinkedHMap != null) {
-            for (Trx trx : trxLinkedHMap.values()) {
-                if (trx.getTrxNumber() == NUMBER_TRX_MIDDLE) {
-                    trx.init(historicDefaultValueCentral);
-                } else {
-                    trx.init(historicDefaultValuePeriph);
-                }
-            }
-        }
     }
 
     /**

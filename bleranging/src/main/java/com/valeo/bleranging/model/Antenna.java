@@ -22,10 +22,6 @@ public class Antenna {
         this.hasReceivedRssi = new AtomicBoolean(false);
     }
 
-    public void init(int historicDefaultValue) {
-        currentOriginalRssi = historicDefaultValue;
-    }
-
     /**
      * Compare a new check with the last one, if they are equals the trx antenna is inactive
      *

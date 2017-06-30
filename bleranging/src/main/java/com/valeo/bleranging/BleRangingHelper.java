@@ -925,16 +925,7 @@ public class BleRangingHelper {
         rkeListener.updateCarDoorStatus(newLockStatus);
         mProtocolManager.setIsLockedToSend(newLockStatus);
         mAlgoManager.setLastCommandFromTrx(newLockStatus);
-        if (connectedCar != null) {
-            connectedCar.initializeTrx(newLockStatus);
-        }
         if (mMainHandler != null) {
-//            mMainHandler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if (connectedCar != null) connectedCar.readPredictionsRawFiles();
-//                }
-//            });
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {

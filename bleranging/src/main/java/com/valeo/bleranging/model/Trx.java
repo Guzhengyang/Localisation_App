@@ -1,7 +1,5 @@
 package com.valeo.bleranging.model;
 
-import android.util.SparseIntArray;
-
 import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.ArrayList;
@@ -17,7 +15,6 @@ public class Trx {
     private final int trxNumber;
     private final String trxName;
     private final List<Antenna> antennaList;
-    private final SparseIntArray antennaIdArray;
     private String trxAddress;
     private Antenna currentAntenna;
     private int carRssi;
@@ -25,35 +22,15 @@ public class Trx {
     public Trx(int trxNumber, String trxName) {
         this.trxNumber = trxNumber;
         this.trxName = trxName;
-        this.antennaIdArray = initSparseArray();
         this.antennaList = createAntennaList();
     }
 
-    /**
-     * Create a list of antenna Id
-     *
-     * @return a sparseIntArray of antenna id
-     */
-    private SparseIntArray initSparseArray() {
-        SparseIntArray antennaIdArray = new SparseIntArray();
-        antennaIdArray.put(0, ANTENNA_NULL);
-        antennaIdArray.put(1, ANTENNA_A);
-        antennaIdArray.put(2, ANTENNA_B);
-        return antennaIdArray;
-    }
-
     private List<Antenna> createAntennaList() {
-        List<Antenna> antennaTmpList = new ArrayList<>();
-        for (int i = 0; i < antennaIdArray.size(); i++) {
-            antennaTmpList.add(new Antenna(trxNumber, antennaIdArray.get(i)));
-        }
+        final List<Antenna> antennaTmpList = new ArrayList<>();
+        antennaTmpList.add(new Antenna(trxNumber, ANTENNA_NULL));
+        antennaTmpList.add(new Antenna(trxNumber, ANTENNA_A));
+        antennaTmpList.add(new Antenna(trxNumber, ANTENNA_B));
         return antennaTmpList;
-    }
-
-    public void init(int historicDefaultValue) {
-        for (Antenna antenna : antennaList) {
-            antenna.init(historicDefaultValue);
-        }
     }
 
     /**
@@ -131,12 +108,7 @@ public class Trx {
      * Get the current original rssi
      * @return the current original rssi value, or 0
      */
-    public int getCurrentOriginalRssi() { //TODO change to int[]
-//        int[] currentOriginRssi = new int[antennaList.size()];
-//        for (int i = 0; i < antennaList.size(); i++) {
-//            currentOriginRssi[i] = antennaList.get(i).getCurrentOriginalRssi();
-//        }
-//        return currentOriginRssi[0];
+    public int getCurrentOriginalRssi() {
         if (currentAntenna != null) {
             return currentAntenna.getCurrentOriginalRssi();
         }

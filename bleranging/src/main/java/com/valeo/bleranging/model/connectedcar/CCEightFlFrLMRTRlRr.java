@@ -4,17 +4,18 @@ import android.content.Context;
 import android.graphics.PointF;
 
 import com.valeo.bleranging.BleRangingHelper;
+import com.valeo.bleranging.machinelearningalgo.prediction.Coord;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 
 import org.ejml.simple.SimpleMatrix;
+import com.valeo.bleranging.utils.CalculUtils;
 
 /**
  * Created by l-avaratha on 07/09/2016
  */
 public class CCEightFlFrLMRTRlRr extends ConnectedCar {
-
     private static final int MAX_X = 11;
     private static final int MAX_Y = 10;
     private static final double THRESHOLD_DIST = 0.25;
@@ -22,6 +23,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     private double coord_x, coord_y;
     private double dt = 0.105;
     private SimpleMatrix X, P, F, G, H, Q, R, Z, K;
+    private Coord coord = null;
 
     public CCEightFlFrLMRTRlRr(Context mContext) {
         super(mContext);
@@ -68,6 +70,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             coord_y = pyPrediction.getPredictionCoord();
 //            testPrediction.initTest(rssi);
 //            testPrediction.predictTest();
+            coord = new Coord(pxPrediction.getPredictionCoord(), pyPrediction.getPredictionCoord());
 //            rpPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
 //            rpPrediction.predict(N_VOTE_LONG);
         }
@@ -127,6 +130,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             correctCoordKalman(pxPrediction.getPredictionCoord(), pyPrediction.getPredictionCoord());
             correctBoundry();
 //            testPrediction.calculatePredictionTest();
+            CalculUtils.correctCoord(coord, pxPrediction.getPredictionCoord(), pyPrediction.getPredictionCoord(), THRESHOLD_DIST);
 //            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
@@ -148,8 +152,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public String getPredictionPosition(boolean smartphoneIsInPocket) {
         if (standardPrediction != null && standardPrediction.isPredictRawFileRead()) {
-            String result = standardPrediction.getPrediction();
-            return result;
+            return standardPrediction.getPrediction();
         }
         return BleRangingHelper.PREDICTION_UNKNOWN;
     }
@@ -164,56 +167,18 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     public PointF getPredictionCoord() {
         if (pxPrediction != null && pxPrediction.isPredictRawFileRead() &&
-                pyPrediction != null && pyPrediction.isPredictRawFileRead()) {
-            return new PointF((float) coord_x, (float) coord_y);
+                pyPrediction != null && pyPrediction.isPredictRawFileRead() && coord != null) {
+            return new PointF((float) coord.getCoord_x(), (float) coord.getCoord_y());
         }
         return null;
     }
 
     public double getDist2Car() {
         if (pxPrediction != null && pxPrediction.isPredictRawFileRead() &&
-                pyPrediction != null && pyPrediction.isPredictRawFileRead()) {
-            return calculateDist2Car();
+                pyPrediction != null && pyPrediction.isPredictRawFileRead() && coord != null) {
+            return CalculUtils.calculateDist2Car(coord.getCoord_x(), coord.getCoord_y());
         }
         return 0f;
-    }
-
-    private double calculateDist2Car() {
-        double dist2car;
-        if ((coord_x < X1) & (coord_y < Y1)) {
-            dist2car = Math.sqrt((coord_x - X1) * (coord_x - X1) + (coord_y - Y1) * (coord_y - Y1));
-        } else if ((coord_x < X1) & (coord_y > Y2)) {
-            dist2car = Math.sqrt((coord_x - X1) * (coord_x - X1) + (coord_y - Y2) * (coord_y - Y2));
-        } else if ((coord_x > X2) & (coord_y < Y1)) {
-            dist2car = Math.sqrt((coord_x - X2) * (coord_x - X2) + (coord_y - Y1) * (coord_y - Y1));
-        } else if ((coord_x > X2) & (coord_y > Y2)) {
-            dist2car = Math.sqrt((coord_x - X2) * (coord_x - X2) + (coord_y - Y2) * (coord_y - Y2));
-        } else if ((coord_x < X1) & (coord_y > Y1) & (coord_y < Y2)) {
-            dist2car = X1 - coord_x;
-        } else if ((coord_x > X2) & (coord_y > Y1) & (coord_y < Y2)) {
-            dist2car = coord_x - X2;
-        } else if ((coord_y < Y1) & (coord_x > X1) & (coord_x < X2)) {
-            dist2car = Y1 - coord_y;
-        } else if ((coord_y > Y2) & (coord_x > X1) & (coord_x < X2)) {
-            dist2car = coord_y - Y2;
-        } else {
-            dist2car = -1;
-        }
-        return dist2car;
-    }
-
-    private void correctCoordThreshold(double coord_x_new, double coord_y_new, double threshold_dist) {
-        double deltaX = coord_x_new - coord_x;
-        double deltaY = coord_y_new - coord_y;
-        double dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        if (dist > threshold_dist) {
-            double ratio = threshold_dist / dist;
-            coord_x = coord_x + deltaX * ratio;
-            coord_y = coord_y + deltaY * ratio;
-        } else {
-            coord_x = coord_x_new;
-            coord_y = coord_y_new;
-        }
     }
 
     public void correctBoundry() {
