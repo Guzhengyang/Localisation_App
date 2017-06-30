@@ -10,7 +10,7 @@ android {
         targetSdkVersion 25
         multiDexEnabled true
         versionCode 1
-        versionName "1.7.4"
+        versionName "1.8.0"
     }
 
     dexOptions {
