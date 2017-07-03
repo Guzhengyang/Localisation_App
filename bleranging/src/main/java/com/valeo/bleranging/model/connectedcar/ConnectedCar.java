@@ -1,35 +1,20 @@
 package com.valeo.bleranging.model.connectedcar;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Handler;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.style.ForegroundColorSpan;
 
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionCoord;
+import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionZone;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.Trx;
-import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
-import com.valeo.bleranging.utils.TextUtils;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_BACK;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_FRONT_LEFT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_FRONT_RIGHT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_LEFT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_MIDDLE;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_REAR_LEFT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_REAR_RIGHT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_RIGHT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_TRUNK;
 
 /**
  * Created by l-avaratha on 05/09/2016
@@ -50,6 +35,7 @@ public abstract class ConnectedCar {
     final static double THRESHOLD_PROB_LOCK2UNLOCK = 0.9;
     final Handler mHandlerComValidTimeOut = new Handler();
     protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
+    //    protected HashMap<String, BasePrediction> predictionHMap;
     protected Context mContext;
     protected double[] rssi;
     PredictionCoord pxPrediction;
@@ -63,9 +49,17 @@ public abstract class ConnectedCar {
 
     ConnectedCar(Context context) {
         this.mContext = context;
+//        initPredictionHashMap();
     }
 
-    // COMPARE UTILS
+//    private void initPredictionHashMap() {
+//        predictionHMap = new HashMap<>();
+//        predictionHMap.put("pxPrediction", pxPrediction);
+//        predictionHMap.put("pyPrediction", pyPrediction);
+//        predictionHMap.put("standardPrediction", standardPrediction);
+//        predictionHMap.put("earPrediction", earPrediction);
+//        predictionHMap.put("rpPrediction", rpPrediction);
+//    }
 
     /**
      * Save an incoming rssi
@@ -119,35 +113,16 @@ public abstract class ConnectedCar {
         }
     }
 
+    public LinkedHashMap<Integer, Trx> getTrxLinkedHMap() {
+        return trxLinkedHMap;
+    }
+
     public Antenna.BLEChannel getCurrentBLEChannel(int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getCurrentBLEChannel();
         } else {
             return Antenna.BLEChannel.UNKNOWN;
         }
-    }
-
-    private String getCurrentBLEChannelString(int trxNumber) {
-        String result;
-        if (trxLinkedHMap.get(trxNumber) != null) {
-            switch (trxLinkedHMap.get(trxNumber).getCurrentBLEChannel()) {
-                case BLE_CHANNEL_37:
-                    result = " 37";
-                    break;
-                case BLE_CHANNEL_38:
-                    result = " 38";
-                    break;
-                case BLE_CHANNEL_39:
-                    result = " 39";
-                    break;
-                default:
-                    result = "   ";
-                    break;
-            }
-        } else {
-            result = "   ";
-        }
-        return result;
     }
 
     public int getCurrentOriginalRssi(int trxNumber) {
@@ -165,143 +140,6 @@ public abstract class ConnectedCar {
             return 0;
         }
     }
-
-    public boolean isActive(int trxNumber) {
-        return trxLinkedHMap.get(trxNumber) != null && trxLinkedHMap.get(trxNumber).isActive();
-    }
-
-    /**
-     * Create a string of header debug
-     *
-     * @param bytesToSend      the bytes to send
-     * @param bytesReceived    the bytes received
-     * @param isFullyConnected the boolean that determine if the smartphone is connected or not
-     * @return the spannable string builder filled with the header
-     */
-    public SpannableStringBuilder createHeaderDebugData(final byte[] bytesToSend, final byte[] bytesReceived, boolean isFullyConnected) {
-        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-        if (isFullyConnected) {
-            if (bytesToSend != null) {
-                spannableStringBuilder.append("       Send:       ").append(TextUtils.printBleBytes((bytesToSend))).append("\n");
-            }
-            if (bytesReceived != null) {
-                spannableStringBuilder.append("       Receive: ").append(TextUtils.printBleBytes(bytesReceived)).append("\n");
-            }
-        } else {
-            SpannableString disconnectedSpanString = new SpannableString("Disconnected\n");
-            disconnectedSpanString.setSpan(new ForegroundColorSpan(Color.DKGRAY), 0, "Disconnected\n".length(), 0);
-            spannableStringBuilder.append(disconnectedSpanString);
-        }
-        spannableStringBuilder.append("-------------------------------------------------------------------------\n");
-        return spannableStringBuilder;
-    }
-
-    /**
-     * Create a string of footer debug
-     *
-     * @return the spannable string builder filled with the first footer
-     */
-    public SpannableStringBuilder createFirstFooterDebugData() {
-        final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-        for (Trx trx : trxLinkedHMap.values()) {
-            spannableStringBuilder.append(String.format(Locale.FRANCE, "%7s",
-                    TextUtils.colorText(isActive(trx.getTrxNumber()), trx.getTrxName(), Color.WHITE, Color.DKGRAY)));
-        }
-        spannableStringBuilder.append("\n");
-
-        for (Trx trx : trxLinkedHMap.values()) {
-            spannableStringBuilder.append(String.format(Locale.FRANCE, "%10d",
-                    getCurrentOriginalRssi(trx.getTrxNumber())));
-        }
-        spannableStringBuilder.append('\n');
-
-        for (Trx trx : trxLinkedHMap.values()) {
-            spannableStringBuilder.append(String.format(Locale.FRANCE, "%10s",
-                    getCurrentBLEChannelString(trx.getTrxNumber())));
-        }
-
-        spannableStringBuilder.append('\n');
-        spannableStringBuilder.append("-------------------------------------------------------------------------\n");
-        return spannableStringBuilder;
-    }
-
-    /**
-     * Create predictions
-     */
-    public abstract void readPredictionsRawFiles();
-
-    /**
-     * Initialize predictions
-     */
-    public abstract void initPredictions();
-
-    /**
-     * Check if predictions has been initialized
-     *
-     * @return true if prediction were initialized, false otherwise
-     */
-    public abstract boolean isInitialized();
-
-    /**
-     * Get rssi from beacon to make a prediction
-     *
-     * @return an array with a rssi from each beacon
-     */
-    public double[] getRssiForRangingPrediction() {
-        if (trxLinkedHMap != null) {
-            rssi = new double[trxLinkedHMap.size()];
-            Iterator<Trx> trxIterator = trxLinkedHMap.values().iterator();
-            for (int i = 0; i < trxLinkedHMap.size(); i++) {
-                if (trxIterator.hasNext()) {
-                    rssi[i] = getCurrentOriginalRssi(trxIterator.next().getTrxNumber());
-                } else {
-                    rssi[i] = 1;
-                }
-            }
-        } else {
-            PSALogs.d("init2", "getRssiForRangingPrediction trxLinkedHMap is NULL\n");
-        }
-        return checkForRssiNonNull(rssi);
-    }
-
-    /**
-     * Set the rssi into the machine learning algorithm
-     *
-     * @param rssi the array containing rssi from beacons
-     */
-    public abstract void setRssi(double[] rssi, boolean lockStatus);
-
-    /**
-     * Calculate a prediction using machine learning
-     */
-    public abstract void calculatePrediction(float[] orientation);
-
-    public abstract void calculatePredictionTest(Double threshold);
-
-    public abstract String getPredictionPositionTest();
-
-    /**
-     * Print debug info
-     *
-     * @param smartphoneIsInPocket true if the smartphone is supposedly in the pocket, false otherwise
-     * @return the debug information
-     */
-    public abstract String printDebug(boolean smartphoneIsInPocket);
-
-    /**
-     * Get a prediction of position regarding the car
-     *
-     * @param smartphoneIsInPocket true if the smartphone is supposedly in the pocket, false otherwise
-     * @return the position prediction
-     */
-    public abstract String getPredictionPosition(boolean smartphoneIsInPocket);
-
-    /**
-     * Get a coord prediction regarding the car
-     *
-     * @return the position prediction
-     */
-    public abstract PointF getPredictionCoord();
 
     /**
      * Get a prediction of proximity with the car
@@ -354,29 +192,94 @@ public abstract class ConnectedCar {
         return null;
     }
 
-    public int getTrxNumber(String address) {
-        if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft())) {
-            return NUMBER_TRX_FRONT_LEFT;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressFrontRight())) {
-            return NUMBER_TRX_FRONT_RIGHT;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressLeft())) {
-            return NUMBER_TRX_LEFT;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressMiddle())) {
-            return NUMBER_TRX_MIDDLE;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressRight())) {
-            return NUMBER_TRX_RIGHT;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressTrunk())) {
-            return NUMBER_TRX_TRUNK;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressRearLeft())) {
-            return NUMBER_TRX_REAR_LEFT;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressBack())) {
-            return NUMBER_TRX_BACK;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressRearRight())) {
-            return NUMBER_TRX_REAR_RIGHT;
+    /**
+     * Get rssi from beacon to make a prediction
+     *
+     * @return an array with a rssi from each beacon
+     */
+    public double[] getRssiForRangingPrediction() {
+        if (trxLinkedHMap != null) {
+            rssi = new double[trxLinkedHMap.size()];
+            Iterator<Trx> trxIterator = trxLinkedHMap.values().iterator();
+            for (int i = 0; i < trxLinkedHMap.size(); i++) {
+                if (trxIterator.hasNext()) {
+                    rssi[i] = getCurrentOriginalRssi(trxIterator.next().getTrxNumber());
+                } else {
+                    rssi[i] = 1;
+                }
+            }
         } else {
-            return -1;
+            PSALogs.d("init2", "getRssiForRangingPrediction trxLinkedHMap is NULL\n");
         }
+        return checkForRssiNonNull(rssi);
     }
+
+    public boolean isActive(int trxNumber) {
+        return trxLinkedHMap.get(trxNumber) != null && trxLinkedHMap.get(trxNumber).isActive();
+    }
+
+    /**
+     * Create predictions
+     */
+    public void readPredictionsRawFiles() {
+        pxPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Px);
+        pyPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Py);
+        standardPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_STANDARD);
+        earPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_EAR);
+        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);
+//        initPredictionHashMap();
+    }
+
+    /**
+     * Initialize predictions
+     */
+    public abstract void initPredictions();
+
+    /**
+     * Check if predictions has been initialized
+     *
+     * @return true if prediction were initialized, false otherwise
+     */
+    public abstract boolean isInitialized();
+
+    /**
+     * Set the rssi into the machine learning algorithm
+     *
+     * @param rssi the array containing rssi from beacons
+     */
+    public abstract void setRssi(double[] rssi, boolean lockStatus);
+
+    /**
+     * Calculate a prediction using machine learning
+     */
+    public abstract void calculatePrediction(float[] orientation);
+
+    public abstract void calculatePredictionTest(Double threshold);
+
+    public abstract String getPredictionPositionTest();
+
+    /**
+     * Print debug info
+     *
+     * @param smartphoneIsInPocket true if the smartphone is supposedly in the pocket, false otherwise
+     * @return the debug information
+     */
+    public abstract String printDebug(boolean smartphoneIsInPocket);
+
+    /**
+     * Get a prediction of position regarding the car
+     *
+     * @param smartphoneIsInPocket true if the smartphone is supposedly in the pocket, false otherwise
+     * @return the position prediction
+     */
+    public abstract String getPredictionPosition(boolean smartphoneIsInPocket);
+
+    /**
+     * Get a coord prediction regarding the car
+     *
+     * @return the position prediction
+     */
+    public abstract PointF getPredictionCoord();
 
     public abstract double getDist2Car();
 }

@@ -47,6 +47,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_TRUNK;
 import static com.valeo.bleranging.utils.LogFileUtils.RSSI_DIR;
 import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
+import static com.valeo.bleranging.utils.TextUtils.createFirstFooterDebugData;
+import static com.valeo.bleranging.utils.TextUtils.createHeaderDebugData;
+import static com.valeo.bleranging.utils.TextUtils.getTrxNumber;
 
 /**
  * Created by l-avaratha on 19/07/2016
@@ -207,9 +210,9 @@ public class BleRangingHelper {
             lock.readLock().lock();
             final SpannedString spannedString =
                     (SpannedString) android.text.TextUtils.concat(
-                            connectedCar.createHeaderDebugData(bytesToSend, bytesReceived,
+                            createHeaderDebugData(bytesToSend, bytesReceived,
                                     isFullyConnected()),
-                            connectedCar.createFirstFooterDebugData(),
+                            createFirstFooterDebugData(connectedCar),
                             mAlgoManager.createDebugData(connectedCar));
             lock.readLock().unlock();
             debugListener.printDebugInfo(spannedString);
@@ -773,7 +776,7 @@ public class BleRangingHelper {
                     PSALogs.w("NIH", "BEACON " + device.getAddress());
                 }
             } else if (isFullyConnected()) {
-                int trxNumber = connectedCar.getTrxNumber(device.getAddress());
+                int trxNumber = getTrxNumber(device.getAddress());
                 if (trxNumber == -1) {
                     if (SdkPreferencesHelper.getInstance().getTrxAddressConnectable().equalsIgnoreCase(device.getAddress())) {
                         PSALogs.i("restartConnection", "connectable is advertising again (central)");
@@ -799,7 +802,7 @@ public class BleRangingHelper {
     private void catchBeaconScanResponse(final BluetoothDevice device, int rssi, BeaconScanResponse beaconScanResponse, byte[] advertisedData) {
         if (device != null && beaconScanResponse != null) {
 //            if (isFullyConnected()) {
-            int trxNumber = connectedCar.getTrxNumber(device.getAddress());
+            int trxNumber = getTrxNumber(device.getAddress());
             if (trxNumber != -1) {
                 final Antenna.BLEChannel receivedBleChannel = getCurrentChannel(beaconScanResponse);
                 if (isFullyConnected() && SdkPreferencesHelper.getInstance().isChannelLimited()) {
@@ -855,13 +858,6 @@ public class BleRangingHelper {
                     PSALogs.d("NIH", "newConnectable coz advertising is null " + device.getAddress());
                 }
             }
-//            } else { // not connected after first connection has been established
-//                PSALogs.i("NIH", "not connected");
-//                if (isRestartAuthorized) {
-//                    PSALogs.i("restartConnection", "not connected after first connection");
-//                    reconnectAfterDisconnection();
-//                }
-//            }
         }
     }
 
@@ -883,7 +879,6 @@ public class BleRangingHelper {
             rightTurnByte = (byte) ((advertisedData[4] & (1 << 2)) >> 2);
             leftTurnByte = (byte) ((advertisedData[4] & (1 << 1)) >> 1);
             approachByte = (byte) (advertisedData[4] & 1);
-//            counterByte = advertisedData[5];
         }
     }
 
