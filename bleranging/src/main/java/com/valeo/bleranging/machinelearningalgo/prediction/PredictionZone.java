@@ -17,8 +17,8 @@ import java.util.Map;
 import hex.genmodel.easy.EasyPredictModelWrapper;
 import hex.genmodel.easy.RowData;
 import hex.genmodel.easy.prediction.BinomialModelPrediction;
+import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.PASSIVE_ENTRY_ORIENTED;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
@@ -40,13 +40,13 @@ public class PredictionZone {
     private int prediction_old = -1;// old prediction result index
     private Context mContext;
     private boolean arePredictRawFileRead = false;// check whether the prediction model has been read
-    private int INDEX_LOCK;// find the index of lock zone
     private StringBuilder sb = new StringBuilder();
     private EasyPredictModelWrapper modelWrapper;// Machine learning prediction wrapper
     private RowData rowData;// sample data
     private List<String> rowDataKeySet;// column names for sample data
     private String label;// prediction result string
     private String predictionType;// standard prediction or rp prediction
+    private boolean binomial;// whether the model is binomial
 
     public PredictionZone(Context context, String modelClassName, List<String> rowDataKeySet, String predictionType) {
         this.mContext = context;
@@ -65,13 +65,6 @@ public class PredictionZone {
         this.distance = new double[rssi.length];
         this.rssi = new double[rssi.length];
         this.distribution = new double[modelWrapper.getResponseDomainValues().length];
-//        find index of lock
-        for (int i = 0; i < modelWrapper.getResponseDomainValues().length; i++) {
-            if (modelWrapper.getResponseDomainValues()[i].equalsIgnoreCase(PREDICTION_LOCK)) {
-                INDEX_LOCK = i;
-                break;
-            }
-        }
         for (int i = 0; i < rssi.length; i++) {
             this.rssi_offset[i] = rssi[i] - offset;
             this.rssi[i] = rssi_offset[i];
@@ -118,18 +111,13 @@ public class PredictionZone {
     public void predict(int nVote) {
         int result = 0;
         try {
-            if (predictionType.equalsIgnoreCase(PredictionFactory.PREDICTION_RP)) {
+            if (binomial) {
                 final BinomialModelPrediction modelPrediction = modelWrapper.predictBinomial(rowData);
                 label = modelPrediction.label;
                 result = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
             } else {
-//                final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
-//                label = modelPrediction.label;
-//                result = modelPrediction.labelIndex;
-//                distribution = modelPrediction.classProbabilities;
-
-                final BinomialModelPrediction modelPrediction = modelWrapper.predictBinomial(rowData);
+                final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
                 label = modelPrediction.label;
                 result = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
@@ -358,6 +346,7 @@ public class PredictionZone {
             try {
                 PSALogs.d("init2", "start AsyncPredictionInit\n");
                 hex.genmodel.GenModel rawModel = (hex.genmodel.GenModel) Class.forName(elements[0]).newInstance();
+                binomial = rawModel.getNumResponseClasses() == 2;
                 PSALogs.d("init2", "newInstance rawModel... done\n");
                 modelWrapper = new EasyPredictModelWrapper(rawModel);
                 PSALogs.d("init2", "new EasyPredictModelWrapper... done\n");
