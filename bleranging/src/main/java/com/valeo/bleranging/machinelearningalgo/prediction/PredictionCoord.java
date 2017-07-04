@@ -19,21 +19,17 @@ import hex.genmodel.easy.prediction.RegressionModelPrediction;
  */
 
 public class PredictionCoord {
-    private static final double THRESHOLD_RSSI_AWAY = 1;
-    private static final int MAX_X = 11;
-    private static final int MAX_HISTORIC_SIZE = 5;
-    //    rssi saved to calculate the average
-    private final LinkedHashMap<Integer, List<Double>> rssiHistoric;
+    private static final double THRESHOLD_RSSI_AWAY = 1;// max signal power to be reduced between two sample
+    private static final int MAX_HISTORIC_SIZE = 5;// rssi history size
+    private final LinkedHashMap<Integer, List<Double>> rssiHistoric;// rssi saved to calculate the average
     private Context mContext;
-    //    rssi after adding smartphone offset
-    private double[] rssi_offset;
-    //    rssi used for algo entry
-    private double[] rssi;
-    private boolean arePredictRawFileRead = false;
-    private EasyPredictModelWrapper modelWrapper;
-    private RowData rowData;
-    private List<String> rowDataKeySet;
-    private double coord;
+    private double[] rssi_offset;//rssi after adding smartphone offset
+    private double[] rssi;//rssi used for algo entry
+    private boolean arePredictRawFileRead = false;// whether the prediction model has been read
+    private EasyPredictModelWrapper modelWrapper;// Machine learning prediction model wrapper
+    private RowData rowData;// sample for machine learning entry
+    private List<String> rowDataKeySet;// column names for machine learning entry
+    private double coord;// regression prediction result
 
     public PredictionCoord(Context context, String modelClassName, List<String> rowDataKeySet) {
         this.mContext = context;
@@ -114,24 +110,6 @@ public class PredictionCoord {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public double[] point2PxPy(int index) {
-        double[] coord = new double[2];
-        index = index - 1;
-        coord[1] = Math.floor(index / (2 * MAX_X + 1));
-        coord[0] = index - coord[1] * (2 * MAX_X + 1);
-        return coord;
-    }
-
-    public double[] square2PxPy(int index) {
-        double[] coord = new double[2];
-        index = index - 1;
-        coord[1] = Math.floor(index / MAX_X);
-        coord[0] = index - coord[1] * MAX_X;
-        coord[0] = coord[0] + 0.5;
-        coord[1] = coord[1] + 0.5;
-        return coord;
     }
 
     public double getPredictionCoord() {

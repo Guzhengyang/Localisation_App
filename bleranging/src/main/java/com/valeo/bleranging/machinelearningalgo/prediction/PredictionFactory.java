@@ -17,7 +17,6 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_5
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_6_A;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_7_A;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_8_A;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_Clf;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_Px;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_Py;
 
@@ -52,15 +51,13 @@ public class PredictionFactory {
     /***
      *
      * @param mContext
-     * @param modelType classification or regression
-     * @return coord prediction
+     * @param modelType regression model for Px or Py
+     * @return Coordinate Prediction
      */
     public static PredictionCoord getPredictionCoord(Context mContext, String modelType) {
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
         if (carType.equalsIgnoreCase(TYPE_8_A)) {
-            if (modelType.equalsIgnoreCase(TYPE_Clf)) {
-                return new PredictionCoord(mContext, COORD_8_A_CLF, rowDataKeySetFactory(TYPE_8_A));
-            } else if (modelType.equalsIgnoreCase(TYPE_Px)) {
+            if (modelType.equalsIgnoreCase(TYPE_Px)) {
                 return new PredictionCoord(mContext, COORD_8_A_PX, rowDataKeySetFactory(TYPE_8_A));
             } else if (modelType.equalsIgnoreCase(TYPE_Py)) {
                 return new PredictionCoord(mContext, COORD_8_A_PY, rowDataKeySetFactory(TYPE_8_A));
@@ -69,10 +66,11 @@ public class PredictionFactory {
         return null;
     }
 
-    /**
+    /***
+     *
      * @param mContext
-     * @param predictionType PREDICTION_STANDARD for all the zones and PREDICTION_RP for near/far prediction
-     * @return zone prediction
+     * @param predictionType  standard prediction for zones(left, right, lock, start, ...) and rp prediction(near or far)
+     * @return
      */
     public static PredictionZone getPredictionZone(Context mContext, String predictionType) {
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();

@@ -17,7 +17,6 @@ import java.util.Map;
 import hex.genmodel.easy.EasyPredictModelWrapper;
 import hex.genmodel.easy.RowData;
 import hex.genmodel.easy.prediction.BinomialModelPrediction;
-import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
@@ -29,28 +28,25 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIE
  */
 
 public class PredictionZone {
-    private static final double f = 2.45 * Math.pow(10, 9);
-    private static final double c = 3 * Math.pow(10, 8);
-    private static final double P = -22;
-    private static final double THRESHOLD_RSSI_AWAY = 1;
-    private List<Integer> predictions = new ArrayList<>();
-    private double[] distribution;
-    private double[] distance;
-    //    rssi used for algo entry
-    private double[] rssi;
-    //    rssi after adding smartphone offset
-    private double[] rssi_offset;
-    private int prediction_old = -1;
+    private static final double f = 2.45 * Math.pow(10, 9);// ble frequency
+    private static final double c = 3 * Math.pow(10, 8);// light spped
+    private static final double P = -22;// initial power
+    private static final double THRESHOLD_RSSI_AWAY = 1;// max signal power to be reduced between two samples
+    private List<Integer> predictions = new ArrayList<>();// Machine learning prediction history list
+    private double[] distribution;// prob for each Machine learning class
+    private double[] distance;// distance converted using path loss propagation
+    private double[] rssi;// rssi used for algo entry
+    private double[] rssi_offset;// rssi after adding smartphone offset
+    private int prediction_old = -1;// old prediction result index
     private Context mContext;
-    private boolean arePredictRawFileRead = false;
-    private int INDEX_LOCK;
-    private boolean isThresholdMethod = false;
+    private boolean arePredictRawFileRead = false;// check whether the prediction model has been read
+    private int INDEX_LOCK;// find the index of lock zone
     private StringBuilder sb = new StringBuilder();
-    private EasyPredictModelWrapper modelWrapper;
-    private RowData rowData;
-    private List<String> rowDataKeySet;
-    private String label;
-    private String predictionType;
+    private EasyPredictModelWrapper modelWrapper;// Machine learning prediction wrapper
+    private RowData rowData;// sample data
+    private List<String> rowDataKeySet;// column names for sample data
+    private String label;// prediction result string
+    private String predictionType;// standard prediction or rp prediction
 
     public PredictionZone(Context context, String modelClassName, List<String> rowDataKeySet, String predictionType) {
         this.mContext = context;
@@ -63,28 +59,6 @@ public class PredictionZone {
     public boolean isPredictRawFileRead() {
         return arePredictRawFileRead;
     }
-
-//    public void setRssi(int index, double rssi, int offset, double threshold, boolean comValid, boolean lockStatus) {
-//        this.rssi_offset[index] = rssi - offset;
-//        if (prediction_old != -1) {
-//            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK) |
-//                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_OUTSIDE)) {
-//                rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
-//            }
-//
-//            // Add unlock hysteresis to all the trx
-//            if (this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
-//                    this.classes[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
-//                rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
-//            }
-//        }
-//        double dist_new = rssi2dist(rssi_offset[index]);
-//        if (comValid) {
-//            distance[index] = dist_new;
-//        } else {
-//            distance[index] = correctDistUnilateral(distance[index], dist_new, threshold);
-//        }
-//    }
 
     public void init(double[] rssi, int offset) {
         this.rssi_offset = new double[rssi.length];
@@ -120,11 +94,6 @@ public class PredictionZone {
                             this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
                         rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
                     }
-//            if(lockStatus){
-//                rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
-//            }else {
-//                rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
-//            }
                 }
                 this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
                 distance[index] = rssi2dist(this.rssi[index]);
@@ -155,17 +124,15 @@ public class PredictionZone {
                 result = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
             } else {
-                if (rssi != null && (rssi.length == 8 | rssi.length == 6)) {
-                    final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
-                    label = modelPrediction.label;
-                    result = modelPrediction.labelIndex;
-                    distribution = modelPrediction.classProbabilities;
-                } else {
-                    final BinomialModelPrediction modelPrediction = modelWrapper.predictBinomial(rowData);
-                    label = modelPrediction.label;
-                    result = modelPrediction.labelIndex;
-                    distribution = modelPrediction.classProbabilities;
-                }
+//                final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
+//                label = modelPrediction.label;
+//                result = modelPrediction.labelIndex;
+//                distribution = modelPrediction.classProbabilities;
+
+                final BinomialModelPrediction modelPrediction = modelWrapper.predictBinomial(rowData);
+                label = modelPrediction.label;
+                result = modelPrediction.labelIndex;
+                distribution = modelPrediction.classProbabilities;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -216,15 +183,6 @@ public class PredictionZone {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
             if (strategy.equals(THATCHAM_ORIENTED)) {
-                //                when no decision for lock is made, use threshold method
-                if (ifNoDecision2Lock(distribution, threshold_prob_unlock2lock)) {
-                    if (if2Lock(rssi, SdkPreferencesHelper.getInstance().getThresholdLock())) {
-                        prediction_old = INDEX_LOCK;
-                        isThresholdMethod = true;
-                        return;
-                    }
-                }
-                isThresholdMethod = false;
 //                lock --> left, right, front, back
                 if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_LEFT)
                         || comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_RIGHT)
@@ -252,15 +210,6 @@ public class PredictionZone {
                     return;
                 }
             } else if (strategy.equals(PASSIVE_ENTRY_ORIENTED)) {
-//                when no decision for lock is made, use threshold method
-                if (ifNoDecision2Lock(distribution, threshold_prob_unlock2lock)) {
-                    if (if2Lock(rssi, SdkPreferencesHelper.getInstance().getThresholdLock())) {
-                        prediction_old = INDEX_LOCK;
-                        isThresholdMethod = true;
-                        return;
-                    }
-                }
-                isThresholdMethod = false;
 //                left, right, front, back --> lock
                 if (comparePrediction(prediction_old, BleRangingHelper.PREDICTION_LEFT)
                         || comparePrediction(prediction_old, BleRangingHelper.PREDICTION_RIGHT)
@@ -330,18 +279,6 @@ public class PredictionZone {
         }
     }
 
-    public void calculatePredictionEar(double threshold_prob) {
-        if (checkOldPrediction()) {
-            int temp_prediction = most(predictions);
-            if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_LOCK)) {
-                prediction_old = temp_prediction;
-                return;
-            }
-            if (compareDistribution(temp_prediction, threshold_prob)) {
-                prediction_old = temp_prediction;
-            }
-        }
-    }
 
     public String getPrediction() {
         if (prediction_old != -1) {
@@ -381,12 +318,6 @@ public class PredictionZone {
         } else if (label == null) {
             return "";
         } else {
-//            if (isThresholdMethod) {
-//                sb.append("Threshold\n");
-//            } else {
-//                sb.append("Machine Learning\n");
-//            }
-//            sb.append("Current Prediction Label: ").append(label).append("\n");
             sb.append(String.format(Locale.FRANCE, "%1$s %2$s %3$.2f", title, getPrediction(), distribution[prediction_old])).append("\n");
             for (double arssi : rssi) {
                 sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
@@ -414,36 +345,6 @@ public class PredictionZone {
         } else {
             return null;
         }
-    }
-
-    private double max(double[] rssi) {
-        double result = rssi[0];
-        for (int i = 1; i < rssi.length; i++) {
-            if (rssi[i] > result) {
-                result = rssi[i];
-            }
-        }
-        return result;
-    }
-
-    private boolean ifNoDecision2Lock(double[] distribution, double threshold_prob_unlock2lock) {
-        if (distribution != null) {
-            return distribution[INDEX_LOCK] <= threshold_prob_unlock2lock;
-        }
-        return true;
-    }
-
-    private boolean if2Lock(double[] rssi, double threshold_rssi_lock) {
-        boolean result = true;
-        if (rssi != null) {
-            for (int i = 0; i < rssi.length; i++) {
-                if (rssi[i] > threshold_rssi_lock) {
-                    result = false;
-                    break;
-                }
-            }
-        }
-        return result;
     }
 
     public double[] getRssi() {
