@@ -21,14 +21,12 @@ import static com.valeo.bleranging.utils.CalculUtils.most;
 import static com.valeo.bleranging.utils.CalculUtils.rssi2dist;
 import static com.valeo.bleranging.utils.CheckUtils.compareDistribution;
 import static com.valeo.bleranging.utils.CheckUtils.comparePrediction;
-import static com.valeo.bleranging.utils.CheckUtils.if2Lock;
-import static com.valeo.bleranging.utils.CheckUtils.ifNoDecision2Lock;
 
 /**
  * Created by l-avaratha on 12/01/2017
  */
 
-public class PredictionZone {
+public class PredictionZone extends BasePrediction {
     private List<Integer> predictions = new ArrayList<>();// Machine learning prediction history list
     private double[] distribution;// prob for each Machine learning class
     private double[] distance;// distance converted using path loss propagation
