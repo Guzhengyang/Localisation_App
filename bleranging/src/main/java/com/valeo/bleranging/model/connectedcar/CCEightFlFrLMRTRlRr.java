@@ -12,6 +12,8 @@ import com.valeo.bleranging.utils.PSALogs;
 import org.ejml.simple.SimpleMatrix;
 import com.valeo.bleranging.utils.CalculUtils;
 
+import static com.valeo.bleranging.utils.CheckUtils.checkForRssiNonNull;
+
 /**
  * Created by l-avaratha on 07/09/2016
  */

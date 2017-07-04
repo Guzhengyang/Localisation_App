@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
+import static com.valeo.bleranging.utils.CheckUtils.checkForRssiNonNull;
 
 /**
  * Created by l-avaratha on 05/09/2016
@@ -151,24 +152,6 @@ public abstract class ConnectedCar {
             return rpPrediction.getPrediction();
         }
         return PREDICTION_UNKNOWN;
-    }
-
-    /**
-     * Check if the array of rssi contains only non null value
-     *
-     * @param mRssi the array of rssi to check
-     * @return null if a value is equal to 0, the entire array otherwise
-     */
-    double[] checkForRssiNonNull(double[] mRssi) {
-        if (mRssi == null) {
-            return null;
-        }
-        for (Double elem : mRssi) {
-            if (elem == 0) {
-                return null;
-            }
-        }
-        return mRssi;
     }
 
     public double[] getStandardDistribution() {

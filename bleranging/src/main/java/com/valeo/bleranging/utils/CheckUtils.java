@@ -34,4 +34,22 @@ public class CheckUtils {
         }
         return result;
     }
+
+    /**
+     * Check if the array of rssi contains only non null value
+     *
+     * @param mRssi the array of rssi to check
+     * @return null if a value is equal to 0, the entire array otherwise
+     */
+    public static double[] checkForRssiNonNull(double[] mRssi) {
+        if (mRssi == null) {
+            return null;
+        }
+        for (Double elem : mRssi) {
+            if (elem == 0) {
+                return null;
+            }
+        }
+        return mRssi;
+    }
 }

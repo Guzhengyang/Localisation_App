@@ -92,6 +92,18 @@ public class CalculUtils {
         return somme / rssiList.size();
     }
 
+    /**
+     * Calculate the quadratic sum
+     *
+     * @param x the first axe value
+     * @param y the second axe value
+     * @param z the third axe value
+     * @return the quadratic sum of the three axes
+     */
+    public static double getQuadratiqueSum(float x, float y, float z) {
+        return Math.sqrt(x * x + y * y + z * z);
+    }
+
     public static double[] point2PxPy(int index) {
         double[] coord = new double[2];
         index = index - 1;

@@ -23,6 +23,7 @@ import com.valeo.bleranging.listeners.RkeListener;
 import com.valeo.bleranging.listeners.TestListener;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.CalculUtils;
 import com.valeo.bleranging.utils.CallReceiver;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.SoundUtils;
@@ -485,18 +486,6 @@ public class AlgoManager implements SensorEventListener {
         return average;
     }
 
-    /**
-     * Calculate the quadratic sum
-     *
-     * @param x the first axe value
-     * @param y the second axe value
-     * @param z the third axe value
-     * @return the quadratic sum of the three axes
-     */
-    private double getQuadratiqueSum(float x, float y, float z) {
-        return Math.sqrt(x * x + y * y + z * z);
-    }
-
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
@@ -508,7 +497,7 @@ public class AlgoManager implements SensorEventListener {
             if (lAccHistoric.size() == SdkPreferencesHelper.getInstance().getLinAccSize()) {
                 lAccHistoric.remove(0);
             }
-            double currentLinAcc = getQuadratiqueSum(event.values[0], event.values[1], event.values[2]);
+            double currentLinAcc = CalculUtils.getQuadratiqueSum(event.values[0], event.values[1], event.values[2]);
             lAccHistoric.add(currentLinAcc);
             double averageLinAcc = getRollingAverageLAcc(lAccHistoric);
             deltaLinAcc = Math.abs(currentLinAcc - averageLinAcc);
