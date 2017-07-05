@@ -28,7 +28,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         app:layout_constraintBaseline_toBaselineOf="@+id/test_title_tv"
         app:layout_constraintEnd_toStartOf="@+id/start_test"
         app:layout_constraintStart_toEndOf="@id/test_title_tv"

@@ -140,7 +140,7 @@ public class Trx {
         if (currentAntenna != null) {
             return currentAntenna.getCurrentOriginalRssi();
         }
-        return 0;
+        return -90;
     }
 
     /**

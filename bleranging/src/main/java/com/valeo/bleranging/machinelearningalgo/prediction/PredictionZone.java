@@ -47,6 +47,7 @@ public class PredictionZone {
     private String label;// prediction result string
     private String predictionType;// standard prediction or rp prediction
     private boolean binomial;// whether the model is binomial
+    private double threshold = 0.5;
 
     public PredictionZone(Context context, String modelClassName, List<String> rowDataKeySet, String predictionType) {
         this.mContext = context;
@@ -73,6 +74,12 @@ public class PredictionZone {
         constructRowData(this.rssi);
     }
 
+    public void initTest(double[] rssi) {
+        this.rssi = new double[rssi.length];
+        this.distribution = new double[modelWrapper.getResponseDomainValues().length];
+        constructRowDataTest(this.rssi);
+    }
+
     public void setRssi(double rssi[], int offset, boolean lockStatus) {
         if (this.rssi_offset != null) {
             for (int index = 0; index < rssi.length; index++) {
@@ -95,6 +102,14 @@ public class PredictionZone {
         }
     }
 
+
+    public void setRssiTest(double[] rssi) {
+        for (int i = 0; i < rssi.length; i++) {
+            this.rssi[i] = rssi[i];
+        }
+        constructRowDataTest(this.rssi);
+    }
+
     private void constructRowData(double[] rssi) {
         if (rssi == null) {
             return;
@@ -103,6 +118,21 @@ public class PredictionZone {
         for (String elem : rowDataKeySet) {
             if (i < rssi.length) {
                 rowData.put(elem, String.valueOf(rssi[i]));
+                i++;
+            }
+        }
+    }
+
+    private void constructRowDataTest(double[] rssi) {
+        if (rssi == null) {
+            return;
+        }
+        int i = 0;
+        for (String elem : rowDataKeySet) {
+            if (i < rssi.length) {
+                if (i != 1) {
+                    rowData.put(elem, String.valueOf(rssi[i] - rssi[1]));
+                }
                 i++;
             }
         }
@@ -132,6 +162,24 @@ public class PredictionZone {
             if (prediction_old == -1) {
                 prediction_old = result;
             }
+        }
+    }
+
+    public void predictTest() {
+        try {
+            if (binomial) {
+                final BinomialModelPrediction modelPrediction = modelWrapper.predictBinomial(rowData);
+                label = modelPrediction.label;
+//                prediction_old = modelPrediction.labelIndex;
+                distribution = modelPrediction.classProbabilities;
+            } else {
+                final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
+                label = modelPrediction.label;
+//                prediction_old = modelPrediction.labelIndex;
+                distribution = modelPrediction.classProbabilities;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -217,56 +265,13 @@ public class PredictionZone {
         }
     }
 
-    //    3 beacons prediction
-    public void calculatePredictionDefault(double threshold_prob, double threshold_prob_lock) {
-        if (checkOldPrediction()) {
-            int temp_prediction = most(predictions);
-            if (comparePrediction(prediction_old, BleRangingHelper.PREDICTION_LEFT)
-                    || comparePrediction(prediction_old, BleRangingHelper.PREDICTION_RIGHT)
-                    || comparePrediction(prediction_old, BleRangingHelper.PREDICTION_BACK)
-                    || comparePrediction(prediction_old, BleRangingHelper.PREDICTION_BACK)) {
-                if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_LOCK)
-                        && compareDistribution(temp_prediction, threshold_prob_lock)) {
-                    prediction_old = temp_prediction;
-                    return;
-                }
-            }
-            if (compareDistribution(temp_prediction, threshold_prob)) {
-                prediction_old = temp_prediction;
-                return;
-            }
+    public void calculatePredictionTest() {
+        if (compareDistribution(0, threshold)) {
+            prediction_old = 0;
+        } else {
+            prediction_old = 1;
         }
     }
-
-    public void calculatePredictionStart(double threshold_prob) {
-        if (checkOldPrediction()) {
-            int temp_prediction = most(predictions);
-//            cover internal space
-            if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_INSIDE) ||
-                    comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_INTERNAL)) {
-                prediction_old = temp_prediction;
-                return;
-            }
-            if (compareDistribution(temp_prediction, threshold_prob)) {
-                prediction_old = temp_prediction;
-            }
-        }
-    }
-
-    public void calculatePredictionRP(double threshold_prob) {
-        if (checkOldPrediction()) {
-            int temp_prediction = most(predictions);
-//            reduce false positive
-            if (comparePrediction(temp_prediction, BleRangingHelper.PREDICTION_FAR)) {
-                prediction_old = temp_prediction;
-                return;
-            }
-            if (compareDistribution(temp_prediction, threshold_prob)) {
-                prediction_old = temp_prediction;
-            }
-        }
-    }
-
 
     public String getPrediction() {
         if (prediction_old != -1) {
@@ -306,7 +311,7 @@ public class PredictionZone {
         } else if (label == null) {
             return "";
         } else {
-            sb.append(String.format(Locale.FRANCE, "%1$s %2$s %3$.2f", title, getPrediction(), distribution[prediction_old])).append("\n");
+            sb.append(String.format(Locale.FRANCE, "%1$s %2$s ", title, getPrediction())).append("\n");
             for (double arssi : rssi) {
                 sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
             }
@@ -323,6 +328,24 @@ public class PredictionZone {
         }
     }
 
+    public String printDebugTest(String title) {
+        sb.setLength(0);
+        if (distribution == null || rssi == null) {
+            return "";
+        }
+        PSALogs.d("debug", prediction_old + " " + threshold);
+        sb.append(String.format(Locale.FRANCE, "%1$s %2$s ", title, getPrediction())).append("\n");
+        for (double arssi : rssi) {
+            sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
+        }
+        sb.append("\n");
+        for (int i = 0; i < distribution.length; i++) {
+            sb.append(modelWrapper.getResponseDomainValues()[i]).append(": ").append(String.format(Locale.FRANCE, "%.2f", distribution[i])).append(" \n");
+        }
+        sb.append("\n");
+        return sb.toString();
+    }
+
     public double[] getDistribution() {
         return distribution;
     }
@@ -337,6 +360,10 @@ public class PredictionZone {
 
     public double[] getRssi() {
         return rssi;
+    }
+
+    public void setThreshold(Double threshold) {
+        this.threshold = threshold;
     }
 
     private class AsyncPredictionInit extends AsyncTask<String, Void, Void> {
@@ -363,8 +390,11 @@ public class PredictionZone {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (!arePredictRawFileRead) {
-                Toast.makeText(mContext, "Init for Zone Model... failed", Toast.LENGTH_LONG).show();
-                PSALogs.w("init2", "Init for Zone Model... failed\n");
+                Toast.makeText(mContext, "Init for Zone Model " + predictionType + ".. failed", Toast.LENGTH_SHORT).show();
+                PSALogs.w("init2", "Init for Zone Model " + predictionType + "... failed\n");
+            } else {
+                Toast.makeText(mContext, "Init for Zone Model " + predictionType, Toast.LENGTH_SHORT).show();
+                PSALogs.w("init2", "Init for Zone Model " + predictionType + "\n");
             }
         }
     }

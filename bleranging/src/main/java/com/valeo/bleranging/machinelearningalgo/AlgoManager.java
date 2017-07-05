@@ -20,6 +20,7 @@ import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
 import com.valeo.bleranging.listeners.BleRangingListener;
 import com.valeo.bleranging.listeners.RkeListener;
+import com.valeo.bleranging.listeners.TestListener;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.CallReceiver;
@@ -63,6 +64,7 @@ public class AlgoManager implements SensorEventListener {
     private final static int LOCK_STATUS_CHANGED_TIMEOUT = 5000;
     private final InblueProtocolManager mProtocolManager;
     private final BleRangingListener bleRangingListener;
+    private final TestListener testListener;
     private final RkeListener rkeListener;
     private final Context mContext;
     private final Handler mMainHandler;
@@ -216,11 +218,12 @@ public class AlgoManager implements SensorEventListener {
     };
 
     public AlgoManager(Context mContext, BleRangingListener bleRangingListener,
-                       RkeListener rkeListener,
+                       RkeListener rkeListener, TestListener testListener,
                        InblueProtocolManager mProtocolManager, Handler mMainHandler) {
         this.mContext = mContext;
         this.bleRangingListener = bleRangingListener;
         this.rkeListener = rkeListener;
+        this.testListener = testListener;
         this.mProtocolManager = mProtocolManager;
         this.mMainHandler = mMainHandler;
         this.mHandlerLockTimeOut = new Handler();

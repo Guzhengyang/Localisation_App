@@ -23,7 +23,7 @@ public class ConnectedCarFactory {
     public final static String TYPE_6_A = "sixFlFrMTRlRr";
     public final static String TYPE_7_A = "sevenFlFrLMRRlRr";
     public final static String TYPE_8_A = "eightFlFrLMRTRlRr";
-    public final static String TYPE_Clf = "MLP4Clf";
+    public final static String TYPE_TEST = "test";
     public final static String TYPE_Px = "MLP4Px";
     public final static String TYPE_Py = "MLP4Py";
     public final static int NUMBER_TRX_FRONT_LEFT = 1;
@@ -52,27 +52,7 @@ public class ConnectedCarFactory {
      * @return a connected car with the specified number of connection
      */
     public static ConnectedCar getConnectedCar(Context mContext, String carName) {
-        if (carName.equalsIgnoreCase(TYPE_2_A)) {
-            return new CCTwoMT(mContext);
-        } else if (carName.equalsIgnoreCase(TYPE_2_B)) {
-            return new CCTwoLR(mContext);
-        } else if (carName.equalsIgnoreCase(TYPE_3_A)) {
-            return new CCThreeLMR(mContext);
-        } else if (carName.equalsIgnoreCase(TYPE_4_A)) {
-            return new CCFourLMRB(mContext);
-        } else if (carName.equalsIgnoreCase(TYPE_4_B)) {
-            return new CCFourLMRT(mContext);
-        } else if (carName.equalsIgnoreCase(TYPE_5_A)) {
-            return new CCFiveLMRTB(mContext);
-        } else if (carName.equalsIgnoreCase(TYPE_6_A)) {
-            return new CCSixFlFrMTRlRr(mContext);
-        } else if (carName.equalsIgnoreCase(TYPE_7_A)) {
-            return new CCSevenFlFrLMRRlRr(mContext);
-        } else if (carName.equalsIgnoreCase(TYPE_8_A)) {
-            return new CCEightFlFrLMRTRlRr(mContext);
-        } else {
-            return new CCFourLMRB(mContext);
-        }
+        return new CCEightFlFrLMRTRlRr(mContext);
     }
 
     public static class TrxLinkHMapBuilder {

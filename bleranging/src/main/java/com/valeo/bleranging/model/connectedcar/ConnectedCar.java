@@ -39,19 +39,14 @@ public abstract class ConnectedCar {
     public final static String PASSIVE_ENTRY_ORIENTED = "passive_entry_oriented";
     final static String SIMPLE_LOC = "Simple Localisation:";
     final static String STANDARD_LOC = "Standard Localisation:";
+    final static String TEST_LOC = "Test Localisation:";
     final static String EAR_HELD_LOC = "Ear held Localisation:";
     final static String RP_LOC = "RP Localisation:";
     final static String START_LOC = "Start Localisation:";
-    final static String FULL_LOC = "Full Localisation:";
-    final static String INSIDE_LOC = "Inside Localisation:";
-    final static int N_VOTE_VERY_LONG = 10;
     final static int N_VOTE_LONG = 5;
     final static int N_VOTE_SHORT = 3;
     final static double THRESHOLD_PROB_UNLOCK2LOCK = 0.5;
     final static double THRESHOLD_PROB_LOCK2UNLOCK = 0.9;
-    final static double THRESHOLD_DIST_AWAY_SLOW = 0.07;
-    final static double THRESHOLD_DIST_AWAY_EAR = 0.25;
-    final static int START_OFFSET = 2;
     private final static int RSSI_UNLOCK_CENTRAL_DEFAULT_VALUE = -60;
     private final static int RSSI_UNLOCK_PERIPH_NEAR_DEFAULT_VALUE = -55;
     private final static int RSSI_UNLOCK_PERIPH_FAR_DEFAULT_VALUE = -75;
@@ -62,6 +57,7 @@ public abstract class ConnectedCar {
     PredictionCoord pxPrediction;
     PredictionCoord pyPrediction;
     PredictionZone standardPrediction;
+    PredictionZone testPrediction;
     PredictionZone earPrediction;
     PredictionZone rpPrediction;
     boolean comValid = false;
@@ -312,6 +308,10 @@ public abstract class ConnectedCar {
      * Calculate a prediction using machine learning
      */
     public abstract void calculatePrediction(float[] orientation);
+
+    public abstract void calculatePredictionTest(Double threshold);
+
+    public abstract String getPredictionPositionTest();
 
     /**
      * Print debug info

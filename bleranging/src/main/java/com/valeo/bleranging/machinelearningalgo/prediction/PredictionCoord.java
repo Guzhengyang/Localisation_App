@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.valeo.bleranging.utils.PSALogs;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,12 +32,15 @@ public class PredictionCoord {
     private RowData rowData;// sample for machine learning entry
     private List<String> rowDataKeySet;// column names for machine learning entry
     private double coord;// regression prediction result
+    private String predictionType;// standard prediction or rp prediction
 
-    public PredictionCoord(Context context, String modelClassName, List<String> rowDataKeySet) {
+
+    public PredictionCoord(Context context, String modelClassName, List<String> rowDataKeySet, String predictionType) {
         this.mContext = context;
         this.rssiHistoric = new LinkedHashMap<>();
         this.rowDataKeySet = rowDataKeySet;
         this.rowData = new RowData();
+        this.predictionType = predictionType;
         new AsyncPredictionInit().execute(modelClassName);
     }
 
@@ -73,6 +78,7 @@ public class PredictionCoord {
             e.printStackTrace();
         }
     }
+
 
     public void setRssi(double rssi[], int offset) {
         if (this.rssi_offset != null) {
@@ -153,7 +159,10 @@ public class PredictionCoord {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (!arePredictRawFileRead) {
-                Toast.makeText(mContext, "Init for Coord Model Fail", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "Init for Coord Model" + predictionType + " Fail", Toast.LENGTH_SHORT).show();
+            } else {
+                PSALogs.w("init2", "Init for Coor Model" + "\n");
+                Toast.makeText(mContext, "Init for Coord Model " + predictionType, Toast.LENGTH_SHORT).show();
             }
         }
     }

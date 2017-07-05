@@ -6,6 +6,7 @@ import android.graphics.PointF;
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 
 /**
  * Created by l-avaratha on 07/09/2016
@@ -37,6 +38,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         standardPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_STANDARD);
         pxPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Px);
         pyPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Py);
+        testPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_TEST);
 //        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);
     }
 
@@ -49,6 +51,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             pyPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             coord_x = pxPrediction.getPredictionCoord();
             coord_y = pyPrediction.getPredictionCoord();
+            testPrediction.initTest(rssi);
+            testPrediction.predictTest();
 //            rpPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
 //            rpPrediction.predict(N_VOTE_LONG);
         }
@@ -62,6 +66,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 && pxPrediction.isPredictRawFileRead()
                 && pyPrediction != null
                 && pyPrediction.isPredictRawFileRead()
+                && testPrediction != null
+                && testPrediction.isPredictRawFileRead()
 //                && rpPrediction != null
 //                && rpPrediction.isPredictRawFileRead()
                 && (checkForRssiNonNull(rssi) != null));
@@ -74,8 +80,18 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             standardPrediction.predict(N_VOTE_SHORT);
             pxPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             pyPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            testPrediction.setRssiTest(rssi);
+            testPrediction.predictTest();
 //            rpPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone(), lockStatus);
 //            rpPrediction.predict(N_VOTE_LONG);
+        }
+    }
+
+    @Override
+    public void calculatePredictionTest(Double threshold) {
+        PSALogs.d("abstract", "calculatePredictionTest overrided OK !");
+        if (threshold >= 0 && threshold <= 1) {
+            testPrediction.setThreshold(threshold);
         }
     }
 
@@ -92,6 +108,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             pxPrediction.calculatePredictionCoord();
             pyPrediction.calculatePredictionCoord();
             correctCoord(pxPrediction.getPredictionCoord(), pyPrediction.getPredictionCoord(), THRESHOLD_DIST);
+            testPrediction.calculatePredictionTest();
 //            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
@@ -101,7 +118,9 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         if (isInitialized()) {
             String result = "";
             result += SdkPreferencesHelper.getInstance().getOpeningStrategy() + "\n";
-            result += standardPrediction.printDebug(FULL_LOC);
+            result += "----------------------------------\n";
+            result += standardPrediction.printDebug(STANDARD_LOC);
+            result += testPrediction.printDebugTest(TEST_LOC);
 //            result += rpPrediction.printDebug(RP_LOC);
             return result;
         }
@@ -112,6 +131,14 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     public String getPredictionPosition(boolean smartphoneIsInPocket) {
         if (standardPrediction != null && standardPrediction.isPredictRawFileRead()) {
             String result = standardPrediction.getPrediction();
+            return result;
+        }
+        return BleRangingHelper.PREDICTION_UNKNOWN;
+    }
+
+    public String getPredictionPositionTest() {
+        if (testPrediction != null && testPrediction.isPredictRawFileRead()) {
+            String result = testPrediction.getPrediction();
             return result;
         }
         return BleRangingHelper.PREDICTION_UNKNOWN;

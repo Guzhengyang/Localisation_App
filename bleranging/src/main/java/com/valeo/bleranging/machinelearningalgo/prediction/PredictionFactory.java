@@ -19,6 +19,7 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_7
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_8_A;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_Px;
 import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_Py;
+import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_TEST;
 
 /**
  * Created by l-avaratha on 17/02/2017
@@ -26,7 +27,9 @@ import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_P
 
 public class PredictionFactory {
     public final static String PREDICTION_STANDARD = "standard_prediction";
-    public final static String PREDICTION_INSIDE = "inside_prediction";
+    public final static String PREDICTION_PX = "px_prediction";
+    public final static String PREDICTION_PY = "py_prediction";
+    public final static String PREDICTION_TEST = "test_prediction";
     public final static String PREDICTION_RP = "rp_prediction";
     public final static String PREDICTION_EAR = "ear_prediction";
     //    models for 2 beacons
@@ -41,12 +44,13 @@ public class PredictionFactory {
     //    models for 8 beacons
     private final static String ZONE_8_A_NORMAL = "EightNormal";
     private final static String ZONE_8_A_NORMAL_MINI = "EightNormalMini";
+    private final static String ZONE_8_A_NORMAL_TEST = "EightNormalTest";
     private final static String ZONE_8_A_THATCHAM = "EightThatcham";
     private final static String ZONE_8_A_THATCHAM_MINI = "EightThatchamMini";
+    private final static String ZONE_8_A_THATCHAM_TEST = "EightThatchamTest";
     private final static String COORD_8_A_PX = "MLP4Px";
     private final static String COORD_8_A_PY = "MLP4Py";
     private final static String ZONE_8_A_RP = "EightRP";
-    private final static String COORD_8_A_CLF = "MLP4Clf";
 
     /***
      *
@@ -58,9 +62,9 @@ public class PredictionFactory {
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
         if (carType.equalsIgnoreCase(TYPE_8_A)) {
             if (modelType.equalsIgnoreCase(TYPE_Px)) {
-                return new PredictionCoord(mContext, COORD_8_A_PX, rowDataKeySetFactory(TYPE_8_A));
+                return new PredictionCoord(mContext, COORD_8_A_PX, rowDataKeySetFactory(TYPE_8_A), PREDICTION_PX);
             } else if (modelType.equalsIgnoreCase(TYPE_Py)) {
-                return new PredictionCoord(mContext, COORD_8_A_PY, rowDataKeySetFactory(TYPE_8_A));
+                return new PredictionCoord(mContext, COORD_8_A_PY, rowDataKeySetFactory(TYPE_8_A), PREDICTION_PY);
             }
         }
         return null;
@@ -114,6 +118,12 @@ public class PredictionFactory {
                             } else {
                                 return new PredictionZone(mContext, ZONE_8_A_NORMAL, rowDataKeySetFactory(TYPE_8_A), predictionType);
                             }
+                        }
+                    case PREDICTION_TEST:
+                        if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
+                            return new PredictionZone(mContext, ZONE_8_A_THATCHAM_TEST, rowDataKeySetFactory(TYPE_TEST), predictionType);
+                        } else {
+                            return new PredictionZone(mContext, ZONE_8_A_NORMAL_TEST, rowDataKeySetFactory(TYPE_TEST), predictionType);
                         }
                     case PREDICTION_RP:
                         return new PredictionZone(mContext, ZONE_8_A_RP, rowDataKeySetFactory(TYPE_8_A), predictionType);
@@ -182,6 +192,15 @@ public class PredictionFactory {
             case TYPE_8_A:
                 rowDataKeySet.add("RSSI LEFT_ORIGIN");
                 rowDataKeySet.add("RSSI MIDDLE_ORIGIN");
+                rowDataKeySet.add("RSSI RIGHT_ORIGIN");
+                rowDataKeySet.add("RSSI TRUNK_ORIGIN");
+                rowDataKeySet.add("RSSI FRONTLEFT_ORIGIN");
+                rowDataKeySet.add("RSSI FRONTRIGHT_ORIGIN");
+                rowDataKeySet.add("RSSI REARLEFT_ORIGIN");
+                rowDataKeySet.add("RSSI REARRIGHT_ORIGIN");
+                break;
+            case TYPE_TEST:
+                rowDataKeySet.add("RSSI LEFT_ORIGIN");
                 rowDataKeySet.add("RSSI RIGHT_ORIGIN");
                 rowDataKeySet.add("RSSI TRUNK_ORIGIN");
                 rowDataKeySet.add("RSSI FRONTLEFT_ORIGIN");

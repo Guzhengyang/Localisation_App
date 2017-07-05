@@ -14,15 +14,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.valeo.bleranging.listeners.MeasureListener;
+import com.valeo.bleranging.listeners.TestListener;
 import com.valeo.psa.R;
+
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ACCESS;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
+import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
 
 
 /**
  * Created by l-avaratha on 09/03/2017
  */
 
-public class TestFragment extends Fragment implements MeasureListener {
+public class TestFragment extends Fragment implements TestListener {
     private EditText test_index;
     private TestFragmentActionListener mListener;
     private Button start_test;
@@ -49,7 +53,7 @@ public class TestFragment extends Fragment implements MeasureListener {
 
     private void setView(View rootView) {
         test_index = (EditText) rootView.findViewById(R.id.test_index);
-        test_index.setText("0");
+        test_index.setText("0.5");
         start_test = (Button) rootView.findViewById(R.id.start_test);
         result_test = (ImageView) rootView.findViewById(R.id.result_test);
         mHandler = new Handler(Looper.getMainLooper());
@@ -66,8 +70,7 @@ public class TestFragment extends Fragment implements MeasureListener {
                     @Override
                     public void run() {
                         if (mListener != null && isAdded()) {
-                            changeColor(result);
-                            result = !result;
+                            mListener.setNewThreshold(Double.valueOf(test_index.getText().toString()));
                         }
                     }
                 });
@@ -75,14 +78,22 @@ public class TestFragment extends Fragment implements MeasureListener {
         });
     }
 
-    private void changeColor(boolean result) {
-        if (result) {
-            result_test.setBackgroundColor(getResources().getColor(android.R.color.holo_purple));
-        } else {
-            result_test.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_light));
+    @Override
+    public void changeColor(String result) {
+        switch (result) {
+            case PREDICTION_UNKNOWN:
+                result_test.setBackgroundColor(getResources().getColor(android.R.color.black));
+                break;
+            case PREDICTION_LOCK:
+                result_test.setBackgroundColor(getResources().getColor(android.R.color.holo_red_dark));
+                break;
+            case PREDICTION_ACCESS:
+                result_test.setBackgroundColor(getResources().getColor(android.R.color.holo_green_light));
+                break;
         }
     }
 
     public interface TestFragmentActionListener {
+        void setNewThreshold(double value);
     }
 }
