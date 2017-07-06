@@ -15,22 +15,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_BACK;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_FRONT_LEFT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_FRONT_RIGHT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_LEFT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_MIDDLE;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_REAR_LEFT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_REAR_RIGHT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_RIGHT;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.NUMBER_TRX_TRUNK;
+import static com.valeo.bleranging.persistence.Constants.CONFIG_DIR;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_BACK;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_FRONT_LEFT;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_FRONT_RIGHT;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_LEFT;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_MIDDLE;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_REAR_LEFT;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_REAR_RIGHT;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_RIGHT;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_TRUNK;
+import static com.valeo.bleranging.persistence.Constants.RSSI_DIR;
 
 /**
  * Created by l-avaratha on 08/06/2016
  */
 public class LogFileUtils {
-    public final static String RSSI_DIR = "/InBlueRssi/";
-    public final static String CONFIG_DIR = "/InBlueConfig/";
     private final static String FILENAME_TIMESTAMP_FORMAT = "yyyy-MM-dd_kk";
     private final static String RSSI_TIMESTAMP_FORMAT = "HH:mm:ss:SSS";
     private final static SimpleDateFormat sdfRssi = new SimpleDateFormat(RSSI_TIMESTAMP_FORMAT, Locale.FRANCE);

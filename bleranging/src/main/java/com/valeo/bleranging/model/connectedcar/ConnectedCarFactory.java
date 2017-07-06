@@ -6,6 +6,34 @@ import com.valeo.bleranging.model.Trx;
 
 import java.util.LinkedHashMap;
 
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_BACK;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_FRONT_LEFT;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_FRONT_RIGHT;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_LEFT;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_MIDDLE;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_REAR_LEFT;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_REAR_RIGHT;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_RIGHT;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_TRUNK;
+import static com.valeo.bleranging.persistence.Constants.TRX_BACK_NAME;
+import static com.valeo.bleranging.persistence.Constants.TRX_FRONT_LEFT_NAME;
+import static com.valeo.bleranging.persistence.Constants.TRX_FRONT_RIGHT_NAME;
+import static com.valeo.bleranging.persistence.Constants.TRX_LEFT_NAME;
+import static com.valeo.bleranging.persistence.Constants.TRX_MIDDLE_NAME;
+import static com.valeo.bleranging.persistence.Constants.TRX_REAR_LEFT_NAME;
+import static com.valeo.bleranging.persistence.Constants.TRX_REAR_RIGHT_NAME;
+import static com.valeo.bleranging.persistence.Constants.TRX_RIGHT_NAME;
+import static com.valeo.bleranging.persistence.Constants.TRX_TRUNK_NAME;
+import static com.valeo.bleranging.persistence.Constants.TYPE_2_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_2_B;
+import static com.valeo.bleranging.persistence.Constants.TYPE_3_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_4_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_4_B;
+import static com.valeo.bleranging.persistence.Constants.TYPE_5_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_6_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_7_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
+
 /**
  * Created by l-avaratha on 07/09/2016
  */

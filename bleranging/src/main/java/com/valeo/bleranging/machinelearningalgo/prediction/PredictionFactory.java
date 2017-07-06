@@ -2,45 +2,38 @@ package com.valeo.bleranging.machinelearningalgo.prediction;
 
 import android.content.Context;
 
-import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_2_A;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_2_B;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_3_A;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_4_A;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_4_B;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_5_A;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_6_A;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_7_A;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_8_A;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_Px;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_Py;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.TYPE_TEST;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_RP;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_STD;
+import static com.valeo.bleranging.persistence.Constants.THATCHAM_ORIENTED;
+import static com.valeo.bleranging.persistence.Constants.TYPE_2_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_2_B;
+import static com.valeo.bleranging.persistence.Constants.TYPE_3_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_4_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_4_B;
+import static com.valeo.bleranging.persistence.Constants.TYPE_5_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_6_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_7_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_Px;
+import static com.valeo.bleranging.persistence.Constants.TYPE_Py;
 
 /**
  * Created by l-avaratha on 17/02/2017
  */
 
 public class PredictionFactory {
-    public final static String PREDICTION_STANDARD = "standard_prediction";
-    public final static String PREDICTION_PX = "px_prediction";
-    public final static String PREDICTION_PY = "py_prediction";
-    public final static String PREDICTION_TEST = "test_prediction";
-    public final static String PREDICTION_RP = "rp_prediction";
-    public final static String PREDICTION_EAR = "ear_prediction";
     //    models for 2 beacons
     private final static String ZONE_2_A = "Two";
-
     //    models for 4 beacons
     private final static String ZONE_4_B_START = "FourStart";
     private final static String ZONE_4_B = "Four";
     private final static String ZONE_4_B_THATCHAM = "FourThatcham";
     private final static String ZONE_4_B_RP = "FourRP";
-
     //    models for 8 beacons
     private final static String ZONE_8_A_NORMAL = "EightNormal";
     private final static String ZONE_8_A_NORMAL_MINI = "EightNormalMini";
@@ -91,7 +84,7 @@ public class PredictionFactory {
                 break;
             case TYPE_4_B:
                 switch (predictionType) {
-                    case PREDICTION_STANDARD:
+                    case PREDICTION_STD:
                         return new PredictionZone(mContext, ZONE_4_B_START, rowDataKeySetFactory(TYPE_4_B), predictionType);
                     case PREDICTION_RP:
                         return new PredictionZone(mContext, ZONE_4_B_RP, rowDataKeySetFactory(TYPE_4_B), predictionType);
@@ -105,15 +98,15 @@ public class PredictionFactory {
                 break;
             case TYPE_8_A:
                 switch (predictionType) {
-                    case PREDICTION_STANDARD:
+                    case PREDICTION_STD:
                         if (miniPrediction) {
-                            if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
+                            if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
                                 return new PredictionZone(mContext, ZONE_8_A_THATCHAM_MINI, rowDataKeySetFactory(TYPE_8_A), predictionType);
                             } else {
                                 return new PredictionZone(mContext, ZONE_8_A_NORMAL_MINI, rowDataKeySetFactory(TYPE_8_A), predictionType);
                             }
                         } else {
-                            if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
+                            if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
                                 return new PredictionZone(mContext, ZONE_8_A_THATCHAM, rowDataKeySetFactory(TYPE_8_A), predictionType);
                             } else {
                                 return new PredictionZone(mContext, ZONE_8_A_NORMAL, rowDataKeySetFactory(TYPE_8_A), predictionType);

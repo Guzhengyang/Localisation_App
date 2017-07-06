@@ -3,7 +3,6 @@ package com.valeo.bleranging.model.connectedcar;
 import android.content.Context;
 import android.graphics.PointF;
 
-import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.machinelearningalgo.prediction.Coord;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
@@ -12,6 +11,16 @@ import com.valeo.bleranging.utils.PSALogs;
 import org.ejml.simple.SimpleMatrix;
 import com.valeo.bleranging.utils.CalculUtils;
 
+import static com.valeo.bleranging.persistence.Constants.FULL_LOC;
+import static com.valeo.bleranging.persistence.Constants.N_VOTE_SHORT;
+import static com.valeo.bleranging.persistence.Constants.PASSIVE_ENTRY_ORIENTED;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_STD;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_UNKNOWN;
+import static com.valeo.bleranging.persistence.Constants.THATCHAM_ORIENTED;
+import static com.valeo.bleranging.persistence.Constants.THRESHOLD_PROB_LOCK2UNLOCK;
+import static com.valeo.bleranging.persistence.Constants.THRESHOLD_PROB_UNLOCK2LOCK;
+import static com.valeo.bleranging.persistence.Constants.TYPE_Px;
+import static com.valeo.bleranging.persistence.Constants.TYPE_Py;
 import static com.valeo.bleranging.utils.CheckUtils.checkForRssiNonNull;
 
 /**
@@ -54,10 +63,9 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     @Override
     public void readPredictionsRawFiles() {
-        standardPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_STANDARD);
-        pxPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Px);
-        pyPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Py);
-//        testPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_TEST);
+        standardPrediction = PredictionFactory.getPredictionZone(mContext, PREDICTION_STD);
+        pxPrediction = PredictionFactory.getPredictionCoord(mContext, TYPE_Px);
+        pyPrediction = PredictionFactory.getPredictionCoord(mContext, TYPE_Py);
 //        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);
     }
 
@@ -156,7 +164,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         if (standardPrediction != null && standardPrediction.isPredictRawFileRead()) {
             return standardPrediction.getPrediction();
         }
-        return BleRangingHelper.PREDICTION_UNKNOWN;
+        return PREDICTION_UNKNOWN;
     }
 
     public String getPredictionPositionTest() {

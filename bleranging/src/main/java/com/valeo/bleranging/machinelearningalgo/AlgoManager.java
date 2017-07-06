@@ -15,7 +15,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.text.SpannableStringBuilder;
 
-import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
 import com.valeo.bleranging.listeners.BleRangingListener;
@@ -35,27 +34,28 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ACCESS;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_EXTERNAL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INSIDE;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INTERNAL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_NEAR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ROOF;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_THATCHAM;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_WELCOME;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_ACCESS;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_BACK;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_EXTERNAL;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_FAR;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_FRONT;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_INSIDE;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_INTERNAL;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_LEFT;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_LOCK;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_NEAR;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_OUTSIDE;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_RIGHT;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_ROOF;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START_FL;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START_FR;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START_RL;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START_RR;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_THATCHAM;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_TRUNK;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_UNKNOWN;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_WELCOME;
 import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
 
 /**
@@ -359,7 +359,7 @@ public class AlgoManager implements SensorEventListener {
                 PSALogs.d("prediction", "NOOO rangingPredictionInt !");
                 break;
         }
-        isInWelcomeArea = rearmWelcome.get() && getPredictionProximity(connectedCar).equals(BleRangingHelper.PREDICTION_FAR);
+        isInWelcomeArea = rearmWelcome.get() && getPredictionProximity(connectedCar).equals(PREDICTION_FAR);
         if (isInWelcomeArea) {
             isWelcomeAllowed = true;
             rearmWelcome.set(false);

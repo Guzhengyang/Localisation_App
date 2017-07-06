@@ -3,7 +3,6 @@ package com.valeo.bleranging.machinelearningalgo.prediction;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.util.ArrayList;
@@ -13,9 +12,18 @@ import java.util.Locale;
 import hex.genmodel.easy.prediction.BinomialModelPrediction;
 import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCar.PASSIVE_ENTRY_ORIENTED;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
+import static com.valeo.bleranging.persistence.Constants.PASSIVE_ENTRY_ORIENTED;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_BACK;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_FAR;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_FRONT;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_INSIDE;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_INTERNAL;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_LEFT;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_LOCK;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_RIGHT;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_RP;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_UNKNOWN;
+import static com.valeo.bleranging.persistence.Constants.THATCHAM_ORIENTED;
 import static com.valeo.bleranging.utils.CalculUtils.correctRssiUnilateral;
 import static com.valeo.bleranging.utils.CalculUtils.most;
 import static com.valeo.bleranging.utils.CalculUtils.rssi2dist;
@@ -76,12 +84,12 @@ public class PredictionZone extends BasePrediction {
                 this.rssi_offset[index] = rssi[index] - offset;
                 if (prediction_old != -1) {
                     // Add lock hysteresis to all the trx
-                    if (this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_LOCK)) {
+                    if (this.modelWrapper.getResponseDomainValues()[prediction_old].equals(PREDICTION_LOCK)) {
                         rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
                     }
                     // Add unlock hysteresis to all the trx
-                    if (this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_LEFT) |
-                            this.modelWrapper.getResponseDomainValues()[prediction_old].equals(BleRangingHelper.PREDICTION_RIGHT)) {
+                    if (this.modelWrapper.getResponseDomainValues()[prediction_old].equals(PREDICTION_LEFT) |
+                            this.modelWrapper.getResponseDomainValues()[prediction_old].equals(PREDICTION_RIGHT)) {
                         rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
                     }
                 }
@@ -144,22 +152,22 @@ public class PredictionZone extends BasePrediction {
             int temp_prediction = most(predictions);
             if (strategy.equals(THATCHAM_ORIENTED)) {
 //                lock --> left, right, front, back
-                if (comparePrediction(modelWrapper, temp_prediction, BleRangingHelper.PREDICTION_LEFT)
-                        || comparePrediction(modelWrapper, temp_prediction, BleRangingHelper.PREDICTION_RIGHT)
-                        || comparePrediction(modelWrapper, temp_prediction, BleRangingHelper.PREDICTION_BACK)
-                        || comparePrediction(modelWrapper, temp_prediction, BleRangingHelper.PREDICTION_FRONT)) {
-                    if (comparePrediction(modelWrapper, prediction_old, BleRangingHelper.PREDICTION_LOCK)
+                if (comparePrediction(modelWrapper, temp_prediction, PREDICTION_LEFT)
+                        || comparePrediction(modelWrapper, temp_prediction, PREDICTION_RIGHT)
+                        || comparePrediction(modelWrapper, temp_prediction, PREDICTION_BACK)
+                        || comparePrediction(modelWrapper, temp_prediction, PREDICTION_FRONT)) {
+                    if (comparePrediction(modelWrapper, prediction_old, PREDICTION_LOCK)
                             && compareDistribution(distribution, temp_prediction, threshold_prob_lock2unlock)) {
                         prediction_old = temp_prediction;
                         return;
                     }
                 }
 //                left, right, front, back --> lock
-                if (comparePrediction(modelWrapper, prediction_old, BleRangingHelper.PREDICTION_LEFT)
-                        || comparePrediction(modelWrapper, prediction_old, BleRangingHelper.PREDICTION_RIGHT)
-                        || comparePrediction(modelWrapper, prediction_old, BleRangingHelper.PREDICTION_BACK)
-                        || comparePrediction(modelWrapper, prediction_old, BleRangingHelper.PREDICTION_FRONT)) {
-                    if (comparePrediction(modelWrapper, temp_prediction, BleRangingHelper.PREDICTION_LOCK)
+                if (comparePrediction(modelWrapper, prediction_old, PREDICTION_LEFT)
+                        || comparePrediction(modelWrapper, prediction_old, PREDICTION_RIGHT)
+                        || comparePrediction(modelWrapper, prediction_old, PREDICTION_BACK)
+                        || comparePrediction(modelWrapper, prediction_old, PREDICTION_FRONT)) {
+                    if (comparePrediction(modelWrapper, temp_prediction, PREDICTION_LOCK)
                             && compareDistribution(distribution, temp_prediction, threshold_prob_unlock2lock)) {
                         prediction_old = temp_prediction;
                         return;
@@ -171,11 +179,11 @@ public class PredictionZone extends BasePrediction {
                 }
             } else if (strategy.equals(PASSIVE_ENTRY_ORIENTED)) {
 //                left, right, front, back --> lock
-                if (comparePrediction(modelWrapper, prediction_old, BleRangingHelper.PREDICTION_LEFT)
-                        || comparePrediction(modelWrapper, prediction_old, BleRangingHelper.PREDICTION_RIGHT)
-                        || comparePrediction(modelWrapper, prediction_old, BleRangingHelper.PREDICTION_BACK)
-                        || comparePrediction(modelWrapper, prediction_old, BleRangingHelper.PREDICTION_FRONT)) {
-                    if (comparePrediction(modelWrapper, temp_prediction, BleRangingHelper.PREDICTION_LOCK)
+                if (comparePrediction(modelWrapper, prediction_old, PREDICTION_LEFT)
+                        || comparePrediction(modelWrapper, prediction_old, PREDICTION_RIGHT)
+                        || comparePrediction(modelWrapper, prediction_old, PREDICTION_BACK)
+                        || comparePrediction(modelWrapper, prediction_old, PREDICTION_FRONT)) {
+                    if (comparePrediction(modelWrapper, temp_prediction, PREDICTION_LOCK)
                             && compareDistribution(distribution, temp_prediction, threshold_prob_unlock2lock)) {
                         prediction_old = temp_prediction;
                         return;
@@ -193,11 +201,11 @@ public class PredictionZone extends BasePrediction {
     public void calculatePredictionDefault(double threshold_prob, double threshold_prob_lock) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
-            if (comparePrediction(modelWrapper, prediction_old, BleRangingHelper.PREDICTION_LEFT)
-                    || comparePrediction(modelWrapper, prediction_old, BleRangingHelper.PREDICTION_RIGHT)
-                    || comparePrediction(modelWrapper, prediction_old, BleRangingHelper.PREDICTION_BACK)
-                    || comparePrediction(modelWrapper, prediction_old, BleRangingHelper.PREDICTION_BACK)) {
-                if (comparePrediction(modelWrapper, temp_prediction, BleRangingHelper.PREDICTION_LOCK)
+            if (comparePrediction(modelWrapper, prediction_old, PREDICTION_LEFT)
+                    || comparePrediction(modelWrapper, prediction_old, PREDICTION_RIGHT)
+                    || comparePrediction(modelWrapper, prediction_old, PREDICTION_BACK)
+                    || comparePrediction(modelWrapper, prediction_old, PREDICTION_BACK)) {
+                if (comparePrediction(modelWrapper, temp_prediction, PREDICTION_LOCK)
                         && compareDistribution(distribution, temp_prediction, threshold_prob_lock)) {
                     prediction_old = temp_prediction;
                     return;
@@ -214,8 +222,8 @@ public class PredictionZone extends BasePrediction {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
 //            cover internal space
-            if (comparePrediction(modelWrapper, temp_prediction, BleRangingHelper.PREDICTION_INSIDE) ||
-                    comparePrediction(modelWrapper, temp_prediction, BleRangingHelper.PREDICTION_INTERNAL)) {
+            if (comparePrediction(modelWrapper, temp_prediction, PREDICTION_INSIDE) ||
+                    comparePrediction(modelWrapper, temp_prediction, PREDICTION_INTERNAL)) {
                 prediction_old = temp_prediction;
                 return;
             }
@@ -229,7 +237,7 @@ public class PredictionZone extends BasePrediction {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
 //            reduce false positive
-            if (comparePrediction(modelWrapper, temp_prediction, BleRangingHelper.PREDICTION_FAR)) {
+            if (comparePrediction(modelWrapper, temp_prediction, PREDICTION_FAR)) {
                 prediction_old = temp_prediction;
                 return;
             }
@@ -289,24 +297,6 @@ public class PredictionZone extends BasePrediction {
             sb.append("\n");
             return sb.toString();
         }
-    }
-
-    public String printDebugTest(String title) {
-        sb.setLength(0);
-        if (distribution == null || rssi == null) {
-            return "";
-        }
-        PSALogs.d("debug", prediction_old + " " + threshold);
-        sb.append(String.format(Locale.FRANCE, "%1$s %2$s ", title, getPrediction())).append("\n");
-        for (double arssi : rssi) {
-            sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
-        }
-        sb.append("\n");
-        for (int i = 0; i < distribution.length; i++) {
-            sb.append(modelWrapper.getResponseDomainValues()[i]).append(": ").append(String.format(Locale.FRANCE, "%.2f", distribution[i])).append(" \n");
-        }
-        sb.append("\n");
-        return sb.toString();
     }
 
     public double[] getDistribution() {

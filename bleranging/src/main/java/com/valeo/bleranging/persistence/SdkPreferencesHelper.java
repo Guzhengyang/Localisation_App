@@ -5,9 +5,10 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.valeo.bleranging.R;
-import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 
-import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
+import static com.valeo.bleranging.persistence.Constants.BASE_1;
+import static com.valeo.bleranging.persistence.Constants.THATCHAM_ORIENTED;
+import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
 
 /**
  * Constants file for SharedPrefs
@@ -90,11 +91,11 @@ public final class SdkPreferencesHelper {
     }
 
     public String getConnectedCarType() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_type_pref_name), ConnectedCarFactory.TYPE_8_A);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_type_pref_name), TYPE_8_A);
     }
 
     public String getConnectedCarBase() {
-        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_base_pref_name), ConnectedCarFactory.BASE_1);
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.connected_car_base_pref_name), BASE_1);
     }
 
     public String getOpeningStrategy() {

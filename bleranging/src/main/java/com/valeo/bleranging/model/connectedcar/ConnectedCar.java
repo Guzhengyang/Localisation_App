@@ -14,26 +14,19 @@ import com.valeo.bleranging.utils.PSALogs;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_EAR;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_RP;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_STD;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_UNKNOWN;
+import static com.valeo.bleranging.persistence.Constants.STANDARD_LOC;
+import static com.valeo.bleranging.persistence.Constants.TYPE_Px;
+import static com.valeo.bleranging.persistence.Constants.TYPE_Py;
 import static com.valeo.bleranging.utils.CheckUtils.checkForRssiNonNull;
 
 /**
  * Created by l-avaratha on 05/09/2016
  */
 public abstract class ConnectedCar {
-    public final static String THATCHAM_ORIENTED = "thatcham_oriented";
-    public final static String PASSIVE_ENTRY_ORIENTED = "passive_entry_oriented";
-    final static String SIMPLE_LOC = "Simple Localisation:";
-    final static String STANDARD_LOC = "Standard Localisation:";
-    final static String TEST_LOC = "Test Localisation:";
-    final static String EAR_HELD_LOC = "Ear held Localisation:";
-    final static String RP_LOC = "RP Localisation:";
-    final static String START_LOC = "Start Localisation:";
-    final static String FULL_LOC = "Full Localisation:";
-    final static int N_VOTE_LONG = 5;
-    final static int N_VOTE_SHORT = 3;
-    final static double THRESHOLD_PROB_UNLOCK2LOCK = 0.5;
-    final static double THRESHOLD_PROB_LOCK2UNLOCK = 0.9;
     final Handler mHandlerComValidTimeOut = new Handler();
     protected LinkedHashMap<Integer, Trx> trxLinkedHMap;
     //    protected HashMap<String, BasePrediction> predictionHMap;
@@ -205,11 +198,11 @@ public abstract class ConnectedCar {
      * Create predictions
      */
     public void readPredictionsRawFiles() {
-        pxPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Px);
-        pyPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Py);
-        standardPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_STANDARD);
-        earPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_EAR);
-        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);
+        pxPrediction = PredictionFactory.getPredictionCoord(mContext, TYPE_Px);
+        pyPrediction = PredictionFactory.getPredictionCoord(mContext, TYPE_Py);
+        standardPrediction = PredictionFactory.getPredictionZone(mContext, PREDICTION_STD);
+        earPrediction = PredictionFactory.getPredictionZone(mContext, PREDICTION_EAR);
+        rpPrediction = PredictionFactory.getPredictionZone(mContext, PREDICTION_RP);
 //        initPredictionHashMap();
     }
 

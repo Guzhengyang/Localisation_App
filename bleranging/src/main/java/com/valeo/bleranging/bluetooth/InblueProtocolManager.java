@@ -4,27 +4,37 @@ import android.graphics.PointF;
 
 import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
-import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ACCESS;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_EXTERNAL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INSIDE;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INTERNAL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ROOF;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
-import static com.valeo.bleranging.model.connectedcar.ConnectedCarFactory.BASE_1;
+import static com.valeo.bleranging.persistence.Constants.BASE_1;
+import static com.valeo.bleranging.persistence.Constants.BASE_2;
+import static com.valeo.bleranging.persistence.Constants.BASE_3;
+import static com.valeo.bleranging.persistence.Constants.BASE_4;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_ACCESS;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_BACK;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_EXTERNAL;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_FRONT;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_INSIDE;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_INTERNAL;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_LEFT;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_LOCK;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_OUTSIDE;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_RIGHT;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_ROOF;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START_FL;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START_FR;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START_RL;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START_RR;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_TRUNK;
+import static com.valeo.bleranging.persistence.Constants.TYPE_2_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_2_B;
+import static com.valeo.bleranging.persistence.Constants.TYPE_3_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_4_B;
+import static com.valeo.bleranging.persistence.Constants.TYPE_5_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_6_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_7_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
 
 /**
  * Created by nhaan on 27/08/2015.
@@ -44,15 +54,15 @@ public class InblueProtocolManager {
 //            SdkPreferencesHelper.getInstance().getTrxAddressRearRight()
 //    };
 //    private final static byte[] TRX_NUMBERS = {
-//            ConnectedCarFactory.NUMBER_TRX_LEFT,
-//            ConnectedCarFactory.NUMBER_TRX_MIDDLE,
-//            ConnectedCarFactory.NUMBER_TRX_RIGHT,
-//            ConnectedCarFactory.NUMBER_TRX_TRUNK,
-//            ConnectedCarFactory.NUMBER_TRX_BACK,
-//            ConnectedCarFactory.NUMBER_TRX_FRONT_LEFT,
-//            ConnectedCarFactory.NUMBER_TRX_FRONT_RIGHT,
-//            ConnectedCarFactory.NUMBER_TRX_REAR_LEFT,
-//            ConnectedCarFactory.NUMBER_TRX_REAR_RIGHT
+//            NUMBER_TRX_LEFT,
+//            NUMBER_TRX_MIDDLE,
+//            NUMBER_TRX_RIGHT,
+//            NUMBER_TRX_TRUNK,
+//            NUMBER_TRX_BACK,
+//            NUMBER_TRX_FRONT_LEFT,
+//            NUMBER_TRX_FRONT_RIGHT,
+//            NUMBER_TRX_REAR_LEFT,
+//            NUMBER_TRX_REAR_RIGHT
 //    };
     private int packetOneCounter = 0;
     private boolean isStartRequested = false;
@@ -159,28 +169,28 @@ public class InblueProtocolManager {
         byte payloadThree = (byte) 0;
         if (SdkPreferencesHelper.getInstance().isCalibrated()) {
             switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
-                case ConnectedCarFactory.TYPE_6_A:
+                case TYPE_6_A:
                     payloadThree |= 0x08;
                     break;
-                case ConnectedCarFactory.TYPE_2_A:
+                case TYPE_2_A:
                     payloadThree |= 0x07;
                     break;
-                case ConnectedCarFactory.TYPE_2_B:
+                case TYPE_2_B:
                     payloadThree |= 0x06;
                     break;
-                case ConnectedCarFactory.TYPE_3_A:
+                case TYPE_3_A:
                     payloadThree |= 0x05;
                     break;
-                case ConnectedCarFactory.TYPE_4_B:
+                case TYPE_4_B:
                     payloadThree |= 0x04;
                     break;
-                case ConnectedCarFactory.TYPE_5_A:
+                case TYPE_5_A:
                     payloadThree |= 0x03;
                     break;
-                case ConnectedCarFactory.TYPE_7_A:
+                case TYPE_7_A:
                     payloadThree |= 0x02;
                     break;
-                case ConnectedCarFactory.TYPE_8_A:
+                case TYPE_8_A:
                     payloadThree |= 0x01;
                     break;
                 default:
@@ -286,7 +296,7 @@ public class InblueProtocolManager {
                 case BASE_1:
                     payloadFive |= 0x30; // Full PSU, lock and unlock activated 0011 0000
                     break;
-                case ConnectedCarFactory.BASE_2:
+                case BASE_2:
                     if (isLockedToSend && !isLockedFromTrx) {
                         payloadFive |= 0x01; // WAL, lock command sent when car is unlocked
                     } else {
@@ -294,11 +304,11 @@ public class InblueProtocolManager {
                     }
                     payloadFive |= 0x20; // Unlock PSU activated 0010 0000
                     break;
-                case ConnectedCarFactory.BASE_3:
+                case BASE_3:
                     payloadFive |= isLockedToSend ? 0x01 : 0x02;
                     // WAL & UIR, PSU deactivated 0000 0000
                     break;
-                case ConnectedCarFactory.BASE_4:
+                case BASE_4:
                     if (!isLockedToSend && isLockedFromTrx) {
                         payloadFive |= 0x02; // UIR, unlock command sent when car is locked
                     } else {
