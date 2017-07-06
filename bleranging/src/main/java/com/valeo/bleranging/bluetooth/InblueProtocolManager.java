@@ -2,7 +2,9 @@ package com.valeo.bleranging.bluetooth;
 
 import android.graphics.PointF;
 
+import com.valeo.bleranging.bluetooth.scanresponse.BeaconScanResponse;
 import com.valeo.bleranging.machinelearningalgo.AlgoManager;
+import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
@@ -42,28 +44,6 @@ import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
  */
 public class InblueProtocolManager {
     private final static int MAX_BLE_TRAME_BYTE = 6;
-    //    private final static String[] MAC_ADDRESSES = {
-//            SdkPreferencesHelper.getInstance().getTrxAddressLeft(),
-//            SdkPreferencesHelper.getInstance().getTrxAddressMiddle(),
-//            SdkPreferencesHelper.getInstance().getTrxAddressRight(),
-//            SdkPreferencesHelper.getInstance().getTrxAddressTrunk(),
-//            SdkPreferencesHelper.getInstance().getTrxAddressBack(),
-//            SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft(),
-//            SdkPreferencesHelper.getInstance().getTrxAddressFrontRight(),
-//            SdkPreferencesHelper.getInstance().getTrxAddressRearLeft(),
-//            SdkPreferencesHelper.getInstance().getTrxAddressRearRight()
-//    };
-//    private final static byte[] TRX_NUMBERS = {
-//            NUMBER_TRX_LEFT,
-//            NUMBER_TRX_MIDDLE,
-//            NUMBER_TRX_RIGHT,
-//            NUMBER_TRX_TRUNK,
-//            NUMBER_TRX_BACK,
-//            NUMBER_TRX_FRONT_LEFT,
-//            NUMBER_TRX_FRONT_RIGHT,
-//            NUMBER_TRX_REAR_LEFT,
-//            NUMBER_TRX_REAR_RIGHT
-//    };
     private int packetOneCounter = 0;
     private boolean isStartRequested = false;
     private boolean isWelcomeRequested = false;
@@ -72,7 +52,19 @@ public class InblueProtocolManager {
     private boolean isThatcham = false;
     private boolean isInRemoteParkingArea = false;
     private String carBase;
-//    private int count = 0;
+    private byte recordByte = 0;
+    private byte welcomeByte = 0;
+    private byte lockByte = 0;
+    private byte startByte = 0;
+    private byte leftAreaByte = 0;
+    private byte rightAreaByte = 0;
+    private byte backAreaByte = 0;
+    private byte walkAwayByte = 0;
+    private byte approachByte = 0;
+    private byte leftTurnByte = 0;
+    private byte rightTurnByte = 0;
+    private byte approachSideByte = 0;
+    private byte approachRoadByte = 0;
 
     public InblueProtocolManager() {
     }
@@ -129,6 +121,58 @@ public class InblueProtocolManager {
         this.carBase = carBase;
     }
 
+    public byte getRecordByte() {
+        return recordByte;
+    }
+
+    public byte getWelcomeByte() {
+        return welcomeByte;
+    }
+
+    public byte getLockByte() {
+        return lockByte;
+    }
+
+    public byte getStartByte() {
+        return startByte;
+    }
+
+    public byte getLeftAreaByte() {
+        return leftAreaByte;
+    }
+
+    public byte getRightAreaByte() {
+        return rightAreaByte;
+    }
+
+    public byte getBackAreaByte() {
+        return backAreaByte;
+    }
+
+    public byte getWalkAwayByte() {
+        return walkAwayByte;
+    }
+
+    public byte getApproachByte() {
+        return approachByte;
+    }
+
+    public byte getLeftTurnByte() {
+        return leftTurnByte;
+    }
+
+    public byte getRightTurnByte() {
+        return rightTurnByte;
+    }
+
+    public byte getApproachSideByte() {
+        return approachSideByte;
+    }
+
+    public byte getApproachRoadByte() {
+        return approachRoadByte;
+    }
+
     /**
      * Construct the packet One to send
      *
@@ -144,15 +188,6 @@ public class InblueProtocolManager {
         payload[3] = getPayloadThirdByte();
         payload[4] = getPayloadFourthByte(isRKE, mAlgoManager.getPredictionPosition(connectedCar));
         payload[5] = getPayloadFifthByte(isRKE, mAlgoManager.getPredictionPosition(connectedCar));
-//        if (count >= TRX_NUMBERS.length) {
-//            count = 0;
-//        }
-//        payload[6] = TRX_NUMBERS[count];
-//        String[] split = MAC_ADDRESSES[count].split(":");
-//        for (int i = 0, splitLength = split.length; i < splitLength; i++) {
-//            payload[i + 7] = (byte) Integer.parseInt(split[i], 16);
-//        }
-//        count++;
         packetOneCounter++;
         if (packetOneCounter > 65534) { // packetOneCounter > FF FE
             packetOneCounter = 0;
@@ -394,5 +429,44 @@ public class InblueProtocolManager {
         payloadProb = (byte) (payloadProb << 4);
         payloadProb |= ((byte) (proba * 10) & 0x0F);
         return payloadProb;
+    }
+
+    /**
+     * Create two bytes with all the bits from the switches
+     */
+    public void getAdvertisedBytes(byte[] advertisedData) {
+        if (advertisedData != null) {
+            walkAwayByte = (byte) ((advertisedData[3] & (1 << 6)) >> 6);
+            backAreaByte = (byte) ((advertisedData[3] & (1 << 5)) >> 5);
+            rightAreaByte = (byte) ((advertisedData[3] & (1 << 4)) >> 4);
+            leftAreaByte = (byte) ((advertisedData[3] & (1 << 3)) >> 3);
+            startByte = (byte) ((advertisedData[3] & (1 << 2)) >> 2);
+            lockByte = (byte) ((advertisedData[3] & (1 << 1)) >> 1);
+            welcomeByte = (byte) (advertisedData[3] & 1);
+            recordByte = (byte) ((advertisedData[4] & (1 << 7)) >> 7);
+            approachRoadByte = (byte) ((advertisedData[4] & 0x070) >> 4);
+            approachSideByte = (byte) ((advertisedData[4] & (1 << 3)) >> 3);
+            rightTurnByte = (byte) ((advertisedData[4] & (1 << 2)) >> 2);
+            leftTurnByte = (byte) ((advertisedData[4] & (1 << 1)) >> 1);
+            approachByte = (byte) (advertisedData[4] & 1);
+        }
+    }
+
+    /**
+     * Get the current advertising channel from beacon scan response
+     *
+     * @param scanResponse the beacon scan response
+     * @return the received ble channel
+     */
+    public Antenna.BLEChannel getCurrentChannel(BeaconScanResponse scanResponse) {
+        if (scanResponse.getAdvertisingChannel() == 0x01) {
+            return Antenna.BLEChannel.BLE_CHANNEL_37;
+        } else if (scanResponse.getAdvertisingChannel() == 0x02) {
+            return Antenna.BLEChannel.BLE_CHANNEL_38;
+        } else if (scanResponse.getAdvertisingChannel() == 0x03) {
+            return Antenna.BLEChannel.BLE_CHANNEL_39;
+        } else {
+            return Antenna.BLEChannel.UNKNOWN;
+        }
     }
 }

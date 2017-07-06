@@ -28,7 +28,6 @@ import android.widget.Toast;
 import com.trncic.library.DottedProgressBar;
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.listeners.BleRangingListener;
-import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.LogFileUtils;
 import com.valeo.bleranging.utils.PSALogs;
@@ -46,6 +45,13 @@ import com.valeo.psa.fragment.TestFragment;
 import com.valeo.psa.interfaces.CalibrationDialogFragmentListener;
 
 import java.util.Locale;
+
+import static com.valeo.bleranging.persistence.Constants.BASE_1;
+import static com.valeo.bleranging.persistence.Constants.BASE_2;
+import static com.valeo.bleranging.persistence.Constants.BASE_3;
+import static com.valeo.bleranging.persistence.Constants.BASE_4;
+import static com.valeo.bleranging.persistence.Constants.REQUEST_PERMISSION_ALL;
+import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
 
 public class MainActivity extends AppCompatActivity implements BleRangingListener,
         RkeFragment.RkeFragmentActionListener, AccuracyFragment.AccuracyFragmentActionListener,
@@ -176,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == BleRangingHelper.REQUEST_PERMISSION_ALL) {
+        if (requestCode == REQUEST_PERMISSION_ALL) {
             // Received permission result for permission.
             PSALogs.i(TAG, "Received response for permission request.");
             if (permissions.length > 0 && grantResults.length > 0) {
@@ -288,16 +294,16 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
 
     private void setActivityTitle() {
         switch (SdkPreferencesHelper.getInstance().getConnectedCarBase()) {
-            case ConnectedCarFactory.BASE_1:
+            case BASE_1:
                 activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.psu), getString(R.string.psu)));
                 break;
-            case ConnectedCarFactory.BASE_2:
+            case BASE_2:
                 activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.wal), getString(R.string.psu)));
                 break;
-            case ConnectedCarFactory.BASE_3:
+            case BASE_3:
                 activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.wal), getString(R.string.uir)));
                 break;
-            case ConnectedCarFactory.BASE_4:
+            case BASE_4:
                 activity_title.setText(String.format(Locale.FRANCE, getString(R.string.title_activity_main), getString(R.string.psu), getString(R.string.uir)));
                 break;
         }
@@ -405,7 +411,7 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         }
         if (chessboardFragment != null) {
             if (SdkPreferencesHelper.getInstance().getConnectedCarType()
-                    .equalsIgnoreCase(ConnectedCarFactory.TYPE_8_A)) {
+                    .equalsIgnoreCase(TYPE_8_A)) {
                 if (chessboardFragment.isHidden()) {
                     showHideFragment(chessboardFragment); // show chessboardFragment
                 }

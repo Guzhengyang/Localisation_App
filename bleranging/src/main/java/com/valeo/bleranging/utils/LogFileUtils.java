@@ -76,27 +76,10 @@ public class LogFileUtils {
     /**
      * Create the string to write in the log file and add it
      * @param lockStatus true if the car is locked, false otherwise
-     * @param welcomeByte equals 1 if welcome is activated, 0 otherwise
-     * @param lockByte equals 1 if lock is activated, 0 otherwise
-     * @param startByte equals 1 if start is activated, 0 otherwise
-     * @param leftAreaByte equals 1 if left area is activated, 0 otherwise
-     * @param rightAreaByte equals 1 if right area is activated, 0 otherwise
-     * @param backAreaByte equals 1 if back area is activated, 0 otherwise
-     * @param walkAwayByte equals 1 if walk away is activated, 0 otherwise
-     * @param approachByte equals 1 if approach is activated, 0 otherwise
-     * @param leftTurnByte equals 1 if left turn is activated, 0 otherwise
-     * @param rightTurnByte equals 1 if right turn is activated, 0 otherwise
-     * @param approachSideByte equals 1 if right side, 0 if left side
-     * @param approachRoadByte equals [1-6] for the road taken during test
-     * @param recordByte equals 1 if record is activated, 0 otherwise
      */
     public static void appendRssiLogs(final ConnectedCar connectedCar, final AlgoManager mAlgoManager,
-                                      boolean lockStatus,
-                                      byte welcomeByte, byte lockByte, byte startByte,
-                                      byte leftAreaByte, byte rightAreaByte, byte backAreaByte,
-                                      byte walkAwayByte, byte approachByte, byte leftTurnByte,
-                                      byte rightTurnByte, byte approachSideByte, byte approachRoadByte,
-                                      byte recordByte, byte counterByte, final InblueProtocolManager mProtocolManager, int beepInt) {
+                                      boolean lockStatus, byte counterByte,
+                                      final InblueProtocolManager mProtocolManager, int beepInt) {
         final String comma = ";";
         String log = connectedCar.getCurrentOriginalRssi(NUMBER_TRX_LEFT) + comma +
                 connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE) + comma +
@@ -133,41 +116,41 @@ public class LogFileUtils {
         } else {
             log += "8" + comma;
         }
-        log += booleanToString(mAlgoManager.getRearmWelcome()) + comma + welcomeByte + comma;
-        if (lockByte == 1) {
+        log += booleanToString(mAlgoManager.getRearmWelcome()) + comma + mProtocolManager.getWelcomeByte() + comma;
+        if (mProtocolManager.getLockByte() == 1) {
             log += "3" + comma;
         } else {
             log += "2" + comma;
         }
-        log += startByte + comma;
-        if (leftAreaByte == 1) {
+        log += mProtocolManager.getStartByte() + comma;
+        if (mProtocolManager.getLeftAreaByte() == 1) {
             log += "11" + comma;
         } else {
             log += "10" + comma;
         }
-        if (rightAreaByte == 1) {
+        if (mProtocolManager.getRightAreaByte() == 1) {
             log += "12" + comma;
         } else {
             log += "10" + comma;
         }
-        if (backAreaByte == 1) {
+        if (mProtocolManager.getBackAreaByte() == 1) {
             log += "13" + comma;
         } else {
             log += "10" + comma;
         }
-        if (walkAwayByte == 1) {
+        if (mProtocolManager.getWalkAwayByte() == 1) {
             log += "15" + comma;
         } else {
             log += "14" + comma;
         }
-        if (approachByte == 1) {
+        if (mProtocolManager.getApproachByte() == 1) {
             log += "16" + comma;
         } else {
             log += "14" + comma;
         }
-        log += leftTurnByte + comma + rightTurnByte + comma
-                + approachSideByte + comma + approachRoadByte + comma
-                + recordByte + comma + counterByte + comma
+        log += mProtocolManager.getLeftTurnByte() + comma + mProtocolManager.getRightTurnByte() + comma
+                + mProtocolManager.getApproachSideByte() + comma + mProtocolManager.getApproachRoadByte() + comma
+                + mProtocolManager.getRecordByte() + comma + counterByte + comma
                 + mAlgoManager.getPredictionPosition(connectedCar) + comma
                 + booleanToString(mProtocolManager.isLockedFromTrx()) + comma
                 + booleanToString(mProtocolManager.isLockedToSend()) + comma
