@@ -143,17 +143,17 @@ public class TextUtils {
      * @return the spannable string builder filled with the first footer
      */
     public static SpannableStringBuilder createFirstFooterDebugData(final ConnectedCar connectedCar) {
-        final LinkedHashMap<Integer, Trx> trxLinkedHMap = connectedCar.getTrxLinkedHMap();
+        final LinkedHashMap<Integer, Trx> trxLinkedHMap = connectedCar.getMultiTrx().getTrxLinkedHMap();
         final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         for (Trx trx : trxLinkedHMap.values()) {
             spannableStringBuilder.append(String.format(Locale.FRANCE, "%7s",
-                    TextUtils.colorText(connectedCar.isActive(trx.getTrxNumber()), trx.getTrxName(), Color.WHITE, Color.DKGRAY)));
+                    TextUtils.colorText(connectedCar.getMultiTrx().isActive(trx.getTrxNumber()), trx.getTrxName(), Color.WHITE, Color.DKGRAY)));
         }
         spannableStringBuilder.append("\n");
 
         for (Trx trx : trxLinkedHMap.values()) {
             spannableStringBuilder.append(String.format(Locale.FRANCE, "%10d",
-                    connectedCar.getCurrentOriginalRssi(trx.getTrxNumber())));
+                    connectedCar.getMultiTrx().getCurrentOriginalRssi(trx.getTrxNumber())));
         }
         spannableStringBuilder.append('\n');
 
@@ -169,7 +169,7 @@ public class TextUtils {
 
     private static String getCurrentBLEChannelString(final ConnectedCar connectedCar, int trxNumber) {
         String result;
-        switch (connectedCar.getCurrentBLEChannel(trxNumber)) {
+        switch (connectedCar.getMultiTrx().getCurrentBLEChannel(trxNumber)) {
             case BLE_CHANNEL_37:
                 result = " 37";
                 break;

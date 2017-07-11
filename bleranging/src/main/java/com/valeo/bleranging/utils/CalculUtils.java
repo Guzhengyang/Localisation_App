@@ -43,17 +43,17 @@ public class CalculUtils {
         return dist2car;
     }
 
-    public static void correctCoord(Coord coord, double coord_x_new, double coord_y_new, double threshold_dist) {
-        double deltaX = coord_x_new - coord.getCoord_x();
-        double deltaY = coord_y_new - coord.getCoord_y();
+    public static void correctCoord(Coord coord, Coord coordNew, double threshold_dist) {
+        double deltaX = coordNew.getCoord_x() - coord.getCoord_x();
+        double deltaY = coordNew.getCoord_y() - coord.getCoord_y();
         double dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
         if (dist > threshold_dist) {
             double ratio = threshold_dist / dist;
             coord.setCoord_x(coord.getCoord_x() + deltaX * ratio);
             coord.setCoord_y(coord.getCoord_y() + deltaY * ratio);
         } else {
-            coord.setCoord_x(coord_x_new);
-            coord.setCoord_y(coord_y_new);
+            coord.setCoord_x(coordNew.getCoord_x());
+            coord.setCoord_y(coordNew.getCoord_y());
         }
         if (coord.getCoord_x() > MAX_X) {
             coord.setCoord_x(MAX_X);

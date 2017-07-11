@@ -81,24 +81,24 @@ public class LogFileUtils {
                                       boolean lockStatus, byte counterByte,
                                       final InblueProtocolManager mProtocolManager, int beepInt) {
         final String comma = ";";
-        String log = connectedCar.getCurrentOriginalRssi(NUMBER_TRX_LEFT) + comma +
-                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_MIDDLE) + comma +
-                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_RIGHT) + comma +
-                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_TRUNK) + comma +
-                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT) + comma +
-                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT) + comma +
-                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT) + comma +
-                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT) + comma +
-                connectedCar.getCurrentOriginalRssi(NUMBER_TRX_BACK) + comma +
+        String log = connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_LEFT) + comma +
+                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_MIDDLE) + comma +
+                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_RIGHT) + comma +
+                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_TRUNK) + comma +
+                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT) + comma +
+                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT) + comma +
+                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT) + comma +
+                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT) + comma +
+                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_BACK) + comma +
                 mAlgoManager.getOrientation()[0] + comma + mAlgoManager.getOrientation()[1] + comma + mAlgoManager.getOrientation()[2] + comma +
                 mAlgoManager.getGravity()[0] + comma + mAlgoManager.getGravity()[1] + comma + mAlgoManager.getGravity()[2] + comma +
                 mAlgoManager.getGeomagnetic()[0] + comma + mAlgoManager.getGeomagnetic()[1] + comma + mAlgoManager.getGeomagnetic()[2] + comma +
                 mAlgoManager.getAcceleration() + comma +
-                booleanToString(connectedCar.isActive(NUMBER_TRX_LEFT)) + comma + booleanToString(connectedCar.isActive(NUMBER_TRX_MIDDLE)) + comma +
-                booleanToString(connectedCar.isActive(NUMBER_TRX_RIGHT)) + comma + booleanToString(connectedCar.isActive(NUMBER_TRX_TRUNK)) + comma +
-                booleanToString(connectedCar.isActive(NUMBER_TRX_FRONT_LEFT)) + comma + booleanToString(connectedCar.isActive(NUMBER_TRX_FRONT_RIGHT)) + comma +
-                booleanToString(connectedCar.isActive(NUMBER_TRX_REAR_LEFT)) + comma + booleanToString(connectedCar.isActive(NUMBER_TRX_REAR_RIGHT)) + comma +
-                booleanToString(connectedCar.isActive(NUMBER_TRX_BACK)) + comma +
+                booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_LEFT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_MIDDLE)) + comma +
+                booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_RIGHT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_TRUNK)) + comma +
+                booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_FRONT_LEFT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_FRONT_RIGHT)) + comma +
+                booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_REAR_LEFT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_REAR_RIGHT)) + comma +
+                booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_BACK)) + comma +
                 booleanToString(mAlgoManager.isSmartphoneInPocket()) + comma +
                 booleanToString(mAlgoManager.areLockActionsAvailable()) + comma;
         if (lockStatus) {
@@ -156,24 +156,24 @@ public class LogFileUtils {
                 + booleanToString(mProtocolManager.isLockedToSend()) + comma
                 + booleanToString(mProtocolManager.isStartRequested()) + comma
                 + booleanToString(mProtocolManager.isThatcham()) + comma
-                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_LEFT).toString() + comma
-                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_MIDDLE).toString() + comma
-                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_RIGHT).toString() + comma
-                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_TRUNK).toString() + comma
-                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_FRONT_LEFT).toString() + comma
-                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_FRONT_RIGHT).toString() + comma
-                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_REAR_LEFT).toString() + comma
-                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_REAR_RIGHT).toString() + comma
-                + connectedCar.getCurrentBLEChannel(NUMBER_TRX_BACK).toString() + comma + beepInt + comma
-                + connectedCar.getCurrentAntennaId(NUMBER_TRX_LEFT) + comma
-                + connectedCar.getCurrentAntennaId(NUMBER_TRX_MIDDLE) + comma
-                + connectedCar.getCurrentAntennaId(NUMBER_TRX_RIGHT) + comma
-                + connectedCar.getCurrentAntennaId(NUMBER_TRX_TRUNK) + comma
-                + connectedCar.getCurrentAntennaId(NUMBER_TRX_FRONT_LEFT) + comma
-                + connectedCar.getCurrentAntennaId(NUMBER_TRX_FRONT_RIGHT) + comma
-                + connectedCar.getCurrentAntennaId(NUMBER_TRX_REAR_LEFT) + comma
-                + connectedCar.getCurrentAntennaId(NUMBER_TRX_REAR_RIGHT) + comma
-                + connectedCar.getCurrentAntennaId(NUMBER_TRX_BACK) + comma;
+                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_LEFT).toString() + comma
+                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_MIDDLE).toString() + comma
+                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_RIGHT).toString() + comma
+                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_TRUNK).toString() + comma
+                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_FRONT_LEFT).toString() + comma
+                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_FRONT_RIGHT).toString() + comma
+                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_REAR_LEFT).toString() + comma
+                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_REAR_RIGHT).toString() + comma
+                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_BACK).toString() + comma + beepInt + comma
+                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_LEFT) + comma
+                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_MIDDLE) + comma
+                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_RIGHT) + comma
+                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_TRUNK) + comma
+                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_FRONT_LEFT) + comma
+                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_FRONT_RIGHT) + comma
+                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_REAR_LEFT) + comma
+                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_REAR_RIGHT) + comma
+                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_BACK) + comma;
         appendTimestampToLog(log);
     }
 
