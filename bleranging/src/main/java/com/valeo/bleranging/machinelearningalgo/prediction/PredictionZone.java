@@ -56,10 +56,10 @@ public class PredictionZone extends BasePrediction {
         this.rssi_offset = new double[rssi.length];
         this.distance = new double[rssi.length];
         this.rssi = new double[rssi.length];
-        this.distribution = new double[modelWrapper.getResponseDomainValues().length];
+        this.distribution = new double[modelWrappers.get(0).getResponseDomainValues().length];
         // find index of lock
-        for (int i = 0; i < modelWrapper.getResponseDomainValues().length; i++) {
-            if (modelWrapper.getResponseDomainValues()[i].equalsIgnoreCase(PREDICTION_LOCK)) {
+        for (int i = 0; i < modelWrappers.get(0).getResponseDomainValues().length; i++) {
+            if (modelWrappers.get(0).getResponseDomainValues()[i].equalsIgnoreCase(PREDICTION_LOCK)) {
                 INDEX_LOCK = i;
                 break;
             }
@@ -84,12 +84,12 @@ public class PredictionZone extends BasePrediction {
                 this.rssi_offset[index] = rssi[index] - offset;
                 if (prediction_old != -1) {
                     // Add lock hysteresis to all the trx
-                    if (this.modelWrapper.getResponseDomainValues()[prediction_old].equals(PREDICTION_LOCK)) {
+                    if (this.modelWrappers.get(0).getResponseDomainValues()[prediction_old].equals(PREDICTION_LOCK)) {
                         rssi_offset[index] -= SdkPreferencesHelper.getInstance().getOffsetHysteresisLock();
                     }
                     // Add unlock hysteresis to all the trx
-                    if (this.modelWrapper.getResponseDomainValues()[prediction_old].equals(PREDICTION_LEFT) |
-                            this.modelWrapper.getResponseDomainValues()[prediction_old].equals(PREDICTION_RIGHT)) {
+                    if (this.modelWrappers.get(0).getResponseDomainValues()[prediction_old].equals(PREDICTION_LEFT) |
+                            this.modelWrappers.get(0).getResponseDomainValues()[prediction_old].equals(PREDICTION_RIGHT)) {
                         rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
                     }
                 }
@@ -103,13 +103,18 @@ public class PredictionZone extends BasePrediction {
     public void predict(int nVote) {
         int result = 0;
         try {
-            if (binomial) {
+            if (predictionType.equalsIgnoreCase(PREDICTION_RP)) {
                 final BinomialModelPrediction modelPrediction = modelWrapper.predictBinomial(rowData);
                 label = modelPrediction.label;
                 result = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
             } else {
-                final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
+//                final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
+//                label = modelPrediction.label;
+//                result = modelPrediction.labelIndex;
+//                distribution = modelPrediction.classProbabilities;
+
+                final BinomialModelPrediction modelPrediction = modelWrapper.predictBinomial(rowData);
                 label = modelPrediction.label;
                 result = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
@@ -152,22 +157,22 @@ public class PredictionZone extends BasePrediction {
             int temp_prediction = most(predictions);
             if (strategy.equals(THATCHAM_ORIENTED)) {
 //                lock --> left, right, front, back
-                if (comparePrediction(modelWrapper, temp_prediction, PREDICTION_LEFT)
-                        || comparePrediction(modelWrapper, temp_prediction, PREDICTION_RIGHT)
-                        || comparePrediction(modelWrapper, temp_prediction, PREDICTION_BACK)
-                        || comparePrediction(modelWrapper, temp_prediction, PREDICTION_FRONT)) {
-                    if (comparePrediction(modelWrapper, prediction_old, PREDICTION_LOCK)
+                if (comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_LEFT)
+                        || comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_RIGHT)
+                        || comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_BACK)
+                        || comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_FRONT)) {
+                    if (comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_LOCK)
                             && compareDistribution(distribution, temp_prediction, threshold_prob_lock2unlock)) {
                         prediction_old = temp_prediction;
                         return;
                     }
                 }
 //                left, right, front, back --> lock
-                if (comparePrediction(modelWrapper, prediction_old, PREDICTION_LEFT)
-                        || comparePrediction(modelWrapper, prediction_old, PREDICTION_RIGHT)
-                        || comparePrediction(modelWrapper, prediction_old, PREDICTION_BACK)
-                        || comparePrediction(modelWrapper, prediction_old, PREDICTION_FRONT)) {
-                    if (comparePrediction(modelWrapper, temp_prediction, PREDICTION_LOCK)
+                if (comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_LEFT)
+                        || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_RIGHT)
+                        || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_BACK)
+                        || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_FRONT)) {
+                    if (comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_LOCK)
                             && compareDistribution(distribution, temp_prediction, threshold_prob_unlock2lock)) {
                         prediction_old = temp_prediction;
                         return;
@@ -179,11 +184,11 @@ public class PredictionZone extends BasePrediction {
                 }
             } else if (strategy.equals(PASSIVE_ENTRY_ORIENTED)) {
 //                left, right, front, back --> lock
-                if (comparePrediction(modelWrapper, prediction_old, PREDICTION_LEFT)
-                        || comparePrediction(modelWrapper, prediction_old, PREDICTION_RIGHT)
-                        || comparePrediction(modelWrapper, prediction_old, PREDICTION_BACK)
-                        || comparePrediction(modelWrapper, prediction_old, PREDICTION_FRONT)) {
-                    if (comparePrediction(modelWrapper, temp_prediction, PREDICTION_LOCK)
+                if (comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_LEFT)
+                        || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_RIGHT)
+                        || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_BACK)
+                        || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_FRONT)) {
+                    if (comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_LOCK)
                             && compareDistribution(distribution, temp_prediction, threshold_prob_unlock2lock)) {
                         prediction_old = temp_prediction;
                         return;
@@ -201,11 +206,11 @@ public class PredictionZone extends BasePrediction {
     public void calculatePredictionDefault(double threshold_prob, double threshold_prob_lock) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
-            if (comparePrediction(modelWrapper, prediction_old, PREDICTION_LEFT)
-                    || comparePrediction(modelWrapper, prediction_old, PREDICTION_RIGHT)
-                    || comparePrediction(modelWrapper, prediction_old, PREDICTION_BACK)
-                    || comparePrediction(modelWrapper, prediction_old, PREDICTION_BACK)) {
-                if (comparePrediction(modelWrapper, temp_prediction, PREDICTION_LOCK)
+            if (comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_LEFT)
+                    || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_RIGHT)
+                    || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_BACK)
+                    || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_BACK)) {
+                if (comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_LOCK)
                         && compareDistribution(distribution, temp_prediction, threshold_prob_lock)) {
                     prediction_old = temp_prediction;
                     return;
@@ -222,8 +227,8 @@ public class PredictionZone extends BasePrediction {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
 //            cover internal space
-            if (comparePrediction(modelWrapper, temp_prediction, PREDICTION_INSIDE) ||
-                    comparePrediction(modelWrapper, temp_prediction, PREDICTION_INTERNAL)) {
+            if (comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_INSIDE) ||
+                    comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_INTERNAL)) {
                 prediction_old = temp_prediction;
                 return;
             }
@@ -237,7 +242,7 @@ public class PredictionZone extends BasePrediction {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
 //            reduce false positive
-            if (comparePrediction(modelWrapper, temp_prediction, PREDICTION_FAR)) {
+            if (comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_FAR)) {
                 prediction_old = temp_prediction;
                 return;
             }
@@ -264,7 +269,7 @@ public class PredictionZone extends BasePrediction {
 
     public String getPrediction() {
         if (prediction_old != -1) {
-            return modelWrapper.getResponseDomainValues()[prediction_old];
+            return modelWrappers.get(0).getResponseDomainValues()[prediction_old];
         }
         return PREDICTION_UNKNOWN;
     }
@@ -292,7 +297,7 @@ public class PredictionZone extends BasePrediction {
             }
             sb.append("\n");
             for (int i = 0; i < distribution.length; i++) {
-                sb.append(modelWrapper.getResponseDomainValues()[i]).append(": ").append(String.format(Locale.FRANCE, "%.2f", distribution[i])).append(" \n");
+                sb.append(modelWrappers.get(0).getResponseDomainValues()[i]).append(": ").append(String.format(Locale.FRANCE, "%.2f", distribution[i])).append(" \n");
             }
             sb.append("\n");
             return sb.toString();
@@ -304,8 +309,8 @@ public class PredictionZone extends BasePrediction {
     }
 
     public String[] getClasses() {
-        if (modelWrapper != null) {
-            return modelWrapper.getResponseDomainValues();
+        if (modelWrappers.get(0) != null) {
+            return modelWrappers.get(0).getResponseDomainValues();
         } else {
             return null;
         }

@@ -21,11 +21,11 @@ import static com.valeo.bleranging.utils.CalculUtils.correctRssiUnilateral;
 public class PredictionCoord extends BasePrediction {
     private static final int MAX_HISTORIC_SIZE = 5;// rssi history size
     private final LinkedHashMap<Integer, List<Double>> rssiHistoric;// rssi saved to calculate the average
-    private double coord;// regression prediction result
+    private Coord coord = new Coord();// regression prediction result
     private String predictionType;// standard prediction or rp prediction
 
-    public PredictionCoord(Context context, String modelClassName, List<String> rowDataKeySet) {
-        super(context, modelClassName, rowDataKeySet);
+    public PredictionCoord(Context context, String modelClassNameX, String modelClassNameY, List<String> rowDataKeySet) {
+        super(context, modelClassNameX, modelClassNameY, rowDataKeySet);
         this.rssiHistoric = new LinkedHashMap<>();
     }
 
@@ -40,8 +40,10 @@ public class PredictionCoord extends BasePrediction {
         }
         constructRowData(this.rssi);
         try {
-            final RegressionModelPrediction modelPrediction = modelWrapper.predictRegression(rowData);
-            coord = modelPrediction.value;
+            final RegressionModelPrediction modelPredictionX = modelWrappers.get(0).predictRegression(rowData);
+            coord.setCoord_x(modelPredictionX.value);
+            final RegressionModelPrediction modelPredictionY = modelWrappers.get(1).predictRegression(rowData);
+            coord.setCoord_y(modelPredictionY.value);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,18 +69,20 @@ public class PredictionCoord extends BasePrediction {
 
     public void calculatePredictionCoord() {
         try {
-            final RegressionModelPrediction modelPrediction = modelWrapper.predictRegression(rowData);
-            coord = modelPrediction.value;
+            final RegressionModelPrediction modelPredictionX = modelWrappers.get(0).predictRegression(rowData);
+            coord.setCoord_x(modelPredictionX.value);
+            final RegressionModelPrediction modelPredictionY = modelWrappers.get(1).predictRegression(rowData);
+            coord.setCoord_y(modelPredictionY.value);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public double getPredictionCoord() {
+    public Coord getPredictionCoord() {
         return coord;
     }
 
     public String printDebug() {
-        return String.format(Locale.FRANCE, "%.2f", coord);
+        return String.format(Locale.FRANCE, "x: %.2f   y: %.2f", coord.getCoord_x(), coord.getCoord_y());
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import hex.genmodel.easy.EasyPredictModelWrapper;
@@ -15,7 +16,7 @@ import hex.genmodel.easy.RowData;
  */
 
 public class BasePrediction {
-    protected EasyPredictModelWrapper modelWrapper;
+    protected List<EasyPredictModelWrapper> modelWrappers = new ArrayList<>();
     protected RowData rowData;
     protected Context mContext;
     //    rssi after adding smartphone offset
@@ -30,6 +31,13 @@ public class BasePrediction {
         this.rowDataKeySet = rowDataKeySet;
         this.rowData = new RowData();
         new AsyncPredictionInit().execute(modelClassName);
+    }
+
+    public BasePrediction(Context context, String modelClassNameX, String modelClassNameY, List<String> rowDataKeySet) {
+        this.mContext = context;
+        this.rowDataKeySet = rowDataKeySet;
+        this.rowData = new RowData();
+        new AsyncPredictionInit().execute(modelClassNameX, modelClassNameY);
     }
 
     protected void constructRowData(double[] rssi) {
@@ -58,8 +66,10 @@ public class BasePrediction {
         @Override
         protected Void doInBackground(String... elements) {
             try {
-                hex.genmodel.GenModel rawModel = (hex.genmodel.GenModel) Class.forName(elements[0]).newInstance();
-                modelWrapper = new EasyPredictModelWrapper(rawModel);
+                for (String genModelClassName : elements) {
+                    hex.genmodel.GenModel rawModel = (hex.genmodel.GenModel) Class.forName(genModelClassName).newInstance();
+                    modelWrappers.add(new EasyPredictModelWrapper(rawModel));
+                }
                 arePredictRawFileRead = true;
             } catch (Exception e) {
                 e.printStackTrace();

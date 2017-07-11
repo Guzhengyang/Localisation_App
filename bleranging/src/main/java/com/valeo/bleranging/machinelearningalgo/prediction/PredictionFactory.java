@@ -19,8 +19,6 @@ import static com.valeo.bleranging.persistence.Constants.TYPE_5_A;
 import static com.valeo.bleranging.persistence.Constants.TYPE_6_A;
 import static com.valeo.bleranging.persistence.Constants.TYPE_7_A;
 import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
-import static com.valeo.bleranging.persistence.Constants.TYPE_Px;
-import static com.valeo.bleranging.persistence.Constants.TYPE_Py;
 
 /**
  * Created by l-avaratha on 17/02/2017
@@ -48,17 +46,12 @@ public class PredictionFactory {
     /***
      *
      * @param mContext
-     * @param modelType regression model for Px or Py
      * @return Coordinate Prediction
      */
-    public static PredictionCoord getPredictionCoord(Context mContext, String modelType) {
+    public static PredictionCoord getPredictionCoord(Context mContext) {
         String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();
         if (carType.equalsIgnoreCase(TYPE_8_A)) {
-            if (modelType.equalsIgnoreCase(TYPE_Px)) {
-                return new PredictionCoord(mContext, COORD_8_A_PX, rowDataKeySetFactory(TYPE_8_A), PREDICTION_PX);
-            } else if (modelType.equalsIgnoreCase(TYPE_Py)) {
-                return new PredictionCoord(mContext, COORD_8_A_PY, rowDataKeySetFactory(TYPE_8_A), PREDICTION_PY);
-            }
+            return new PredictionCoord(mContext, COORD_8_A_PX, COORD_8_A_PY, rowDataKeySetFactory(TYPE_8_A));
         }
         return null;
     }

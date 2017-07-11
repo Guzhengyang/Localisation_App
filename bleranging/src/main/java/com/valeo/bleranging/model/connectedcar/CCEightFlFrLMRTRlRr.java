@@ -5,6 +5,7 @@ import android.graphics.PointF;
 
 import com.valeo.bleranging.machinelearningalgo.prediction.Coord;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
+import com.valeo.bleranging.model.MultiTrx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 
@@ -19,8 +20,6 @@ import static com.valeo.bleranging.persistence.Constants.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.persistence.Constants.THATCHAM_ORIENTED;
 import static com.valeo.bleranging.persistence.Constants.THRESHOLD_PROB_LOCK2UNLOCK;
 import static com.valeo.bleranging.persistence.Constants.THRESHOLD_PROB_UNLOCK2LOCK;
-import static com.valeo.bleranging.persistence.Constants.TYPE_Px;
-import static com.valeo.bleranging.persistence.Constants.TYPE_Py;
 import static com.valeo.bleranging.utils.CheckUtils.checkForRssiNonNull;
 
 /**
@@ -38,7 +37,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     public CCEightFlFrLMRTRlRr(Context mContext) {
         super(mContext);
-        trxLinkedHMap = new ConnectedCarFactory.TrxLinkHMapBuilder()
+        mMultiTrx = new MultiTrx(new ConnectedCarFactory.TrxLinkHMapBuilder()
                 .left()
                 .middle()
                 .right()
@@ -64,23 +63,17 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public void readPredictionsRawFiles() {
         standardPrediction = PredictionFactory.getPredictionZone(mContext, PREDICTION_STD);
-        pxPrediction = PredictionFactory.getPredictionCoord(mContext, TYPE_Px);
-        pyPrediction = PredictionFactory.getPredictionCoord(mContext, TYPE_Py);
+        coordPrediction = PredictionFactory.getPredictionCoord(mContext);
 //        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);
     }
 
     @Override
     public void initPredictions() {
         if (isInitialized()) {
-            standardPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            standardPrediction.init(mMultiTrx.getRssiTab(), SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             standardPrediction.predict(N_VOTE_SHORT);
-            pxPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-            pyPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-            coord_x = pxPrediction.getPredictionCoord();
-            coord_y = pyPrediction.getPredictionCoord();
-//            testPrediction.initTest(rssi);
-//            testPrediction.predictTest();
-            coord = new Coord(pxPrediction.getPredictionCoord(), pyPrediction.getPredictionCoord());
+            coordPrediction.init(mMultiTrx.getRssiTab(), SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+            coord = new Coord(coordPrediction.getPredictionCoord());
 //            rpPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
 //            rpPrediction.predict(N_VOTE_LONG);
         }
@@ -90,15 +83,11 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     public boolean isInitialized() {
         return (standardPrediction != null
                 && standardPrediction.isPredictRawFileRead()
-                && pxPrediction != null
-                && pxPrediction.isPredictRawFileRead()
-                && pyPrediction != null
-                && pyPrediction.isPredictRawFileRead()
-//                && testPrediction != null
-//                && testPrediction.isPredictRawFileRead()
+                && coordPrediction != null
+                && coordPrediction.isPredictRawFileRead()
 //                && rpPrediction != null
 //                && rpPrediction.isPredictRawFileRead()
-                && (checkForRssiNonNull(rssi) != null));
+                && (checkForRssiNonNull(mMultiTrx.getRssiTab()) != null));
     }
 
     @Override
@@ -106,10 +95,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         if (isInitialized()) {
             standardPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone(), lockStatus);
             standardPrediction.predict(N_VOTE_SHORT);
-            pxPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-            pyPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-//            testPrediction.setRssiTest(rssi);
-//            testPrediction.predictTest();
+            coordPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
 //            rpPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone(), lockStatus);
 //            rpPrediction.predict(N_VOTE_LONG);
         }
@@ -134,8 +120,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 standardPrediction.calculatePredictionStandard(SdkPreferencesHelper.getInstance().getThresholdProbStandard(),
                         THRESHOLD_PROB_LOCK2UNLOCK, THRESHOLD_PROB_UNLOCK2LOCK, PASSIVE_ENTRY_ORIENTED);
             }
-            pxPrediction.calculatePredictionCoord();
-            pyPrediction.calculatePredictionCoord();
+            coordPrediction.calculatePredictionCoord();
+            CalculUtils.correctCoord(coord, coordPrediction.getPredictionCoord(), THRESHOLD_DIST);
 //            correctCoordThreshold(pxPrediction.getPredictionCoord(), pyPrediction.getPredictionCoord(), THRESHOLD_DIST);
             correctCoordKalman(pxPrediction.getPredictionCoord(), pyPrediction.getPredictionCoord());
             correctBoundry();
@@ -176,16 +162,14 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     }
 
     public PointF getPredictionCoord() {
-        if (pxPrediction != null && pxPrediction.isPredictRawFileRead() &&
-                pyPrediction != null && pyPrediction.isPredictRawFileRead() && coord != null) {
+        if (coordPrediction != null && coordPrediction.isPredictRawFileRead() && coord != null) {
             return new PointF((float) coord.getCoord_x(), (float) coord.getCoord_y());
         }
         return null;
     }
 
     public double getDist2Car() {
-        if (pxPrediction != null && pxPrediction.isPredictRawFileRead() &&
-                pyPrediction != null && pyPrediction.isPredictRawFileRead() && coord != null) {
+        if (coordPrediction != null && coordPrediction.isPredictRawFileRead() && coord != null) {
             return CalculUtils.calculateDist2Car(coord.getCoord_x(), coord.getCoord_y());
         }
         return 0f;

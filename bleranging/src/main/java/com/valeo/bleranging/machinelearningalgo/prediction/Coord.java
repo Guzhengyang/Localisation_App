@@ -7,9 +7,17 @@ package com.valeo.bleranging.machinelearningalgo.prediction;
 public class Coord {
     private double coord_x, coord_y;
 
+    public Coord() {
+    }
+
     public Coord(double coord_x, double coord_y) {
         this.coord_x = coord_x;
         this.coord_y = coord_y;
+    }
+
+    public Coord(Coord predictionCoord) {
+        this.coord_x = predictionCoord.getCoord_x();
+        this.coord_y = predictionCoord.getCoord_y();
     }
 
     public double getCoord_x() {
