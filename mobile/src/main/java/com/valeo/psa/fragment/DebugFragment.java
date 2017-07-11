@@ -16,31 +16,39 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.valeo.bleranging.listeners.DebugListener;
-import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.psa.R;
 
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ACCESS;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_BACK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_EXTERNAL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FAR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_FRONT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INSIDE;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_INTERNAL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LEFT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_NEAR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_OUTSIDE;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_RIGHT;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ROOF;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_FR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RL;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_START_RR;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_THATCHAM;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_TRUNK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_WELCOME;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_ACCESS;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_BACK;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_EXTERNAL;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_FAR;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_FRONT;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_INSIDE;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_INTERNAL;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_LEFT;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_LOCK;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_NEAR;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_OUTSIDE;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_RIGHT;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_ROOF;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START_FL;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START_FR;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START_RL;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_START_RR;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_THATCHAM;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_TRUNK;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_WELCOME;
+import static com.valeo.bleranging.persistence.Constants.TYPE_2_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_2_B;
+import static com.valeo.bleranging.persistence.Constants.TYPE_3_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_4_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_4_B;
+import static com.valeo.bleranging.persistence.Constants.TYPE_5_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_6_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_7_A;
+import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
 
 /**
  * Created by l-avaratha on 09/03/2017
@@ -271,39 +279,39 @@ public class DebugFragment extends Fragment implements DebugListener {
             layerDrawable = (LayerDrawable) ContextCompat.getDrawable(getActivity(), R.drawable.rssi_localization);
             Drawable carDrawable;
             switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
-                case ConnectedCarFactory.TYPE_2_A:
+                case TYPE_2_A:
                     carDrawable = chooseCarDrawable(isLocked, R.drawable.car_2_a_close, R.drawable.car_2_a_open);
                     trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                     break;
-                case ConnectedCarFactory.TYPE_2_B:
+                case TYPE_2_B:
                     carDrawable = chooseCarDrawable(isLocked, R.drawable.car_2_b_close, R.drawable.car_2_b_open);
                     trunk_area = null;
                     break;
-                case ConnectedCarFactory.TYPE_3_A:
+                case TYPE_3_A:
                     carDrawable = chooseCarDrawable(isLocked, R.drawable.car_3_a_close, R.drawable.car_3_a_open);
                     trunk_area = null;
                     break;
-                case ConnectedCarFactory.TYPE_4_A:
+                case TYPE_4_A:
                     carDrawable = chooseCarDrawable(isLocked, R.drawable.car_4_a_close, R.drawable.car_4_a_open);
                     trunk_area = null;
                     break;
-                case ConnectedCarFactory.TYPE_4_B:
+                case TYPE_4_B:
                     carDrawable = chooseCarDrawable(isLocked, R.drawable.car_4_b_close, R.drawable.car_4_b_open);
                     trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                     break;
-                case ConnectedCarFactory.TYPE_5_A:
+                case TYPE_5_A:
                     carDrawable = chooseCarDrawable(isLocked, R.drawable.car_5_close, R.drawable.car_5_open);
                     trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                     break;
-                case ConnectedCarFactory.TYPE_6_A:
+                case TYPE_6_A:
                     carDrawable = chooseCarDrawable(isLocked, R.drawable.car_6_close, R.drawable.car_6_open);
                     trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                     break;
-                case ConnectedCarFactory.TYPE_7_A:
+                case TYPE_7_A:
                     carDrawable = chooseCarDrawable(isLocked, R.drawable.car_7_close, R.drawable.car_7_open);
                     trunk_area = null;
                     break;
-                case ConnectedCarFactory.TYPE_8_A:
+                case TYPE_8_A:
                     carDrawable = chooseCarDrawable(isLocked, R.drawable.car_8_close, R.drawable.car_8_open);
                     trunk_area = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.trunk_area);
                     break;

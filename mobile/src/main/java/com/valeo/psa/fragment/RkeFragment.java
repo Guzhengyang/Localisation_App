@@ -26,7 +26,7 @@ import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 
 import static android.view.DragEvent.ACTION_DRAG_LOCATION;
-import static com.valeo.bleranging.BleRangingHelper.RKE_USE_TIMEOUT;
+import static com.valeo.bleranging.persistence.Constants.RKE_USE_TIMEOUT;
 
 /**
  * Created by l-avaratha on 09/03/2017

@@ -22,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
@@ -35,8 +34,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
-import static com.valeo.bleranging.model.connectedcar.ConnectedCar.THATCHAM_ORIENTED;
-import static com.valeo.bleranging.utils.LogFileUtils.CONFIG_DIR;
+import static com.valeo.bleranging.persistence.Constants.BASE_3;
+import static com.valeo.bleranging.persistence.Constants.CONFIG_DIR;
+import static com.valeo.bleranging.persistence.Constants.THATCHAM_ORIENTED;
+import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
+
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -182,8 +184,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // updated to reflect the new value, per the Android Design
         // guidelines.
         private void bindSummaries() {
-            bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_8_A);
-            bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
+            bindPreferenceSummaryToValue(connected_car_type, TYPE_8_A);
+            bindPreferenceSummaryToValue(connected_car_base, BASE_3);
             user_speed_enabled.setSummary(R.string.pref_user_speed_enabled_summary);
             bindPreferenceSummaryToValue(wanted_speed, String.valueOf(SdkPreferencesHelper.WANTED_SPEED));
             bindPreferenceSummaryToValue(one_step_size, String.valueOf(SdkPreferencesHelper.ONE_STEP_SIZE));
@@ -622,8 +624,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // updated to reflect the new value, per the Android Design
         // guidelines.
         private void bindSummaries() {
-            bindPreferenceSummaryToValue(connected_car_type, ConnectedCarFactory.TYPE_8_A);
-            bindPreferenceSummaryToValue(connected_car_base, ConnectedCarFactory.BASE_3);
+            bindPreferenceSummaryToValue(connected_car_type, TYPE_8_A);
+            bindPreferenceSummaryToValue(connected_car_base, BASE_3);
             bindPreferenceSummaryToValue(opening_orientation_type, THATCHAM_ORIENTED);
             com_simulation_enabled.setSummary(R.string.pref_com_simulation_enabled_summary);
             is_channel_limited.setSummary(R.string.pref_is_channel_limited_summary);

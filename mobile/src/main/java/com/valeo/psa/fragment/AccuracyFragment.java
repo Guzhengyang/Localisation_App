@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_UNKNOWN;
 
 /**
  * Created by l-avaratha on 09/03/2017

@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
 import static com.valeo.psa.R.array.entry_values_list_preference;
 import static java.util.Arrays.asList;
 
@@ -85,7 +85,7 @@ public class IconPickerPreference extends ListPreference {
     protected void onBindView(View view) {
         super.onBindView(view);
         String selectedIconId = sharedPreferences.getString(context.
-                getString(R.string.connected_car_type_pref_name), ConnectedCarFactory.TYPE_8_A);
+                getString(R.string.connected_car_type_pref_name), TYPE_8_A);
         selectedIconFile = getIconFileFromId(selectedIconId, defaultIconFile);
         icon = (ImageView) view.findViewById(R.id.ic_selected);
         updateIcon();
