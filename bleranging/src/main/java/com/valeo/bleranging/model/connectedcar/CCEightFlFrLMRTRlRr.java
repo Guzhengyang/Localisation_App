@@ -97,6 +97,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
 
     @Override
     public void calculatePrediction(float[] orientation) {
+
         if (isInitialized()) {
             if (SdkPreferencesHelper.getInstance().getOpeningStrategy().equalsIgnoreCase(THATCHAM_ORIENTED)) {
                 standardPrediction.calculatePredictionStandard(SdkPreferencesHelper.getInstance().getThresholdProbStandard(),

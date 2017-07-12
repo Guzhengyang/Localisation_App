@@ -200,7 +200,15 @@ public class PredictionFactory {
                 rowDataKeySet.add("RSSI REARRIGHT_ORIGIN");
                 break;
             case TYPE_TEST:
+//                rowDataKeySet.add("RSSI LEFT_ORIGIN");
+//                rowDataKeySet.add("RSSI RIGHT_ORIGIN");
+//                rowDataKeySet.add("RSSI TRUNK_ORIGIN");
+//                rowDataKeySet.add("RSSI FRONTLEFT_ORIGIN");
+//                rowDataKeySet.add("RSSI FRONTRIGHT_ORIGIN");
+//                rowDataKeySet.add("RSSI REARLEFT_ORIGIN");
+//                rowDataKeySet.add("RSSI REARRIGHT_ORIGIN");
                 rowDataKeySet.add("RSSI LEFT_ORIGIN");
+                rowDataKeySet.add("RSSI MIDDLE_ORIGIN");
                 rowDataKeySet.add("RSSI RIGHT_ORIGIN");
                 rowDataKeySet.add("RSSI TRUNK_ORIGIN");
                 rowDataKeySet.add("RSSI FRONTLEFT_ORIGIN");

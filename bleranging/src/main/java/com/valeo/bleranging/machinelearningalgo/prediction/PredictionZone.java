@@ -130,9 +130,10 @@ public class PredictionZone {
         int i = 0;
         for (String elem : rowDataKeySet) {
             if (i < rssi.length) {
-                if (i != 1) {
-                    rowData.put(elem, String.valueOf(rssi[i] - rssi[1]));
-                }
+//                if (i != 1) {
+//                    rowData.put(elem, String.valueOf(rssi[i] - rssi[1]));
+//                }
+                rowData.put(elem, String.valueOf(rssi[i]));
                 i++;
             }
         }
