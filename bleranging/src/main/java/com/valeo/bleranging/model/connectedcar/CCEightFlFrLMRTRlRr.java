@@ -8,6 +8,8 @@ import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 
+import org.ejml.simple.SimpleMatrix;
+
 /**
  * Created by l-avaratha on 07/09/2016
  */
@@ -18,6 +20,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     private static final double THRESHOLD_DIST = 0.25;
     private static double X1 = 3, X2 = 7, Y1 = 4, Y2 = 6;
     private double coord_x, coord_y;
+    private double dt = 0.105;
+    private SimpleMatrix X, P, F, G, H, Q, R, Z, K;
 
     public CCEightFlFrLMRTRlRr(Context mContext) {
         super(mContext);
@@ -31,6 +35,17 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 .rearleft()
                 .rearRight()
                 .build();
+        initMatrix();
+    }
+
+    public void initMatrix() {
+        X = new SimpleMatrix(new double[][]{{0}, {0}, {0}, {0}});
+        P = new SimpleMatrix(SimpleMatrix.identity(X.numRows()));
+        F = new SimpleMatrix(new double[][]{{1, dt, 0, 0}, {0, 1, 0, 1}, {0, 0, 1, dt}, {0, 0, 0, 1}});
+        G = new SimpleMatrix(new double[][]{{dt * dt / 2, 0}, {dt, 0}, {0, dt * dt / 2}, {0, dt}});
+        H = new SimpleMatrix(new double[][]{{1, 0, 0, 0}, {0, 0, 1, 0}});
+        Q = new SimpleMatrix(SimpleMatrix.identity(2));
+        R = new SimpleMatrix(SimpleMatrix.identity(H.numRows()));
     }
 
     @Override
@@ -38,7 +53,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         standardPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_STANDARD);
         pxPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Px);
         pyPrediction = PredictionFactory.getPredictionCoord(mContext, ConnectedCarFactory.TYPE_Py);
-        testPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_TEST);
+//        testPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_TEST);
 //        rpPrediction = PredictionFactory.getPredictionZone(mContext, PredictionFactory.PREDICTION_RP);
     }
 
@@ -51,8 +66,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             pyPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             coord_x = pxPrediction.getPredictionCoord();
             coord_y = pyPrediction.getPredictionCoord();
-            testPrediction.initTest(rssi);
-            testPrediction.predictTest();
+//            testPrediction.initTest(rssi);
+//            testPrediction.predictTest();
 //            rpPrediction.init(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
 //            rpPrediction.predict(N_VOTE_LONG);
         }
@@ -66,8 +81,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 && pxPrediction.isPredictRawFileRead()
                 && pyPrediction != null
                 && pyPrediction.isPredictRawFileRead()
-                && testPrediction != null
-                && testPrediction.isPredictRawFileRead()
+//                && testPrediction != null
+//                && testPrediction.isPredictRawFileRead()
 //                && rpPrediction != null
 //                && rpPrediction.isPredictRawFileRead()
                 && (checkForRssiNonNull(rssi) != null));
@@ -80,8 +95,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             standardPrediction.predict(N_VOTE_SHORT);
             pxPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
             pyPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone());
-            testPrediction.setRssiTest(rssi);
-            testPrediction.predictTest();
+//            testPrediction.setRssiTest(rssi);
+//            testPrediction.predictTest();
 //            rpPrediction.setRssi(rssi, SdkPreferencesHelper.getInstance().getOffsetSmartphone(), lockStatus);
 //            rpPrediction.predict(N_VOTE_LONG);
         }
@@ -90,7 +105,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
     @Override
     public void calculatePredictionTest(Double threshold) {
         PSALogs.d("abstract", "calculatePredictionTest overrided OK !");
-        if (threshold >= 0 && threshold <= 1) {
+        if (testPrediction != null && threshold >= 0 && threshold <= 1) {
             testPrediction.setThreshold(threshold);
         }
     }
@@ -108,8 +123,10 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             }
             pxPrediction.calculatePredictionCoord();
             pyPrediction.calculatePredictionCoord();
-            correctCoord(pxPrediction.getPredictionCoord(), pyPrediction.getPredictionCoord(), THRESHOLD_DIST);
-            testPrediction.calculatePredictionTest();
+//            correctCoordThreshold(pxPrediction.getPredictionCoord(), pyPrediction.getPredictionCoord(), THRESHOLD_DIST);
+            correctCoordKalman(pxPrediction.getPredictionCoord(), pyPrediction.getPredictionCoord());
+            correctBoundry();
+//            testPrediction.calculatePredictionTest();
 //            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
@@ -121,7 +138,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             result += SdkPreferencesHelper.getInstance().getOpeningStrategy() + "\n";
             result += "----------------------------------\n";
             result += standardPrediction.printDebug(STANDARD_LOC);
-            result += testPrediction.printDebugTest(TEST_LOC);
+//            result += testPrediction.printDebugTest(TEST_LOC);
 //            result += rpPrediction.printDebug(RP_LOC);
             return result;
         }
@@ -185,7 +202,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         return dist2car;
     }
 
-    private void correctCoord(double coord_x_new, double coord_y_new, double threshold_dist) {
+    private void correctCoordThreshold(double coord_x_new, double coord_y_new, double threshold_dist) {
         double deltaX = coord_x_new - coord_x;
         double deltaY = coord_y_new - coord_y;
         double dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -197,6 +214,9 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             coord_x = coord_x_new;
             coord_y = coord_y_new;
         }
+    }
+
+    public void correctBoundry() {
         if (coord_x > MAX_X) {
             coord_x = MAX_X;
         } else if (coord_x < 0) {
@@ -207,5 +227,16 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         } else if (coord_y < 0) {
             coord_y = 0;
         }
+    }
+
+    public void correctCoordKalman(double coord_x_new, double coord_y_new) {
+        Z = new SimpleMatrix(new double[][]{{coord_x_new}, {coord_y_new}});
+        X = F.mult(X);
+        P = F.mult(P.mult(F.transpose())).plus(G.mult(Q.mult(G.transpose())));
+        K = P.mult(H.transpose()).mult(H.mult(P).mult(H.transpose()).plus(R).invert());
+        X = X.plus(K.mult(Z.minus(H.mult(X))));
+        P = P.minus(K.mult(H.mult(P)));
+        coord_x = X.get(0);
+        coord_y = X.get(2);
     }
 }

@@ -25,4 +25,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-cast-framework:10.2.4'
     compile 'com.android.support:mediarouter-v7:25.3.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
+    compile files('libs/ejml-core-0.31.jar')
+    compile files('libs/ejml-ddense-0.31.jar')
+    compile files('libs/ejml-simple-0.31.jar')
 }
