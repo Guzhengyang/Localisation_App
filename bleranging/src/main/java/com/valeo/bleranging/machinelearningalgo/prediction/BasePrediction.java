@@ -19,10 +19,9 @@ public class BasePrediction {
     protected List<EasyPredictModelWrapper> modelWrappers = new ArrayList<>();
     protected RowData rowData;
     protected Context mContext;
-    //    rssi after adding smartphone offset
-    protected double[] rssi_offset;
-    //    rssi used for algo entry
-    protected double[] rssi;
+    protected double[] rssi_offset; //    rssi after adding smartphone offset
+    protected double[] rssi; //    rssi used for algo entry
+    protected boolean binomial; // whether the model is binomial
     private boolean arePredictRawFileRead = false;
     private List<String> rowDataKeySet;
 
@@ -69,6 +68,7 @@ public class BasePrediction {
                 for (String genModelClassName : elements) {
                     hex.genmodel.GenModel rawModel = (hex.genmodel.GenModel) Class.forName(genModelClassName).newInstance();
                     modelWrappers.add(new EasyPredictModelWrapper(rawModel));
+                    binomial = rawModel.getNumResponseClasses() == 2;
                 }
                 arePredictRawFileRead = true;
             } catch (Exception e) {

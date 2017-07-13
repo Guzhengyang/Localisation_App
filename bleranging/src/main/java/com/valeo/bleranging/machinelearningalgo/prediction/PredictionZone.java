@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,6 @@ public class PredictionZone extends BasePrediction {
     private int INDEX_LOCK;// find the index of lock zone
     private int prediction_old = -1;// old prediction result index
     private StringBuilder sb = new StringBuilder();
-    private boolean binomial;// whether the model is binomial
     private double threshold = 0.5;
 
     public PredictionZone(Context context, String modelClassName,
@@ -74,8 +74,7 @@ public class PredictionZone extends BasePrediction {
 
     public void initTest(double[] rssi) {
         this.rssi = new double[rssi.length];
-        this.distribution = new double[modelWrapper.getResponseDomainValues().length];
-        constructRowDataTest(this.rssi);
+        this.distribution = new double[modelWrappers.get(0).getResponseDomainValues().length];
     }
 
     public void setRssi(double rssi[], int offset, boolean lockStatus) {
@@ -104,7 +103,7 @@ public class PredictionZone extends BasePrediction {
         int result = 0;
         try {
             if (predictionType.equalsIgnoreCase(PREDICTION_RP)) {
-                final BinomialModelPrediction modelPrediction = modelWrapper.predictBinomial(rowData);
+                final BinomialModelPrediction modelPrediction = modelWrappers.get(0).predictBinomial(rowData);
                 label = modelPrediction.label;
                 result = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
@@ -114,7 +113,7 @@ public class PredictionZone extends BasePrediction {
 //                result = modelPrediction.labelIndex;
 //                distribution = modelPrediction.classProbabilities;
 
-                final BinomialModelPrediction modelPrediction = modelWrapper.predictBinomial(rowData);
+                final BinomialModelPrediction modelPrediction = modelWrappers.get(0).predictBinomial(rowData);
                 label = modelPrediction.label;
                 result = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
@@ -136,12 +135,12 @@ public class PredictionZone extends BasePrediction {
     public void predictTest() {
         try {
             if (binomial) {
-                final BinomialModelPrediction modelPrediction = modelWrapper.predictBinomial(rowData);
+                final BinomialModelPrediction modelPrediction = modelWrappers.get(0).predictBinomial(rowData);
                 label = modelPrediction.label;
 //                prediction_old = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
             } else {
-                final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
+                final MultinomialModelPrediction modelPrediction = modelWrappers.get(0).predictMultinomial(rowData);
                 label = modelPrediction.label;
 //                prediction_old = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
@@ -260,7 +259,7 @@ public class PredictionZone extends BasePrediction {
         return true;
     }
     public void calculatePredictionTest() {
-        if (compareDistribution(0, threshold)) {
+        if (compareDistribution(distribution, 0, threshold)) {
             prediction_old = 0;
         } else {
             prediction_old = 1;
@@ -304,8 +303,30 @@ public class PredictionZone extends BasePrediction {
         }
     }
 
+    public String printDebugTest(String title) {
+        sb.setLength(0);
+        if (distribution == null || rssi == null) {
+            return "";
+        }
+        PSALogs.d("debug", prediction_old + " " + threshold);
+        sb.append(String.format(Locale.FRANCE, "%1$s %2$s ", title, getPrediction())).append("\n");
+        for (double arssi : rssi) {
+            sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
+        }
+        sb.append("\n");
+        for (int i = 0; i < distribution.length; i++) {
+            sb.append(modelWrappers.get(0).getResponseDomainValues()[i]).append(": ").append(String.format(Locale.FRANCE, "%.2f", distribution[i])).append(" \n");
+        }
+        sb.append("\n");
+        return sb.toString();
+    }
+
     public double[] getDistribution() {
         return distribution;
+    }
+
+    public void setThreshold(Double threshold) {
+        this.threshold = threshold;
     }
 
     public String[] getClasses() {

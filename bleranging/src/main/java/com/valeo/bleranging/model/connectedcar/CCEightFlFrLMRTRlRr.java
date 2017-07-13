@@ -7,16 +7,16 @@ import com.valeo.bleranging.machinelearningalgo.prediction.Coord;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
 import com.valeo.bleranging.model.MultiTrx;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.CalculUtils;
 import com.valeo.bleranging.utils.PSALogs;
 
 import org.ejml.simple.SimpleMatrix;
-import com.valeo.bleranging.utils.CalculUtils;
 
-import static com.valeo.bleranging.persistence.Constants.FULL_LOC;
 import static com.valeo.bleranging.persistence.Constants.N_VOTE_SHORT;
 import static com.valeo.bleranging.persistence.Constants.PASSIVE_ENTRY_ORIENTED;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_STD;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_UNKNOWN;
+import static com.valeo.bleranging.persistence.Constants.STANDARD_LOC;
 import static com.valeo.bleranging.persistence.Constants.THATCHAM_ORIENTED;
 import static com.valeo.bleranging.persistence.Constants.THRESHOLD_PROB_LOCK2UNLOCK;
 import static com.valeo.bleranging.persistence.Constants.THRESHOLD_PROB_UNLOCK2LOCK;
@@ -46,7 +46,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                 .frontRight()
                 .rearleft()
                 .rearRight()
-                .build();
+                .build());
         initMatrix();
     }
 
@@ -121,12 +121,10 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
                         THRESHOLD_PROB_LOCK2UNLOCK, THRESHOLD_PROB_UNLOCK2LOCK, PASSIVE_ENTRY_ORIENTED);
             }
             coordPrediction.calculatePredictionCoord();
-            CalculUtils.correctCoord(coord, coordPrediction.getPredictionCoord(), THRESHOLD_DIST);
-//            correctCoordThreshold(pxPrediction.getPredictionCoord(), pyPrediction.getPredictionCoord(), THRESHOLD_DIST);
-            correctCoordKalman(pxPrediction.getPredictionCoord(), pyPrediction.getPredictionCoord());
+            correctCoordKalman(coordPrediction.getPredictionCoord());
             correctBoundry();
 //            testPrediction.calculatePredictionTest();
-            CalculUtils.correctCoord(coord, pxPrediction.getPredictionCoord(), pyPrediction.getPredictionCoord(), THRESHOLD_DIST);
+            CalculUtils.correctCoord(coord, coordPrediction.getPredictionCoord(), THRESHOLD_DIST);
 //            rpPrediction.calculatePredictionRP(SdkPreferencesHelper.getInstance().getThresholdProbStandard());
         }
     }
@@ -158,7 +156,7 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
             String result = testPrediction.getPrediction();
             return result;
         }
-        return BleRangingHelper.PREDICTION_UNKNOWN;
+        return PREDICTION_UNKNOWN;
     }
 
     public PointF getPredictionCoord() {
@@ -188,8 +186,8 @@ public class CCEightFlFrLMRTRlRr extends ConnectedCar {
         }
     }
 
-    public void correctCoordKalman(double coord_x_new, double coord_y_new) {
-        Z = new SimpleMatrix(new double[][]{{coord_x_new}, {coord_y_new}});
+    public void correctCoordKalman(Coord coord_new) {
+        Z = new SimpleMatrix(new double[][]{{coord_new.getCoord_x()}, {coord_new.getCoord_y()}});
         X = F.mult(X);
         P = F.mult(P.mult(F.transpose())).plus(G.mult(Q.mult(G.transpose())));
         K = P.mult(H.transpose()).mult(H.mult(P).mult(H.transpose()).plus(R).invert());
