@@ -18,10 +18,9 @@ import com.valeo.bleranging.listeners.TestListener;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_ACCESS;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_LOCK;
-import static com.valeo.bleranging.BleRangingHelper.PREDICTION_UNKNOWN;
-
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_ACCESS;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_LOCK;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_UNKNOWN;
 
 /**
  * Created by l-avaratha on 09/03/2017
@@ -33,7 +32,6 @@ public class TestFragment extends Fragment implements TestListener {
     private Button start_test;
     private ImageView result_test;
     private Handler mHandler;
-    private boolean result = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

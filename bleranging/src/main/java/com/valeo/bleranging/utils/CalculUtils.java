@@ -2,6 +2,8 @@ package com.valeo.bleranging.utils;
 
 import com.valeo.bleranging.machinelearningalgo.prediction.Coord;
 
+import org.ejml.simple.SimpleMatrix;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +19,43 @@ public class CalculUtils {
     private static final double X1 = 3, X2 = 7, Y1 = 4, Y2 = 6;
     private static final double f = 2.45 * Math.pow(10, 9);
     private static final double c = 3 * Math.pow(10, 8);
-    private static final double P = -22;
+    private static final double P0 = -22;
+    private static SimpleMatrix X, P, F, G, H, Q, R;
+
+    public static void initMatrix() {
+        X = new SimpleMatrix(new double[][]{{0}, {0}, {0}, {0}});
+        P = new SimpleMatrix(SimpleMatrix.identity(X.numRows()));
+        double dt = 0.105;
+        F = new SimpleMatrix(new double[][]{{1, dt, 0, 0}, {0, 1, 0, 1}, {0, 0, 1, dt}, {0, 0, 0, 1}});
+        G = new SimpleMatrix(new double[][]{{dt * dt / 2, 0}, {dt, 0}, {0, dt * dt / 2}, {0, dt}});
+        H = new SimpleMatrix(new double[][]{{1, 0, 0, 0}, {0, 0, 1, 0}});
+        Q = new SimpleMatrix(SimpleMatrix.identity(2));
+        R = new SimpleMatrix(SimpleMatrix.identity(H.numRows()));
+    }
+
+    public static void correctBoundry(final Coord coord) {
+        if (coord.getCoord_x() > MAX_X) {
+            coord.setCoord_x(MAX_X);
+        } else if (coord.getCoord_x() < 0) {
+            coord.setCoord_x(0);
+        }
+        if (coord.getCoord_y() > MAX_Y) {
+            coord.setCoord_y(MAX_Y);
+        } else if (coord.getCoord_y() < 0) {
+            coord.setCoord_y(0);
+        }
+    }
+
+    public static void correctCoordKalman(final Coord coord, final Coord coord_new) {
+        SimpleMatrix z = new SimpleMatrix(new double[][]{{coord_new.getCoord_x()}, {coord_new.getCoord_y()}});
+        X = F.mult(X);
+        P = F.mult(P.mult(F.transpose())).plus(G.mult(Q.mult(G.transpose())));
+        SimpleMatrix k = P.mult(H.transpose()).mult(H.mult(P).mult(H.transpose()).plus(R).invert());
+        X = X.plus(k.mult(z.minus(H.mult(X))));
+        P = P.minus(k.mult(H.mult(P)));
+        coord.setCoord_x(X.get(0));
+        coord.setCoord_y(X.get(2));
+    }
 
     public static double calculateDist2Car(double coord_x, double coord_y) {
         double dist2car;
@@ -43,7 +81,7 @@ public class CalculUtils {
         return dist2car;
     }
 
-    public static void correctCoord(Coord coord, Coord coordNew, double threshold_dist) {
+    public static void correctCoord(final Coord coord, final Coord coordNew, final double threshold_dist) {
         double deltaX = coordNew.getCoord_x() - coord.getCoord_x();
         double deltaY = coordNew.getCoord_y() - coord.getCoord_y();
         double dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -68,7 +106,7 @@ public class CalculUtils {
     }
 
     public static double rssi2dist(double rssi) {
-        return c / f / 4 / Math.PI * Math.pow(10, -(rssi - P) / 20);
+        return c / f / 4 / Math.PI * Math.pow(10, -(rssi - P0) / 20);
     }
 
     public static double correctRssiUnilateral(double rssi_old, double rssi_new) {

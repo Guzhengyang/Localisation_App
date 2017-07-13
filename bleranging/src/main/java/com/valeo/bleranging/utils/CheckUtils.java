@@ -14,7 +14,7 @@ public class CheckUtils {
 
     public static boolean compareDistribution(double[] distribution,
                                               int temp_prediction, double threshold_prob) {
-        return distribution[temp_prediction] > threshold_prob;
+        return distribution != null && distribution[temp_prediction] > threshold_prob;
     }
 
     public static boolean ifNoDecision2Lock(double[] distribution, int index_lock,

@@ -15,6 +15,7 @@ import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 
 import static com.valeo.bleranging.persistence.Constants.PASSIVE_ENTRY_ORIENTED;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_BACK;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_EAR;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_FAR;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_FRONT;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_INSIDE;
@@ -55,7 +56,7 @@ public class PredictionZone extends BasePrediction {
     public void init(double[] rssi, int offset) {
         this.rssi_offset = new double[rssi.length];
         this.distance = new double[rssi.length];
-        this.rssi = new double[rssi.length];
+        this.modified_rssi = new double[rssi.length];
         this.distribution = new double[modelWrappers.get(0).getResponseDomainValues().length];
         // find index of lock
         for (int i = 0; i < modelWrappers.get(0).getResponseDomainValues().length; i++) {
@@ -66,18 +67,18 @@ public class PredictionZone extends BasePrediction {
         }
         for (int i = 0; i < rssi.length; i++) {
             this.rssi_offset[i] = rssi[i] - offset;
-            this.rssi[i] = rssi_offset[i];
-            this.distance[i] = rssi2dist(this.rssi[i]);
+            this.modified_rssi[i] = rssi_offset[i];
+            this.distance[i] = rssi2dist(this.modified_rssi[i]);
         }
-        constructRowData(this.rssi);
+        constructRowData(this.modified_rssi);
     }
 
     public void initTest(double[] rssi) {
-        this.rssi = new double[rssi.length];
+        this.modified_rssi = new double[rssi.length];
         this.distribution = new double[modelWrappers.get(0).getResponseDomainValues().length];
     }
 
-    public void setRssi(double rssi[], int offset, boolean lockStatus) {
+    public void setRssi(double rssi[], int offset) {
         if (this.rssi_offset != null) {
             for (int index = 0; index < rssi.length; index++) {
                 this.rssi_offset[index] = rssi[index] - offset;
@@ -92,10 +93,10 @@ public class PredictionZone extends BasePrediction {
                         rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
                     }
                 }
-                this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
-                distance[index] = rssi2dist(this.rssi[index]);
+                this.modified_rssi[index] = correctRssiUnilateral(this.modified_rssi[index], rssi_offset[index]);
+                distance[index] = rssi2dist(this.modified_rssi[index]);
             }
-            constructRowData(this.rssi);
+            constructRowData(this.modified_rssi);
         }
     }
 
@@ -107,13 +108,13 @@ public class PredictionZone extends BasePrediction {
                 label = modelPrediction.label;
                 result = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
+            } else if (predictionType.equalsIgnoreCase(PREDICTION_EAR)) {
+                final MultinomialModelPrediction modelPrediction = modelWrappers.get(0).predictMultinomial(rowData);
+                label = modelPrediction.label;
+                result = modelPrediction.labelIndex;
+                distribution = modelPrediction.classProbabilities;
             } else {
-//                final MultinomialModelPrediction modelPrediction = modelWrapper.predictMultinomial(rowData);
-//                label = modelPrediction.label;
-//                result = modelPrediction.labelIndex;
-//                distribution = modelPrediction.classProbabilities;
-
-                final BinomialModelPrediction modelPrediction = modelWrappers.get(0).predictBinomial(rowData);
+                final MultinomialModelPrediction modelPrediction = modelWrappers.get(0).predictMultinomial(rowData);
                 label = modelPrediction.label;
                 result = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
@@ -273,11 +274,11 @@ public class PredictionZone extends BasePrediction {
         return PREDICTION_UNKNOWN;
     }
 
-    public String printDebug(String title) {
+    public String printDebug() {
         sb.setLength(0);
         if (distance == null) {
             return "";
-        } else if (rssi == null) {
+        } else if (modified_rssi == null) {
             return "";
         } else if (distribution == null) {
             return "";
@@ -286,8 +287,8 @@ public class PredictionZone extends BasePrediction {
         } else if (label == null) {
             return "";
         } else {
-            sb.append(String.format(Locale.FRANCE, "%1$s %2$s ", title, getPrediction())).append("\n");
-            for (double arssi : rssi) {
+            sb.append(String.format(Locale.FRANCE, "%1$s %2$s ", predictionType, getPrediction())).append("\n");
+            for (double arssi : modified_rssi) {
                 sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
             }
             sb.append("\n");
@@ -305,12 +306,12 @@ public class PredictionZone extends BasePrediction {
 
     public String printDebugTest(String title) {
         sb.setLength(0);
-        if (distribution == null || rssi == null) {
+        if (distribution == null || modified_rssi == null) {
             return "";
         }
         PSALogs.d("debug", prediction_old + " " + threshold);
         sb.append(String.format(Locale.FRANCE, "%1$s %2$s ", title, getPrediction())).append("\n");
-        for (double arssi : rssi) {
+        for (double arssi : modified_rssi) {
             sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
         }
         sb.append("\n");

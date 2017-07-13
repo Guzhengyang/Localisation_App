@@ -12,7 +12,7 @@ import static com.valeo.bleranging.utils.CheckUtils.checkForRssiNonNull;
  */
 
 public class MultiTrx {
-    private LinkedHashMap<Integer, Trx> trxLinkedHMap;
+    private final LinkedHashMap<Integer, Trx> trxLinkedHMap;
     private double[] mRssiTab;
 
     public MultiTrx(LinkedHashMap<Integer, Trx> trxLinkedHMap) {
@@ -26,7 +26,7 @@ public class MultiTrx {
      * @param rssi       the rssi value to save
      * @param bleChannel the ble Channel
      */
-    public void saveRssi(int trxNumber, int rssi, byte antennaId, Antenna.BLEChannel bleChannel) {
+    public void saveRssi(final int trxNumber, final int rssi, final byte antennaId, Antenna.BLEChannel bleChannel) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             PSALogs.d("NIH", "trx n°" + trxNumber + " rssi saved");
             trxLinkedHMap.get(trxNumber).saveRssi(rssi, true, antennaId, bleChannel);
@@ -71,11 +71,7 @@ public class MultiTrx {
         }
     }
 
-    public LinkedHashMap<Integer, Trx> getTrxLinkedHMap() {
-        return trxLinkedHMap;
-    }
-
-    public Antenna.BLEChannel getCurrentBLEChannel(int trxNumber) {
+    public Antenna.BLEChannel getCurrentBLEChannel(final int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getCurrentBLEChannel();
         } else {
@@ -83,7 +79,7 @@ public class MultiTrx {
         }
     }
 
-    public int getCurrentOriginalRssi(int trxNumber) {
+    public int getCurrentOriginalRssi(final int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getCurrentOriginalRssi();
         } else {
@@ -91,7 +87,7 @@ public class MultiTrx {
         }
     }
 
-    public int getCurrentAntennaId(int trxNumber) {
+    public int getCurrentAntennaId(final int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getAntennaId();
         } else {
@@ -121,11 +117,15 @@ public class MultiTrx {
         return checkForRssiNonNull(this.mRssiTab);
     }
 
-    public boolean isActive(int trxNumber) {
+    public boolean isActive(final int trxNumber) {
         return trxLinkedHMap.get(trxNumber) != null && trxLinkedHMap.get(trxNumber).isActive();
     }
 
     public double[] getRssiTab() {
         return mRssiTab;
+    }
+
+    public LinkedHashMap<Integer, Trx> getTrxLinkedHMap() {
+        return trxLinkedHMap;
     }
 }

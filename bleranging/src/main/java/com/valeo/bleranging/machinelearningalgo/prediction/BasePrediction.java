@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.valeo.bleranging.utils.PSALogs;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class BasePrediction {
     protected RowData rowData;
     protected Context mContext;
     protected double[] rssi_offset; //    rssi after adding smartphone offset
-    protected double[] rssi; //    rssi used for algo entry
+    protected double[] modified_rssi; //    rssi used for algo entry
     protected boolean binomial; // whether the model is binomial
     private boolean arePredictRawFileRead = false;
     private List<String> rowDataKeySet;
@@ -52,8 +54,12 @@ public class BasePrediction {
         }
     }
 
-    public double[] getRssi() {
-        return rssi;
+    public String printDebug() {
+        return "";
+    }
+
+    public double[] getModifiedRssi() {
+        return modified_rssi;
     }
 
     public boolean isPredictRawFileRead() {
@@ -64,17 +70,19 @@ public class BasePrediction {
 
         @Override
         protected Void doInBackground(String... elements) {
-            try {
-                for (String genModelClassName : elements) {
-                    hex.genmodel.GenModel rawModel = (hex.genmodel.GenModel) Class.forName(genModelClassName).newInstance();
+            for (String genModelClassName : elements) {
+                hex.genmodel.GenModel rawModel;
+                try {
+                    rawModel = (hex.genmodel.GenModel) Class.forName(genModelClassName).newInstance();
                     modelWrappers.add(new EasyPredictModelWrapper(rawModel));
                     binomial = rawModel.getNumResponseClasses() == 2;
+                    PSALogs.d("read", genModelClassName + " OK");
+                } catch (Exception e) {
+                    PSALogs.d("read", e.toString());
                 }
-                arePredictRawFileRead = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-                arePredictRawFileRead = false;
             }
+            arePredictRawFileRead = modelWrappers.size() != 0;
+            PSALogs.d("read", "arePredictRawFileRead : " + arePredictRawFileRead);
             return null;
         }
 
@@ -82,7 +90,7 @@ public class BasePrediction {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (!arePredictRawFileRead) {
-                Toast.makeText(mContext, "Init for Coord Model Fail", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "Init Model Fail", Toast.LENGTH_LONG).show();
             }
         }
     }

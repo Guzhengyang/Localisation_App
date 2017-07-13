@@ -249,7 +249,7 @@ public class AlgoManager implements SensorEventListener {
     public SpannableStringBuilder createDebugData(final ConnectedCar connectedCar) {
         final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         if (connectedCar != null) {
-            spannableStringBuilder.append(connectedCar.printDebug(smartphoneIsInPocket));
+            spannableStringBuilder.append(connectedCar.getMultiPrediction().printDebug());
             spannableStringBuilder.append(String.format(Locale.FRANCE, "%.3f %.3f %.3f\n", orientation[0], orientation[1], orientation[2]));
             spannableStringBuilder.append(String.format(Locale.FRANCE, "%.3f\n", deltaLinAcc));
         }
@@ -310,7 +310,7 @@ public class AlgoManager implements SensorEventListener {
         boolean isInLockArea = false;
         mProtocolManager.setIsStartRequested(false);
         mProtocolManager.setIsWelcomeRequested(false);
-        connectedCar.calculatePrediction(orientation);
+        connectedCar.getMultiPrediction().calculatePrediction();
         //TODO Replace SdkPreferencesHelper.getInstance().getComSimulationEnabled() by CallReceiver.smartphoneComIsActivated after demo
         lastPrediction = getPredictionPosition(connectedCar);
         switch (lastPrediction) {
@@ -443,28 +443,28 @@ public class AlgoManager implements SensorEventListener {
 
     public String getPredictionPosition(final ConnectedCar connectedCar) {
         if (connectedCar != null) {
-            return connectedCar.getPredictionPosition(smartphoneIsInPocket);
+            return connectedCar.getMultiPrediction().getPredictionPosition(smartphoneIsInPocket);
         }
         return PREDICTION_UNKNOWN;
     }
 
     public PointF getPredictionCoord(final ConnectedCar connectedCar) {
         if (connectedCar != null) {
-            return connectedCar.getPredictionCoord();
+            return connectedCar.getMultiPrediction().getPredictionCoord();
         }
         return null;
     }
 
     public double getDist2Car(final ConnectedCar connectedCar) {
         if (connectedCar != null) {
-            return connectedCar.getDist2Car();
+            return connectedCar.getMultiPrediction().getDist2Car();
         }
         return 0;
     }
 
     public String getPredictionProximity(final ConnectedCar connectedCar) {
         if (connectedCar != null) {
-            return connectedCar.getPredictionProximity();
+            return connectedCar.getMultiPrediction().getPredictionProximity();
         }
         return PREDICTION_UNKNOWN;
     }

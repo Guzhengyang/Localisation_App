@@ -35,6 +35,23 @@ public class Constants {
     public final static String TYPE_Clf = "MLP4Clf";
     public final static String TYPE_Px = "MLP4Px";
     public final static String TYPE_Py = "MLP4Py";
+    //    models for 2 beacons
+    public final static String ZONE_2_A = "Two";
+    //    models for 4 beacons
+    public final static String ZONE_4_B_START = "FourStart";
+    public final static String ZONE_4_B = "Four";
+    public final static String ZONE_4_B_THATCHAM = "FourThatcham";
+    public final static String ZONE_4_B_RP = "FourRP";
+    //    models for 8 beacons
+    public final static String ZONE_8_A_NORMAL = "EightNormal";
+    public final static String ZONE_8_A_NORMAL_MINI = "EightNormalMini";
+    public final static String ZONE_8_A_NORMAL_TEST = "EightNormalTest";
+    public final static String ZONE_8_A_THATCHAM = "EightThatcham";
+    public final static String ZONE_8_A_THATCHAM_MINI = "EightThatchamMini";
+    public final static String ZONE_8_A_THATCHAM_TEST = "EightThatchamTest";
+    public final static String ZONE_8_A_RP = "EightRP";
+    public final static String COORD_8_A_PX = "MLP4Px";
+    public final static String COORD_8_A_PY = "MLP4Py";
     public final static int NUMBER_TRX_FRONT_LEFT = 1;
     public final static int NUMBER_TRX_FRONT_RIGHT = 2;
     public final static int NUMBER_TRX_LEFT = 3;
@@ -78,7 +95,9 @@ public class Constants {
     public static final String PREDICTION_OUTDOOR = "outdoor";
     public static final String PREDICTION_UNKNOWN = "unknown";
     public final static String PREDICTION_STD = "standard_prediction";
+    public final static String PREDICTION_COORD = "coord_prediction";
     public final static String PREDICTION_IN = "inside_prediction";
+    public final static String PREDICTION_TEST = "test_prediction";
     public final static String PREDICTION_RP = "rp_prediction";
     public final static String PREDICTION_EAR = "ear_prediction";
     public final static String[] PREDICTIONS = {

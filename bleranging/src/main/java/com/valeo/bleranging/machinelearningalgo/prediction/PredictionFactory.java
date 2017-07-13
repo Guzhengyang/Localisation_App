@@ -7,8 +7,11 @@ import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.valeo.bleranging.persistence.Constants.COORD_8_A_PX;
+import static com.valeo.bleranging.persistence.Constants.COORD_8_A_PY;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_RP;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_STD;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_TEST;
 import static com.valeo.bleranging.persistence.Constants.THATCHAM_ORIENTED;
 import static com.valeo.bleranging.persistence.Constants.TYPE_2_A;
 import static com.valeo.bleranging.persistence.Constants.TYPE_2_B;
@@ -19,29 +22,22 @@ import static com.valeo.bleranging.persistence.Constants.TYPE_5_A;
 import static com.valeo.bleranging.persistence.Constants.TYPE_6_A;
 import static com.valeo.bleranging.persistence.Constants.TYPE_7_A;
 import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
+import static com.valeo.bleranging.persistence.Constants.ZONE_2_A;
+import static com.valeo.bleranging.persistence.Constants.ZONE_4_B_RP;
+import static com.valeo.bleranging.persistence.Constants.ZONE_4_B_START;
+import static com.valeo.bleranging.persistence.Constants.ZONE_8_A_NORMAL;
+import static com.valeo.bleranging.persistence.Constants.ZONE_8_A_NORMAL_MINI;
+import static com.valeo.bleranging.persistence.Constants.ZONE_8_A_NORMAL_TEST;
+import static com.valeo.bleranging.persistence.Constants.ZONE_8_A_RP;
+import static com.valeo.bleranging.persistence.Constants.ZONE_8_A_THATCHAM;
+import static com.valeo.bleranging.persistence.Constants.ZONE_8_A_THATCHAM_MINI;
+import static com.valeo.bleranging.persistence.Constants.ZONE_8_A_THATCHAM_TEST;
 
 /**
  * Created by l-avaratha on 17/02/2017
  */
 
 public class PredictionFactory {
-    //    models for 2 beacons
-    private final static String ZONE_2_A = "Two";
-    //    models for 4 beacons
-    private final static String ZONE_4_B_START = "FourStart";
-    private final static String ZONE_4_B = "Four";
-    private final static String ZONE_4_B_THATCHAM = "FourThatcham";
-    private final static String ZONE_4_B_RP = "FourRP";
-    //    models for 8 beacons
-    private final static String ZONE_8_A_NORMAL = "EightNormal";
-    private final static String ZONE_8_A_NORMAL_MINI = "EightNormalMini";
-    private final static String ZONE_8_A_NORMAL_TEST = "EightNormalTest";
-    private final static String ZONE_8_A_THATCHAM = "EightThatcham";
-    private final static String ZONE_8_A_THATCHAM_MINI = "EightThatchamMini";
-    private final static String ZONE_8_A_THATCHAM_TEST = "EightThatchamTest";
-    private final static String COORD_8_A_PX = "MLP4Px";
-    private final static String COORD_8_A_PY = "MLP4Py";
-    private final static String ZONE_8_A_RP = "EightRP";
 
     /***
      *
@@ -106,10 +102,10 @@ public class PredictionFactory {
                             }
                         }
                     case PREDICTION_TEST:
-                        if (strategy.equalsIgnoreCase(ConnectedCar.THATCHAM_ORIENTED)) {
-                            return new PredictionZone(mContext, ZONE_8_A_THATCHAM_TEST, rowDataKeySetFactory(TYPE_TEST), predictionType);
+                        if (strategy.equalsIgnoreCase(THATCHAM_ORIENTED)) {
+                            return new PredictionZone(mContext, ZONE_8_A_THATCHAM_TEST, rowDataKeySetFactory(TYPE_8_A), predictionType);
                         } else {
-                            return new PredictionZone(mContext, ZONE_8_A_NORMAL_TEST, rowDataKeySetFactory(TYPE_TEST), predictionType);
+                            return new PredictionZone(mContext, ZONE_8_A_NORMAL_TEST, rowDataKeySetFactory(TYPE_8_A), predictionType);
                         }
                     case PREDICTION_RP:
                         return new PredictionZone(mContext, ZONE_8_A_RP, rowDataKeySetFactory(TYPE_8_A), predictionType);
@@ -176,23 +172,6 @@ public class PredictionFactory {
                 rowDataKeySet.add("RSSI REARRIGHT_ORIGIN");
                 break;
             case TYPE_8_A:
-                rowDataKeySet.add("RSSI LEFT_ORIGIN");
-                rowDataKeySet.add("RSSI MIDDLE_ORIGIN");
-                rowDataKeySet.add("RSSI RIGHT_ORIGIN");
-                rowDataKeySet.add("RSSI TRUNK_ORIGIN");
-                rowDataKeySet.add("RSSI FRONTLEFT_ORIGIN");
-                rowDataKeySet.add("RSSI FRONTRIGHT_ORIGIN");
-                rowDataKeySet.add("RSSI REARLEFT_ORIGIN");
-                rowDataKeySet.add("RSSI REARRIGHT_ORIGIN");
-                break;
-            case TYPE_TEST:
-//                rowDataKeySet.add("RSSI LEFT_ORIGIN");
-//                rowDataKeySet.add("RSSI RIGHT_ORIGIN");
-//                rowDataKeySet.add("RSSI TRUNK_ORIGIN");
-//                rowDataKeySet.add("RSSI FRONTLEFT_ORIGIN");
-//                rowDataKeySet.add("RSSI FRONTRIGHT_ORIGIN");
-//                rowDataKeySet.add("RSSI REARLEFT_ORIGIN");
-//                rowDataKeySet.add("RSSI REARRIGHT_ORIGIN");
                 rowDataKeySet.add("RSSI LEFT_ORIGIN");
                 rowDataKeySet.add("RSSI MIDDLE_ORIGIN");
                 rowDataKeySet.add("RSSI RIGHT_ORIGIN");

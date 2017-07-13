@@ -2,8 +2,6 @@ package com.valeo.bleranging.machinelearningalgo.prediction;
 
 import android.content.Context;
 
-import com.valeo.bleranging.utils.PSALogs;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -31,14 +29,14 @@ public class PredictionCoord extends BasePrediction {
 
     public void init(double[] rssi, int offset) {
         this.rssi_offset = new double[rssi.length];
-        this.rssi = new double[rssi.length];
+        this.modified_rssi = new double[rssi.length];
         for (int i = 0; i < rssi.length; i++) {
             this.rssi_offset[i] = rssi[i] - offset;
-            this.rssi[i] = rssi_offset[i];
+            this.modified_rssi[i] = rssi_offset[i];
             rssiHistoric.put(i, new ArrayList<Double>());
-            rssiHistoric.get(i).add(this.rssi[i]);
+            rssiHistoric.get(i).add(this.modified_rssi[i]);
         }
-        constructRowData(this.rssi);
+        constructRowData(this.modified_rssi);
         try {
             final RegressionModelPrediction modelPredictionX = modelWrappers.get(0).predictRegression(rowData);
             coord.setCoord_x(modelPredictionX.value);
@@ -53,17 +51,17 @@ public class PredictionCoord extends BasePrediction {
         if (this.rssi_offset != null) {
             for (int index = 0; index < rssi.length; index++) {
                 this.rssi_offset[index] = rssi[index] - offset;
-                this.rssi[index] = correctRssiUnilateral(this.rssi[index], rssi_offset[index]);
+                this.modified_rssi[index] = correctRssiUnilateral(this.modified_rssi[index], rssi_offset[index]);
                 if (rssiHistoric.get(index).size() == MAX_HISTORIC_SIZE) {
                     rssiHistoric.get(index).remove(0);
                 }
-                rssiHistoric.get(index).add(this.rssi[index]);
+                rssiHistoric.get(index).add(this.modified_rssi[index]);
             }
             double[] rssiAverage = new double[rssi.length];
             for (int i = 0; i < rssi.length; i++) {
                 rssiAverage[i] = averageRssi(rssiHistoric.get(i));
             }
-            constructRowData(this.rssi);
+            constructRowData(this.modified_rssi);
         }
     }
 
@@ -82,6 +80,7 @@ public class PredictionCoord extends BasePrediction {
         return coord;
     }
 
+    @Override
     public String printDebug() {
         return String.format(Locale.FRANCE, "x: %.2f   y: %.2f", coord.getCoord_x(), coord.getCoord_y());
     }

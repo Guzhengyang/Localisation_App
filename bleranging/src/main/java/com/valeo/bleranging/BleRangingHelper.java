@@ -113,10 +113,10 @@ public class BleRangingHelper {
             lock.writeLock().unlock();
             lock.readLock().lock();
             mBluetoothManager.sendPackets(bytesToSend, bytesReceived,
-                    mProtocolManager.getPacketTwoPayload(connectedCar.getStandardClasses(),
-                            connectedCar.getStandardDistribution()),
-                    mProtocolManager.getPacketThreePayload(connectedCar.getStandardRssi()),
-                    mProtocolManager.getPacketFourPayload(connectedCar.getPredictionCoord(), connectedCar.getDist2Car()));
+                    mProtocolManager.getPacketTwoPayload(connectedCar.getMultiPrediction().getStandardClasses(),
+                            connectedCar.getMultiPrediction().getStandardDistribution()),
+                    mProtocolManager.getPacketThreePayload(connectedCar.getMultiPrediction().getStandardRssi()),
+                    mProtocolManager.getPacketFourPayload(connectedCar.getMultiPrediction().getPredictionCoord(), connectedCar.getMultiPrediction().getDist2Car()));
             lock.readLock().unlock();
             if (mAlgoManager.getIsRKE()) {
                 mAlgoManager.setIsRKE(false);
@@ -131,7 +131,7 @@ public class BleRangingHelper {
         public void run() {
             double[] rssi = connectedCar.getMultiTrx().getRssiForRangingPrediction();
             if (rssi != null) {
-                connectedCar.setRssi(rssi, newLockStatus);
+                connectedCar.getMultiPrediction().setRssi(rssi);
             } else {
                 PSALogs.d("init2", "setRssiForRangingPrediction is NULL\n");
             }
@@ -165,7 +165,71 @@ public class BleRangingHelper {
             mMainHandler.postDelayed(this, 105);
         }
     };
+    private final Runnable checkNewPacketsRunner = new Runnable() {
+        @Override
+        public void run() {
+            if (bytesReceived != null) {
+                lock.readLock().lock();
+                PSALogs.d("NIH", "checkNewPacketsRunnable " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
+                if ((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
+                    lock.readLock().unlock();
+                    PSALogs.w("NIH", "LAST_EQUALS_NEW_PACKETS_RECEIVED");
+                    PSALogs.i("restartConnection", "received counter packet have not changed in a second");
+                    restartConnection(false);
+                } else if (Byte.valueOf(bytesReceived[bytesReceived.length - 1]).equals((byte) 0xFF)) {
+                    lock.readLock().unlock();
+                    PSALogs.w("NIH", "TWO_CONSECUTIVES_FF_PACKETS_RECEIVED");
+                    PSALogs.i("restartConnection", "received FF packet have not changed in a second");
+                    restartConnection(false);
+                } else {
+                    lastPacketIdNumber[0] = bytesReceived[0];
+                    lastPacketIdNumber[1] = bytesReceived[1];
+                    lock.readLock().unlock();
+                    if (isFullyConnected()) {
+                        mMainHandler.postDelayed(this, 1000);
+                    }
+                }
+            } else {
+                PSALogs.w("NIH", "PACKETS_RECEIVED_ARE_NULL");
+                PSALogs.i("restartConnection", "received packet is null");
+                restartConnection(false);
+            }
+        }
+    };
     private int reconnectionCounter = 0;
+    private byte counterByte = 0;
+    private byte savedCounterByte = 0;
+    private int beepInt = 0;
+    private final Runnable beepRunner = new Runnable() {
+        @Override
+        public void run() {
+            long delayedTime = 500;
+            if (SdkPreferencesHelper.getInstance().getUserSpeedEnabled()) {
+                beepInt = 1;
+                makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_LOW_SS, 100);
+                // interval time between each beep sound in milliseconds
+                delayedTime = Math.round(((SdkPreferencesHelper.getInstance().getOneStepSize() / 100.0f) / (SdkPreferencesHelper.getInstance().getWantedSpeed() / 3.6)) * 1000);
+            }
+            if (isFullyConnected()) {
+                mMainHandler.postDelayed(this, delayedTime);
+            }
+        }
+    };
+    private boolean alreadyStopped = false;
+    private boolean isLoggable = true;
+    private final Runnable logRunner = new Runnable() {
+        @Override
+        public void run() {
+            if (isLoggable) {
+                LogFileUtils.appendRssiLogs(connectedCar, mAlgoManager, newLockStatus, counterByte,
+                        mProtocolManager, beepInt);
+                beepInt = 0;
+            }
+            if (isFullyConnected()) {
+                mMainHandler.postDelayed(this, 105);
+            }
+        }
+    };
     /**
      * Handles various events fired by the Service.
      * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
@@ -242,70 +306,6 @@ public class BleRangingHelper {
                 PSALogs.d("NIH", "TRX ACTION_GATT_CONNECTED");
                 bleRangingListener.updateBLEStatus();
                 mBluetoothManager.resumeLeScan();
-            }
-        }
-    };
-    private byte counterByte = 0;
-    private byte savedCounterByte = 0;
-    private int beepInt = 0;
-    private final Runnable beepRunner = new Runnable() {
-        @Override
-        public void run() {
-            long delayedTime = 500;
-            if (SdkPreferencesHelper.getInstance().getUserSpeedEnabled()) {
-                beepInt = 1;
-                makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_LOW_SS, 100);
-                // interval time between each beep sound in milliseconds
-                delayedTime = Math.round(((SdkPreferencesHelper.getInstance().getOneStepSize() / 100.0f) / (SdkPreferencesHelper.getInstance().getWantedSpeed() / 3.6)) * 1000);
-            }
-            if (isFullyConnected()) {
-                mMainHandler.postDelayed(this, delayedTime);
-            }
-        }
-    };
-    private boolean alreadyStopped = false;
-    private boolean isLoggable = true;
-    private final Runnable logRunner = new Runnable() {
-        @Override
-        public void run() {
-            if (isLoggable) {
-                LogFileUtils.appendRssiLogs(connectedCar, mAlgoManager, newLockStatus, counterByte,
-                        mProtocolManager, beepInt);
-                beepInt = 0;
-            }
-            if (isFullyConnected()) {
-                mMainHandler.postDelayed(this, 105);
-            }
-        }
-    };
-    private final Runnable checkNewPacketsRunner = new Runnable() {
-        @Override
-        public void run() {
-            if (bytesReceived != null) {
-                lock.readLock().lock();
-                PSALogs.d("NIH", "checkNewPacketsRunnable " + lastPacketIdNumber[0] + " " + (bytesReceived[0] + " " + lastPacketIdNumber[1] + " " + bytesReceived[1]));
-                if ((lastPacketIdNumber[0] == bytesReceived[0]) && (lastPacketIdNumber[1] == bytesReceived[1])) {
-                    lock.readLock().unlock();
-                    PSALogs.w("NIH", "LAST_EQUALS_NEW_PACKETS_RECEIVED");
-                    PSALogs.i("restartConnection", "received counter packet have not changed in a second");
-                    restartConnection(false);
-                } else if (Byte.valueOf(bytesReceived[bytesReceived.length - 1]).equals((byte) 0xFF)) {
-                    lock.readLock().unlock();
-                    PSALogs.w("NIH", "TWO_CONSECUTIVES_FF_PACKETS_RECEIVED");
-                    PSALogs.i("restartConnection", "received FF packet have not changed in a second");
-                    restartConnection(false);
-                } else {
-                    lastPacketIdNumber[0] = bytesReceived[0];
-                    lastPacketIdNumber[1] = bytesReceived[1];
-                    lock.readLock().unlock();
-                    if (isFullyConnected()) {
-                        mMainHandler.postDelayed(this, 1000);
-                    }
-                }
-            } else {
-                PSALogs.w("NIH", "PACKETS_RECEIVED_ARE_NULL");
-                PSALogs.i("restartConnection", "received packet is null");
-                restartConnection(false);
             }
         }
     };
@@ -478,7 +478,8 @@ public class BleRangingHelper {
                 @Override
                 public void run() {
                     PSALogs.d("init2", "readPredictionsRawFiles\n");
-                    if (connectedCar != null) connectedCar.readPredictionsRawFiles();
+                    if (connectedCar != null) connectedCar.getMultiPrediction().
+                            readPredictionsRawFiles(mContext);
                 }
             });
             mMainHandler.post(new Runnable() {
@@ -802,7 +803,7 @@ public class BleRangingHelper {
         }
         debugListener.applyNewDrawable();
         chessBoardListener.updateChessboard(coord, dist);
-        testListener.changeColor(connectedCar.getPredictionPositionTest());
+        testListener.changeColor(connectedCar.getMultiPrediction().getPredictionPositionTest());
     }
 
     /**
@@ -892,7 +893,7 @@ public class BleRangingHelper {
 
     public String[] getStandardClasses() {
         if (connectedCar != null) {
-            return connectedCar.getStandardClasses();
+            return connectedCar.getMultiPrediction().getStandardClasses();
         }
         return null;
     }
@@ -929,6 +930,6 @@ public class BleRangingHelper {
     }
 
     public void setNewThreshold(double value) {
-        connectedCar.calculatePredictionTest(value);
+        connectedCar.getMultiPrediction().calculatePredictionTest(value);
     }
 }
