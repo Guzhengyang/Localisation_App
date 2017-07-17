@@ -13,23 +13,17 @@
         <item>2 beacons (Middle and Trunk)</item>
         <item>2 beacons (Left and Right)</item>
         <item>3 beacons</item>
-        <!--<item>4 beacons</item>-->
         <item>4 beacons</item>
-        <!--<item>5 beacons (4+trunk)</item>-->
-        <!--<item>7 beacons</item>-->
         <item>6 beacons</item>
         <item>8 beacons</item>
     </string-array>
     <string-array name="entry_values_list_preference">
-        <item>"twoMT"        </item>
-        <item>"twoLR"        </item>
-        <item>"threeLMR"        </item>
-        <!--<item>"fourLMRB"        </item>-->
-        <item>"fourLMRT"        </item>
-        <!--<item>"fiveLMRTB"     </item>-->
-        <!--<item>"sevenFlFrLMRRlRr"</item>-->
-        <item>"sixFlFrMTRlRr"</item>
-        <item>"eightFlFrLMRTRlRr"</item>
+        <item>"M_T"        </item>
+        <item>"L_R"        </item>
+        <item>"L_M_R"        </item>
+        <item>"L_M_R_T"        </item>
+        <item>"Fl_Fr_M_T_Rl_Rr"</item>
+        <item>"Fl_Fr_L_M_R_T_Rl_Rr"</item>
     </string-array>
     <string-array name="iconFile">
         <item>car_2_a</item>

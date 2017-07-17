@@ -7,6 +7,7 @@ import android.Manifest;
  */
 
 public class Constants {
+    public final static String DEFAULT_JSON_FILE_NAME = "connected_car_generator.json";
     public final static String THATCHAM_ORIENTED = "thatcham_oriented";
     public final static String PASSIVE_ENTRY_ORIENTED = "passive_entry_oriented";
     public final static String SIMPLE_LOC = "Simple Localisation:";
@@ -23,15 +24,15 @@ public class Constants {
     public final static String BASE_2 = "Base_2";
     public final static String BASE_3 = "Base_3";
     public final static String BASE_4 = "Base_4";
-    public final static String TYPE_2_A = "twoMT";
-    public final static String TYPE_2_B = "twoLR";
-    public final static String TYPE_3_A = "threeLMR";
-    public final static String TYPE_4_A = "fourLMRB";
-    public final static String TYPE_4_B = "fourLMRT";
-    public final static String TYPE_5_A = "fiveLMRTB";
-    public final static String TYPE_6_A = "sixFlFrMTRlRr";
-    public final static String TYPE_7_A = "sevenFlFrLMRRlRr";
-    public final static String TYPE_8_A = "eightFlFrLMRTRlRr";
+    public final static String TYPE_2_A = "M_T";
+    public final static String TYPE_2_B = "L_R";
+    public final static String TYPE_3_A = "L_M_R";
+    public final static String TYPE_4_A = "L_M_R_B";
+    public final static String TYPE_4_B = "L_M_R_T";
+    public final static String TYPE_5_A = "L_M_R_T_B";
+    public final static String TYPE_6_A = "Fl_Fr_M_T_Rl_Rr";
+    public final static String TYPE_7_A = "Fl_Fr_L_M_R_Rl_Rr";
+    public final static String TYPE_8_A = "Fl_Fr_L_M_R_T_Rl_Rr";
     public final static String TYPE_Clf = "MLP4Clf";
     public final static String TYPE_Px = "MLP4Px";
     public final static String TYPE_Py = "MLP4Py";
