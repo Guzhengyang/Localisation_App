@@ -75,10 +75,12 @@ public class BasePrediction {
                 try {
                     rawModel = (hex.genmodel.GenModel) Class.forName(genModelClassName).newInstance();
                     modelWrappers.add(new EasyPredictModelWrapper(rawModel));
-                    binomial = rawModel.getNumResponseClasses() == 2;
+                    if (rawModel.isClassifier()) {
+                        binomial = rawModel.getNumResponseClasses() == 2;
+                    }
                     PSALogs.d("read", genModelClassName + " OK");
                 } catch (Exception e) {
-                    PSALogs.d("read", e.toString());
+                    PSALogs.d("read", e.toString() + " KO");
                 }
             }
             arePredictRawFileRead = modelWrappers.size() != 0;

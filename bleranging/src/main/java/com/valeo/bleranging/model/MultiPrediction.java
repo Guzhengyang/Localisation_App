@@ -87,6 +87,7 @@ public class MultiPrediction {
      */
     public boolean isInitialized() {
         for (String predictionType : predictionLinkedHMap.keySet()) {
+            PSALogs.d("read", "isInitialized : " + predictionType);
             if (isInitialized(predictionType)) {
                 return true;
             }
@@ -95,10 +96,8 @@ public class MultiPrediction {
     }
 
     private boolean isInitialized(String predictionType) {
-        boolean result = predictionLinkedHMap.get(predictionType) != null
+        return predictionLinkedHMap.get(predictionType) != null
                 && predictionLinkedHMap.get(predictionType).isPredictRawFileRead();
-        PSALogs.d("read", "private isInitialized : " + predictionType + " " + result);
-        return result;
     }
 
     /**
