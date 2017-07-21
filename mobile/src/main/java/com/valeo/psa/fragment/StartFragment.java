@@ -82,7 +82,7 @@ public class StartFragment extends Fragment {
 
     public void startButtonActions(final BleRangingHelper mBleRangingHelper) {
         if (countDownTimer == null) { // prevent from launching two countDownTimer
-            /** CountDownTimer starts with 5 minutes and every onTick is 1 second */
+            /* CountDownTimer starts with 5 minutes and every onTick is 1 second */
             countDownTimer = new CountDownTimer(FIVE_MINUTES_IN_MILLI, SECOND_IN_MILLI) {
                 public void onTick(long millisUntilFinished) {
                     int timePassed = (int) (millisUntilFinished / SECOND_IN_MILLI);

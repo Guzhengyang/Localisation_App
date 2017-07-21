@@ -6,8 +6,8 @@ import java.util.Arrays;
  * Created by nhaan on 24/08/2015
  */
 public class CentralScanResponse {
-    public final byte antennaId;
     public final byte vehicleState;
+    private final byte antennaId;
     private final byte[] random;
     private final byte[] cryptedCidpu;
     private final byte protocolVersion;

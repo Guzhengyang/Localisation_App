@@ -34,7 +34,6 @@ public class JsonUtils {
      * Read the JSON file to get the stored data (mainly the default values).
      *
      * @param context Context
-     * @return A reader with the result
      */
     public static void getStoredData(Context context) {
         InputStream stream;
@@ -119,8 +118,8 @@ public class JsonUtils {
     public static List<String> createRowDataList(final String carTypeString) {
         List<String> rowDataArrayList = new ArrayList<>();
         final String[] splitCode = carTypeString.split("_");
-        for (int i = 0; i < splitCode.length; i++) {
-            String[] data = getTrxJsonContent(splitCode[i]);
+        for (String aSplitCode : splitCode) {
+            String[] data = getTrxJsonContent(aSplitCode);
             if (data != null && data.length >= 3) {
                 rowDataArrayList.add(data[3]);
             }

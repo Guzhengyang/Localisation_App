@@ -7,7 +7,7 @@ import android.util.Log;
  */
 
 public class PSALogs {
-    public static boolean DEBUG = true;
+    public static final boolean DEBUG = true;
 
     PSALogs() {
     }

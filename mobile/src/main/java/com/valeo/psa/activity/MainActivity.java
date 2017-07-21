@@ -237,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         close_all_windows_title.setTypeface(lightTypeFace, Typeface.NORMAL);
     }
 
-    public void showHideFragment(final Fragment fragment) {
+    private void showHideFragment(final Fragment fragment) {
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);

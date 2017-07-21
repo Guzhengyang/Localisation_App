@@ -179,7 +179,7 @@ public class MeasureFragment extends Fragment implements MeasureListener {
         initialize();
     }
 
-    public void initialize() {
+    private void initialize() {
         if (isAdded()) {
             mCameraManager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
             try {

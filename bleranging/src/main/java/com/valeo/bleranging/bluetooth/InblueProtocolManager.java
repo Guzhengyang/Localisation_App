@@ -241,7 +241,7 @@ public class InblueProtocolManager {
 
     /**
      * Set jlr protocol in payload fourth byte
-     * @param isRKE true if the action is RKE, flase otherwise
+     * @param isRKE true if the action is RKE, false otherwise
      * @param prediction the algo prediction
      * @return the payload fourth byte
      */

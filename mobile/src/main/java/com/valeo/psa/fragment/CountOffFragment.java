@@ -28,26 +28,6 @@ public class CountOffFragment extends Fragment {
     private CountOffFragmentListener countOffFragmentListener;
     private Handler mHandler;
     private int mCounter;
-    private final Runnable checkIfFrozenRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (!count_off_launched) {
-                if (countOffFragmentListener.isConnected() && countOffFragmentListener.isFrozen()) {
-                    count_off_launched = true;
-                    mCounter = 10;
-                    mHandler.postDelayed(timerRunner, 1000);
-                } else if (!countOffFragmentListener.isConnected()) {
-                    setCountOffText(R.string.waiting_for_connection, R.string.empty_string);
-                    mHandler.postDelayed(this, 1000);
-                } else if (!countOffFragmentListener.isFrozen()) {
-                    setCountOffText(R.string.smartphone_moved, R.string.empty_string);
-                    mHandler.postDelayed(this, 1000);
-                }
-            } else {
-                PSALogs.d("frag", "count_off already launched");
-            }
-        }
-    };
     private Animation fade_in;
     private Animation fade_out;
     private final Runnable timerRunner = new Runnable() {
@@ -88,6 +68,26 @@ public class CountOffFragment extends Fragment {
             }
         }
     };
+    private final Runnable checkIfFrozenRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!count_off_launched) {
+                if (countOffFragmentListener.isConnected() && countOffFragmentListener.isFrozen()) {
+                    count_off_launched = true;
+                    mCounter = 10;
+                    mHandler.postDelayed(timerRunner, 1000);
+                } else if (!countOffFragmentListener.isConnected()) {
+                    setCountOffText(R.string.waiting_for_connection, R.string.empty_string);
+                    mHandler.postDelayed(this, 1000);
+                } else if (!countOffFragmentListener.isFrozen()) {
+                    setCountOffText(R.string.smartphone_moved, R.string.empty_string);
+                    mHandler.postDelayed(this, 1000);
+                }
+            } else {
+                PSALogs.d("frag", "count_off already launched");
+            }
+        }
+    };
 
     public CountOffFragment() {
     }
@@ -116,7 +116,7 @@ public class CountOffFragment extends Fragment {
         onAttachToParentFragment(getParentFragment());
     }
 
-    public void onAttachToParentFragment(Fragment fragment) {
+    private void onAttachToParentFragment(Fragment fragment) {
         try {
             countOffFragmentListener = (CountOffFragmentListener) fragment;
         } catch (ClassCastException e) {

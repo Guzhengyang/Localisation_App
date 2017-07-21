@@ -131,9 +131,9 @@ public class AlgoManager implements SensorEventListener {
             }
         }
     };
+    private final HashMap<String, Integer> accuracyCounterHMap;
     private double deltaLinAcc = 0;
     private boolean accuracyMeasureEnabled = false;
-    private HashMap<String, Integer> accuracyCounterHMap;
     private boolean smartphoneIsFrozen = false;
     private final Runnable isFrozenRunnable = new Runnable() {
         @Override
@@ -356,7 +356,7 @@ public class AlgoManager implements SensorEventListener {
             case PREDICTION_WELCOME:
             case PREDICTION_THATCHAM:
             default:
-                PSALogs.d("prediction", "NOOO rangingPredictionInt !");
+                PSALogs.d("prediction", "No rangingPredictionInt !");
                 break;
         }
         isInWelcomeArea = rearmWelcome.get() && getPredictionProximity(connectedCar).equals(PREDICTION_FAR);

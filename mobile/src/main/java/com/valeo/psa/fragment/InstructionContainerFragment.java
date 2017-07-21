@@ -22,7 +22,7 @@ import java.util.List;
  */
 
 public class InstructionContainerFragment extends Fragment implements InstructionContainerFragmentListener {
-    public InstructionContainerFragmentListener instructionContainerFragmentListener = null;
+    private InstructionContainerFragmentListener instructionContainerFragmentListener = null;
 
     public InstructionContainerFragment() {
     }
@@ -54,7 +54,7 @@ public class InstructionContainerFragment extends Fragment implements Instructio
         onAttachToParentFragment(getParentFragment());
     }
 
-    public void onAttachToParentFragment(Fragment fragment) {
+    private void onAttachToParentFragment(Fragment fragment) {
         try {
             instructionContainerFragmentListener = (InstructionContainerFragmentListener) fragment;
         } catch (ClassCastException e) {

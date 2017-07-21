@@ -37,14 +37,14 @@ import static com.valeo.bleranging.utils.CheckUtils.comparePrediction;
  */
 
 public class PredictionZone extends BasePrediction {
-    private List<Integer> predictions = new ArrayList<>();// Machine learning prediction history list
+    private final List<Integer> predictions = new ArrayList<>();// Machine learning prediction history list
+    private final String predictionType;// standard prediction or rp prediction
+    private final StringBuilder sb = new StringBuilder();
     private double[] distribution;// prob for each Machine learning class
     private double[] distance;// distance converted using path loss propagation
     private String label;// prediction result string
-    private String predictionType;// standard prediction or rp prediction
     private int INDEX_LOCK;// find the index of lock zone
     private int prediction_old = -1;// old prediction result index
-    private StringBuilder sb = new StringBuilder();
     private double threshold = 0.5;
 
     public PredictionZone(Context context, String modelClassName,

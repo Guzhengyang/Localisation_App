@@ -10,7 +10,7 @@ import java.util.Date;
  */
 
 public class CallReceiver extends PhoneCallReceiver {
-    public static boolean smartphoneComIsActivated = false;
+    private static boolean smartphoneComIsActivated = false;
 
     public CallReceiver() {
     }

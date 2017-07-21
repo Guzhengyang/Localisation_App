@@ -19,7 +19,7 @@ import static com.valeo.bleranging.utils.CalculUtils.correctRssiUnilateral;
 public class PredictionCoord extends BasePrediction {
     private static final int MAX_HISTORIC_SIZE = 5;// rssi history size
     private final LinkedHashMap<Integer, List<Double>> rssiHistoric;// rssi saved to calculate the average
-    private Coord coord = new Coord();// regression prediction result
+    private final Coord coord = new Coord();// regression prediction result
     private String predictionType;// standard prediction or rp prediction
 
     public PredictionCoord(Context context, String modelClassNameX, String modelClassNameY, List<String> rowDataKeySet) {

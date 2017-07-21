@@ -30,6 +30,12 @@ public class LockFragment extends Fragment implements BigButtonView.OnPressListe
     private int incorrectInputTimes = 0;
     private OnPasswordInputListener onPasswordInputListener;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        onAttachToParentFragment(getParentFragment());
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -66,6 +72,15 @@ public class LockFragment extends Fragment implements BigButtonView.OnPressListe
             }
         });
         return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    private void onAttachToParentFragment(Fragment fragment) {
+        try {
+            onPasswordInputListener = (OnPasswordInputListener) fragment;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(fragment.toString()
+                    + " must implement onPasswordInputListener");
+        }
     }
 
     /**

@@ -17,7 +17,7 @@ public class PredictionFactory {
 
     /***
      *
-     * @param mContext
+     * @param mContext the context
      * @return Coordinate Prediction
      */
     public static PredictionCoord getPredictionCoord(Context mContext) {
@@ -32,9 +32,9 @@ public class PredictionFactory {
 
     /***
      *
-     * @param mContext
+     * @param mContext the context
      * @param predictionType  standard prediction for zones(left, right, lock, start, ...) and rp prediction(near or far)
-     * @return
+     * @return a PredictionZone
      */
     public static PredictionZone getPredictionZone(Context mContext, String predictionType) {
         final String carType = SdkPreferencesHelper.getInstance().getConnectedCarType();

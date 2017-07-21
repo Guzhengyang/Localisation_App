@@ -36,7 +36,7 @@ import static com.valeo.bleranging.utils.CalculUtils.initMatrix;
 
 public class MultiPrediction {
     private static final double THRESHOLD_DIST = 0.25;
-    private LinkedHashMap<String, BasePrediction> predictionLinkedHMap;
+    private final LinkedHashMap<String, BasePrediction> predictionLinkedHMap;
     private Coord coord = null;
 
     public MultiPrediction(LinkedHashMap<String, BasePrediction> predictionLinkedHMap) {
@@ -181,7 +181,7 @@ public class MultiPrediction {
     }
 
     public void calculatePredictionTest(Double threshold) {
-        PSALogs.d("abstract", "calculatePredictionTest overrided OK !");
+        PSALogs.d("abstract", "calculatePredictionTest override OK !");
         if (predictionLinkedHMap.get(PREDICTION_TEST) != null && threshold >= 0 && threshold <= 1) {
             ((PredictionZone) predictionLinkedHMap.get(PREDICTION_TEST)).setThreshold(threshold);
         }

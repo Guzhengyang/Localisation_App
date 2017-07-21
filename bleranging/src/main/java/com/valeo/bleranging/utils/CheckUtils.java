@@ -25,8 +25,8 @@ public class CheckUtils {
     public static boolean if2Lock(double[] rssi, double threshold_rssi_lock) {
         boolean result = true;
         if (rssi != null) {
-            for (int i = 0; i < rssi.length; i++) {
-                if (rssi[i] > threshold_rssi_lock) {
+            for (double aRssi : rssi) {
+                if (aRssi > threshold_rssi_lock) {
                     result = false;
                     break;
                 }

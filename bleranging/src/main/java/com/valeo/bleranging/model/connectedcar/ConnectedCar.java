@@ -16,9 +16,9 @@ import static com.valeo.bleranging.utils.CheckUtils.checkForRssiNonNull;
  * Created by l-avaratha on 05/09/2016
  */
 public class ConnectedCar {
-    protected final MultiTrx mMultiTrx;
-    protected final MultiPrediction mMultiPrediction;
-    protected final Context mContext;
+    private final MultiTrx mMultiTrx;
+    private final MultiPrediction mMultiPrediction;
+    private final Context mContext;
 
     ConnectedCar(final Context context, final LinkedHashMap<Integer, Trx> trxLinked,
                  LinkedHashMap<String, BasePrediction> predictionLinked) {

@@ -75,7 +75,7 @@ public class TextUtils {
      * @param colorInactive the inactive color
      * @return the colored text as a spannable string
      */
-    public static SpannableString colorText(boolean active, String text, int colorActive, int colorInactive) {
+    private static SpannableString colorText(boolean active, String text, int colorActive, int colorInactive) {
         SpannableString spanString = new SpannableString(text);
         if(active) {
             spanString.setSpan(new ForegroundColorSpan(colorActive), 0, text.length(), 0);

@@ -18,30 +18,30 @@ import hex.genmodel.easy.RowData;
  */
 
 public class BasePrediction {
-    protected List<EasyPredictModelWrapper> modelWrappers = new ArrayList<>();
-    protected RowData rowData;
-    protected Context mContext;
-    protected double[] rssi_offset; //    rssi after adding smartphone offset
-    protected double[] modified_rssi; //    rssi used for algo entry
-    protected boolean binomial; // whether the model is binomial
+    final List<EasyPredictModelWrapper> modelWrappers = new ArrayList<>();
+    final RowData rowData;
+    final Context mContext;
+    private final List<String> rowDataKeySet;
+    double[] rssi_offset; //    rssi after adding smartphone offset
+    double[] modified_rssi; //    rssi used for algo entry
+    boolean binomial; // whether the model is binomial
     private boolean arePredictRawFileRead = false;
-    private List<String> rowDataKeySet;
 
-    public BasePrediction(Context context, String modelClassName, List<String> rowDataKeySet) {
+    BasePrediction(Context context, String modelClassName, List<String> rowDataKeySet) {
         this.mContext = context;
         this.rowDataKeySet = rowDataKeySet;
         this.rowData = new RowData();
         new AsyncPredictionInit().execute(modelClassName);
     }
 
-    public BasePrediction(Context context, String modelClassNameX, String modelClassNameY, List<String> rowDataKeySet) {
+    BasePrediction(Context context, String modelClassNameX, String modelClassNameY, List<String> rowDataKeySet) {
         this.mContext = context;
         this.rowDataKeySet = rowDataKeySet;
         this.rowData = new RowData();
         new AsyncPredictionInit().execute(modelClassNameX, modelClassNameY);
     }
 
-    protected void constructRowData(double[] rssi) {
+    void constructRowData(double[] rssi) {
         if (rssi == null) {
             return;
         }

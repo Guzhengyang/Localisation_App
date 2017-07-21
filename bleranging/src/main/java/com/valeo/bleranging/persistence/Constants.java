@@ -92,8 +92,6 @@ public class Constants {
     public static final String PREDICTION_FAR = "far";
     public static final String PREDICTION_INSIDE = "inside";
     public static final String PREDICTION_OUTSIDE = "outside";
-    public static final String PREDICTION_INDOOR = "indoor";
-    public static final String PREDICTION_OUTDOOR = "outdoor";
     public static final String PREDICTION_UNKNOWN = "unknown";
     public final static String PREDICTION_STD = "standard_prediction";
     public final static String PREDICTION_COORD = "coord_prediction";
@@ -101,6 +99,22 @@ public class Constants {
     public final static String PREDICTION_TEST = "test_prediction";
     public final static String PREDICTION_RP = "rp_prediction";
     public final static String PREDICTION_EAR = "ear_prediction";
+    public final static String[] PERMISSIONS = {
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.PROCESS_OUTGOING_CALLS,
+            Manifest.permission.CAMERA
+    };
+    public final static int RKE_USE_TIMEOUT = 5000;
+    public final static int REQUEST_PERMISSION_ALL = 25110;
+    public final static String RSSI_DIR = "/InBlueRssi/";
+    public final static String CONFIG_DIR = "/InBlueConfig/";
+    private static final String PREDICTION_INDOOR = "indoor";
+    private static final String PREDICTION_OUTDOOR = "outdoor";
     public final static String[] PREDICTIONS = {
             PREDICTION_INTERNAL,
             PREDICTION_ACCESS,
@@ -127,18 +141,4 @@ public class Constants {
             PREDICTION_FAR,
             PREDICTION_UNKNOWN
     };
-    public final static String[] PERMISSIONS = {
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.BLUETOOTH,
-            Manifest.permission.BLUETOOTH_ADMIN,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.PROCESS_OUTGOING_CALLS,
-            Manifest.permission.CAMERA
-    };
-    public final static int RKE_USE_TIMEOUT = 5000;
-    public final static int REQUEST_PERMISSION_ALL = 25110;
-    public final static String RSSI_DIR = "/InBlueRssi/";
-    public final static String CONFIG_DIR = "/InBlueConfig/";
 }

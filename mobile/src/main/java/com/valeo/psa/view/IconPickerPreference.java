@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.preference.ListPreference;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,12 +35,12 @@ import static java.util.Arrays.asList;
 
 public class IconPickerPreference extends ListPreference {
 
-    private Context context;
+    private final Context context;
+    private final SharedPreferences sharedPreferences;
+    private final Resources resources;
     private CharSequence[] iconFile;
     private CharSequence[] iconName;
     private List<IconItem> icons;
-    private SharedPreferences sharedPreferences;
-    private Resources resources;
     private String selectedIconFile, defaultIconFile;
     private ImageView icon;
     private TextView summary;
@@ -150,10 +151,10 @@ public class IconPickerPreference extends ListPreference {
     }
 
     private static class IconItem {
-        private String id;
-        private String file;
+        private final String id;
+        private final String file;
+        private final String name;
         private boolean isChecked;
-        private String name;
 
         public IconItem(CharSequence id, CharSequence name, CharSequence file, boolean isChecked) {
             this(id.toString(), name.toString(), file.toString(), isChecked);
@@ -168,16 +169,16 @@ public class IconPickerPreference extends ListPreference {
     }
 
     private static class ViewHolder {
-        protected ImageView iconImage;
-        protected TextView iconName;
-        protected RadioButton radioButton;
+        ImageView iconImage;
+        TextView iconName;
+        RadioButton radioButton;
     }
 
     private class CustomListPreferenceAdapter extends ArrayAdapter<IconItem> {
 
-        private Context context;
-        private List<IconItem> icons;
-        private int resource;
+        private final Context context;
+        private final List<IconItem> icons;
+        private final int resource;
 
         public CustomListPreferenceAdapter(Context context, int resource, List<IconItem> objects) {
             super(context, resource, objects);
@@ -186,8 +187,9 @@ public class IconPickerPreference extends ListPreference {
             this.icons = objects;
         }
 
+        @NonNull
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
             ViewHolder holder;
             if (convertView == null) {
                 LayoutInflater inflater = (LayoutInflater) context
