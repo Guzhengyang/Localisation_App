@@ -79,7 +79,10 @@ public class IconPickerPreference extends ListPreference {
         String[] ids = resources.getStringArray(entry_values_list_preference);
         int index = Arrays.asList(ids).indexOf(selectedIconId);
         String[] values = resources.getStringArray(R.array.iconFile);
-        return values[index];
+        if (index != -1) {
+            return values[index];
+        }
+        return null;
     }
 
     @Override
@@ -88,10 +91,12 @@ public class IconPickerPreference extends ListPreference {
         String selectedIconId = sharedPreferences.getString(context.
                 getString(R.string.connected_car_type_pref_name), TYPE_8_A);
         selectedIconFile = getIconFileFromId(selectedIconId, defaultIconFile);
-        icon = (ImageView) view.findViewById(R.id.ic_selected);
-        updateIcon();
-        summary = (TextView) view.findViewById(R.id.ic_summary);
-        summary.setText(getEntry(selectedIconFile));
+        if (selectedIconFile != null) {
+            icon = (ImageView) view.findViewById(R.id.ic_selected);
+            updateIcon();
+            summary = (TextView) view.findViewById(R.id.ic_summary);
+            summary.setText(getEntry(selectedIconFile));
+        }
     }
 
     @Override

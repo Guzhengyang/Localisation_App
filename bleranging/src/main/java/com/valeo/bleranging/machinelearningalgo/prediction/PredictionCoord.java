@@ -1,6 +1,7 @@
 package com.valeo.bleranging.machinelearningalgo.prediction;
 
 import android.content.Context;
+import android.util.SparseArray;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,14 +18,17 @@ import static com.valeo.bleranging.utils.CalculUtils.correctRssiUnilateral;
  */
 
 public class PredictionCoord extends BasePrediction {
+    public static final int INDEX_KALMAN = 0;
+    public static final int INDEX_THRESHOLD = 1;
     private static final int MAX_HISTORIC_SIZE = 5;// rssi history size
     private final LinkedHashMap<Integer, List<Double>> rssiHistoric;// rssi saved to calculate the average
-    private final Coord coord = new Coord();// regression prediction result
+    private final SparseArray<Coord> coords; // regression prediction result
     private String predictionType;// standard prediction or rp prediction
 
     public PredictionCoord(Context context, String modelClassNameX, String modelClassNameY, List<String> rowDataKeySet) {
         super(context, modelClassNameX, modelClassNameY, rowDataKeySet);
         this.rssiHistoric = new LinkedHashMap<>();
+        this.coords = new SparseArray<>();
     }
 
     public void init(double[] rssi, int offset) {
@@ -37,13 +41,16 @@ public class PredictionCoord extends BasePrediction {
             rssiHistoric.get(i).add(this.modified_rssi[i]);
         }
         constructRowData(this.modified_rssi);
-        try {
-            final RegressionModelPrediction modelPredictionX = modelWrappers.get(0).predictRegression(rowData);
-            coord.setCoord_x(modelPredictionX.value);
-            final RegressionModelPrediction modelPredictionY = modelWrappers.get(1).predictRegression(rowData);
-            coord.setCoord_y(modelPredictionY.value);
-        } catch (Exception e) {
-            e.printStackTrace();
+        for (int i = 0; i < 2; i++) {
+            coords.put(i, new Coord());
+            try {
+                final RegressionModelPrediction modelPredictionX = modelWrappers.get(0).predictRegression(rowData);
+                coords.get(i).setCoord_x(modelPredictionX.value);
+                final RegressionModelPrediction modelPredictionY = modelWrappers.get(1).predictRegression(rowData);
+                coords.get(i).setCoord_y(modelPredictionY.value);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -65,23 +72,35 @@ public class PredictionCoord extends BasePrediction {
         }
     }
 
-    public void calculatePredictionCoord() {
+    public Coord getMLCoord() {
+        final Coord coordML = new Coord();
         try {
             final RegressionModelPrediction modelPredictionX = modelWrappers.get(0).predictRegression(rowData);
-            coord.setCoord_x(modelPredictionX.value);
+            coordML.setCoord_x(modelPredictionX.value);
             final RegressionModelPrediction modelPredictionY = modelWrappers.get(1).predictRegression(rowData);
-            coord.setCoord_y(modelPredictionY.value);
+            coordML.setCoord_y(modelPredictionY.value);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return coordML;
     }
 
-    public Coord getPredictionCoord() {
-        return coord;
+    public Coord getPredictionCoord(final int index) {
+        if (index < coords.size()) {
+            return coords.get(index);
+        }
+        return null;
     }
 
     @Override
     public String printDebug() {
-        return String.format(Locale.FRANCE, "x: %.2f   y: %.2f", coord.getCoord_x(), coord.getCoord_y());
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < 2; i++) {
+            if (coords.get(i) != null) {
+                stringBuilder.append(String.format(Locale.FRANCE, "x: %.2f   y: %.2f",
+                        coords.get(i).getCoord_x(), coords.get(i).getCoord_y()));
+            }
+        }
+        return stringBuilder.toString();
     }
 }

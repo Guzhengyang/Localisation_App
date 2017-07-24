@@ -143,27 +143,29 @@ public class TextUtils {
      * @return the spannable string builder filled with the first footer
      */
     public static SpannableStringBuilder createFirstFooterDebugData(final ConnectedCar connectedCar) {
-        final LinkedHashMap<Integer, Trx> trxLinkedHMap = connectedCar.getMultiTrx().getTrxLinkedHMap();
         final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-        for (Trx trx : trxLinkedHMap.values()) {
-            spannableStringBuilder.append(String.format(Locale.FRANCE, "%7s",
-                    TextUtils.colorText(connectedCar.getMultiTrx().isActive(trx.getTrxNumber()), trx.getTrxName(), Color.WHITE, Color.DKGRAY)));
-        }
-        spannableStringBuilder.append("\n");
+        if (connectedCar != null) {
+            final LinkedHashMap<Integer, Trx> trxLinkedHMap = connectedCar.getMultiTrx().getTrxLinkedHMap();
+            for (Trx trx : trxLinkedHMap.values()) {
+                spannableStringBuilder.append(String.format(Locale.FRANCE, "%7s",
+                        TextUtils.colorText(connectedCar.getMultiTrx().isActive(trx.getTrxNumber()), trx.getTrxName(), Color.WHITE, Color.DKGRAY)));
+            }
+            spannableStringBuilder.append("\n");
 
-        for (Trx trx : trxLinkedHMap.values()) {
-            spannableStringBuilder.append(String.format(Locale.FRANCE, "%10d",
-                    connectedCar.getMultiTrx().getCurrentOriginalRssi(trx.getTrxNumber())));
-        }
-        spannableStringBuilder.append('\n');
+            for (Trx trx : trxLinkedHMap.values()) {
+                spannableStringBuilder.append(String.format(Locale.FRANCE, "%10d",
+                        connectedCar.getMultiTrx().getCurrentOriginalRssi(trx.getTrxNumber())));
+            }
+            spannableStringBuilder.append('\n');
 
-        for (Trx trx : trxLinkedHMap.values()) {
-            spannableStringBuilder.append(String.format(Locale.FRANCE, "%10s",
-                    getCurrentBLEChannelString(connectedCar, trx.getTrxNumber())));
-        }
+            for (Trx trx : trxLinkedHMap.values()) {
+                spannableStringBuilder.append(String.format(Locale.FRANCE, "%10s",
+                        getCurrentBLEChannelString(connectedCar, trx.getTrxNumber())));
+            }
 
-        spannableStringBuilder.append('\n');
-        spannableStringBuilder.append("-------------------------------------------------------------------------\n");
+            spannableStringBuilder.append('\n');
+            spannableStringBuilder.append("-------------------------------------------------------------------------\n");
+        }
         return spannableStringBuilder;
     }
 

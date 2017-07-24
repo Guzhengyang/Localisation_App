@@ -64,13 +64,14 @@ public class JsonUtils {
      */
     public static String[] getConnectedCarJsonContent(String searchedKey) {
         PSALogs.d("json", "getConnectedCarJsonContent searchedKey = " + searchedKey);
-        String[] data = new String[3];
+        String[] data = null;
         // Then, we read through the array until we find our key
         for (int i = 0; i < mJsonConnectedCarArray.size(); ++i) {
             JsonObject connectedCar = mJsonConnectedCarArray.get(i).getAsJsonObject();
             String carTypeString = connectedCar.getAsJsonPrimitive("car_type_string").getAsString();
             PSALogs.d("json", "getConnectedCarJsonContent car_type_string = " + carTypeString);
             if (carTypeString.compareTo(searchedKey) == 0) {
+                data = new String[3];
                 data[0] = carTypeString;
                 data[1] = connectedCar.getAsJsonPrimitive("car_type_code").getAsString();
                 PSALogs.d("json", "getConnectedCarJsonContent car_type_code = " + data[1]);
@@ -83,13 +84,14 @@ public class JsonUtils {
     }
 
     private static String[] getTrxJsonContent(String searchedKey) {
-        String[] data = new String[4];
+        String[] data = null;
         // Then, we read through the array until we find our key
         for (int i = 0; i < mJsonTrxArray.size(); ++i) {
             JsonObject trx = mJsonTrxArray.get(i).getAsJsonObject();
             String trx_code = trx.getAsJsonPrimitive("trx_code").getAsString();
             PSALogs.d("json", "getTrxJsonContent trx_code = " + trx_code);
             if (trx_code.compareTo(searchedKey) == 0) {
+                data = new String[4];
                 data[0] = trx_code;
                 data[1] = trx.getAsJsonPrimitive("trx_name").getAsString();
                 PSALogs.d("json", "getTrxJsonContent trx_name = " + data[1]);

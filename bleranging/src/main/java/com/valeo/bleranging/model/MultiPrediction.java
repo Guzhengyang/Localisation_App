@@ -14,6 +14,8 @@ import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.LinkedHashMap;
 
+import static com.valeo.bleranging.machinelearningalgo.prediction.PredictionCoord.INDEX_KALMAN;
+import static com.valeo.bleranging.machinelearningalgo.prediction.PredictionCoord.INDEX_THRESHOLD;
 import static com.valeo.bleranging.persistence.Constants.N_VOTE_LONG;
 import static com.valeo.bleranging.persistence.Constants.N_VOTE_SHORT;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_COORD;
@@ -37,7 +39,6 @@ import static com.valeo.bleranging.utils.CalculUtils.initMatrix;
 public class MultiPrediction {
     private static final double THRESHOLD_DIST = 0.25;
     private final LinkedHashMap<String, BasePrediction> predictionLinkedHMap;
-    private Coord coord = null;
 
     public MultiPrediction(LinkedHashMap<String, BasePrediction> predictionLinkedHMap) {
         this.predictionLinkedHMap = predictionLinkedHMap;
@@ -61,7 +62,6 @@ public class MultiPrediction {
         for (String predictionType : predictionLinkedHMap.keySet()) {
             initPredictions(predictionType, rssiTab, offset, nVote);
         }
-        coord = new Coord(((PredictionCoord) predictionLinkedHMap.get(PREDICTION_COORD)).getPredictionCoord());
         PSALogs.d("init2", "initPredictions OK");
     }
 
@@ -168,14 +168,12 @@ public class MultiPrediction {
             if (predictionLinkedHMap.get(predictionType) instanceof PredictionZone) {
                 ((PredictionZone) predictionLinkedHMap.get(predictionType)).calculatePredictionStandard(SdkPreferencesHelper.getInstance().getThresholdProbStandard(),
                         THRESHOLD_PROB_LOCK2UNLOCK, THRESHOLD_PROB_UNLOCK2LOCK, SdkPreferencesHelper.getInstance().getOpeningStrategy());
-            } else if ((predictionLinkedHMap.get(predictionType) instanceof PredictionCoord)
-                    && coord != null) {
-                ((PredictionCoord) predictionLinkedHMap.get(predictionType)).calculatePredictionCoord();
-                CalculUtils.correctCoordKalman(coord, ((PredictionCoord) predictionLinkedHMap.get(predictionType)).getPredictionCoord());
-                CalculUtils.correctBoundry(coord);
-//                CalculUtils.correctCoordThreshold(coord,
-//                        ((PredictionCoord) predictionLinkedHMap.get(predictionType))
-//                                .getPredictionCoord(), THRESHOLD_DIST);
+            } else if ((predictionLinkedHMap.get(predictionType) instanceof PredictionCoord)) {
+                final PredictionCoord predictionCoord = (PredictionCoord) predictionLinkedHMap.get(predictionType);
+                CalculUtils.correctCoordKalman(predictionCoord.getPredictionCoord(INDEX_KALMAN), predictionCoord.getMLCoord());
+                CalculUtils.correctBoundry(predictionCoord.getPredictionCoord(INDEX_KALMAN));
+                CalculUtils.correctCoordThreshold(predictionCoord.getPredictionCoord(INDEX_THRESHOLD), predictionCoord.getMLCoord(), THRESHOLD_DIST);
+                CalculUtils.correctBoundry(predictionCoord.getPredictionCoord(INDEX_THRESHOLD));
             }
         }
     }
@@ -230,8 +228,11 @@ public class MultiPrediction {
      * @return the position prediction
      */
     public PointF getPredictionCoord() {
-        if (isInitialized(PREDICTION_COORD) && coord != null) {
-            return new PointF((float) coord.getCoord_x(), (float) coord.getCoord_y());
+        if (isInitialized(PREDICTION_COORD)) {
+            final Coord coordFinal = ((PredictionCoord) predictionLinkedHMap.get(PREDICTION_COORD)).getPredictionCoord(INDEX_KALMAN);
+            if (coordFinal != null) {
+                return new PointF((float) coordFinal.getCoord_x(), (float) coordFinal.getCoord_y());
+            }
         }
         return null;
     }
@@ -277,8 +278,11 @@ public class MultiPrediction {
     }
 
     public double getDist2Car() {
-        if (isInitialized(PREDICTION_COORD) && coord != null) {
-            return CalculUtils.calculateDist2Car(coord.getCoord_x(), coord.getCoord_y());
+        if (isInitialized(PREDICTION_COORD)) {
+            final Coord coordFinal = ((PredictionCoord) predictionLinkedHMap.get(PREDICTION_COORD)).getPredictionCoord(INDEX_KALMAN);
+            if (coordFinal != null) {
+                return CalculUtils.calculateDist2Car(coordFinal.getCoord_x(), coordFinal.getCoord_y());
+            }
         }
         return 0f;
     }

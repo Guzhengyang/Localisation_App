@@ -10,12 +10,6 @@ public class Constants {
     public final static String DEFAULT_JSON_FILE_NAME = "connected_car_generator.json";
     public final static String THATCHAM_ORIENTED = "thatcham_oriented";
     public final static String PASSIVE_ENTRY_ORIENTED = "passive_entry_oriented";
-    public final static String SIMPLE_LOC = "Simple Localisation:";
-    public final static String STANDARD_LOC = "Standard Localisation:";
-    public final static String EAR_HELD_LOC = "Ear held Localisation:";
-    public final static String RP_LOC = "RP Localisation:";
-    public final static String START_LOC = "Start Localisation:";
-    public final static String FULL_LOC = "Full Localisation:";
     public final static int N_VOTE_LONG = 5;
     public final static int N_VOTE_SHORT = 3;
     public final static double THRESHOLD_PROB_UNLOCK2LOCK = 0.5;
@@ -33,26 +27,6 @@ public class Constants {
     public final static String TYPE_6_A = "Fl_Fr_M_T_Rl_Rr";
     public final static String TYPE_7_A = "Fl_Fr_L_M_R_Rl_Rr";
     public final static String TYPE_8_A = "Fl_Fr_L_M_R_T_Rl_Rr";
-    public final static String TYPE_Clf = "MLP4Clf";
-    public final static String TYPE_Px = "MLP4Px";
-    public final static String TYPE_Py = "MLP4Py";
-    //    models for 2 beacons
-    public final static String ZONE_2_A = "Two";
-    //    models for 4 beacons
-    public final static String ZONE_4_B_START = "FourStart";
-    public final static String ZONE_4_B = "Four";
-    public final static String ZONE_4_B_THATCHAM = "FourThatcham";
-    public final static String ZONE_4_B_RP = "FourRP";
-    //    models for 8 beacons
-    public final static String ZONE_8_A_NORMAL = "EightNormal";
-    public final static String ZONE_8_A_NORMAL_MINI = "EightNormalMini";
-    public final static String ZONE_8_A_NORMAL_TEST = "EightNormalTest";
-    public final static String ZONE_8_A_THATCHAM = "EightThatcham";
-    public final static String ZONE_8_A_THATCHAM_MINI = "EightThatchamMini";
-    public final static String ZONE_8_A_THATCHAM_TEST = "EightThatchamTest";
-    public final static String ZONE_8_A_RP = "EightRP";
-    public final static String COORD_8_A_PX = "MLP4Px";
-    public final static String COORD_8_A_PY = "MLP4Py";
     public final static int NUMBER_TRX_FRONT_LEFT = 1;
     public final static int NUMBER_TRX_FRONT_RIGHT = 2;
     public final static int NUMBER_TRX_LEFT = 3;
@@ -62,15 +36,6 @@ public class Constants {
     public final static int NUMBER_TRX_REAR_LEFT = 7;
     public final static int NUMBER_TRX_BACK = 8;
     public final static int NUMBER_TRX_REAR_RIGHT = 9;
-    public final static String TRX_FRONT_LEFT_NAME = "FLeft";
-    public final static String TRX_FRONT_RIGHT_NAME = "FRight";
-    public final static String TRX_LEFT_NAME = "Left";
-    public final static String TRX_MIDDLE_NAME = "Middle";
-    public final static String TRX_RIGHT_NAME = "Right";
-    public final static String TRX_TRUNK_NAME = "Trunk";
-    public final static String TRX_REAR_LEFT_NAME = "RLeft";
-    public final static String TRX_BACK_NAME = "Back";
-    public final static String TRX_REAR_RIGHT_NAME = "RRight";
     public static final String PREDICTION_INTERNAL = "internal";
     public static final String PREDICTION_ACCESS = "access";
     public static final String PREDICTION_EXTERNAL = "external";
