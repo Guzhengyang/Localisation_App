@@ -173,9 +173,9 @@ public class MultiPrediction {
                 ((PredictionCoord) predictionLinkedHMap.get(predictionType)).calculatePredictionCoord();
                 CalculUtils.correctCoordKalman(coord, ((PredictionCoord) predictionLinkedHMap.get(predictionType)).getPredictionCoord());
                 CalculUtils.correctBoundry(coord);
-                CalculUtils.correctCoord(coord,
-                        ((PredictionCoord) predictionLinkedHMap.get(predictionType))
-                                .getPredictionCoord(), THRESHOLD_DIST);
+//                CalculUtils.correctCoordThreshold(coord,
+//                        ((PredictionCoord) predictionLinkedHMap.get(predictionType))
+//                                .getPredictionCoord(), THRESHOLD_DIST);
             }
         }
     }

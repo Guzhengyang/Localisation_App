@@ -49,8 +49,8 @@ public class CalculUtils {
     public static void correctCoordKalman(final Coord coord, final Coord coord_new) {
         SimpleMatrix z = new SimpleMatrix(new double[][]{{coord_new.getCoord_x()}, {coord_new.getCoord_y()}});
         X = F.mult(X);
-        P = F.mult(P.mult(F.transpose())).plus(G.mult(Q.mult(G.transpose())));
-        SimpleMatrix k = P.mult(H.transpose()).mult(H.mult(P).mult(H.transpose()).plus(R).invert());
+        P = F.mult(P).mult(F.transpose()).plus(G.mult(Q).mult(G.transpose()));
+        SimpleMatrix k = P.mult(H.transpose()).mult((H.mult(P).mult(H.transpose()).plus(R)).invert());
         X = X.plus(k.mult(z.minus(H.mult(X))));
         P = P.minus(k.mult(H.mult(P)));
         coord.setCoord_x(X.get(0));
@@ -81,7 +81,7 @@ public class CalculUtils {
         return dist2car;
     }
 
-    public static void correctCoord(final Coord coord, final Coord coordNew, final double threshold_dist) {
+    public static void correctCoordThreshold(final Coord coord, final Coord coordNew, final double threshold_dist) {
         double deltaX = coordNew.getCoord_x() - coord.getCoord_x();
         double deltaY = coordNew.getCoord_y() - coord.getCoord_y();
         double dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
