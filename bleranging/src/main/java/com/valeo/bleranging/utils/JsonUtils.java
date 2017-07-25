@@ -69,10 +69,10 @@ public class JsonUtils {
         for (int i = 0; i < mJsonConnectedCarArray.size(); ++i) {
             JsonObject connectedCar = mJsonConnectedCarArray.get(i).getAsJsonObject();
             String carTypeString = connectedCar.getAsJsonPrimitive("car_type_string").getAsString();
-            PSALogs.d("json", "getConnectedCarJsonContent car_type_string = " + carTypeString);
             if (carTypeString.compareTo(searchedKey) == 0) {
                 data = new String[3];
                 data[0] = carTypeString;
+                PSALogs.d("json", "getConnectedCarJsonContent car_type_string = " + carTypeString);
                 data[1] = connectedCar.getAsJsonPrimitive("car_type_code").getAsString();
                 PSALogs.d("json", "getConnectedCarJsonContent car_type_code = " + data[1]);
                 data[2] = connectedCar.getAsJsonPrimitive("total_beacon").getAsString();
@@ -89,10 +89,10 @@ public class JsonUtils {
         for (int i = 0; i < mJsonTrxArray.size(); ++i) {
             JsonObject trx = mJsonTrxArray.get(i).getAsJsonObject();
             String trx_code = trx.getAsJsonPrimitive("trx_code").getAsString();
-            PSALogs.d("json", "getTrxJsonContent trx_code = " + trx_code);
             if (trx_code.compareTo(searchedKey) == 0) {
                 data = new String[4];
                 data[0] = trx_code;
+                PSALogs.d("json", "getTrxJsonContent trx_code = " + trx_code);
                 data[1] = trx.getAsJsonPrimitive("trx_name").getAsString();
                 PSALogs.d("json", "getTrxJsonContent trx_name = " + data[1]);
                 data[2] = trx.getAsJsonPrimitive("trx_number").getAsString();
@@ -148,22 +148,22 @@ public class JsonUtils {
         for (int i = 0; i < mJsonPredictionZoneArray.size(); ++i) {
             JsonObject predictionZone = mJsonPredictionZoneArray.get(i).getAsJsonObject();
             String carTypeString = predictionZone.getAsJsonPrimitive("car_type_string").getAsString();
-            PSALogs.d("json", "getPredictionZoneJsonContent car_type_string = " + carTypeString);
             String predictionType = predictionZone.getAsJsonPrimitive("prediction_type").getAsString();
-            PSALogs.d("json", "getPredictionZoneJsonContent prediction_type = " + predictionType);
             boolean isMini = predictionZone.getAsJsonPrimitive("is_mini").getAsBoolean();
-            PSALogs.d("json", "getPredictionZoneJsonContent is_mini = " + isMini);
             String isThatchamOriented = predictionZone.getAsJsonPrimitive("is_thatcham_oriented").getAsString();
-            PSALogs.d("json", "getPredictionZoneJsonContent is_thatcham_oriented = " + isThatchamOriented);
             if ((carTypeString.compareTo(searchedKey) == 0)
                     && (predictionType.compareTo(expectedPredictionType) == 0)
                     && (expectedMini == isMini)
                     && (expectedThatchamOrientation.compareTo(isThatchamOriented) == 0)) {
                 data = new String[6];
                 data[0] = carTypeString;
+                PSALogs.d("json", "getPredictionZoneJsonContent car_type_string = " + carTypeString);
                 data[1] = predictionType;
+                PSALogs.d("json", "getPredictionZoneJsonContent prediction_type = " + predictionType);
                 data[2] = String.valueOf(isMini);
+                PSALogs.d("json", "getPredictionZoneJsonContent is_mini = " + isMini);
                 data[3] = isThatchamOriented;
+                PSALogs.d("json", "getPredictionZoneJsonContent is_thatcham_oriented = " + isThatchamOriented);
                 data[4] = predictionZone.getAsJsonPrimitive("row_data_key_set_string").getAsString();
                 PSALogs.d("json", "getPredictionZoneJsonContent row_data_key_set_string = " + data[4]);
                 data[5] = predictionZone.getAsJsonPrimitive("model_file_name").getAsString();
@@ -187,10 +187,10 @@ public class JsonUtils {
         for (int i = 0; i < mJsonPredictionCoordArray.size(); ++i) {
             JsonObject predictionZone = mJsonPredictionCoordArray.get(i).getAsJsonObject();
             String carTypeString = predictionZone.getAsJsonPrimitive("car_type_string").getAsString();
-            PSALogs.d("json", "getPredictionZoneJsonContent car_type_string = " + carTypeString);
             if (carTypeString.compareTo(searchedKey) == 0) {
                 data = new String[4];
                 data[0] = carTypeString;
+                PSALogs.d("json", "getPredictionZoneJsonContent car_type_string = " + carTypeString);
                 data[1] = predictionZone.getAsJsonPrimitive("row_data_key_set_string").getAsString();
                 PSALogs.d("json", "getPredictionZoneJsonContent row_data_key_set_string = " + data[1]);
                 data[2] = predictionZone.getAsJsonPrimitive("model_file_name_X").getAsString();

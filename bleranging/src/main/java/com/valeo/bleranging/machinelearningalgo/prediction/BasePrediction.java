@@ -67,6 +67,7 @@ public class BasePrediction {
     }
 
     private class AsyncPredictionInit extends AsyncTask<String, Void, Void> {
+        private String message = "";
 
         @Override
         protected Void doInBackground(String... elements) {
@@ -81,6 +82,7 @@ public class BasePrediction {
                     PSALogs.d("read", genModelClassName + " OK");
                 } catch (Exception e) {
                     PSALogs.d("read", e.toString() + " KO");
+                    message = "Init " + genModelClassName + " Model fail";
                 }
             }
             arePredictRawFileRead = modelWrappers.size() != 0;
@@ -92,7 +94,7 @@ public class BasePrediction {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (!arePredictRawFileRead) {
-                Toast.makeText(mContext, "Init Model Fail", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
             }
         }
     }
