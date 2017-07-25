@@ -312,7 +312,6 @@ public class AlgoManager implements SensorEventListener {
         boolean isInLockArea = false;
         mProtocolManager.setIsStartRequested(false);
         mProtocolManager.setIsWelcomeRequested(false);
-        connectedCar.getMultiPrediction().calculatePrediction();
         //TODO Replace SdkPreferencesHelper.getInstance().getComSimulationEnabled() by CallReceiver.smartphoneComIsActivated after demo
         lastPrediction = getPredictionPosition(connectedCar);
         switch (lastPrediction) {
