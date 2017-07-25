@@ -8,6 +8,8 @@ import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
+import java.util.List;
+
 import static com.valeo.bleranging.persistence.Constants.BASE_1;
 import static com.valeo.bleranging.persistence.Constants.BASE_2;
 import static com.valeo.bleranging.persistence.Constants.BASE_3;
@@ -381,13 +383,15 @@ public class InblueProtocolManager {
         return new byte[1];
     }
 
-    public byte[] getPacketFourPayload(PointF predictionCoord, double distance) {
+    public byte[] getPacketFourPayload(List<PointF> predictionCoords, List<Double> distances) {
         byte[] payloadSix = new byte[3];
-        if (predictionCoord != null) {
-            payloadSix[0] = (byte) (predictionCoord.x * 10);
-            payloadSix[1] = (byte) (predictionCoord.y * 10);
+        if (predictionCoords != null && predictionCoords.size() > 0 && predictionCoords.get(0) != null) {
+            payloadSix[0] = (byte) (predictionCoords.get(0).x * 10);
+            payloadSix[1] = (byte) (predictionCoords.get(0).y * 10);
         }
-        payloadSix[2] = (byte) (distance * 10);
+        if (distances != null && distances.size() > 0 && distances.get(0) != null) {
+            payloadSix[2] = (byte) (distances.get(0) * 10);
+        }
         return payloadSix;
     }
 

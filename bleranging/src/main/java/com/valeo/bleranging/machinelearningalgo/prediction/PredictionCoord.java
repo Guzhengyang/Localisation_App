@@ -97,10 +97,14 @@ public class PredictionCoord extends BasePrediction {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < 2; i++) {
             if (coords.get(i) != null) {
-                stringBuilder.append(String.format(Locale.FRANCE, "x: %.2f   y: %.2f",
+                stringBuilder.append(String.format(Locale.FRANCE, "x: %.2f   y: %.2f \n",
                         coords.get(i).getCoord_x(), coords.get(i).getCoord_y()));
             }
         }
         return stringBuilder.toString();
+    }
+
+    public int getCoordsSize() {
+        return coords.size();
     }
 }

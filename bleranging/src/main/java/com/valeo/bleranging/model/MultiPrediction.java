@@ -12,7 +12,9 @@ import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.CalculUtils;
 import com.valeo.bleranging.utils.PSALogs;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import static com.valeo.bleranging.machinelearningalgo.prediction.PredictionCoord.INDEX_KALMAN;
 import static com.valeo.bleranging.machinelearningalgo.prediction.PredictionCoord.INDEX_THRESHOLD;
@@ -227,14 +229,20 @@ public class MultiPrediction {
      *
      * @return the position prediction
      */
-    public PointF getPredictionCoord() {
+    public List<PointF> getPredictionCoord() {
+        List<PointF> pointFList = null;
         if (isInitialized(PREDICTION_COORD)) {
-            final Coord coordFinal = ((PredictionCoord) predictionLinkedHMap.get(PREDICTION_COORD)).getPredictionCoord(INDEX_KALMAN);
-            if (coordFinal != null) {
-                return new PointF((float) coordFinal.getCoord_x(), (float) coordFinal.getCoord_y());
+            for (int i = 0; i < ((PredictionCoord) predictionLinkedHMap.get(PREDICTION_COORD)).getCoordsSize(); i++) {
+                final Coord coordFinal = ((PredictionCoord) predictionLinkedHMap.get(PREDICTION_COORD)).getPredictionCoord(i);
+                if (coordFinal != null) {
+                    if (pointFList == null) {
+                        pointFList = new ArrayList<>();
+                    }
+                    pointFList.add(new PointF((float) coordFinal.getCoord_x(), (float) coordFinal.getCoord_y()));
+                }
             }
         }
-        return null;
+        return pointFList;
     }
 
     /**
@@ -277,13 +285,19 @@ public class MultiPrediction {
         return null;
     }
 
-    public double getDist2Car() {
+    public List<Double> getDist2Car() {
+        List<Double> doubleList = null;
         if (isInitialized(PREDICTION_COORD)) {
-            final Coord coordFinal = ((PredictionCoord) predictionLinkedHMap.get(PREDICTION_COORD)).getPredictionCoord(INDEX_KALMAN);
-            if (coordFinal != null) {
-                return CalculUtils.calculateDist2Car(coordFinal.getCoord_x(), coordFinal.getCoord_y());
+            for (int i = 0; i < ((PredictionCoord) predictionLinkedHMap.get(PREDICTION_COORD)).getCoordsSize(); i++) {
+                final Coord coordFinal = ((PredictionCoord) predictionLinkedHMap.get(PREDICTION_COORD)).getPredictionCoord(i);
+                if (coordFinal != null) {
+                    if (doubleList == null) {
+                        doubleList = new ArrayList<>();
+                    }
+                    doubleList.add(CalculUtils.calculateDist2Car(coordFinal.getCoord_x(), coordFinal.getCoord_y()));
+                }
             }
         }
-        return 0f;
+        return doubleList;
     }
 }

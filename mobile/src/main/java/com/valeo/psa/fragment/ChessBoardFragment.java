@@ -4,12 +4,14 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -33,11 +36,13 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     private final Paint paintOne = new Paint();
     private final Paint paintTwo = new Paint();
     private final Paint paintThree = new Paint();
+    private final Paint paintFour = new Paint();
     private final Paint paintCar = new Paint();
     private final Paint paintUnlock = new Paint();
     private final Paint paintLock = new Paint();
-    private final ArrayList<PointF> positions = new ArrayList<>(MAX_POSITIONS);
-    //    private final Path path = new Path();
+    private final SparseArray<ArrayList<PointF>> positions = new SparseArray<>();
+    private final SparseArray<ArrayList<Paint>> paints = new SparseArray<>();
+    private final Path path = new Path();
     private ImageView chessboard;
     private TextView chessboard_debug_info;
     private int measuredWidth;
@@ -50,6 +55,14 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.chessboard_fragment, container, false);
         setView(rootView);
+        positions.put(0, new ArrayList<PointF>(MAX_POSITIONS));
+        positions.put(1, new ArrayList<PointF>(MAX_POSITIONS));
+        paints.put(0, new ArrayList<Paint>());
+        paints.put(1, new ArrayList<Paint>());
+        paints.get(0).add(paintOne);
+        paints.get(0).add(paintThree);
+        paints.get(1).add(paintOne);
+        paints.get(1).add(paintFour);
         return rootView;
     }
 
@@ -80,6 +93,8 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
         paintTwo.setStyle(Paint.Style.STROKE); // print border
         paintThree.setColor(Color.YELLOW);
         paintThree.setStrokeWidth(25f);
+        paintFour.setColor(Color.BLUE);
+        paintFour.setStrokeWidth(25f);
         paintCar.setColor(Color.DKGRAY);
         paintUnlock.setColor(Color.GREEN);
         paintLock.setColor(Color.RED);
@@ -91,37 +106,44 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     }
 
     @Override
-    public void updateChessboard(final PointF point, final double dist) {
-        if (point != null) {
-            chessboard.setImageBitmap(placeUserOnChessBoard(point, dist));
+    public void updateChessboard(final List<PointF> points, final List<Double> dists) {
+        if (points != null && dists != null) {
+            chessboard.setImageBitmap(placeUserOnChessBoard(points, dists));
         }
     }
 
-    private Bitmap placeUserOnChessBoard(final PointF point, final double dist) {
+    private Bitmap placeUserOnChessBoard(final List<PointF> points, final List<Double> dists) {
         final Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
-        PSALogs.d("chess", String.format(Locale.FRANCE, "coord : %.1f %.1f", point.x, point.y));
-        chessboard_debug_info.setText(String.format(Locale.FRANCE, "coord : x = %.1f      y = %.1f    distance : %.1f", point.x, point.y, dist));
-        point.y = 10 - point.y;
-        point.x *= stepX;
-        point.y *= stepY;
-        PSALogs.d("chess", String.format(Locale.FRANCE, "pixel : %.1f %.1f", point.x, point.y));
-        if (positions.size() == MAX_POSITIONS) {
-            positions.remove(0);
-//            path.reset();
-//            path.moveTo(positions.get(0).x, positions.get(0).y);
+        final StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < points.size(); i++) {
+            final PointF point = points.get(i);
+            final ArrayList<PointF> positionHistoric = positions.get(i);
+            PSALogs.d("chess", String.format(Locale.FRANCE, "coord : %.1f %.1f", point.x, point.y));
+            stringBuilder.append(String.format(Locale.FRANCE,
+                    "coord : x = %.1f      y = %.1f    distance : %.1f \n", point.x, point.y, dists.get(i)));
+            point.y = 10 - point.y;
+            point.x *= stepX;
+            point.y *= stepY;
+            PSALogs.d("chess", String.format(Locale.FRANCE, "pixel : %.1f %.1f", point.x, point.y));
+            if (positionHistoric.size() == MAX_POSITIONS) {
+                positionHistoric.remove(0);
+                path.reset();
+                path.moveTo(positionHistoric.get(0).x, positionHistoric.get(0).y);
+            }
+            positionHistoric.add(point);
+            if (positionHistoric.size() == 1) {
+                positionHistoric.add(point);
+                path.moveTo(point.x, point.y);
+            }
+            for (int index = 1; index < positionHistoric.size(); index++) {
+                PointF tempPoint = positionHistoric.get(index);
+                path.lineTo(tempPoint.x, tempPoint.y);
+            }
+            canvas.drawPath(path, paints.get(i).get(0));
+            canvas.drawPoint(point.x, point.y, paints.get(i).get(1));
         }
-        positions.add(point);
-        if (positions.size() == 1) {
-            positions.add(point);
-//            path.moveTo(point.x, point.y);
-        }
-//        for (int index = 1; index < positions.size(); index++) {
-//            PointF tempPoint = positions.get(index);
-//            path.lineTo(tempPoint.x, tempPoint.y);
-//        }
-//        canvas.drawPath(path, paintOne);
-        canvas.drawPoint(point.x, point.y, paintThree);
+        chessboard_debug_info.setText(stringBuilder.toString());
         return bitmap;
     }
 

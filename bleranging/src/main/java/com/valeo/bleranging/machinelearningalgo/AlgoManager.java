@@ -30,6 +30,7 @@ import com.valeo.bleranging.utils.SoundUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -448,18 +449,18 @@ public class AlgoManager implements SensorEventListener {
         return PREDICTION_UNKNOWN;
     }
 
-    public PointF getPredictionCoord(final ConnectedCar connectedCar) {
+    public List<PointF> getPredictionCoord(final ConnectedCar connectedCar) {
         if (connectedCar != null) {
             return connectedCar.getMultiPrediction().getPredictionCoord();
         }
         return null;
     }
 
-    public double getDist2Car(final ConnectedCar connectedCar) {
+    public List<Double> getDist2Car(final ConnectedCar connectedCar) {
         if (connectedCar != null) {
             return connectedCar.getMultiPrediction().getDist2Car();
         }
-        return 0;
+        return null;
     }
 
     public String getPredictionProximity(final ConnectedCar connectedCar) {
