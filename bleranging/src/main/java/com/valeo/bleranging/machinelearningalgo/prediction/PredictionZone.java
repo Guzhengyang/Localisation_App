@@ -15,7 +15,6 @@ import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 
 import static com.valeo.bleranging.persistence.Constants.PASSIVE_ENTRY_ORIENTED;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_BACK;
-import static com.valeo.bleranging.persistence.Constants.PREDICTION_EAR;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_FAR;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_FRONT;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_INSIDE;
@@ -23,7 +22,6 @@ import static com.valeo.bleranging.persistence.Constants.PREDICTION_INTERNAL;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_LEFT;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_LOCK;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_RIGHT;
-import static com.valeo.bleranging.persistence.Constants.PREDICTION_RP;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.persistence.Constants.THATCHAM_ORIENTED;
 import static com.valeo.bleranging.utils.CalculUtils.correctRssiUnilateral;
@@ -45,7 +43,7 @@ public class PredictionZone extends BasePrediction {
     private String label;// prediction result string
     private int INDEX_LOCK;// find the index of lock zone
     private int prediction_old = -1;// old prediction result index
-    private double threshold = 0.5;
+    private double thresholdROC = 0.5;
 
     public PredictionZone(Context context, String modelClassName,
                           List<String> rowDataKeySet, String predictionType) {
@@ -103,13 +101,8 @@ public class PredictionZone extends BasePrediction {
     public void predict(int nVote) {
         int result = 0;
         try {
-            if (predictionType.equalsIgnoreCase(PREDICTION_RP)) {
+            if (binomial) {
                 final BinomialModelPrediction modelPrediction = modelWrappers.get(0).predictBinomial(rowData);
-                label = modelPrediction.label;
-                result = modelPrediction.labelIndex;
-                distribution = modelPrediction.classProbabilities;
-            } else if (predictionType.equalsIgnoreCase(PREDICTION_EAR)) {
-                final MultinomialModelPrediction modelPrediction = modelWrappers.get(0).predictMultinomial(rowData);
                 label = modelPrediction.label;
                 result = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
@@ -138,12 +131,12 @@ public class PredictionZone extends BasePrediction {
             if (binomial) {
                 final BinomialModelPrediction modelPrediction = modelWrappers.get(0).predictBinomial(rowData);
                 label = modelPrediction.label;
-//                prediction_old = modelPrediction.labelIndex;
+                prediction_old = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
             } else {
                 final MultinomialModelPrediction modelPrediction = modelWrappers.get(0).predictMultinomial(rowData);
                 label = modelPrediction.label;
-//                prediction_old = modelPrediction.labelIndex;
+                prediction_old = modelPrediction.labelIndex;
                 distribution = modelPrediction.classProbabilities;
             }
         } catch (Exception e) {
@@ -259,8 +252,9 @@ public class PredictionZone extends BasePrediction {
         }
         return true;
     }
+
     public void calculatePredictionTest() {
-        if (compareDistribution(distribution, 0, threshold)) {
+        if (compareDistribution(distribution, 0, thresholdROC)) {
             prediction_old = 0;
         } else {
             prediction_old = 1;
@@ -309,7 +303,7 @@ public class PredictionZone extends BasePrediction {
         if (distribution == null || modified_rssi == null) {
             return "";
         }
-        PSALogs.d("debug", prediction_old + " " + threshold);
+        PSALogs.d("debug", prediction_old + " " + thresholdROC);
         sb.append(String.format(Locale.FRANCE, "%1$s %2$s ", title, getPrediction())).append("\n");
         for (double arssi : modified_rssi) {
             sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
@@ -326,8 +320,8 @@ public class PredictionZone extends BasePrediction {
         return distribution;
     }
 
-    public void setThreshold(Double threshold) {
-        this.threshold = threshold;
+    public void setThresholdROC(Double threshold) {
+        this.thresholdROC = threshold;
     }
 
     public String[] getClasses() {

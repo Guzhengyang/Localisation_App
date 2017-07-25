@@ -183,7 +183,7 @@ public class MultiPrediction {
     public void calculatePredictionTest(Double threshold) {
         PSALogs.d("abstract", "calculatePredictionTest override OK !");
         if (predictionLinkedHMap.get(PREDICTION_TEST) != null && threshold >= 0 && threshold <= 1) {
-            ((PredictionZone) predictionLinkedHMap.get(PREDICTION_TEST)).setThreshold(threshold);
+            ((PredictionZone) predictionLinkedHMap.get(PREDICTION_TEST)).setThresholdROC(threshold);
         }
     }
 

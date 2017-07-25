@@ -93,16 +93,6 @@ public class CalculUtils {
             coord.setCoord_x(coordNew.getCoord_x());
             coord.setCoord_y(coordNew.getCoord_y());
         }
-        if (coord.getCoord_x() > MAX_X) {
-            coord.setCoord_x(MAX_X);
-        } else if (coord.getCoord_x() < 0) {
-            coord.setCoord_x(0);
-        }
-        if (coord.getCoord_y() > MAX_Y) {
-            coord.setCoord_y(MAX_Y);
-        } else if (coord.getCoord_y() < 0) {
-            coord.setCoord_y(0);
-        }
     }
 
     public static double rssi2dist(double rssi) {
