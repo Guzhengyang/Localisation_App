@@ -304,6 +304,7 @@ public class AlgoManager implements SensorEventListener {
      * Try all strategy based on machine learning
      */
     public void tryMachineLearningStrategies(ConnectedCar connectedCar) {
+        PSALogs.d("ML", "tryMachineLearningStrategies");
         boolean isWelcomeAllowed = false;
         // Cancel previous requested actions
         boolean isInStartArea = false;

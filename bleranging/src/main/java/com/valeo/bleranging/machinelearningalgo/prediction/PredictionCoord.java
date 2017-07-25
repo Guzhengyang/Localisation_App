@@ -40,7 +40,7 @@ public class PredictionCoord extends BasePrediction {
             rssiHistoric.get(i).add(this.modified_rssi[i]);
         }
         constructRowData(this.modified_rssi);
-        for (int i = 0; i < getCoordsSize(); i++) {
+        for (int i = 0; i < 2; i++) { // doo not use getCoordsSize() because it's empty
             coords.put(i, new Coord());
             try {
                 final RegressionModelPrediction modelPredictionX = modelWrappers.get(0).predictRegression(rowData);

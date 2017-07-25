@@ -93,9 +93,9 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
         paintOne.setStrokeWidth(5f);
         paintTwo.setColor(Color.LTGRAY);
         paintTwo.setStyle(Paint.Style.STROKE); // print border
-        paintThree.setColor(Color.YELLOW);
+        paintThree.setColor(Color.YELLOW); // KALMAN
         paintThree.setStrokeWidth(25f);
-        paintFour.setColor(Color.BLUE);
+        paintFour.setColor(Color.BLUE); // THRESHOLD
         paintFour.setStrokeWidth(25f);
         paintCar.setColor(Color.DKGRAY);
         paintUnlock.setColor(Color.GREEN);

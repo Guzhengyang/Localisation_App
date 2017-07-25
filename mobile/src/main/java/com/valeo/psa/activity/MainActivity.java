@@ -132,10 +132,13 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         getSupportFragmentManager().beginTransaction().add(R.id.chessboard_rl, chessboardFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.debug_rl, debugFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.test_rl, testFragment).commit();
+        showHideFragment(testFragment); // hide testFragment
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getSupportFragmentManager().beginTransaction().add(R.id.measure_rl, measureFragment).commit();
+            showHideFragment(measureFragment); // hide measureFragment
         }
         getSupportFragmentManager().beginTransaction().add(R.id.accuracy_rl, accuracyFragment).commit();
+        showHideFragment(accuracyFragment); // hide accuracyFragment
         getSupportFragmentManager().beginTransaction().add(R.id.nfc_rl, nfcFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.start_rl, startFragment).commit();
         showHideFragment(startFragment); // hide startFragment
