@@ -30,7 +30,7 @@ import java.util.Locale;
  * Created by l-avaratha on 21/03/2017
  */
 public class ChessBoardFragment extends Fragment implements ChessBoardListener {
-    private static final int MAX_POSITIONS = 15;
+    private static final int MAX_POSITIONS = 5;
     private static final float MAX_ROWS = 11;
     private static final float MAX_COLUMNS = 10;
     private final Paint paintOne = new Paint();
@@ -42,7 +42,7 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     private final Paint paintLock = new Paint();
     private final SparseArray<ArrayList<PointF>> positions = new SparseArray<>();
     private final SparseArray<ArrayList<Paint>> paints = new SparseArray<>();
-    private final Path path = new Path();
+    private final SparseArray<Path> paths = new SparseArray<>();
     private ImageView chessboard;
     private TextView chessboard_debug_info;
     private int measuredWidth;
@@ -63,6 +63,8 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
         paints.get(0).add(paintThree);
         paints.get(1).add(paintOne);
         paints.get(1).add(paintFour);
+        paths.put(0, new Path());
+        paths.put(1, new Path());
         return rootView;
     }
 
@@ -119,6 +121,8 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
         for (int i = 0; i < points.size(); i++) {
             final PointF point = points.get(i);
             final ArrayList<PointF> positionHistoric = positions.get(i);
+            final ArrayList<Paint> paint = paints.get(i);
+            final Path path = paths.get(i);
             PSALogs.d("chess", String.format(Locale.FRANCE, "coord : %.1f %.1f", point.x, point.y));
             stringBuilder.append(String.format(Locale.FRANCE,
                     "coord : x = %.1f      y = %.1f    distance : %.1f \n", point.x, point.y, dists.get(i)));
@@ -140,8 +144,8 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
                 PointF tempPoint = positionHistoric.get(index);
                 path.lineTo(tempPoint.x, tempPoint.y);
             }
-            canvas.drawPath(path, paints.get(i).get(0));
-            canvas.drawPoint(point.x, point.y, paints.get(i).get(1));
+            canvas.drawPath(path, paint.get(0));
+            canvas.drawPoint(point.x, point.y, paint.get(1));
         }
         chessboard_debug_info.setText(stringBuilder.toString());
         return bitmap;

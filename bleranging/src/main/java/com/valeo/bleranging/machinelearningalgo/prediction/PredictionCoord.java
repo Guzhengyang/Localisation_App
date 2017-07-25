@@ -23,7 +23,6 @@ public class PredictionCoord extends BasePrediction {
     private static final int MAX_HISTORIC_SIZE = 5;// rssi history size
     private final LinkedHashMap<Integer, List<Double>> rssiHistoric;// rssi saved to calculate the average
     private final SparseArray<Coord> coords; // regression prediction result
-    private String predictionType;// standard prediction or rp prediction
 
     public PredictionCoord(Context context, String modelClassNameX, String modelClassNameY, List<String> rowDataKeySet) {
         super(context, modelClassNameX, modelClassNameY, rowDataKeySet);
@@ -41,7 +40,7 @@ public class PredictionCoord extends BasePrediction {
             rssiHistoric.get(i).add(this.modified_rssi[i]);
         }
         constructRowData(this.modified_rssi);
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < getCoordsSize(); i++) {
             coords.put(i, new Coord());
             try {
                 final RegressionModelPrediction modelPredictionX = modelWrappers.get(0).predictRegression(rowData);
@@ -73,8 +72,9 @@ public class PredictionCoord extends BasePrediction {
     }
 
     public Coord getMLCoord() {
-        final Coord coordML = new Coord();
+        Coord coordML = null;
         try {
+            coordML = new Coord();
             final RegressionModelPrediction modelPredictionX = modelWrappers.get(0).predictRegression(rowData);
             coordML.setCoord_x(modelPredictionX.value);
             final RegressionModelPrediction modelPredictionY = modelWrappers.get(1).predictRegression(rowData);
@@ -94,8 +94,8 @@ public class PredictionCoord extends BasePrediction {
 
     @Override
     public String printDebug() {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < 2; i++) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < getCoordsSize(); i++) {
             if (coords.get(i) != null) {
                 stringBuilder.append(String.format(Locale.FRANCE, "x: %.2f   y: %.2f \n",
                         coords.get(i).getCoord_x(), coords.get(i).getCoord_y()));

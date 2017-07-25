@@ -94,11 +94,8 @@ public class JsonUtils {
                 data[0] = trx_code;
                 PSALogs.d("json", "getTrxJsonContent trx_code = " + trx_code);
                 data[1] = trx.getAsJsonPrimitive("trx_name").getAsString();
-                PSALogs.d("json", "getTrxJsonContent trx_name = " + data[1]);
                 data[2] = trx.getAsJsonPrimitive("trx_number").getAsString();
-                PSALogs.d("json", "getTrxJsonContent trx_number = " + data[2]);
                 data[3] = trx.getAsJsonPrimitive("row_data_key_set_title").getAsString();
-                PSALogs.d("json", "getTrxJsonContent row_data_key_set_title = " + data[3]);
                 break;
             }
         }

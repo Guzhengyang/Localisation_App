@@ -172,10 +172,17 @@ public class MultiPrediction {
                         THRESHOLD_PROB_LOCK2UNLOCK, THRESHOLD_PROB_UNLOCK2LOCK, SdkPreferencesHelper.getInstance().getOpeningStrategy());
             } else if ((predictionLinkedHMap.get(predictionType) instanceof PredictionCoord)) {
                 final PredictionCoord predictionCoord = (PredictionCoord) predictionLinkedHMap.get(predictionType);
-                CalculUtils.correctCoordKalman(predictionCoord.getPredictionCoord(INDEX_KALMAN), predictionCoord.getMLCoord());
-                CalculUtils.correctBoundry(predictionCoord.getPredictionCoord(INDEX_KALMAN));
-                CalculUtils.correctCoordThreshold(predictionCoord.getPredictionCoord(INDEX_THRESHOLD), predictionCoord.getMLCoord(), THRESHOLD_DIST);
-                CalculUtils.correctBoundry(predictionCoord.getPredictionCoord(INDEX_THRESHOLD));
+                if (predictionCoord != null) {
+                    final Coord mlCoord = predictionCoord.getMLCoord();
+                    if (predictionCoord.getPredictionCoord(INDEX_KALMAN) != null) {
+                        CalculUtils.correctCoordKalman(predictionCoord.getPredictionCoord(INDEX_KALMAN), mlCoord);
+                        CalculUtils.correctBoundry(predictionCoord.getPredictionCoord(INDEX_KALMAN));
+                    }
+                    if (predictionCoord.getPredictionCoord(INDEX_THRESHOLD) != null) {
+                        CalculUtils.correctCoordThreshold(predictionCoord.getPredictionCoord(INDEX_THRESHOLD), mlCoord, THRESHOLD_DIST);
+                        CalculUtils.correctBoundry(predictionCoord.getPredictionCoord(INDEX_THRESHOLD));
+                    }
+                }
             }
         }
     }
