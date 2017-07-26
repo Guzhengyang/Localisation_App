@@ -10,6 +10,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -134,7 +137,7 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     private Bitmap placeUserOnChessBoard(final List<PointF> points, final List<Double> dists) {
         final Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
-        final StringBuilder stringBuilder = new StringBuilder();
+        final SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
         for (int i = 0; i < points.size(); i++) {
             final PointF point = points.get(i);
             final ArrayList<PointF> positionHistoric = positions.get(i);
@@ -143,8 +146,13 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
             PSALogs.d("chess", String.format(Locale.FRANCE,
                     "coord : %.1f %.1f " + getSerieName(i), point.x, point.y));
             stringBuilder.append(String.format(Locale.FRANCE,
-                    "coord : x = %.1f      y = %.1f    distance : %.1f " + getSerieName(i) + "\n",
+                    "coord : x = %.1f      y = %.1f    distance : %.1f ",
                     point.x, point.y, dists.get(i)));
+            int startSpanPosition = stringBuilder.length();
+            stringBuilder.append(getSerieName(i)).append("\n");
+            int endSpanPosition = stringBuilder.length();
+            stringBuilder.setSpan(new ForegroundColorSpan(paint.get(1).getColor()),
+                    startSpanPosition, endSpanPosition, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             point.y = 10 - point.y;
             point.x *= stepX;
             point.y *= stepY;
@@ -166,7 +174,7 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
             canvas.drawPath(path, paint.get(0));
             canvas.drawPoint(point.x, point.y, paint.get(1));
         }
-        chessboard_debug_info.setText(stringBuilder.toString());
+        chessboard_debug_info.setText(stringBuilder);
         return bitmap;
     }
 

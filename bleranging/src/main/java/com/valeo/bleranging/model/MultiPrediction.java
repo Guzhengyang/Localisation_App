@@ -181,13 +181,14 @@ public class MultiPrediction {
                     if (predictionCoord != null) {
                         final Coord mlCoord = predictionCoord.getMLCoord();
                         for (int i = 0; i < predictionCoord.getCoordsSize(); i++) {
-                            if (i == INDEX_KALMAN && predictionCoord.getPredictionCoord(INDEX_KALMAN) != null) {
-                                CalculUtils.correctCoordKalman(predictionCoord.getPredictionCoord(INDEX_KALMAN), mlCoord);
+                            if (predictionCoord.getPredictionCoord(i) != null) {
+                                if (i == INDEX_KALMAN) {
+                                    CalculUtils.correctCoordKalman(predictionCoord.getPredictionCoord(i), mlCoord);
+                                } else if (i == INDEX_THRESHOLD) {
+                                    CalculUtils.correctCoordThreshold(predictionCoord.getPredictionCoord(i), mlCoord, THRESHOLD_DIST);
+                                }
+                                CalculUtils.correctBoundry(predictionCoord.getPredictionCoord(i));
                             }
-                            if (i == INDEX_THRESHOLD && predictionCoord.getPredictionCoord(INDEX_THRESHOLD) != null) {
-                                CalculUtils.correctCoordThreshold(predictionCoord.getPredictionCoord(INDEX_THRESHOLD), mlCoord, THRESHOLD_DIST);
-                            }
-                            CalculUtils.correctBoundry(predictionCoord.getPredictionCoord(i));
                         }
                     }
                 }
