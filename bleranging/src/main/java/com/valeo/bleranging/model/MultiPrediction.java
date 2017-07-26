@@ -180,13 +180,14 @@ public class MultiPrediction {
                     final PredictionCoord predictionCoord = (PredictionCoord) predictionLinkedHMap.get(predictionType);
                     if (predictionCoord != null) {
                         final Coord mlCoord = predictionCoord.getMLCoord();
-                        if (predictionCoord.getPredictionCoord(INDEX_KALMAN) != null) {
-                            CalculUtils.correctCoordKalman(predictionCoord.getPredictionCoord(INDEX_KALMAN), mlCoord);
-                            CalculUtils.correctBoundry(predictionCoord.getPredictionCoord(INDEX_KALMAN));
-                        }
-                        if (predictionCoord.getPredictionCoord(INDEX_THRESHOLD) != null) {
-                            CalculUtils.correctCoordThreshold(predictionCoord.getPredictionCoord(INDEX_THRESHOLD), mlCoord, THRESHOLD_DIST);
-                            CalculUtils.correctBoundry(predictionCoord.getPredictionCoord(INDEX_THRESHOLD));
+                        for (int i = 0; i < predictionCoord.getCoordsSize(); i++) {
+                            if (i == INDEX_KALMAN && predictionCoord.getPredictionCoord(INDEX_KALMAN) != null) {
+                                CalculUtils.correctCoordKalman(predictionCoord.getPredictionCoord(INDEX_KALMAN), mlCoord);
+                            }
+                            if (i == INDEX_THRESHOLD && predictionCoord.getPredictionCoord(INDEX_THRESHOLD) != null) {
+                                CalculUtils.correctCoordThreshold(predictionCoord.getPredictionCoord(INDEX_THRESHOLD), mlCoord, THRESHOLD_DIST);
+                            }
+                            CalculUtils.correctBoundry(predictionCoord.getPredictionCoord(i));
                         }
                     }
                 }

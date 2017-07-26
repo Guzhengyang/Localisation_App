@@ -37,6 +37,7 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     private final Paint paintTwo = new Paint();
     private final Paint paintThree = new Paint();
     private final Paint paintFour = new Paint();
+    private final Paint paintFive = new Paint();
     private final Paint paintCar = new Paint();
     private final Paint paintUnlock = new Paint();
     private final Paint paintLock = new Paint();
@@ -55,17 +56,18 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.chessboard_fragment, container, false);
         setView(rootView);
-        positions.put(0, new ArrayList<PointF>(MAX_POSITIONS));
-        positions.put(1, new ArrayList<PointF>(MAX_POSITIONS));
-        paints.put(0, new ArrayList<Paint>());
-        paints.put(1, new ArrayList<Paint>());
-        paints.get(0).add(paintOne);
-        paints.get(0).add(paintThree);
-        paints.get(1).add(paintOne);
-        paints.get(1).add(paintFour);
-        paths.put(0, new Path());
-        paths.put(1, new Path());
+        addSerie(0, paintOne, paintThree);
+        addSerie(1, paintOne, paintFour);
+        addSerie(2, paintOne, paintFive);
         return rootView;
+    }
+
+    private void addSerie(final int index, final Paint queue, final Paint head) {
+        positions.put(index, new ArrayList<PointF>(MAX_POSITIONS));
+        paints.put(index, new ArrayList<Paint>());
+        paints.get(index).add(queue);
+        paints.get(index).add(head);
+        paths.put(index, new Path());
     }
 
     /**
@@ -97,6 +99,8 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
         paintThree.setStrokeWidth(25f);
         paintFour.setColor(Color.BLUE); // THRESHOLD
         paintFour.setStrokeWidth(25f);
+        paintFive.setColor(Color.MAGENTA); // RAW
+        paintFive.setStrokeWidth(25f);
         paintCar.setColor(Color.DKGRAY);
         paintUnlock.setColor(Color.GREEN);
         paintLock.setColor(Color.RED);
@@ -114,6 +118,19 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
         }
     }
 
+    private String getSerieName(final int index) {
+        switch (index) {
+            case 0:
+                return "KALMAN";
+            case 1:
+                return "THRESHOLD";
+            case 2:
+                return "RAW";
+            default:
+                return "UNKNOWN";
+        }
+    }
+
     private Bitmap placeUserOnChessBoard(final List<PointF> points, final List<Double> dists) {
         final Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
@@ -123,9 +140,11 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
             final ArrayList<PointF> positionHistoric = positions.get(i);
             final ArrayList<Paint> paint = paints.get(i);
             final Path path = paths.get(i);
-            PSALogs.d("chess", String.format(Locale.FRANCE, "coord : %.1f %.1f", point.x, point.y));
+            PSALogs.d("chess", String.format(Locale.FRANCE,
+                    "coord : %.1f %.1f " + getSerieName(i), point.x, point.y));
             stringBuilder.append(String.format(Locale.FRANCE,
-                    "coord : x = %.1f      y = %.1f    distance : %.1f \n", point.x, point.y, dists.get(i)));
+                    "coord : x = %.1f      y = %.1f    distance : %.1f " + getSerieName(i) + "\n",
+                    point.x, point.y, dists.get(i)));
             point.y = 10 - point.y;
             point.x *= stepX;
             point.y *= stepY;

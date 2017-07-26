@@ -20,6 +20,8 @@ import static com.valeo.bleranging.utils.CalculUtils.correctRssiUnilateral;
 public class PredictionCoord extends BasePrediction {
     public static final int INDEX_KALMAN = 0;
     public static final int INDEX_THRESHOLD = 1;
+    public static final int INDEX_RAW = 2;
+    public static final int INDEX_MAX = 3;
     private static final int MAX_HISTORIC_SIZE = 5;// rssi history size
     private final LinkedHashMap<Integer, List<Double>> rssiHistoric;// rssi saved to calculate the average
     private final SparseArray<Coord> coords; // regression prediction result
@@ -40,7 +42,7 @@ public class PredictionCoord extends BasePrediction {
             rssiHistoric.get(i).add(this.modified_rssi[i]);
         }
         constructRowData(this.modified_rssi);
-        for (int i = 0; i < 2; i++) { // doo not use getCoordsSize() because it's empty
+        for (int i = 0; i < INDEX_MAX; i++) { // doo not use getCoordsSize() because it's empty
             coords.put(i, new Coord());
             try {
                 final RegressionModelPrediction modelPredictionX = modelWrappers.get(0).predictRegression(rowData);
@@ -97,11 +99,24 @@ public class PredictionCoord extends BasePrediction {
         final StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < getCoordsSize(); i++) {
             if (coords.get(i) != null) {
-                stringBuilder.append(String.format(Locale.FRANCE, "x: %.2f   y: %.2f \n",
+                stringBuilder.append(String.format(Locale.FRANCE, "x: %.2f   y: %.2f " + getSerieName(i) + "\n",
                         coords.get(i).getCoord_x(), coords.get(i).getCoord_y()));
             }
         }
         return stringBuilder.toString();
+    }
+
+    private String getSerieName(final int index) {
+        switch (index) {
+            case 0:
+                return "KALMAN";
+            case 1:
+                return "THRESHOLD";
+            case 2:
+                return "RAW";
+            default:
+                return "UNKNOWN";
+        }
     }
 
     public int getCoordsSize() {
