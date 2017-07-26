@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import static com.valeo.bleranging.machinelearningalgo.prediction.PredictionCoord.INDEX_KALMAN;
+import static com.valeo.bleranging.machinelearningalgo.prediction.PredictionCoord.INDEX_RAW;
 import static com.valeo.bleranging.machinelearningalgo.prediction.PredictionCoord.INDEX_THRESHOLD;
 import static com.valeo.bleranging.persistence.Constants.N_VOTE_LONG;
 import static com.valeo.bleranging.persistence.Constants.N_VOTE_SHORT;
@@ -186,6 +187,8 @@ public class MultiPrediction {
                                     CalculUtils.correctCoordKalman(predictionCoord.getPredictionCoord(i), mlCoord);
                                 } else if (i == INDEX_THRESHOLD) {
                                     CalculUtils.correctCoordThreshold(predictionCoord.getPredictionCoord(i), mlCoord, THRESHOLD_DIST);
+                                } else if (i == INDEX_RAW) {
+                                    predictionCoord.getPredictionCoord(i).setCoord(mlCoord);
                                 }
                                 CalculUtils.correctBoundry(predictionCoord.getPredictionCoord(i));
                             }

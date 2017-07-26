@@ -35,4 +35,9 @@ public class Coord {
     public void setCoord_y(double coord_y) {
         this.coord_y = coord_y;
     }
+
+    public void setCoord(Coord coord) {
+        this.coord_x = coord.getCoord_x();
+        this.coord_y = coord.getCoord_y();
+    }
 }
