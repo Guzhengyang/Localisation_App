@@ -313,8 +313,13 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     }
 
     @Override
-    public void restartConnection(boolean createCar) {
-        mBleRangingHelper.restartConnection(createCar);
+    public void restartConnection() {
+        mBleRangingHelper.restartConnection();
+    }
+
+    @Override
+    public void initializeConnectedCar() {
+        mBleRangingHelper.initializeConnectedCar();
     }
 
     @Override

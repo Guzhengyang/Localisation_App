@@ -151,7 +151,7 @@ public class BluetoothManagement {
      * Close the connection between the phone and the current device
      */
     public void disconnect() {
-        if (isFullyConnected()) {
+        if (isLinked()) {
             try {
                 mBluetoothLeService.disconnect();
             } catch (Exception e) {
@@ -216,7 +216,7 @@ public class BluetoothManagement {
      * Open the connection between the phone and the current device
      */
     public void connect(BroadcastReceiver mTrxUpdateReceiver) {
-        if (!isFullyConnected() && !isConnecting()) {
+        if (!isLinked() && !isConnecting()) {
             if (!isReceiverRegistered) {
                 this.mTrxUpdateReceiver = mTrxUpdateReceiver;
                 mContext.registerReceiver(this.mTrxUpdateReceiver, makeTrxUpdateIntentFilter());
@@ -445,7 +445,7 @@ public class BluetoothManagement {
         return mBluetoothLeServiceForRemoteControl != null && mBluetoothLeServiceForRemoteControl.isConnecting3();
     }
 
-    public boolean isFullyConnected() {
+    public boolean isLinked() {
         return mBluetoothLeService != null && mBluetoothLeService.isFullyConnected();
     }
 

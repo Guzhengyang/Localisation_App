@@ -231,7 +231,8 @@ public class MainFragment extends Fragment implements MyRecyclerAdapter.OnStartD
                                                 selectedCar.getCarConfigFileName(),
                                                 "raw", getActivity().getPackageName())),
                                 SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION)) {
-                            mListener.restartConnection(true);
+                            mListener.restartConnection();
+                            mListener.initializeConnectedCar();
                             lastPos = position;
                         } else {
                             Snackbar.make(recyclerView, "pref file not found", Snackbar.LENGTH_SHORT).show();
@@ -472,7 +473,9 @@ public class MainFragment extends Fragment implements MyRecyclerAdapter.OnStartD
     public interface MainFragmentActionListener {
         void switchToolbars(boolean mainToNewToolBar, int resId);
 
-        void restartConnection(boolean createCar);
+        void restartConnection();
+
+        void initializeConnectedCar();
 
         void startProgress();
 

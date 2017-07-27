@@ -179,8 +179,6 @@ public class BluetoothLeService extends Service {
                     gatt.requestMtu(23);
                 } else {
                     PSALogs.d("NIH", "onConnectionStateChange no mtu request");
-                    isFullyConnected = true;
-                    isConnecting = false;
                 }
                 // Result from the requested action: should be 1 or 15 at the end
                 // Otherwise an error occurred during the process
@@ -253,6 +251,7 @@ public class BluetoothLeService extends Service {
             PSALogs.i("NIH", "onCharacteristicChanged(): " + Arrays.toString(characteristic.getValue()));
             mReceiveQueue.add(characteristic.getValue());
             isFullyConnected = true;
+            isConnecting = false;
             broadcastUpdate(ACTION_DATA_AVAILABLE);
             broadcastUpdate(ACTION_DATA_AVAILABLE2);
         }
