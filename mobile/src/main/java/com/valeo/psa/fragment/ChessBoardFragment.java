@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -53,6 +54,8 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     private float stepX;
     private int measuredHeight;
     private float stepY;
+    private Bitmap bitmap;
+    private Canvas canvas;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -81,6 +84,8 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
         chessboard_debug_info = (TextView) rootView.findViewById(R.id.chessboard_debug_info);
         setPaint();
         setSteps();
+        bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
     }
 
     private void setSteps() {
@@ -135,8 +140,7 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     }
 
     private Bitmap placeUserOnChessBoard(final List<PointF> points, final List<Double> dists) {
-        final Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         final SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
         for (int i = 0; i < points.size(); i++) {
             final PointF point = points.get(i);
