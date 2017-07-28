@@ -97,6 +97,7 @@ public class BleRangingHelper {
     private Boolean lastMiniPredictionUsed;
     private boolean isCloseAppCalled = false;
     private boolean newLockStatus;
+    private boolean canStartRunner = true;
     private boolean isFirstConnection = true;
     private boolean isTryingToConnect = false;
     private final Runnable mManageIsTryingToConnectTimer = new Runnable() {
@@ -290,6 +291,8 @@ public class BleRangingHelper {
                     rkeListener.updateCarDoorStatus(newLockStatus);
                 }
                 mProtocolManager.setIsLockedFromTrx(newLockStatus);
+                runFirstConnection(newLockStatus);
+                bleRangingListener.updateBLEStatus();
                 if (checkNewPacketOnlyOneLaunch) {
                     checkNewPacketOnlyOneLaunch = false;
                     mMainHandler.postDelayed(checkNewPacketsRunner, 1000);
@@ -297,19 +300,21 @@ public class BleRangingHelper {
             } else if (BluetoothLeService.ACTION_GATT_CHARACTERISTIC_SUBSCRIBED.equals(action)) {
                 PSALogs.d("NIH", "TRX ACTION_GATT_CHARACTERISTIC_SUBSCRIBED");
                 mMainHandler.post(sendPacketRunner); // send works only after subscribed
-                runFirstConnection(newLockStatus);
-                bleRangingListener.updateBLEStatus();
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
                 bleRangingListener.updateBLEStatus();
                 PSALogs.i("restartConnection", "after being disconnected");
 //                reconnectAfterDisconnection();
+                resetParams();
+                bleRangingListener.updateBLEStatus();
                 mBluetoothManager.startLeScan();
             } else if (BluetoothLeService.ACTION_GATT_CONNECTION_LOSS.equals(action)) {
                 PSALogs.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
                 bleRangingListener.updateBLEStatus();
                 PSALogs.i("restartConnection", "after connection loss");
 //                reconnectAfterDisconnection();
+                resetParams();
+                bleRangingListener.updateBLEStatus();
                 mBluetoothManager.startLeScan();
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
                 PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
@@ -626,11 +631,12 @@ public class BleRangingHelper {
             mMainHandler.removeCallbacks(sendPacketRunner);
             mMainHandler.removeCallbacks(checkNewPacketsRunner);
             mMainHandler.removeCallbacks(null);
+            canStartRunner = true;
         }
     }
 
     private void startRunners() {
-        if (mMainHandler != null) {
+        if (mMainHandler != null && canStartRunner) {
             PSALogs.d("NIH", "startRunners");
             mMainHandler.post(printRunner);
             mMainHandler.post(logRunner);
@@ -638,6 +644,7 @@ public class BleRangingHelper {
             mMainHandler.post(calculateCoordPrediction);
             mMainHandler.post(updateCarLocalizationRunnable);
             mMainHandler.post(beepRunner);
+            canStartRunner = false;
         }
     }
 
@@ -674,19 +681,23 @@ public class BleRangingHelper {
             mBluetoothManager.stopLeScan();
             mBluetoothManager.disconnect();
             stopRunners();
-            mProtocolManager.restartPacketOneCounter();
-            mAlgoManager.setRearmWelcome(true);
-            dataReceived = false;
-            isFirstConnection = true;
-            checkNewPacketOnlyOneLaunch = true;
-            lastPacketIdNumber[0] = 0;
-            lastPacketIdNumber[1] = 0;
-            resetByteArray(bytesToSend);
-            resetByteArray(bytesReceived);
-            makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_NETWORK_USA_RINGBACK, 100);
+            resetParams();
             bleRangingListener.updateBLEStatus();
             mBluetoothManager.startLeScan();
         }
+    }
+
+    private void resetParams() {
+        mProtocolManager.restartPacketOneCounter();
+        mAlgoManager.setRearmWelcome(true);
+        dataReceived = false;
+        isFirstConnection = true;
+        checkNewPacketOnlyOneLaunch = true;
+        lastPacketIdNumber[0] = 0;
+        lastPacketIdNumber[1] = 0;
+        resetByteArray(bytesToSend);
+        resetByteArray(bytesReceived);
+        makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_NETWORK_USA_RINGBACK, 100);
     }
 
     /**
@@ -711,6 +722,7 @@ public class BleRangingHelper {
      * @param centralScanResponse the centralScanResponse received
      */
     private void catchCentralScanResponse(final BluetoothDevice device, CentralScanResponse centralScanResponse) {
+        PSALogs.d("NIH", "catchCentralScanResponse isFirstConnection:" + isFirstConnection);
         if (device != null && centralScanResponse != null) {
             if (isFirstConnection) {
                 if (device.getAddress().equals(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())) {
@@ -734,7 +746,7 @@ public class BleRangingHelper {
                 int trxNumber = getTrxNumber(device.getAddress());
                 if (trxNumber == -1) {
                     if (SdkPreferencesHelper.getInstance().getTrxAddressConnectable().equalsIgnoreCase(device.getAddress())) {
-                        PSALogs.i("restartConnection", "connectable is advertising again (central)");
+                        PSALogs.d("NIH", "connectable is connected but adv again (central)");
                         if (isRestartAuthorized) { // prevent from restarting connection when a restart is already in progress
                             isRestartAuthorized = false;
                             restartConnection();
@@ -743,6 +755,9 @@ public class BleRangingHelper {
                         }
                     }
                 }
+            } else if (mBluetoothManager != null && mBluetoothManager.isLinked()) {
+                PSALogs.d("NIH", "connectable isLinked but adv again (central)");
+                resetParams();
             }
         }
     }

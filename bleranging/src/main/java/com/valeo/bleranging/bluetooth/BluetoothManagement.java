@@ -341,7 +341,7 @@ public class BluetoothManagement {
      */
     private void onScanRecordsGet(BluetoothDevice device, int rssi, byte[] scanRecord, byte[] advertisedData) {
         if (scanRecord != null) {
-            PSALogs.d("catch_address", device.getAddress() + " " + SdkPreferencesHelper.getInstance().getTrxAddressConnectable());
+            PSALogs.d("catch_address", device.getAddress() + " " + device.getAddress().equalsIgnoreCase(SdkPreferencesHelper.getInstance().getTrxAddressConnectable()));
             if (device.getAddress().equalsIgnoreCase(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())) {
                 //TODO Add condition to limit central scans to connection advertising
                 fireCentralScanResponseCatch(device, ScanResponseParser.parseCentralScanResponse(scanRecord));

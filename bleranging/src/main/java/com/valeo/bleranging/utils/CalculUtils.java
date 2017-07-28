@@ -1,12 +1,12 @@
 package com.valeo.bleranging.utils;
 
+import android.util.SparseIntArray;
+
 import com.valeo.bleranging.machinelearningalgo.prediction.Coord;
 
 import org.ejml.simple.SimpleMatrix;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by l-avaratha on 30/06/2017
@@ -167,17 +167,19 @@ public class CalculUtils {
         if (list.size() == 0) {
             return -1;
         }
-        Map<Integer, Integer> map = new HashMap<>();
+        SparseIntArray sparseArray = new SparseIntArray();
         for (Integer t : list) {
-            Integer val = map.get(t);
-            map.put(t, val == null ? 1 : val + 1);
+            Integer val = sparseArray.get(t);
+            sparseArray.put(t, val == 0 ? 1 : val + 1);
         }
-        Map.Entry<Integer, Integer> max = null;
-        for (Map.Entry<Integer, Integer> e : map.entrySet()) {
-            if (max == null || e.getValue() >= max.getValue()) {
-                max = e;
+        Integer maximumValue = null;
+        Integer maximumIndex = null;
+        for (int i = 0; i < sparseArray.size(); i++) {
+            if (maximumValue == null || sparseArray.get(i) >= maximumValue) {
+                maximumValue = sparseArray.get(i);
+                maximumIndex = i;
             }
         }
-        return max == null ? -1 : max.getKey();
+        return maximumValue == null ? -1 : maximumIndex;
     }
 }
