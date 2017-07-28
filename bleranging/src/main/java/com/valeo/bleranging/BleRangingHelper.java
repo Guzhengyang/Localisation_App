@@ -319,7 +319,7 @@ public class BleRangingHelper {
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_FAILED.equals(action)) {
                 PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_FAILED");
                 isRestartAuthorized = true;
-                mAlgoManager.setRearmWelcome(true);
+                resetParams();
                 bleRangingListener.updateBLEStatus();
                 mBluetoothManager.startLeScan();
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
