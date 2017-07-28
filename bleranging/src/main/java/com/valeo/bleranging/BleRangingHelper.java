@@ -562,6 +562,15 @@ public class BleRangingHelper {
     }
 
     /**
+     * Get the connection status between the smartphone and the car
+     *
+     * @return true if the smartphone is connecting to the car, false otherwise
+     */
+    public boolean isConnecting() {
+        return isTryingToConnect || mBluetoothManager.isConnecting();
+    }
+
+    /**
      * Verify if the user can click on rke button by checking if the action can succeed
      *
      * @return true if the rke button is ready, false otherwise
@@ -732,7 +741,6 @@ public class BleRangingHelper {
                         mBluetoothManager.stopLeScan();
                         mHandlerTimeOut.postDelayed(mManageIsTryingToConnectTimer, 3000);
                         PSALogs.w("NIH", "************************************** isTryingToConnect TRUE ************************************************");
-                        bleRangingListener.showSnackBar("CONNECTABLE " + device.getAddress());
                         newLockStatus = (centralScanResponse.vehicleState & 0x01) != 0; // get lock status for initialization later
                         connect();
                     } else {

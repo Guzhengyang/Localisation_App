@@ -15,7 +15,8 @@
     <string name="close_all_windows_title">Closing windows</string>
     <string name="header_back_button">header back button</string>
     <string name="connected_over_ble">connected over Bluetooth</string>
-    <string name="not_connected_over_ble">not connected over Bluetooth</string>
+    <string name="is_connecting_over_ble">connecting…</string>
+    <string name="not_connected_over_ble">disconnected</string>
     <string name="car_model_type">Car Model Type</string>
     <string name="ds5">DS 5 DC-917-NY</string>
     <string name="ds5_2">DS 5 DC-917-NY E1</string>

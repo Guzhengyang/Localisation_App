@@ -339,6 +339,8 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
             public void run() {
                 if (mBleRangingHelper.isFullyConnected()) {
                     mainFragment.setBleStatus(R.string.connected_over_ble);
+                } else if (mBleRangingHelper.isConnecting()) {
+                    mainFragment.setBleStatus(R.string.is_connecting_over_ble);
                 } else {
                     mainFragment.setBleStatus(R.string.not_connected_over_ble);
                     if (rkeFragment != null) {
