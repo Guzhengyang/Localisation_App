@@ -214,8 +214,11 @@ public class MultiPrediction {
     public String printDebug() {
         final StringBuilder stringBuilder = new StringBuilder();
         for (String predictionType : predictionLinkedHMap.keySet()) {
-            stringBuilder.append(printDebug(predictionType));
-            stringBuilder.append("\n");
+            final String temp = printDebug(predictionType);
+            if (temp.length() > 0) {
+                stringBuilder.append(temp);
+                stringBuilder.append("\n");
+            }
         }
         return stringBuilder.toString();
     }
@@ -224,7 +227,7 @@ public class MultiPrediction {
         if (isInitialized(predictionType)) {
             return predictionLinkedHMap.get(predictionType).printDebug();
         }
-        return " ";
+        return "";
     }
 
     /**

@@ -783,7 +783,7 @@ public class BleRangingHelper {
             int trxNumber = getTrxNumber(device.getAddress());
             if (trxNumber != -1) {
                 final Antenna.BLEChannel receivedBleChannel = mProtocolManager.getCurrentChannel(beaconScanResponse);
-                if (isFullyConnected() && SdkPreferencesHelper.getInstance().isChannelLimited()) {
+                if (SdkPreferencesHelper.getInstance().isChannelLimited()) {
                     if (alreadyStopped) {
                         PSALogs.d("bleChannel2 ", "not 37, do not parse scanResponse");
                         return;
