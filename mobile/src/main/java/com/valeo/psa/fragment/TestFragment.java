@@ -79,19 +79,21 @@ public class TestFragment extends Fragment implements TestListener {
 
     @Override
     public void changeColor(String result) {
-        switch (result) {
-            case PREDICTION_UNKNOWN:
-                PSALogs.d("debug", "black");
-                result_test.setBackgroundColor(getResources().getColor(android.R.color.black));
-                break;
-            case PREDICTION_LOCK:
-                PSALogs.d("debug", "red");
-                result_test.setBackgroundColor(getResources().getColor(android.R.color.holo_red_dark));
-                break;
-            case PREDICTION_ACCESS:
-                PSALogs.d("debug", "green");
-                result_test.setBackgroundColor(getResources().getColor(android.R.color.holo_green_light));
-                break;
+        if(isAdded()) {
+            switch (result) {
+                case PREDICTION_UNKNOWN:
+                    PSALogs.d("debug", "black");
+                    result_test.setBackgroundColor(getResources().getColor(android.R.color.black));
+                    break;
+                case PREDICTION_LOCK:
+                    PSALogs.d("debug", "red");
+                    result_test.setBackgroundColor(getResources().getColor(android.R.color.holo_red_dark));
+                    break;
+                case PREDICTION_ACCESS:
+                    PSALogs.d("debug", "green");
+                    result_test.setBackgroundColor(getResources().getColor(android.R.color.holo_green_light));
+                    break;
+            }
         }
     }
 
