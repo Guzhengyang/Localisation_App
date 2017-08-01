@@ -19,8 +19,8 @@ import android.widget.Toast;
 
 import com.valeo.bleranging.bluetooth.BluetoothManagement;
 import com.valeo.bleranging.bluetooth.BluetoothManagementListener;
-import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
+import com.valeo.bleranging.bluetooth.protocol.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.scanresponse.BeaconScanResponse;
 import com.valeo.bleranging.bluetooth.scanresponse.CentralScanResponse;
 import com.valeo.bleranging.listeners.BleRangingListener;
@@ -112,15 +112,15 @@ public class BleRangingHelper {
         @Override
         public void run() {
             lock.writeLock().lock();
-            bytesToSend = mProtocolManager.getPacketOnePayload(mAlgoManager, connectedCar);
+            bytesToSend = mProtocolManager.getPacketOne().getPacketOnePayload(mAlgoManager, connectedCar);
             lock.writeLock().unlock();
             lock.readLock().lock();
             PSALogs.d("NIH", "sendPackets isLinked:" + mBluetoothManager.isLinked());
             mBluetoothManager.sendPackets(bytesToSend, bytesReceived,
-                    mProtocolManager.getPacketTwoPayload(connectedCar.getMultiPrediction().getStandardClasses(),
+                    mProtocolManager.getPacketTwo().getPacketTwoPayload(connectedCar.getMultiPrediction().getStandardClasses(),
                             connectedCar.getMultiPrediction().getStandardDistribution()),
-                    mProtocolManager.getPacketThreePayload(connectedCar.getMultiPrediction().getStandardRssi()),
-                    mProtocolManager.getPacketFourPayload(connectedCar.getMultiPrediction().getPredictionCoord(), connectedCar.getMultiPrediction().getDist2Car()));
+                    mProtocolManager.getPacketThree().getPacketThreePayload(connectedCar.getMultiPrediction().getStandardRssi()),
+                    mProtocolManager.getPacketFour().getPacketFourPayload(connectedCar.getMultiPrediction().getPredictionCoord(), connectedCar.getMultiPrediction().getDist2Car()));
             lock.readLock().unlock();
             if (mAlgoManager.getIsRKE()) {
                 mAlgoManager.setIsRKE(false);
@@ -290,7 +290,7 @@ public class BleRangingHelper {
                 if (oldLockStatus != newLockStatus) {
                     rkeListener.updateCarDoorStatus(newLockStatus);
                 }
-                mProtocolManager.setIsLockedFromTrx(newLockStatus);
+                mProtocolManager.getPacketOne().setIsLockedFromTrx(newLockStatus);
                 runFirstConnection(newLockStatus);
                 bleRangingListener.updateBLEStatus();
                 if (checkNewPacketOnlyOneLaunch) {
@@ -544,12 +544,12 @@ public class BleRangingHelper {
             } else {
                 mMainHandler.post(updateCarLocalizationRunnable);
             }
-            mProtocolManager.setIsStartRequested(isStartRequested);
+            mProtocolManager.getPacketOne().setIsStartRequested(isStartRequested);
         }
     }
 
     public boolean isStartRequested() {
-        return mProtocolManager.isStartRequested();
+        return mProtocolManager.getPacketOne().isStartRequested();
     }
 
     /**
@@ -697,7 +697,7 @@ public class BleRangingHelper {
     }
 
     private void resetParams() {
-        mProtocolManager.restartPacketOneCounter();
+        mProtocolManager.getPacketOne().restartPacketOneCounter();
         mAlgoManager.setRearmWelcome(true);
         dataReceived = false;
         isFirstConnection = true;
@@ -832,7 +832,7 @@ public class BleRangingHelper {
                 }
                 if (advertisedData != null && advertisedData.length > 0) {
                     PSALogs.d("NIH", "BLE_ADDRESS_LOGGER= " + TextUtils.printBleBytes(advertisedData));
-                    mProtocolManager.getAdvertisedBytes(advertisedData);
+                    mProtocolManager.getPacketLog().getAdvertisedBytes(advertisedData);
                 } else {
                     PSALogs.d("NIH", "newConnectable coz advertising is null " + device.getAddress());
                 }
@@ -849,7 +849,7 @@ public class BleRangingHelper {
             debugListener.darkenArea(elementPred);
         }
         //THATCHAM
-        if (mProtocolManager.isThatcham()) {
+        if (mProtocolManager.getPacketOne().isThatcham()) {
             debugListener.lightUpArea(PREDICTION_THATCHAM);
         }
         // WELCOME
@@ -878,7 +878,7 @@ public class BleRangingHelper {
             isFirstConnection = false;
             PSALogs.w(" rssiHistorics", "*********************************** runFirstConnection ************************************************");
             rkeListener.updateCarDoorStatus(newLockStatus);
-            mProtocolManager.setIsLockedToSend(newLockStatus);
+            mProtocolManager.getPacketOne().setIsLockedToSend(newLockStatus);
             mAlgoManager.setLastCommandFromTrx(newLockStatus);
         }
     }
@@ -904,7 +904,7 @@ public class BleRangingHelper {
 
     private void enableSecurityWal() {
         String connectedCarBase = SdkPreferencesHelper.getInstance().getConnectedCarBase();
-        mProtocolManager.setCarBase(connectedCarBase);
+        mProtocolManager.getPacketOne().setCarBase(connectedCarBase);
         if (connectedCarBase.equalsIgnoreCase(BASE_2)
                 || connectedCarBase.equalsIgnoreCase(BASE_3)) {
             SdkPreferencesHelper.getInstance().setSecurityWALEnabled(true);

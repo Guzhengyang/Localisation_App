@@ -15,8 +15,8 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.text.SpannableStringBuilder;
 
-import com.valeo.bleranging.bluetooth.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
+import com.valeo.bleranging.bluetooth.protocol.InblueProtocolManager;
 import com.valeo.bleranging.listeners.BleRangingListener;
 import com.valeo.bleranging.listeners.RkeListener;
 import com.valeo.bleranging.listeners.TestListener;
@@ -150,10 +150,10 @@ public class AlgoManager implements SensorEventListener {
     private final Runnable abortCommandRunner = new Runnable() {
         @Override
         public void run() {
-            PSALogs.d("performLock", "abortCommandRunner trx: " + mProtocolManager.isLockedFromTrx() + " me: " + mProtocolManager.isLockedToSend());
-            if (mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) { // if command from trx and app are different, make the app send what the trx sent
-                mProtocolManager.setIsLockedToSend(mProtocolManager.isLockedFromTrx());
-                rkeListener.updateCarDoorStatus(mProtocolManager.isLockedFromTrx());
+            PSALogs.d("performLock", "abortCommandRunner trx: " + mProtocolManager.getPacketOne().isLockedFromTrx() + " me: " + mProtocolManager.getPacketOne().isLockedToSend());
+            if (mProtocolManager.getPacketOne().isLockedFromTrx() != mProtocolManager.getPacketOne().isLockedToSend()) { // if command from trx and app are different, make the app send what the trx sent
+                mProtocolManager.getPacketOne().setIsLockedToSend(mProtocolManager.getPacketOne().isLockedFromTrx());
+                rkeListener.updateCarDoorStatus(mProtocolManager.getPacketOne().isLockedFromTrx());
                 rearmLock.set(false);
             }
             isAbortRunning = false;
@@ -170,11 +170,11 @@ public class AlgoManager implements SensorEventListener {
             final String action = intent.getAction();
             if (BluetoothLeService.ACTION_DATA_AVAILABLE2.equals(action)) {
                 // if car lock status changed
-                if (lastCommandFromTrx != mProtocolManager.isLockedFromTrx()) {
+                if (lastCommandFromTrx != mProtocolManager.getPacketOne().isLockedFromTrx()) {
                     PSALogs.d("performLock a_data_a_2", "lastCommandFromTrx =" + lastCommandFromTrx +
-                            ", isLockedFromTrx=" + mProtocolManager.isLockedFromTrx());
-                    lastCommandFromTrx = mProtocolManager.isLockedFromTrx();
-                    mProtocolManager.setIsLockedToSend(lastCommandFromTrx);
+                            ", isLockedFromTrx=" + mProtocolManager.getPacketOne().isLockedFromTrx());
+                    lastCommandFromTrx = mProtocolManager.getPacketOne().isLockedFromTrx();
+                    mProtocolManager.getPacketOne().setIsLockedToSend(lastCommandFromTrx);
                     //Initialize timeout flag which is cleared in the runnable launched in the next instruction
                     areLockActionsAvailable.set(false);
                     //Launch timeout
@@ -182,8 +182,8 @@ public class AlgoManager implements SensorEventListener {
                     manageRearms(lastCommandFromTrx);
                 }
                 // if car thatcham status changed
-                if (lastThatcham.get() != mProtocolManager.isThatcham()) {
-                    lastThatcham.set(mProtocolManager.isThatcham());
+                if (lastThatcham.get() != mProtocolManager.getPacketOne().isThatcham()) {
+                    lastThatcham.set(mProtocolManager.getPacketOne().isThatcham());
                     if (lastThatcham.get()) { // if in thatcham area, rearm lock
                         rearmLock.set(true);
                         lastThatchamChanged = false;
@@ -200,7 +200,7 @@ public class AlgoManager implements SensorEventListener {
                     }, (long) SdkPreferencesHelper.getInstance().getUnlockTimeout());
                     lastThatchamChanged = false;
                     if (SdkPreferencesHelper.getInstance().getSecurityWALEnabled()) {
-                        if (!mProtocolManager.isLockedFromTrx()) { // if the vehicle is unlocked, lock it
+                        if (!mProtocolManager.getPacketOne().isLockedFromTrx()) { // if the vehicle is unlocked, lock it
                             new CountDownTimer(600, 90) { // Send safety close command several times in case it got lost
                                 public void onTick(long millisUntilFinished) {
                                     performLockWithCryptoTimeout(true, true);
@@ -274,15 +274,15 @@ public class AlgoManager implements SensorEventListener {
      * @param lockVehicle true to lock the vehicle, false to unlock it.
      */
     private void performLockVehicleRequest(final boolean lockVehicle) {
-        boolean lastLockCommand = mProtocolManager.isLockedToSend();
+        boolean lastLockCommand = mProtocolManager.getPacketOne().isLockedToSend();
         PSALogs.d("performLock", "lastCommand=" + lastLockCommand
                 + ", lockVehicle=" + lockVehicle);
         if (lastLockCommand != lockVehicle) { // if previous command is different that current one !!!!
-            mProtocolManager.setIsLockedToSend(lockVehicle);
-            PSALogs.d("performLock", "lockToSend=" + mProtocolManager.isLockedToSend()
-                    + ", isLockedFromTrx=" + mProtocolManager.isLockedFromTrx());
+            mProtocolManager.getPacketOne().setIsLockedToSend(lockVehicle);
+            PSALogs.d("performLock", "lockToSend=" + mProtocolManager.getPacketOne().isLockedToSend()
+                    + ", isLockedFromTrx=" + mProtocolManager.getPacketOne().isLockedFromTrx());
             // Only if previous and current command are different, or it will always be called
-            if (mProtocolManager.isLockedFromTrx() != mProtocolManager.isLockedToSend()) { // if command sent and command received are different
+            if (mProtocolManager.getPacketOne().isLockedFromTrx() != mProtocolManager.getPacketOne().isLockedToSend()) { // if command sent and command received are different
                 if (isAbortRunning) { // stop already running Runnable and start a new one
                     mHandlerLockTimeOut.removeCallbacks(abortCommandRunner);
                     mHandlerLockTimeOut.removeCallbacksAndMessages(null);
@@ -310,15 +310,15 @@ public class AlgoManager implements SensorEventListener {
         boolean isInStartArea = false;
         boolean isInUnlockArea = false;
         boolean isInLockArea = false;
-        mProtocolManager.setIsStartRequested(false);
-        mProtocolManager.setIsWelcomeRequested(false);
+        mProtocolManager.getPacketOne().setIsStartRequested(false);
+        mProtocolManager.getPacketOne().setIsWelcomeRequested(false);
         //TODO Replace SdkPreferencesHelper.getInstance().getComSimulationEnabled() by CallReceiver.smartphoneComIsActivated after demo
         lastPrediction = getPredictionPosition(connectedCar);
         switch (lastPrediction) {
             case PREDICTION_INSIDE:
                 isInStartArea = true;
-                if (!mProtocolManager.isStartRequested()) {
-                    mProtocolManager.setIsStartRequested(true);
+                if (!mProtocolManager.getPacketOne().isStartRequested()) {
+                    mProtocolManager.getPacketOne().setIsStartRequested(true);
                 }
                 break;
             case PREDICTION_OUTSIDE:
@@ -338,8 +338,8 @@ public class AlgoManager implements SensorEventListener {
             case PREDICTION_START_RR:
             case PREDICTION_TRUNK:
                 isInStartArea = true;
-                if (!mProtocolManager.isStartRequested()) {
-                    mProtocolManager.setIsStartRequested(true);
+                if (!mProtocolManager.getPacketOne().isStartRequested()) {
+                    mProtocolManager.getPacketOne().setIsStartRequested(true);
                 }
                 break;
             case PREDICTION_ACCESS:
@@ -367,14 +367,14 @@ public class AlgoManager implements SensorEventListener {
             SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
             bleRangingListener.doWelcome();
         }
-        if (mProtocolManager.isWelcomeRequested() != isWelcomeAllowed) {
-            mProtocolManager.setIsWelcomeRequested(isWelcomeAllowed);
+        if (mProtocolManager.getPacketOne().isWelcomeRequested() != isWelcomeAllowed) {
+            mProtocolManager.getPacketOne().setIsWelcomeRequested(isWelcomeAllowed);
         }
         setIsThatcham(isInLockArea, isInUnlockArea, isInStartArea);
         if (getPredictionProximity(connectedCar).equalsIgnoreCase(PREDICTION_NEAR)) {
-            mProtocolManager.setInRemoteParkingArea(true);
+            mProtocolManager.getPacketOne().setInRemoteParkingArea(true);
         } else {
-            mProtocolManager.setInRemoteParkingArea(false);
+            mProtocolManager.getPacketOne().setInRemoteParkingArea(false);
         }
         if (accuracyMeasureEnabled) {
             if (accuracyCounterHMap.get(lastPrediction) == null) {
@@ -391,7 +391,7 @@ public class AlgoManager implements SensorEventListener {
     }
 
     private void launchThatchamValidityTimeOut() {
-        mProtocolManager.setThatcham(true);
+        mProtocolManager.getPacketOne().setThatcham(true);
         if (thatchamIsChanging.get()) {
             mHandlerThatchamTimeOut.removeCallbacks(mHasThatchamChanged);
             mHandlerThatchamTimeOut.removeCallbacks(null);
@@ -405,7 +405,7 @@ public class AlgoManager implements SensorEventListener {
     private void setIsThatcham(boolean isInLockArea, boolean isInUnlockArea, boolean isInStartArea) {
         if (isInLockArea || isInStartArea || !isInUnlockArea) {
             if (!thatchamIsChanging.get()) { // if thatcham is not changing
-                mProtocolManager.setThatcham(false);
+                mProtocolManager.getPacketOne().setThatcham(false);
             }
         } else if (isInUnlockArea) {
             launchThatchamValidityTimeOut();
@@ -413,7 +413,7 @@ public class AlgoManager implements SensorEventListener {
     }
 
     private void manageRearms(final boolean newVehicleLockStatus) {
-        if (mProtocolManager.isThatcham()) {
+        if (mProtocolManager.getPacketOne().isThatcham()) {
             if (newVehicleLockStatus) { // if has just lock, rearm lock and desarm unlock
                 rearmLock.set(true);
                 rearmUnlock.set(false);

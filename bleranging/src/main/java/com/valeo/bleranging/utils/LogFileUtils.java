@@ -2,7 +2,7 @@ package com.valeo.bleranging.utils;
 
 import android.content.Context;
 
-import com.valeo.bleranging.bluetooth.InblueProtocolManager;
+import com.valeo.bleranging.bluetooth.protocol.InblueProtocolManager;
 import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
@@ -116,46 +116,46 @@ public class LogFileUtils {
         } else {
             log += "8" + comma;
         }
-        log += booleanToString(mAlgoManager.getRearmWelcome()) + comma + mProtocolManager.getWelcomeByte() + comma;
-        if (mProtocolManager.getLockByte() == 1) {
+        log += booleanToString(mAlgoManager.getRearmWelcome()) + comma + mProtocolManager.getPacketLog().getWelcomeByte() + comma;
+        if (mProtocolManager.getPacketLog().getLockByte() == 1) {
             log += "3" + comma;
         } else {
             log += "2" + comma;
         }
-        log += mProtocolManager.getStartByte() + comma;
-        if (mProtocolManager.getLeftAreaByte() == 1) {
+        log += mProtocolManager.getPacketLog().getStartByte() + comma;
+        if (mProtocolManager.getPacketLog().getLeftAreaByte() == 1) {
             log += "11" + comma;
         } else {
             log += "10" + comma;
         }
-        if (mProtocolManager.getRightAreaByte() == 1) {
+        if (mProtocolManager.getPacketLog().getRightAreaByte() == 1) {
             log += "12" + comma;
         } else {
             log += "10" + comma;
         }
-        if (mProtocolManager.getBackAreaByte() == 1) {
+        if (mProtocolManager.getPacketLog().getBackAreaByte() == 1) {
             log += "13" + comma;
         } else {
             log += "10" + comma;
         }
-        if (mProtocolManager.getWalkAwayByte() == 1) {
+        if (mProtocolManager.getPacketLog().getWalkAwayByte() == 1) {
             log += "15" + comma;
         } else {
             log += "14" + comma;
         }
-        if (mProtocolManager.getApproachByte() == 1) {
+        if (mProtocolManager.getPacketLog().getApproachByte() == 1) {
             log += "16" + comma;
         } else {
             log += "14" + comma;
         }
-        log += mProtocolManager.getLeftTurnByte() + comma + mProtocolManager.getRightTurnByte() + comma
-                + mProtocolManager.getApproachSideByte() + comma + mProtocolManager.getApproachRoadByte() + comma
-                + mProtocolManager.getRecordByte() + comma + counterByte + comma
+        log += mProtocolManager.getPacketLog().getLeftTurnByte() + comma + mProtocolManager.getPacketLog().getRightTurnByte() + comma
+                + mProtocolManager.getPacketLog().getApproachSideByte() + comma + mProtocolManager.getPacketLog().getApproachRoadByte() + comma
+                + mProtocolManager.getPacketLog().getRecordByte() + comma + counterByte + comma
                 + mAlgoManager.getPredictionPosition(connectedCar) + comma
-                + booleanToString(mProtocolManager.isLockedFromTrx()) + comma
-                + booleanToString(mProtocolManager.isLockedToSend()) + comma
-                + booleanToString(mProtocolManager.isStartRequested()) + comma
-                + booleanToString(mProtocolManager.isThatcham()) + comma
+                + booleanToString(mProtocolManager.getPacketOne().isLockedFromTrx()) + comma
+                + booleanToString(mProtocolManager.getPacketOne().isLockedToSend()) + comma
+                + booleanToString(mProtocolManager.getPacketOne().isStartRequested()) + comma
+                + booleanToString(mProtocolManager.getPacketOne().isThatcham()) + comma
                 + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_LEFT).toString() + comma
                 + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_MIDDLE).toString() + comma
                 + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_RIGHT).toString() + comma
