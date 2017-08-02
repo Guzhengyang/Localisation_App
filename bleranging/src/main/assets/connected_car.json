@@ -1,0 +1,195 @@
+{
+  "connected_car": [
+    {
+      "car_type_code": "TYPE_2_A",
+      "car_type_string": "M_T",
+      "total_beacon": "2"
+    },
+    {
+      "car_type_code": "TYPE_2_B",
+      "car_type_string": "L_R",
+      "total_beacon": "2"
+    },
+    {
+      "car_type_code": "TYPE_3_A",
+      "car_type_string": "L_M_R",
+      "total_beacon": "3"
+    },
+    {
+      "car_type_code": "TYPE_4_A",
+      "car_type_string": "L_M_R_B",
+      "total_beacon": "4"
+    },
+    {
+      "car_type_code": "TYPE_4_B",
+      "car_type_string": "L_M_R_T",
+      "total_beacon": "4"
+    },
+    {
+      "car_type_code": "TYPE_5_A",
+      "car_type_string": "L_M_R_T_B",
+      "total_beacon": "5"
+    },
+    {
+      "car_type_code": "TYPE_6_A",
+      "car_type_string": "Fl_Fr_M_T_Rl_Rr",
+      "total_beacon": "6"
+    },
+    {
+      "car_type_code": "TYPE_7_A",
+      "car_type_string": "Fl_Fr_L_M_R_Rl_Rr",
+      "total_beacon": "7"
+    },
+    {
+      "car_type_code": "TYPE_8_A",
+      "car_type_string": "Fl_Fr_L_M_R_T_Rl_Rr",
+      "total_beacon": "8"
+    }
+  ],
+  "trx": [
+    {
+      "trx_code": "Fl",
+      "trx_name": "FLeft",
+      "trx_number": "1",
+      "row_data_key_set_title": "RSSI FRONTLEFT_ORIGIN"
+    },
+    {
+      "trx_code": "Fr",
+      "trx_name": "FRight",
+      "trx_number": "2",
+      "row_data_key_set_title": "RSSI FRONTRIGHT_ORIGIN"
+    },
+    {
+      "trx_code": "L",
+      "trx_name": "Left",
+      "trx_number": "3",
+      "row_data_key_set_title": "RSSI LEFT_ORIGIN"
+    },
+    {
+      "trx_code": "M",
+      "trx_name": "Middle",
+      "trx_number": "4",
+      "row_data_key_set_title": "RSSI MIDDLE_ORIGIN"
+    },
+    {
+      "trx_code": "R",
+      "trx_name": "Right",
+      "trx_number": "5",
+      "row_data_key_set_title": "RSSI RIGHT_ORIGIN"
+    },
+    {
+      "trx_code": "T",
+      "trx_name": "Trunk",
+      "trx_number": "6",
+      "row_data_key_set_title": "RSSI TRUNK_ORIGIN"
+    },
+    {
+      "trx_code": "Rl",
+      "trx_name": "RLeft",
+      "trx_number": "7",
+      "row_data_key_set_title": "RSSI REARLEFT_ORIGIN"
+    },
+    {
+      "trx_code": "Rr",
+      "trx_name": "RRight",
+      "trx_number": "9",
+      "row_data_key_set_title": "RSSI REARRIGHT_ORIGIN"
+    },
+    {
+      "trx_code": "B",
+      "trx_name": "Back",
+      "trx_number": "8",
+      "row_data_key_set_title": "RSSI BACK_ORIGIN"
+    }
+  ],
+  "prediction_zone": [
+    {
+      "car_type_string": "M_T",
+      "row_data_key_set_string": "M_T",
+      "model_file_name": "Two",
+      "is_mini": "false",
+      "is_thatcham_oriented": "passive_entry_oriented",
+      "prediction_type": "standard_prediction"
+    },
+    {
+      "car_type_string": "L_M_R_T",
+      "row_data_key_set_string": "L_M_R_T",
+      "model_file_name": "FourStart",
+      "is_mini": "false",
+      "is_thatcham_oriented": "passive_entry_oriented",
+      "prediction_type": "standard_prediction"
+    },
+    {
+      "car_type_string": "L_M_R_T",
+      "row_data_key_set_string": "L_M_R_T",
+      "model_file_name": "FourRP",
+      "is_mini": "false",
+      "is_thatcham_oriented": "passive_entry_oriented",
+      "prediction_type": "rp_prediction"
+    },
+    {
+      "car_type_string": "Fl_Fr_L_M_R_T_Rl_Rr",
+      "row_data_key_set_string": "L_M_R_T_Fl_Fr_Rl_Rr",
+      "model_file_name": "EightNormal",
+      "is_mini": "false",
+      "is_thatcham_oriented": "passive_entry_oriented",
+      "prediction_type": "standard_prediction"
+    },
+    {
+      "car_type_string": "Fl_Fr_L_M_R_T_Rl_Rr",
+      "row_data_key_set_string": "L_M_R_T_Fl_Fr_Rl_Rr",
+      "model_file_name": "EightNormalMini",
+      "is_mini": "true",
+      "is_thatcham_oriented": "passive_entry_oriented",
+      "prediction_type": "standard_prediction"
+    },
+    {
+      "car_type_string": "Fl_Fr_L_M_R_T_Rl_Rr",
+      "row_data_key_set_string": "L_M_R_T_Fl_Fr_Rl_Rr",
+      "model_file_name": "EightNormalTest",
+      "is_mini": "false",
+      "is_thatcham_oriented": "passive_entry_oriented",
+      "prediction_type": "test_prediction"
+    },
+    {
+      "car_type_string": "Fl_Fr_L_M_R_T_Rl_Rr",
+      "row_data_key_set_string": "L_M_R_T_Fl_Fr_Rl_Rr",
+      "model_file_name": "EightThatcham",
+      "is_mini": "false",
+      "is_thatcham_oriented": "thatcham_oriented",
+      "prediction_type": "standard_prediction"
+    },
+    {
+      "car_type_string": "Fl_Fr_L_M_R_T_Rl_Rr",
+      "row_data_key_set_string": "L_M_R_T_Fl_Fr_Rl_Rr",
+      "model_file_name": "EightThatchamMini",
+      "is_mini": "true",
+      "is_thatcham_oriented": "thatcham_oriented",
+      "prediction_type": "standard_prediction"
+    },
+    {
+      "car_type_string": "Fl_Fr_L_M_R_T_Rl_Rr",
+      "row_data_key_set_string": "L_M_R_T_Fl_Fr_Rl_Rr",
+      "model_file_name": "EightThatchamTest",
+      "is_mini": "false",
+      "is_thatcham_oriented": "thatcham_oriented",
+      "prediction_type": "test_prediction"
+    },
+    {
+      "car_type_string": "Fl_Fr_L_M_R_T_Rl_Rr",
+      "row_data_key_set_string": "L_M_R_T_Fl_Fr_Rl_Rr",
+      "model_file_name": "EightRP",
+      "is_mini": "false",
+      "is_thatcham_oriented": "passive_entry_oriented",
+      "prediction_type": "rp_prediction"
+    }
+  ],
+  "prediction_coord": [
+    {
+      "car_type_string": "Fl_Fr_L_M_R_T_Rl_Rr",
+      "row_data_key_set_string": "L_M_R_T_Fl_Fr_Rl_Rr",
+      "model_file_name_X": "MLP4Px",
+      "model_file_name_Y": "MLP4Py"
+    }
+  ]
+}

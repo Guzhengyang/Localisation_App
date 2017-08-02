@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static com.valeo.bleranging.persistence.Constants.DEFAULT_ADDRESS_MAC;
 import static com.valeo.bleranging.persistence.Constants.DEFAULT_JSON_FILE_NAME;
+import static com.valeo.bleranging.persistence.Constants.MAC_ADDRESSES_JSON_FILE_NAME;
 
 /**
  * Created by l-avaratha on 17/07/2017
@@ -29,6 +31,40 @@ public class JsonUtils {
     private static JsonArray mJsonTrxArray;
     private static JsonArray mJsonPredictionZoneArray;
     private static JsonArray mJsonPredictionCoordArray;
+    private static JsonArray mJsonMacAddressesArray;
+
+    public static void loadMacAddress(Context context) {
+        InputStream stream;
+        JsonParser parser = new JsonParser();
+        Reader reader;
+        try {
+            stream = context.getAssets().open(MAC_ADDRESSES_JSON_FILE_NAME);
+            if (stream != null) {
+                reader = new InputStreamReader(stream, "UTF-8");
+                // We parse the Reader in order to use it as a JsonObject and import it into the preferences part.
+                JsonObject config = parser.parse(reader).getAsJsonObject();
+                mJsonMacAddressesArray = config.getAsJsonArray("car_config");
+            }
+        } catch (IOException e) {
+            PSALogs.e("json", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static String getMacAddress(final String regPlate, final String trxNumber) {
+        for (int i = 0; i < mJsonMacAddressesArray.size(); ++i) { // search over all car_config
+            JsonObject car_config = mJsonMacAddressesArray.get(i).getAsJsonObject();
+            String carRegPlateString = car_config.getAsJsonPrimitive("car").getAsString();
+            if (carRegPlateString.equals(regPlate)) { // find the car_config with the right regPlate
+                try {
+                    return car_config.getAsJsonPrimitive(trxNumber).getAsString();
+                } catch (NullPointerException e) {
+                    return DEFAULT_ADDRESS_MAC;
+                }
+            }
+        }
+        return DEFAULT_ADDRESS_MAC;
+    }
 
     /**
      * Read the JSON file to get the stored data (mainly the default values).

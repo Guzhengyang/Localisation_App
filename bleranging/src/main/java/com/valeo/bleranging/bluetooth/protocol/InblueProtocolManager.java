@@ -1,5 +1,7 @@
 package com.valeo.bleranging.bluetooth.protocol;
 
+import android.content.Context;
+
 import com.valeo.bleranging.bluetooth.scanresponse.BeaconScanResponse;
 import com.valeo.bleranging.model.Antenna;
 
@@ -9,8 +11,8 @@ import com.valeo.bleranging.model.Antenna;
  */
 public class InblueProtocolManager {
 
-    public InblueProtocolManager() {
-        PacketOne.initializePacketOne();
+    public InblueProtocolManager(Context context) {
+        PacketOne.initializePacketOne(context);
         PacketTwo.initializePacketTwo();
         PacketThree.initializePacketThree();
         PacketFour.initializePacketFour();

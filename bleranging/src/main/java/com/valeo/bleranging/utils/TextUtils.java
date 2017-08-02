@@ -32,6 +32,25 @@ import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_TRUNK;
 public class TextUtils {
 
     /**
+     * Convert hex string to byte array
+     * @param encoded the hex string
+     * @return a byte array
+     */
+    public static byte[] fromHexString(final String encoded) {
+        if ((encoded.length() % 2) != 0)
+            throw new IllegalArgumentException("Input string must contain an even number of characters");
+
+        final byte result[] = new byte[encoded.length() / 2];
+        final char enc[] = encoded.toCharArray();
+        for (int i = 0; i < enc.length; i += 2) {
+            StringBuilder curr = new StringBuilder(2);
+            curr.append(enc[i]).append(enc[i + 1]);
+            result[i / 2] = (byte) Integer.parseInt(curr.toString(), 16);
+        }
+        return result;
+    }
+
+    /**
      * Print the bytes of a tab of bytes
      * @param bytesTab the byte tab to print
      * @return the string representation of the tab of bytes
@@ -164,6 +183,13 @@ public class TextUtils {
             }
 
             spannableStringBuilder.append('\n');
+            spannableStringBuilder.append("-------------------------------------------------------------------------\n");
+            for (Trx trx : trxLinkedHMap.values()) {
+                if (trx.getTrxAddress() != null) {
+                    spannableStringBuilder.append(trx.getTrxAddress()).append(" ");
+                    spannableStringBuilder.append(String.valueOf(trx.getCarRssi())).append("\n");
+                }
+            }
             spannableStringBuilder.append("-------------------------------------------------------------------------\n");
         }
         return spannableStringBuilder;

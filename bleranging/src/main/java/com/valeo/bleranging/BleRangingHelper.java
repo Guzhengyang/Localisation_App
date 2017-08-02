@@ -177,7 +177,7 @@ public class BleRangingHelper {
             mMainHandler.postDelayed(this, 405);
         }
     };
-    private int reconnectionCounter = 0;
+    //    private int reconnectionCounter = 0;
     private byte counterByte = 0;
     private byte savedCounterByte = 0;
     private int beepInt = 0;
@@ -345,7 +345,7 @@ public class BleRangingHelper {
         this.rkeListener = rkeListener;
         this.spinnerListener = accuracyListener;
         this.testListener = testListener;
-        this.mProtocolManager = new InblueProtocolManager();
+        this.mProtocolManager = new InblueProtocolManager(context);
         this.mMainHandler = new Handler(Looper.getMainLooper());
         this.mAlgoManager = new AlgoManager(mContext, bleRangingListener, rkeListener, testListener, mProtocolManager, mMainHandler);
         this.mHandlerTimeOut = new Handler();
@@ -657,29 +657,29 @@ public class BleRangingHelper {
         }
     }
 
-    private void reconnectAfterDisconnection() {
-        long restartConnectionDelay;
-        isRestartAuthorized = false;
-        if (reconnectionCounter < 3) {
-            restartConnectionDelay = 1000;
-        } else if (reconnectionCounter < 6) {
-            restartConnectionDelay = 3000;
-        } else {
-            isRestartAuthorized = true;
-            reconnectionCounter = 0;
-            return;
-        }
-        if (!isFullyConnected()
-                && !mBluetoothManager.isConnecting()) {
-            mMainHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    restartConnection();
-                }
-            }, restartConnectionDelay);
-        }
-        reconnectionCounter++;
-    }
+//    private void reconnectAfterDisconnection() {
+//        long restartConnectionDelay;
+//        isRestartAuthorized = false;
+//        if (reconnectionCounter < 3) {
+//            restartConnectionDelay = 1000;
+//        } else if (reconnectionCounter < 6) {
+//            restartConnectionDelay = 3000;
+//        } else {
+//            isRestartAuthorized = true;
+//            reconnectionCounter = 0;
+//            return;
+//        }
+//        if (!isFullyConnected()
+//                && !mBluetoothManager.isConnecting()) {
+//            mMainHandler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    restartConnection();
+//                }
+//            }, restartConnectionDelay);
+//        }
+//        reconnectionCounter++;
+//    }
 
     /**
      * Suspend scan, stop all loops, reinit all variables, then resume scan to be able to reconnect
@@ -687,12 +687,13 @@ public class BleRangingHelper {
     public void restartConnection() {
         if (!mBluetoothManager.isConnecting()) {
             PSALogs.d("NIH", "restartConnection");
+            stopRunners();
             mBluetoothManager.stopLeScan();
             mBluetoothManager.disconnect();
-            stopRunners();
             resetParams();
             bleRangingListener.updateBLEStatus();
             mBluetoothManager.startLeScan();
+            startRunners();
         }
     }
 

@@ -15,9 +15,9 @@ public class Trx {
     private final int trxNumber;
     private final String trxName;
     private final List<Antenna> antennaList;
-    private String trxAddress;
+    private String trxAddress = null;
     private Antenna currentAntenna;
-    private int carRssi;
+    private int carRssi = -1;
 
     public Trx(int trxNumber, String trxName) {
         this.trxNumber = trxNumber;
@@ -89,6 +89,7 @@ public class Trx {
      * @param rssi the rssi to save
      */
     public void saveCarRssi(final int rssi) {
+        PSALogs.d("currentTrx", "carRssi " + carRssi);
         this.carRssi = rssi;
     }
 
@@ -143,6 +144,7 @@ public class Trx {
     }
 
     public void setTrxAddress(String trxAddress) {
+        PSALogs.d("currentTrx", "trxAddress " + trxAddress);
         this.trxAddress = trxAddress;
     }
 }

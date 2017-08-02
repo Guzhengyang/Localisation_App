@@ -1,8 +1,13 @@
 package com.valeo.bleranging.bluetooth.protocol;
 
+import android.content.Context;
+
 import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.JsonUtils;
+import com.valeo.bleranging.utils.PSALogs;
+import com.valeo.bleranging.utils.TextUtils;
 
 import static com.valeo.bleranging.persistence.Constants.BASE_1;
 import static com.valeo.bleranging.persistence.Constants.BASE_2;
@@ -39,7 +44,7 @@ import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
  */
 
 public class PacketOne {
-    private static final int MAX_BLE_TRAME_BYTE = 6;
+    private static final int MAX_BLE_TRAME_BYTE = 13;
     private static final int MAC_ADDRESS_SIZE = 6;
     private static final int NUMBER_MAX_TRX = 16;
     private static PacketOne instance;
@@ -57,9 +62,10 @@ public class PacketOne {
     private PacketOne() {
     }
 
-    static void initializePacketOne() {
+    static void initializePacketOne(Context context) {
         if (instance == null) {
             instance = new PacketOne();
+            JsonUtils.loadMacAddress(context);
         }
     }
 
@@ -83,7 +89,10 @@ public class PacketOne {
         payload[4] = getPayloadFourthByte(isRKE, mAlgoManager.getPredictionPosition(connectedCar));
         payload[5] = getPayloadFifthByte(isRKE, mAlgoManager.getPredictionPosition(connectedCar));
         payload[6] = getPayloadSixthByte();
-        System.arraycopy(getPayloadSevenToTwelveByte(), 0, payload, 7, 6);
+        PSALogs.d("currentTrx", String.format("%02X ", payload[6]));
+        if (!isAutoMode) {
+            System.arraycopy(getPayloadSevenToTwelveByte("DC-917-NY"), 0, payload, 7, 6);
+        }
         packetOneCounter++;
         if (packetOneCounter > 65534) { // packetOneCounter > FF FE
             packetOneCounter = 0;
@@ -256,29 +265,30 @@ public class PacketOne {
     }
 
     private byte getPayloadSixthByte() {
-        byte payloadSix = (byte) 0;
+        currentTrx++;
         if (isAutoMode) {
-            payloadSix = 0x20;
+            return (byte) 0x20;
+        } else if (currentTrx < NUMBER_MAX_TRX) {
+            return (byte) currentTrx;
         } else {
-            payloadSix = getCurrentTrxNumber();
+            isAutoMode = true;
+            return (byte) 0xF0;
         }
-        return payloadSix;
     }
 
-    private byte getCurrentTrxNumber() {
-        if (currentTrx < NUMBER_MAX_TRX) {
-            return (byte) currentTrx++;
-        }
-        return (byte) 0xF0;
-    }
-
-
-    private byte[] getPayloadSevenToTwelveByte() {
+    private byte[] getPayloadSevenToTwelveByte(final String regPlate) {
         byte[] payloadSevenToTwelve = new byte[MAC_ADDRESS_SIZE];
-        //TODO get @MAC at index currentTrx
+        //TODO get regPlate here
+        String address = JsonUtils.getMacAddress(regPlate, String.valueOf(currentTrx));
         if (currentTrx >= NUMBER_MAX_TRX) {
             payloadSevenToTwelve[0] = (byte) 0xF0;
+        } else {
+            String[] split = address.split(":");
+            for (int i = 0; i < split.length; i++) {
+                payloadSevenToTwelve[i] = TextUtils.fromHexString(split[i])[0];
+            }
         }
+        PSALogs.d("currentTrx", currentTrx + " " + TextUtils.printAddressBytes(payloadSevenToTwelve) + " !");
         return payloadSevenToTwelve;
     }
 

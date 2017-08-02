@@ -7,7 +7,8 @@ import android.Manifest;
  */
 
 public class Constants {
-    public final static String DEFAULT_JSON_FILE_NAME = "connected_car_generator.json";
+    public final static String DEFAULT_JSON_FILE_NAME = "connected_car.json";
+    public final static String MAC_ADDRESSES_JSON_FILE_NAME = "mac_addresses.json";
     public final static String THATCHAM_ORIENTED = "thatcham_oriented";
     public final static String PASSIVE_ENTRY_ORIENTED = "passive_entry_oriented";
     public final static int N_VOTE_LONG = 5;
@@ -27,6 +28,7 @@ public class Constants {
     public final static String TYPE_6_A = "Fl_Fr_M_T_Rl_Rr";
     public final static String TYPE_7_A = "Fl_Fr_L_M_R_Rl_Rr";
     public final static String TYPE_8_A = "Fl_Fr_L_M_R_T_Rl_Rr";
+    public final static String DEFAULT_ADDRESS_MAC = "FF:FF:FF:FF:FF:FF";
     public final static int NUMBER_TRX_FRONT_LEFT = 1;
     public final static int NUMBER_TRX_FRONT_RIGHT = 2;
     public final static int NUMBER_TRX_LEFT = 3;
