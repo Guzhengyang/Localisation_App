@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.PointF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -18,8 +17,6 @@ import android.text.SpannableStringBuilder;
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
 import com.valeo.bleranging.bluetooth.protocol.InblueProtocolManager;
 import com.valeo.bleranging.listeners.BleRangingListener;
-import com.valeo.bleranging.listeners.RkeListener;
-import com.valeo.bleranging.listeners.TestListener;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.CalculUtils;
@@ -30,7 +27,6 @@ import com.valeo.bleranging.utils.SoundUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -66,8 +62,6 @@ public class AlgoManager implements SensorEventListener {
     private final static int LOCK_STATUS_CHANGED_TIMEOUT = 5000;
     private final InblueProtocolManager mProtocolManager;
     private final BleRangingListener bleRangingListener;
-    private final TestListener testListener;
-    private final RkeListener rkeListener;
     private final Context mContext;
     private final Handler mMainHandler;
     private final Handler mHandlerLockTimeOut;
@@ -153,7 +147,7 @@ public class AlgoManager implements SensorEventListener {
             PSALogs.d("performLock", "abortCommandRunner trx: " + mProtocolManager.getPacketOne().isLockedFromTrx() + " me: " + mProtocolManager.getPacketOne().isLockedToSend());
             if (mProtocolManager.getPacketOne().isLockedFromTrx() != mProtocolManager.getPacketOne().isLockedToSend()) { // if command from trx and app are different, make the app send what the trx sent
                 mProtocolManager.getPacketOne().setIsLockedToSend(mProtocolManager.getPacketOne().isLockedFromTrx());
-                rkeListener.updateCarDoorStatus(mProtocolManager.getPacketOne().isLockedFromTrx());
+                bleRangingListener.updateCarDoorStatus(mProtocolManager.getPacketOne().isLockedFromTrx());
                 rearmLock.set(false);
             }
             isAbortRunning = false;
@@ -220,12 +214,9 @@ public class AlgoManager implements SensorEventListener {
     };
 
     public AlgoManager(Context mContext, BleRangingListener bleRangingListener,
-                       RkeListener rkeListener, TestListener testListener,
                        InblueProtocolManager mProtocolManager, Handler mMainHandler) {
         this.mContext = mContext;
         this.bleRangingListener = bleRangingListener;
-        this.rkeListener = rkeListener;
-        this.testListener = testListener;
         this.mProtocolManager = mProtocolManager;
         this.mMainHandler = mMainHandler;
         this.mHandlerLockTimeOut = new Handler();
@@ -313,7 +304,7 @@ public class AlgoManager implements SensorEventListener {
         mProtocolManager.getPacketOne().setIsStartRequested(false);
         mProtocolManager.getPacketOne().setIsWelcomeRequested(false);
         //TODO Replace SdkPreferencesHelper.getInstance().getComSimulationEnabled() by CallReceiver.smartphoneComIsActivated after demo
-        lastPrediction = getPredictionPosition(connectedCar);
+        lastPrediction = connectedCar.getMultiPrediction().getPredictionPosition(smartphoneIsInPocket);
         switch (lastPrediction) {
             case PREDICTION_INSIDE:
                 isInStartArea = true;
@@ -360,7 +351,7 @@ public class AlgoManager implements SensorEventListener {
                 PSALogs.d("prediction", "No rangingPredictionInt !");
                 break;
         }
-        isInWelcomeArea = rearmWelcome.get() && getPredictionProximity(connectedCar).equals(PREDICTION_FAR);
+        isInWelcomeArea = rearmWelcome.get() && connectedCar.getMultiPrediction().getPredictionProximity().equals(PREDICTION_FAR);
         if (isInWelcomeArea) {
             isWelcomeAllowed = true;
             rearmWelcome.set(false);
@@ -371,7 +362,7 @@ public class AlgoManager implements SensorEventListener {
             mProtocolManager.getPacketOne().setIsWelcomeRequested(isWelcomeAllowed);
         }
         setIsThatcham(isInLockArea, isInUnlockArea, isInStartArea);
-        if (getPredictionProximity(connectedCar).equalsIgnoreCase(PREDICTION_NEAR)) {
+        if (connectedCar.getMultiPrediction().getPredictionProximity().equalsIgnoreCase(PREDICTION_NEAR)) {
             mProtocolManager.getPacketOne().setInRemoteParkingArea(true);
         } else {
             mProtocolManager.getPacketOne().setInRemoteParkingArea(false);
@@ -442,51 +433,6 @@ public class AlgoManager implements SensorEventListener {
         }
     }
 
-    public String getPredictionPosition(final ConnectedCar connectedCar) {
-        if (connectedCar != null) {
-            return connectedCar.getMultiPrediction().getPredictionPosition(smartphoneIsInPocket);
-        }
-        return PREDICTION_UNKNOWN;
-    }
-
-    public List<PointF> getPredictionCoord(final ConnectedCar connectedCar) {
-        if (connectedCar != null) {
-            return connectedCar.getMultiPrediction().getPredictionCoord();
-        }
-        return null;
-    }
-
-    public List<Double> getDist2Car(final ConnectedCar connectedCar) {
-        if (connectedCar != null) {
-            return connectedCar.getMultiPrediction().getDist2Car();
-        }
-        return null;
-    }
-
-    public String getPredictionProximity(final ConnectedCar connectedCar) {
-        if (connectedCar != null) {
-            return connectedCar.getMultiPrediction().getPredictionProximity();
-        }
-        return PREDICTION_UNKNOWN;
-    }
-
-    /**
-     * Calculate acceleration rolling average
-     *
-     * @param lAccHistoric all acceleration values
-     * @return the rolling average of acceleration
-     */
-    private float getRollingAverageLAcc(ArrayList<Double> lAccHistoric) {
-        float average = 0;
-        if (lAccHistoric.size() > 0) {
-            for (Double element : lAccHistoric) {
-                average += element;
-            }
-            average /= lAccHistoric.size();
-        }
-        return average;
-    }
-
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
@@ -500,7 +446,7 @@ public class AlgoManager implements SensorEventListener {
             }
             double currentLinAcc = CalculUtils.getQuadratiqueSum(event.values[0], event.values[1], event.values[2]);
             lAccHistoric.add(currentLinAcc);
-            double averageLinAcc = getRollingAverageLAcc(lAccHistoric);
+            double averageLinAcc = CalculUtils.getAverage(lAccHistoric);
             deltaLinAcc = Math.abs(currentLinAcc - averageLinAcc);
             if (deltaLinAcc < SdkPreferencesHelper.getInstance().getFrozenThreshold()) {
                 if (!isFrozenRunnableAlreadyLaunched) {

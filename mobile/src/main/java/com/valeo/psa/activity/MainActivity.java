@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         setSupportActionBar(toolbar);
         setFonts();
         this.mBleRangingHelper = new BleRangingHelper(this, chessboardFragment, debugFragment,
-                rkeFragment, accuracyFragment, testFragment);
+                accuracyFragment, testFragment);
         final Bundle bundleArgs = new Bundle();
         bundleArgs.putBoolean("lockStatus", mBleRangingHelper.getLockStatus());
         debugFragment.setArguments(bundleArgs);
@@ -381,6 +381,11 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     @Override
     public void showSnackBar(String message) {
         mainFragment.setSnackBarMessage(message);
+    }
+
+    @Override
+    public void updateCarDoorStatus(boolean lockStatus) {
+        rkeFragment.updateCarDoorStatus(lockStatus);
     }
 
     @Override

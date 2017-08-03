@@ -26,7 +26,6 @@ import com.valeo.bleranging.bluetooth.scanresponse.CentralScanResponse;
 import com.valeo.bleranging.listeners.BleRangingListener;
 import com.valeo.bleranging.listeners.ChessBoardListener;
 import com.valeo.bleranging.listeners.DebugListener;
-import com.valeo.bleranging.listeners.RkeListener;
 import com.valeo.bleranging.listeners.SpinnerListener;
 import com.valeo.bleranging.listeners.TestListener;
 import com.valeo.bleranging.machinelearningalgo.AlgoManager;
@@ -71,7 +70,6 @@ public class BleRangingHelper {
     private final BleRangingListener bleRangingListener;
     private final ChessBoardListener chessBoardListener;
     private final DebugListener debugListener;
-    private final RkeListener rkeListener;
     private final SpinnerListener spinnerListener;
     private final TestListener testListener;
     private final byte[] lastPacketIdNumber = new byte[2];
@@ -170,10 +168,10 @@ public class BleRangingHelper {
             // update ble trame
             mAlgoManager.tryMachineLearningStrategies(connectedCar);
             // update car localization img
-            updateCarLocalization(mAlgoManager.getPredictionPosition(connectedCar),
-                    mAlgoManager.getPredictionProximity(connectedCar),
-                    mAlgoManager.getPredictionCoord(connectedCar),
-                    mAlgoManager.getDist2Car(connectedCar));
+            updateCarLocalization(connectedCar.getMultiPrediction().getPredictionPosition(mAlgoManager.isSmartphoneInPocket()),
+                    connectedCar.getMultiPrediction().getPredictionProximity(),
+                    connectedCar.getMultiPrediction().getPredictionCoord(),
+                    connectedCar.getMultiPrediction().getDist2Car());
             mMainHandler.postDelayed(this, 405);
         }
     };
@@ -288,7 +286,7 @@ public class BleRangingHelper {
                     lock.readLock().unlock();
                 }
                 if (oldLockStatus != newLockStatus) {
-                    rkeListener.updateCarDoorStatus(newLockStatus);
+                    bleRangingListener.updateCarDoorStatus(newLockStatus);
                 }
                 mProtocolManager.getPacketOne().setIsLockedFromTrx(newLockStatus);
                 runFirstConnection(newLockStatus);
@@ -334,7 +332,7 @@ public class BleRangingHelper {
     };
 
     public BleRangingHelper(Context context, ChessBoardListener chessBoardListener,
-                            DebugListener debugListener, RkeListener rkeListener,
+                            DebugListener debugListener,
                             SpinnerListener accuracyListener, TestListener testListener) {
         this.mContext = context;
         askForPermissions();
@@ -342,12 +340,11 @@ public class BleRangingHelper {
         this.bleRangingListener = (BleRangingListener) context;
         this.chessBoardListener = chessBoardListener;
         this.debugListener = debugListener;
-        this.rkeListener = rkeListener;
         this.spinnerListener = accuracyListener;
         this.testListener = testListener;
         this.mProtocolManager = new InblueProtocolManager(context);
         this.mMainHandler = new Handler(Looper.getMainLooper());
-        this.mAlgoManager = new AlgoManager(mContext, bleRangingListener, rkeListener, testListener, mProtocolManager, mMainHandler);
+        this.mAlgoManager = new AlgoManager(mContext, bleRangingListener, mProtocolManager, mMainHandler);
         this.mHandlerTimeOut = new Handler();
         this.mHandlerCryptoTimeOut = new Handler();
         mBluetoothManager.addBluetoothManagementListener(new BluetoothManagementListener() {
@@ -878,7 +875,7 @@ public class BleRangingHelper {
         if (isFirstConnection && mBluetoothManager.isLinked()) {
             isFirstConnection = false;
             PSALogs.w(" rssiHistorics", "*********************************** runFirstConnection ************************************************");
-            rkeListener.updateCarDoorStatus(newLockStatus);
+            bleRangingListener.updateCarDoorStatus(newLockStatus);
             mProtocolManager.getPacketOne().setIsLockedToSend(newLockStatus);
             mAlgoManager.setLastCommandFromTrx(newLockStatus);
         }

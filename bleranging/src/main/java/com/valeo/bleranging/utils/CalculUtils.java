@@ -109,15 +109,15 @@ public class CalculUtils {
         return rssi_corrected;
     }
 
-    public static double averageRssi(final List<Double> rssiList) {
-        if (rssiList == null || rssiList.size() == 0) {
+    public static double getAverage(final List<Double> doubleList) {
+        if (doubleList == null || doubleList.size() == 0) {
             return 0;
         }
         double somme = 0;
-        for (Double elem : rssiList) {
+        for (Double elem : doubleList) {
             somme += elem;
         }
-        return somme / rssiList.size();
+        return somme / doubleList.size();
     }
 
     /**

@@ -10,8 +10,8 @@ import java.util.Locale;
 
 import hex.genmodel.easy.prediction.RegressionModelPrediction;
 
-import static com.valeo.bleranging.utils.CalculUtils.averageRssi;
 import static com.valeo.bleranging.utils.CalculUtils.correctRssiUnilateral;
+import static com.valeo.bleranging.utils.CalculUtils.getAverage;
 
 /**
  * Created by l-avaratha on 12/01/2017
@@ -67,7 +67,7 @@ public class PredictionCoord extends BasePrediction {
             }
             double[] rssiAverage = new double[rssi.length];
             for (int i = 0; i < rssi.length; i++) {
-                rssiAverage[i] = averageRssi(rssiHistoric.get(i));
+                rssiAverage[i] = getAverage(rssiHistoric.get(i));
             }
             constructRowData(this.modified_rssi);
         }

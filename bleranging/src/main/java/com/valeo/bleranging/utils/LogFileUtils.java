@@ -151,7 +151,7 @@ public class LogFileUtils {
         log += mProtocolManager.getPacketLog().getLeftTurnByte() + comma + mProtocolManager.getPacketLog().getRightTurnByte() + comma
                 + mProtocolManager.getPacketLog().getApproachSideByte() + comma + mProtocolManager.getPacketLog().getApproachRoadByte() + comma
                 + mProtocolManager.getPacketLog().getRecordByte() + comma + counterByte + comma
-                + mAlgoManager.getPredictionPosition(connectedCar) + comma
+                + connectedCar.getMultiPrediction().getPredictionPosition(mAlgoManager.isSmartphoneInPocket()) + comma
                 + booleanToString(mProtocolManager.getPacketOne().isLockedFromTrx()) + comma
                 + booleanToString(mProtocolManager.getPacketOne().isLockedToSend()) + comma
                 + booleanToString(mProtocolManager.getPacketOne().isStartRequested()) + comma

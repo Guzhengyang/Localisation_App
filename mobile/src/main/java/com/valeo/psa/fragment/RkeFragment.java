@@ -21,7 +21,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.valeo.bleranging.listeners.RkeListener;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 
@@ -31,7 +30,7 @@ import static com.valeo.bleranging.persistence.Constants.RKE_USE_TIMEOUT;
 /**
  * Created by l-avaratha on 09/03/2017
  */
-public class RkeFragment extends Fragment implements RkeListener {
+public class RkeFragment extends Fragment {
     private final Handler mHandler = new Handler();
     private boolean isDragging = false;
     private boolean updateAfterDragStops = false;
@@ -265,7 +264,6 @@ public class RkeFragment extends Fragment implements RkeListener {
         }
     }
 
-    @Override
     public void updateCarDoorStatus(boolean lockStatus) {
         PSALogs.d("DragDrop", "updateCarDoorStatus isDragging " + isDragging);
         if (isDragging) {
