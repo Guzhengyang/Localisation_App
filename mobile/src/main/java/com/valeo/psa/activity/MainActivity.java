@@ -333,6 +333,11 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     }
 
     @Override
+    public void setRegPlate(final String regPlate) {
+        mBleRangingHelper.setRegPlate(regPlate);
+    }
+
+    @Override
     public void updateBLEStatus() {
         runOnUiThread(new Runnable() {
             @Override
@@ -417,7 +422,8 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
                 LogFileUtils.writeFirstColumnLogs();
             }
             PSALogs.d("init2", "initializeConnectedCar\n");
-            mBleRangingHelper.initializeConnectedCar();
+            initializeConnectedCar();
+            mBleRangingHelper.setRegPlate(mainFragment.getRegPlate());
         }
         if (chessboardFragment != null) {
             if (SdkPreferencesHelper.getInstance().getConnectedCarType()

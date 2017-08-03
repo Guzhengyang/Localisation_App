@@ -991,4 +991,8 @@ public class BleRangingHelper {
     public void setNewThreshold(double value) {
         connectedCar.getMultiPrediction().calculatePredictionTest(value);
     }
+
+    public void setRegPlate(final String regPlate) {
+        connectedCar.setRegPlate(regPlate);
+    }
 }

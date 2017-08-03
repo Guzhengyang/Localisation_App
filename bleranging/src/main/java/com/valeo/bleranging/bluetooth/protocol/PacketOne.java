@@ -91,7 +91,7 @@ public class PacketOne {
         payload[6] = getPayloadSixthByte();
         PSALogs.d("currentTrx", String.format("%02X ", payload[6]));
         if (!isAutoMode) {
-            System.arraycopy(getPayloadSevenToTwelveByte("DC-917-NY"), 0, payload, 7, 6);
+            System.arraycopy(getPayloadSevenToTwelveByte(connectedCar.getRegPlate()), 0, payload, 7, 6);
         }
         packetOneCounter++;
         if (packetOneCounter > 65534) { // packetOneCounter > FF FE

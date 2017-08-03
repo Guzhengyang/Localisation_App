@@ -19,6 +19,7 @@ public class ConnectedCar {
     private final MultiTrx mMultiTrx;
     private final MultiPrediction mMultiPrediction;
     private final Context mContext;
+    private String regPlate;
 
     ConnectedCar(final Context context, final LinkedHashMap<Integer, Trx> trxLinked,
                  LinkedHashMap<String, BasePrediction> predictionLinked) {
@@ -47,5 +48,13 @@ public class ConnectedCar {
 
     public void initPredictions() {
         mMultiPrediction.initPredictions(mMultiTrx.getRssiTab(), SdkPreferencesHelper.getInstance().getOffsetSmartphone());
+    }
+
+    public String getRegPlate() {
+        return regPlate;
+    }
+
+    public void setRegPlate(final String regPlate) {
+        this.regPlate = regPlate;
     }
 }

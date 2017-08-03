@@ -233,6 +233,7 @@ public class MainFragment extends Fragment implements MyRecyclerAdapter.OnStartD
                                 SdkPreferencesHelper.SAVED_CC_CONNECTION_OPTION)) {
                             mListener.restartConnection();
                             mListener.initializeConnectedCar();
+                            mListener.setRegPlate(getRegPlate());
                             lastPos = position;
                         } else {
                             Snackbar.make(recyclerView, "pref file not found", Snackbar.LENGTH_SHORT).show();
@@ -254,9 +255,9 @@ public class MainFragment extends Fragment implements MyRecyclerAdapter.OnStartD
         });
         if (lastPos != -1) {
             car_model_recyclerView.scrollToPosition(lastPos);
-            Car tempCar = mCarListAdapter.getCars().get(lastPos);
-            if (tempCar != null) {
-                selected_car_model_pinned.setText(tempCar.getBrandCar());
+            selectedCar = mCarListAdapter.getCars().get(lastPos);
+            if (selectedCar != null) {
+                selected_car_model_pinned.setText(selectedCar.getBrandCar());
             }
         }
     }
@@ -268,11 +269,11 @@ public class MainFragment extends Fragment implements MyRecyclerAdapter.OnStartD
      */
     private List<Car> createCarList() {
         List<Car> resultList = new ArrayList<>(5);
-        resultList.add(new Car(R.mipmap.car_model_ds5, "1", getString(R.string.ds5), getString(R.string.VIN), "car_one"));
-        resultList.add(new Car(R.mipmap.car_model_ds5_2, "2", getString(R.string.ds5_2), getString(R.string.VIN2), "car_two"));
-        resultList.add(new Car(R.mipmap.car_model_ds5_3, "3", getString(R.string.ds5_3), getString(R.string.VIN3), "car_yagi"));
-        resultList.add(new Car(R.mipmap.car_model_ds5_2, "4", getString(R.string.ds5_4), getString(R.string.VIN4), "car_three"));
-        resultList.add(new Car(R.mipmap.car_model_ds5_3, "5", getString(R.string.ds5_5), getString(R.string.VIN5), "car_vivaldi"));
+        resultList.add(new Car(R.mipmap.car_model_ds5, "DC-917-NY", getString(R.string.ds5), getString(R.string.VIN), "car_one"));
+        resultList.add(new Car(R.mipmap.car_model_ds5_2, "DC-917-NY", getString(R.string.ds5_2), getString(R.string.VIN2), "car_two"));
+        resultList.add(new Car(R.mipmap.car_model_ds5_3, "EB-967-AK", getString(R.string.ds5_3), getString(R.string.VIN3), "car_yagi"));
+        resultList.add(new Car(R.mipmap.car_model_ds5_2, "EB-967-AK", getString(R.string.ds5_4), getString(R.string.VIN4), "car_three"));
+        resultList.add(new Car(R.mipmap.car_model_ds5_3, "EB-967-AK", getString(R.string.ds5_5), getString(R.string.VIN5), "car_vivaldi"));
         return resultList;
     }
 
@@ -470,6 +471,16 @@ public class MainFragment extends Fragment implements MyRecyclerAdapter.OnStartD
         }
     }
 
+    public String getRegPlate() {
+        if (selectedCar != null) {
+            PSALogs.d("regPlate", selectedCar.toString());
+            return selectedCar.getRegPlate();
+        } else {
+            PSALogs.d("regPlate", "default coz null");
+            return "DC-917-NY";
+        }
+    }
+
     public interface MainFragmentActionListener {
         void switchToolbars(boolean mainToNewToolBar, int resId);
 
@@ -480,5 +491,7 @@ public class MainFragment extends Fragment implements MyRecyclerAdapter.OnStartD
         void startProgress();
 
         void stopProgress();
+
+        void setRegPlate(String regPlate);
     }
 }
