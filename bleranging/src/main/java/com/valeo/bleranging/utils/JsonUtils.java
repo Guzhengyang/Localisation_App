@@ -66,6 +66,25 @@ public class JsonUtils {
         return DEFAULT_ADDRESS_MAC;
     }
 
+    public static int getTrxNumber(final String regPlate, final String macAddress) {
+        for (int i = 0; i < mJsonMacAddressesArray.size(); ++i) { // search over all car_config
+            JsonObject car_config = mJsonMacAddressesArray.get(i).getAsJsonObject();
+            String carRegPlateString = car_config.getAsJsonPrimitive("car").getAsString();
+            if (carRegPlateString.equals(regPlate)) { // find the car_config with the right regPlate
+                try {
+                    for (String key : car_config.getAsJsonObject().keySet()) {
+                        if (car_config.getAsJsonPrimitive(key).getAsString().equalsIgnoreCase(macAddress)) {
+                            return Integer.valueOf(key);
+                        }
+                    }
+                } catch (NullPointerException e) {
+                    return -1;
+                }
+            }
+        }
+        return -1;
+    }
+
     /**
      * Read the JSON file to get the stored data (mainly the default values).
      *

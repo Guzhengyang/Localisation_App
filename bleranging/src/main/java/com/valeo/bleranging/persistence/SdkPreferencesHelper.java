@@ -39,15 +39,6 @@ public final class SdkPreferencesHelper {
     public final static String BLE_ADDRESS_CONNECTABLE = "D4:F5:13:56:2A:B8";
     public final static String BLE_ADDRESS_CONNECTABLE_PC = "B0:B4:48:BD:56:85";
     public final static String BLE_ADDRESS_CONNECTABLE_REMOTE_CONTROL = "5C:E0:C5:34:4D:32";
-    public final static String BLE_ADDRESS_FRONT_LEFT = "24:71:89:1D:4E:4D";
-    public final static String BLE_ADDRESS_FRONT_RIGHT = "24:71:89:1D:4E:66";
-    public final static String BLE_ADDRESS_LEFT = "24:71:89:1D:4E:79";
-    public final static String BLE_ADDRESS_MIDDLE = "24:71:89:1D:4E:1A";
-    public final static String BLE_ADDRESS_RIGHT = "24:71:89:1D:4E:3D";
-    public final static String BLE_ADDRESS_TRUNK = "24:71:89:1D:4C:FC";
-    public final static String BLE_ADDRESS_REAR_LEFT = "24:71:89:1D:4E:6D";
-    public final static String BLE_ADDRESS_BACK = "78:A5:04:81:5A:21";
-    public final static String BLE_ADDRESS_REAR_RIGHT = "24:71:89:1D:4E:61";
     public static final String SAVED_CC_GENERIC_OPTION = "savedConnectedCarGenericOption";
     public static final String SAVED_CC_CONNECTION_OPTION = "savedConnectedCarConnectionOption";
     private final static String LOG_FILE_NAME = "/InBlueRssi/allRssi_0_0000.csv";
@@ -210,40 +201,70 @@ public final class SdkPreferencesHelper {
         saveString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_connectable_remote_control_pref_name), address);
     }
 
-    public String getTrxAddressLeft() {
-        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_left_pref_name), BLE_ADDRESS_LEFT);
+    public void setTrxAddress(int receivedTrxNumber, String address) {
+        saveString(SAVED_CC_CONNECTION_OPTION, getTrxAddressKeyName(receivedTrxNumber), address);
     }
 
-    public String getTrxAddressMiddle() {
-        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_middle_pref_name), BLE_ADDRESS_MIDDLE);
+    public void setTrxCarRssi(int receivedTrxNumber, int rssi) {
+        saveInt(SAVED_CC_CONNECTION_OPTION, getTrxCarRssiKeyName(receivedTrxNumber), rssi);
     }
 
-    public String getTrxAddressRight() {
-        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_right_pref_name), BLE_ADDRESS_RIGHT);
+    private String getTrxAddressKeyName(int receivedTrxNumber) {
+        switch (receivedTrxNumber) {
+            case 1:
+                return mApplicationContext.getString(R.string.address_front_left_pref_name);
+            case 2:
+                return mApplicationContext.getString(R.string.address_front_right_pref_name);
+            case 3:
+                return mApplicationContext.getString(R.string.address_left_pref_name);
+            case 4:
+                return mApplicationContext.getString(R.string.address_middle_pref_name);
+            case 5:
+                return mApplicationContext.getString(R.string.address_right_pref_name);
+            case 6:
+                return mApplicationContext.getString(R.string.address_trunk_pref_name);
+            case 7:
+                return mApplicationContext.getString(R.string.address_rear_left_pref_name);
+            case 8:
+                return mApplicationContext.getString(R.string.address_back_pref_name);
+            case 9:
+                return mApplicationContext.getString(R.string.address_rear_right_pref_name);
+            default:
+                return "";
+        }
     }
 
-    public String getTrxAddressTrunk() {
-        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_trunk_pref_name), BLE_ADDRESS_TRUNK);
+    private String getTrxCarRssiKeyName(int receivedTrxNumber) {
+        switch (receivedTrxNumber) {
+            case 1:
+                return mApplicationContext.getString(R.string.car_rssi_front_left_pref_name);
+            case 2:
+                return mApplicationContext.getString(R.string.car_rssi_front_right_pref_name);
+            case 3:
+                return mApplicationContext.getString(R.string.car_rssi_left_pref_name);
+            case 4:
+                return mApplicationContext.getString(R.string.car_rssi_middle_pref_name);
+            case 5:
+                return mApplicationContext.getString(R.string.car_rssi_right_pref_name);
+            case 6:
+                return mApplicationContext.getString(R.string.car_rssi_trunk_pref_name);
+            case 7:
+                return mApplicationContext.getString(R.string.car_rssi_rear_left_pref_name);
+            case 8:
+                return mApplicationContext.getString(R.string.car_rssi_back_pref_name);
+            case 9:
+                return mApplicationContext.getString(R.string.car_rssi_rear_right_pref_name);
+            default:
+                return "";
+        }
     }
 
-    public String getTrxAddressBack() {
-        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_back_pref_name), BLE_ADDRESS_BACK);
+    public String getTrxAddress(int trxNumber) {
+        return readString(SAVED_CC_CONNECTION_OPTION, getTrxAddressKeyName(trxNumber), "");
     }
 
-    public String getTrxAddressFrontLeft() {
-        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_front_left_pref_name), BLE_ADDRESS_FRONT_LEFT);
-    }
-
-    public String getTrxAddressRearLeft() {
-        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_rear_left_pref_name), BLE_ADDRESS_REAR_LEFT);
-    }
-
-    public String getTrxAddressFrontRight() {
-        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_front_right_pref_name), BLE_ADDRESS_FRONT_RIGHT);
-    }
-
-    public String getTrxAddressRearRight() {
-        return readString(SAVED_CC_CONNECTION_OPTION, mApplicationContext.getString(R.string.address_rear_right_pref_name), BLE_ADDRESS_REAR_RIGHT);
+    public int getCarRssi(int trxNumber) {
+        return readInt(SAVED_CC_CONNECTION_OPTION, getTrxCarRssiKeyName(trxNumber), -1);
     }
 
     public Boolean isChannelLimited() {

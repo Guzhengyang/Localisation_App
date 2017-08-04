@@ -13,6 +13,7 @@ import static com.valeo.bleranging.persistence.Constants.BASE_1;
 import static com.valeo.bleranging.persistence.Constants.BASE_2;
 import static com.valeo.bleranging.persistence.Constants.BASE_3;
 import static com.valeo.bleranging.persistence.Constants.BASE_4;
+import static com.valeo.bleranging.persistence.Constants.NUMBER_MAX_TRX;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_ACCESS;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_BACK;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_EXTERNAL;
@@ -46,7 +47,6 @@ import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
 public class PacketOne {
     private static final int MAX_BLE_TRAME_BYTE = 13;
     private static final int MAC_ADDRESS_SIZE = 6;
-    private static final int NUMBER_MAX_TRX = 16;
     private static PacketOne instance;
     private int packetOneCounter = 0;
     private String carBase;

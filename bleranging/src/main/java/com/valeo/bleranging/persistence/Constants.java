@@ -38,6 +38,7 @@ public class Constants {
     public final static int NUMBER_TRX_REAR_LEFT = 7;
     public final static int NUMBER_TRX_BACK = 8;
     public final static int NUMBER_TRX_REAR_RIGHT = 9;
+    public static final int NUMBER_MAX_TRX = 16;
     public static final String PREDICTION_INTERNAL = "internal";
     public static final String PREDICTION_ACCESS = "access";
     public static final String PREDICTION_EXTERNAL = "external";

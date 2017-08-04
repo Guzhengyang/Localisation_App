@@ -16,16 +16,6 @@ import java.nio.channels.FileChannel;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
-import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_BACK;
-import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_FRONT_LEFT;
-import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_FRONT_RIGHT;
-import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_LEFT;
-import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_MIDDLE;
-import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_REAR_LEFT;
-import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_REAR_RIGHT;
-import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_RIGHT;
-import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_TRUNK;
-
 /**
  * Created by l-avaratha on 20/07/2016
  */
@@ -170,25 +160,21 @@ public class TextUtils {
                         TextUtils.colorText(connectedCar.getMultiTrx().isActive(trx.getTrxNumber()), trx.getTrxName(), Color.WHITE, Color.DKGRAY)));
             }
             spannableStringBuilder.append("\n");
-
             for (Trx trx : trxLinkedHMap.values()) {
                 spannableStringBuilder.append(String.format(Locale.FRANCE, "%10d",
                         connectedCar.getMultiTrx().getCurrentOriginalRssi(trx.getTrxNumber())));
             }
             spannableStringBuilder.append('\n');
-
             for (Trx trx : trxLinkedHMap.values()) {
                 spannableStringBuilder.append(String.format(Locale.FRANCE, "%10s",
                         getCurrentBLEChannelString(connectedCar, trx.getTrxNumber())));
             }
-
             spannableStringBuilder.append('\n');
             spannableStringBuilder.append("-------------------------------------------------------------------------\n");
             for (Trx trx : trxLinkedHMap.values()) {
-                if (trx.getTrxAddress() != null) {
-                    spannableStringBuilder.append(trx.getTrxAddress()).append(" ");
-                    spannableStringBuilder.append(String.valueOf(trx.getCarRssi())).append("\n");
-                }
+                spannableStringBuilder.append(trx.getTrxName()).append("   ");
+                spannableStringBuilder.append(SdkPreferencesHelper.getInstance().getTrxAddress(trx.getTrxNumber())).append("   ");
+                spannableStringBuilder.append(String.valueOf(SdkPreferencesHelper.getInstance().getCarRssi(trx.getTrxNumber()))).append("\n");
             }
             spannableStringBuilder.append("-------------------------------------------------------------------------\n");
         }
@@ -212,29 +198,5 @@ public class TextUtils {
                 break;
         }
         return result;
-    }
-
-    public static int getTrxNumber(String address) {
-        if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft())) {
-            return NUMBER_TRX_FRONT_LEFT;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressFrontRight())) {
-            return NUMBER_TRX_FRONT_RIGHT;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressLeft())) {
-            return NUMBER_TRX_LEFT;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressMiddle())) {
-            return NUMBER_TRX_MIDDLE;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressRight())) {
-            return NUMBER_TRX_RIGHT;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressTrunk())) {
-            return NUMBER_TRX_TRUNK;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressRearLeft())) {
-            return NUMBER_TRX_REAR_LEFT;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressBack())) {
-            return NUMBER_TRX_BACK;
-        } else if (address.equals(SdkPreferencesHelper.getInstance().getTrxAddressRearRight())) {
-            return NUMBER_TRX_REAR_RIGHT;
-        } else {
-            return -1;
-        }
     }
 }

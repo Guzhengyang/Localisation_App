@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.valeo.bleranging.persistence.Constants.NUMBER_MAX_TRX;
+
 /**
  * "Compat" Bluetooth adapter. Depending on the device, uses the pre or post Lollipop scan methods.
  */
@@ -241,42 +243,14 @@ public final class BluetoothAdapterCompat {
                     .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressConnectable().toUpperCase(Locale.FRANCE))
                     .build();
             scanFilters.add(scanFilterConnectable);
-            ScanFilter scanFilterLeft = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressLeft().toUpperCase(Locale.FRANCE))
-                    .build();
-            scanFilters.add(scanFilterLeft);
-            ScanFilter scanFilterMiddle = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressMiddle().toUpperCase(Locale.FRANCE))
-                    .build();
-            scanFilters.add(scanFilterMiddle);
-            ScanFilter scanFilterRight = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRight().toUpperCase(Locale.FRANCE))
-                    .build();
-            scanFilters.add(scanFilterRight);
-            ScanFilter scanFilterTrunk = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressTrunk().toUpperCase(Locale.FRANCE))
-                    .build();
-            scanFilters.add(scanFilterTrunk);
-            ScanFilter scanFilterBack = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressBack().toUpperCase(Locale.FRANCE))
-                    .build();
-            scanFilters.add(scanFilterBack);
-            ScanFilter scanFilterFrontLeft = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressFrontLeft().toUpperCase(Locale.FRANCE))
-                    .build();
-            scanFilters.add(scanFilterFrontLeft);
-            ScanFilter scanFilterFrontRight = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressFrontRight().toUpperCase(Locale.FRANCE))
-                    .build();
-            scanFilters.add(scanFilterFrontRight);
-            ScanFilter scanFilterRearLeft = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRearLeft().toUpperCase(Locale.FRANCE))
-                    .build();
-            scanFilters.add(scanFilterRearLeft);
-            ScanFilter scanFilterRearRight = new ScanFilter.Builder()
-                    .setDeviceAddress(SdkPreferencesHelper.getInstance().getTrxAddressRearRight().toUpperCase(Locale.FRANCE))
-                    .build();
-            scanFilters.add(scanFilterRearRight);
+            for (int i = 1; i < NUMBER_MAX_TRX; i++) {
+                String address = SdkPreferencesHelper.getInstance().getTrxAddress(i).toUpperCase(Locale.FRANCE);
+                if (!address.isEmpty()) {
+                    scanFilters.add(new ScanFilter.Builder()
+                            .setDeviceAddress(address)
+                            .build());
+                }
+            }
             ScanFilter scanFilterConnectable2 = new ScanFilter.Builder()
                     .setDeviceAddress("B0:B4:48:BD:56:85")
                     .build();

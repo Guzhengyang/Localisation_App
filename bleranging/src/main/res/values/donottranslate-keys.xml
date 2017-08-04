@@ -12,6 +12,15 @@
     <string name="address_rear_left_pref_name">"com.inblue.PREFERENCE_ADDRESS_REAR_LEFT"</string>
     <string name="address_front_right_pref_name">"com.inblue.PREFERENCE_ADDRESS_FRONT_RIGHT"</string>
     <string name="address_rear_right_pref_name">"com.inblue.PREFERENCE_ADDRESS_REAR_RIGHT"</string>
+    <string name="car_rssi_left_pref_name">"com.inblue.PREFERENCE_CAR_RSSI_LEFT"</string>
+    <string name="car_rssi_middle_pref_name">"com.inblue.PREFERENCE_CAR_RSSI_MIDDLE"</string>
+    <string name="car_rssi_right_pref_name">"com.inblue.PREFERENCE_CAR_RSSI_RIGHT"</string>
+    <string name="car_rssi_trunk_pref_name">"com.inblue.PREFERENCE_CAR_RSSI_TRUNK"</string>
+    <string name="car_rssi_back_pref_name">"com.inblue.PREFERENCE_CAR_RSSI_BACK"</string>
+    <string name="car_rssi_front_left_pref_name">"com.inblue.PREFERENCE_CAR_RSSI_FRONT_LEFT"</string>
+    <string name="car_rssi_rear_left_pref_name">"com.inblue.PREFERENCE_CAR_RSSI_REAR_LEFT"</string>
+    <string name="car_rssi_front_right_pref_name">"com.inblue.PREFERENCE_CAR_RSSI_FRONT_RIGHT"</string>
+    <string name="car_rssi_rear_right_pref_name">"com.inblue.PREFERENCE_CAR_RSSI_REAR_RIGHT"</string>
     <string name="connected_car_type_pref_name">"com.inblue.PREFERENCE_CONNECTED_CAR_TYPE"</string>
     <string name="connected_car_base_pref_name">"com.inblue.PREFERENCE_CONNECTED_CAR_BASE"</string>
     <string name="opening_orientation_type_pref_name">"com.inblue.PREFERENCE_OPENING_ORIENTATION_TYPE"</string>

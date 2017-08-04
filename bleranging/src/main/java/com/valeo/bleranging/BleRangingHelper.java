@@ -33,6 +33,7 @@ import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.JsonUtils;
 import com.valeo.bleranging.utils.LogFileUtils;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.TextUtils;
@@ -57,7 +58,6 @@ import static com.valeo.bleranging.persistence.Constants.RSSI_DIR;
 import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
 import static com.valeo.bleranging.utils.TextUtils.createFirstFooterDebugData;
 import static com.valeo.bleranging.utils.TextUtils.createHeaderDebugData;
-import static com.valeo.bleranging.utils.TextUtils.getTrxNumber;
 
 /**
  * Created by l-avaratha on 19/07/2016
@@ -269,12 +269,6 @@ public class BleRangingHelper {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-//            if (BluetoothLeServiceForRemoteControl.ACTION_DATA_AVAILABLE_REMOTE.equals(action)) {
-//                final byte[] remoteByteReceived = mBluetoothManager.getRemoteBytes();
-//                if (remoteByteReceived != null) {
-//                    counterByte = remoteByteReceived[0];
-//                }
-//            }
             if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 lock.writeLock().lock();
                 bytesReceived = mBluetoothManager.getBytesReceived();
@@ -304,7 +298,6 @@ public class BleRangingHelper {
                 PSALogs.d("NIH", "TRX ACTION_GATT_SERVICES_DISCONNECTED");
                 bleRangingListener.updateBLEStatus();
                 PSALogs.i("restartConnection", "after being disconnected");
-//                reconnectAfterDisconnection();
                 resetParams();
                 bleRangingListener.updateBLEStatus();
                 mBluetoothManager.startLeScan();
@@ -312,7 +305,6 @@ public class BleRangingHelper {
                 PSALogs.w("NIH", "ACTION_GATT_CONNECTION_LOSS");
                 bleRangingListener.updateBLEStatus();
                 PSALogs.i("restartConnection", "after connection loss");
-//                reconnectAfterDisconnection();
                 resetParams();
                 bleRangingListener.updateBLEStatus();
                 mBluetoothManager.startLeScan();
@@ -386,8 +378,10 @@ public class BleRangingHelper {
                 final byte[] address = Arrays.copyOfRange(bytesReceived, 7, 13);
                 connectedCar.getMultiTrx().saveCarAddress(receivedTrxNumber,
                         TextUtils.printAddressBytes(address));
+                SdkPreferencesHelper.getInstance().setTrxAddress(receivedTrxNumber, TextUtils.printAddressBytes(address));
             } else if (infoType == 0x10) {
                 connectedCar.getMultiTrx().saveCarRssi(receivedTrxNumber, bytesReceived[12]);
+                SdkPreferencesHelper.getInstance().setTrxCarRssi(receivedTrxNumber, bytesReceived[12]);
             }
         }
     }
@@ -656,30 +650,6 @@ public class BleRangingHelper {
         }
     }
 
-//    private void reconnectAfterDisconnection() {
-//        long restartConnectionDelay;
-//        isRestartAuthorized = false;
-//        if (reconnectionCounter < 3) {
-//            restartConnectionDelay = 1000;
-//        } else if (reconnectionCounter < 6) {
-//            restartConnectionDelay = 3000;
-//        } else {
-//            isRestartAuthorized = true;
-//            reconnectionCounter = 0;
-//            return;
-//        }
-//        if (!isFullyConnected()
-//                && !mBluetoothManager.isConnecting()) {
-//            mMainHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    restartConnection();
-//                }
-//            }, restartConnectionDelay);
-//        }
-//        reconnectionCounter++;
-//    }
-
     /**
      * Suspend scan, stop all loops, reinit all variables, then resume scan to be able to reconnect
      */
@@ -750,8 +720,8 @@ public class BleRangingHelper {
                 } else {
                     PSALogs.w("NIH", "BEACON " + device.getAddress());
                 }
-            } else if (isFullyConnected()) {
-                int trxNumber = getTrxNumber(device.getAddress());
+            } else if (isFullyConnected() && connectedCar != null) {
+                int trxNumber = JsonUtils.getTrxNumber(connectedCar.getRegPlate(), device.getAddress());
                 if (trxNumber == -1) {
                     if (SdkPreferencesHelper.getInstance().getTrxAddressConnectable().equalsIgnoreCase(device.getAddress())) {
                         PSALogs.d("NIH", "connectable is connected but adv again (central)");
@@ -778,9 +748,8 @@ public class BleRangingHelper {
      * @param beaconScanResponse the beaconScanResponse received
      */
     private void catchBeaconScanResponse(final BluetoothDevice device, int rssi, BeaconScanResponse beaconScanResponse, byte[] advertisedData) {
-        if (device != null && beaconScanResponse != null) {
-//            if (isFullyConnected()) {
-            int trxNumber = getTrxNumber(device.getAddress());
+        if (device != null && beaconScanResponse != null && connectedCar != null) {
+            int trxNumber = JsonUtils.getTrxNumber(connectedCar.getRegPlate(), device.getAddress());
             if (trxNumber != -1) {
                 final Antenna.BLEChannel receivedBleChannel = mProtocolManager.getCurrentChannel(beaconScanResponse);
                 if (SdkPreferencesHelper.getInstance().isChannelLimited()) {
