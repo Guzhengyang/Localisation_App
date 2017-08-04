@@ -304,79 +304,81 @@ public class AlgoManager implements SensorEventListener {
         mProtocolManager.getPacketOne().setIsStartRequested(false);
         mProtocolManager.getPacketOne().setIsWelcomeRequested(false);
         //TODO Replace SdkPreferencesHelper.getInstance().getComSimulationEnabled() by CallReceiver.smartphoneComIsActivated after demo
-        lastPrediction = connectedCar.getMultiPrediction().getPredictionPosition(smartphoneIsInPocket);
-        switch (lastPrediction) {
-            case PREDICTION_INSIDE:
-                isInStartArea = true;
-                if (!mProtocolManager.getPacketOne().isStartRequested()) {
-                    mProtocolManager.getPacketOne().setIsStartRequested(true);
-                }
-                break;
-            case PREDICTION_OUTSIDE:
-                break;
-            case PREDICTION_LOCK:
-            case PREDICTION_EXTERNAL:
-                isInLockArea = true;
-                if (areLockActionsAvailable.get() && rearmLock.get() && SdkPreferencesHelper.getInstance().getSecurityWALEnabled()) {
-                    performLockWithCryptoTimeout(false, true);
-                }
-                break;
-            case PREDICTION_INTERNAL:
-            case PREDICTION_START:
-            case PREDICTION_START_FL:
-            case PREDICTION_START_FR:
-            case PREDICTION_START_RL:
-            case PREDICTION_START_RR:
-            case PREDICTION_TRUNK:
-                isInStartArea = true;
-                if (!mProtocolManager.getPacketOne().isStartRequested()) {
-                    mProtocolManager.getPacketOne().setIsStartRequested(true);
-                }
-                break;
-            case PREDICTION_ACCESS:
-            case PREDICTION_BACK:
-            case PREDICTION_RIGHT:
-            case PREDICTION_LEFT:
-            case PREDICTION_FRONT:
-                isInUnlockArea = true;
-                if (areLockActionsAvailable.get() && rearmUnlock.get()) {
-                    performLockWithCryptoTimeout(false, false);
-                }
-                break;
-            case PREDICTION_UNKNOWN:
-            case PREDICTION_ROOF:
-            case PREDICTION_WELCOME:
-            case PREDICTION_THATCHAM:
-            default:
-                PSALogs.d("prediction", "No rangingPredictionInt !");
-                break;
-        }
-        isInWelcomeArea = rearmWelcome.get() && connectedCar.getMultiPrediction().getPredictionProximity().equals(PREDICTION_FAR);
-        if (isInWelcomeArea) {
-            isWelcomeAllowed = true;
-            rearmWelcome.set(false);
-            SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
-            bleRangingListener.doWelcome();
-        }
-        if (mProtocolManager.getPacketOne().isWelcomeRequested() != isWelcomeAllowed) {
-            mProtocolManager.getPacketOne().setIsWelcomeRequested(isWelcomeAllowed);
-        }
-        setIsThatcham(isInLockArea, isInUnlockArea, isInStartArea);
-        if (connectedCar.getMultiPrediction().getPredictionProximity().equalsIgnoreCase(PREDICTION_NEAR)) {
-            mProtocolManager.getPacketOne().setInRemoteParkingArea(true);
-        } else {
-            mProtocolManager.getPacketOne().setInRemoteParkingArea(false);
-        }
-        if (accuracyMeasureEnabled) {
-            if (accuracyCounterHMap.get(lastPrediction) == null) {
-                PSALogs.d("accuracy", lastPrediction + " was null");
-                accuracyCounterHMap.put(lastPrediction, 0);
+        if (connectedCar != null) {
+            lastPrediction = connectedCar.getMultiPrediction().getPredictionPosition(smartphoneIsInPocket);
+            switch (lastPrediction) {
+                case PREDICTION_INSIDE:
+                    isInStartArea = true;
+                    if (!mProtocolManager.getPacketOne().isStartRequested()) {
+                        mProtocolManager.getPacketOne().setIsStartRequested(true);
+                    }
+                    break;
+                case PREDICTION_OUTSIDE:
+                    break;
+                case PREDICTION_LOCK:
+                case PREDICTION_EXTERNAL:
+                    isInLockArea = true;
+                    if (areLockActionsAvailable.get() && rearmLock.get() && SdkPreferencesHelper.getInstance().getSecurityWALEnabled()) {
+                        performLockWithCryptoTimeout(false, true);
+                    }
+                    break;
+                case PREDICTION_INTERNAL:
+                case PREDICTION_START:
+                case PREDICTION_START_FL:
+                case PREDICTION_START_FR:
+                case PREDICTION_START_RL:
+                case PREDICTION_START_RR:
+                case PREDICTION_TRUNK:
+                    isInStartArea = true;
+                    if (!mProtocolManager.getPacketOne().isStartRequested()) {
+                        mProtocolManager.getPacketOne().setIsStartRequested(true);
+                    }
+                    break;
+                case PREDICTION_ACCESS:
+                case PREDICTION_BACK:
+                case PREDICTION_RIGHT:
+                case PREDICTION_LEFT:
+                case PREDICTION_FRONT:
+                    isInUnlockArea = true;
+                    if (areLockActionsAvailable.get() && rearmUnlock.get()) {
+                        performLockWithCryptoTimeout(false, false);
+                    }
+                    break;
+                case PREDICTION_UNKNOWN:
+                case PREDICTION_ROOF:
+                case PREDICTION_WELCOME:
+                case PREDICTION_THATCHAM:
+                default:
+                    PSALogs.d("prediction", "No rangingPredictionInt !");
+                    break;
             }
-            accuracyCounterHMap.put(lastPrediction, accuracyCounterHMap.get(lastPrediction) + 1);
-            for (Map.Entry<String, Integer> entry : accuracyCounterHMap.entrySet()) {
-                String key = entry.getKey();
-                Integer value = entry.getValue();
-                PSALogs.d("accuracy", "key = " + key + ", value = " + value);
+            isInWelcomeArea = rearmWelcome.get() && connectedCar.getMultiPrediction().getPredictionProximity().equals(PREDICTION_FAR);
+            if (isInWelcomeArea) {
+                isWelcomeAllowed = true;
+                rearmWelcome.set(false);
+                SoundUtils.makeNoise(mContext, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
+                bleRangingListener.doWelcome();
+            }
+            if (mProtocolManager.getPacketOne().isWelcomeRequested() != isWelcomeAllowed) {
+                mProtocolManager.getPacketOne().setIsWelcomeRequested(isWelcomeAllowed);
+            }
+            setIsThatcham(isInLockArea, isInUnlockArea, isInStartArea);
+            if (connectedCar.getMultiPrediction().getPredictionProximity().equalsIgnoreCase(PREDICTION_NEAR)) {
+                mProtocolManager.getPacketOne().setInRemoteParkingArea(true);
+            } else {
+                mProtocolManager.getPacketOne().setInRemoteParkingArea(false);
+            }
+            if (accuracyMeasureEnabled) {
+                if (accuracyCounterHMap.get(lastPrediction) == null) {
+                    PSALogs.d("accuracy", lastPrediction + " was null");
+                    accuracyCounterHMap.put(lastPrediction, 0);
+                }
+                accuracyCounterHMap.put(lastPrediction, accuracyCounterHMap.get(lastPrediction) + 1);
+                for (Map.Entry<String, Integer> entry : accuracyCounterHMap.entrySet()) {
+                    String key = entry.getKey();
+                    Integer value = entry.getValue();
+                    PSALogs.d("accuracy", "key = " + key + ", value = " + value);
+                }
             }
         }
     }

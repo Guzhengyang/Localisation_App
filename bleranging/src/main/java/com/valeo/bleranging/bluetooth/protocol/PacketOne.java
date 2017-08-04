@@ -86,8 +86,10 @@ public class PacketOne {
         payload[1] = (byte) (packetOneCounter & 0xFF);
         payload[2] = (0x01);
         payload[3] = getPayloadThirdByte();
-        payload[4] = getPayloadFourthByte(isRKE, connectedCar.getMultiPrediction().getPredictionPosition(mAlgoManager.isSmartphoneInPocket()));
-        payload[5] = getPayloadFifthByte(isRKE, connectedCar.getMultiPrediction().getPredictionPosition(mAlgoManager.isSmartphoneInPocket()));
+        if (connectedCar != null) {
+            payload[4] = getPayloadFourthByte(isRKE, connectedCar.getMultiPrediction().getPredictionPosition(mAlgoManager.isSmartphoneInPocket()));
+            payload[5] = getPayloadFifthByte(isRKE, connectedCar.getMultiPrediction().getPredictionPosition(mAlgoManager.isSmartphoneInPocket()));
+        }
         payload[6] = getPayloadSixthByte();
         PSALogs.d("currentTrx", String.format("%02X ", payload[6]));
         if (!isAutoMode) {

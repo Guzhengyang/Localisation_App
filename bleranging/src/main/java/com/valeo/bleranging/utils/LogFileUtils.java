@@ -80,101 +80,103 @@ public class LogFileUtils {
     public static void appendRssiLogs(final ConnectedCar connectedCar, final AlgoManager mAlgoManager,
                                       boolean lockStatus, byte counterByte,
                                       final InblueProtocolManager mProtocolManager, int beepInt) {
-        final String comma = ";";
-        String log = connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_LEFT) + comma +
-                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_MIDDLE) + comma +
-                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_RIGHT) + comma +
-                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_TRUNK) + comma +
-                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT) + comma +
-                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT) + comma +
-                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT) + comma +
-                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT) + comma +
-                connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_BACK) + comma +
-                mAlgoManager.getOrientation()[0] + comma + mAlgoManager.getOrientation()[1] + comma + mAlgoManager.getOrientation()[2] + comma +
-                mAlgoManager.getGravity()[0] + comma + mAlgoManager.getGravity()[1] + comma + mAlgoManager.getGravity()[2] + comma +
-                mAlgoManager.getGeomagnetic()[0] + comma + mAlgoManager.getGeomagnetic()[1] + comma + mAlgoManager.getGeomagnetic()[2] + comma +
-                mAlgoManager.getAcceleration() + comma +
-                booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_LEFT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_MIDDLE)) + comma +
-                booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_RIGHT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_TRUNK)) + comma +
-                booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_FRONT_LEFT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_FRONT_RIGHT)) + comma +
-                booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_REAR_LEFT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_REAR_RIGHT)) + comma +
-                booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_BACK)) + comma +
-                booleanToString(mAlgoManager.isSmartphoneInPocket()) + comma +
-                booleanToString(mAlgoManager.areLockActionsAvailable()) + comma;
-        if (lockStatus) {
-            log += "5" + comma;
-        } else {
-            log += "4" + comma;
+        if (connectedCar != null) {
+            final String comma = ";";
+            String log = connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_LEFT) + comma +
+                    connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_MIDDLE) + comma +
+                    connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_RIGHT) + comma +
+                    connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_TRUNK) + comma +
+                    connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_FRONT_LEFT) + comma +
+                    connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_FRONT_RIGHT) + comma +
+                    connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT) + comma +
+                    connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT) + comma +
+                    connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_BACK) + comma +
+                    mAlgoManager.getOrientation()[0] + comma + mAlgoManager.getOrientation()[1] + comma + mAlgoManager.getOrientation()[2] + comma +
+                    mAlgoManager.getGravity()[0] + comma + mAlgoManager.getGravity()[1] + comma + mAlgoManager.getGravity()[2] + comma +
+                    mAlgoManager.getGeomagnetic()[0] + comma + mAlgoManager.getGeomagnetic()[1] + comma + mAlgoManager.getGeomagnetic()[2] + comma +
+                    mAlgoManager.getAcceleration() + comma +
+                    booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_LEFT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_MIDDLE)) + comma +
+                    booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_RIGHT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_TRUNK)) + comma +
+                    booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_FRONT_LEFT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_FRONT_RIGHT)) + comma +
+                    booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_REAR_LEFT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_REAR_RIGHT)) + comma +
+                    booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_BACK)) + comma +
+                    booleanToString(mAlgoManager.isSmartphoneInPocket()) + comma +
+                    booleanToString(mAlgoManager.areLockActionsAvailable()) + comma;
+            if (lockStatus) {
+                log += "5" + comma;
+            } else {
+                log += "4" + comma;
+            }
+            if (mAlgoManager.getRearmLock()) {
+                log += "7" + comma;
+            } else {
+                log += "6" + comma;
+            }
+            if (mAlgoManager.getRearmUnlock()) {
+                log += "9" + comma;
+            } else {
+                log += "8" + comma;
+            }
+            log += booleanToString(mAlgoManager.getRearmWelcome()) + comma + mProtocolManager.getPacketLog().getWelcomeByte() + comma;
+            if (mProtocolManager.getPacketLog().getLockByte() == 1) {
+                log += "3" + comma;
+            } else {
+                log += "2" + comma;
+            }
+            log += mProtocolManager.getPacketLog().getStartByte() + comma;
+            if (mProtocolManager.getPacketLog().getLeftAreaByte() == 1) {
+                log += "11" + comma;
+            } else {
+                log += "10" + comma;
+            }
+            if (mProtocolManager.getPacketLog().getRightAreaByte() == 1) {
+                log += "12" + comma;
+            } else {
+                log += "10" + comma;
+            }
+            if (mProtocolManager.getPacketLog().getBackAreaByte() == 1) {
+                log += "13" + comma;
+            } else {
+                log += "10" + comma;
+            }
+            if (mProtocolManager.getPacketLog().getWalkAwayByte() == 1) {
+                log += "15" + comma;
+            } else {
+                log += "14" + comma;
+            }
+            if (mProtocolManager.getPacketLog().getApproachByte() == 1) {
+                log += "16" + comma;
+            } else {
+                log += "14" + comma;
+            }
+            log += mProtocolManager.getPacketLog().getLeftTurnByte() + comma + mProtocolManager.getPacketLog().getRightTurnByte() + comma
+                    + mProtocolManager.getPacketLog().getApproachSideByte() + comma + mProtocolManager.getPacketLog().getApproachRoadByte() + comma
+                    + mProtocolManager.getPacketLog().getRecordByte() + comma + counterByte + comma
+                    + connectedCar.getMultiPrediction().getPredictionPosition(mAlgoManager.isSmartphoneInPocket()) + comma
+                    + booleanToString(mProtocolManager.getPacketOne().isLockedFromTrx()) + comma
+                    + booleanToString(mProtocolManager.getPacketOne().isLockedToSend()) + comma
+                    + booleanToString(mProtocolManager.getPacketOne().isStartRequested()) + comma
+                    + booleanToString(mProtocolManager.getPacketOne().isThatcham()) + comma
+                    + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_LEFT).toString() + comma
+                    + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_MIDDLE).toString() + comma
+                    + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_RIGHT).toString() + comma
+                    + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_TRUNK).toString() + comma
+                    + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_FRONT_LEFT).toString() + comma
+                    + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_FRONT_RIGHT).toString() + comma
+                    + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_REAR_LEFT).toString() + comma
+                    + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_REAR_RIGHT).toString() + comma
+                    + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_BACK).toString() + comma + beepInt + comma
+                    + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_LEFT) + comma
+                    + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_MIDDLE) + comma
+                    + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_RIGHT) + comma
+                    + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_TRUNK) + comma
+                    + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_FRONT_LEFT) + comma
+                    + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_FRONT_RIGHT) + comma
+                    + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_REAR_LEFT) + comma
+                    + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_REAR_RIGHT) + comma
+                    + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_BACK) + comma;
+            appendTimestampToLog(log);
         }
-        if (mAlgoManager.getRearmLock()) {
-            log += "7" + comma;
-        } else {
-            log += "6" + comma;
-        }
-        if (mAlgoManager.getRearmUnlock()) {
-            log += "9" + comma;
-        } else {
-            log += "8" + comma;
-        }
-        log += booleanToString(mAlgoManager.getRearmWelcome()) + comma + mProtocolManager.getPacketLog().getWelcomeByte() + comma;
-        if (mProtocolManager.getPacketLog().getLockByte() == 1) {
-            log += "3" + comma;
-        } else {
-            log += "2" + comma;
-        }
-        log += mProtocolManager.getPacketLog().getStartByte() + comma;
-        if (mProtocolManager.getPacketLog().getLeftAreaByte() == 1) {
-            log += "11" + comma;
-        } else {
-            log += "10" + comma;
-        }
-        if (mProtocolManager.getPacketLog().getRightAreaByte() == 1) {
-            log += "12" + comma;
-        } else {
-            log += "10" + comma;
-        }
-        if (mProtocolManager.getPacketLog().getBackAreaByte() == 1) {
-            log += "13" + comma;
-        } else {
-            log += "10" + comma;
-        }
-        if (mProtocolManager.getPacketLog().getWalkAwayByte() == 1) {
-            log += "15" + comma;
-        } else {
-            log += "14" + comma;
-        }
-        if (mProtocolManager.getPacketLog().getApproachByte() == 1) {
-            log += "16" + comma;
-        } else {
-            log += "14" + comma;
-        }
-        log += mProtocolManager.getPacketLog().getLeftTurnByte() + comma + mProtocolManager.getPacketLog().getRightTurnByte() + comma
-                + mProtocolManager.getPacketLog().getApproachSideByte() + comma + mProtocolManager.getPacketLog().getApproachRoadByte() + comma
-                + mProtocolManager.getPacketLog().getRecordByte() + comma + counterByte + comma
-                + connectedCar.getMultiPrediction().getPredictionPosition(mAlgoManager.isSmartphoneInPocket()) + comma
-                + booleanToString(mProtocolManager.getPacketOne().isLockedFromTrx()) + comma
-                + booleanToString(mProtocolManager.getPacketOne().isLockedToSend()) + comma
-                + booleanToString(mProtocolManager.getPacketOne().isStartRequested()) + comma
-                + booleanToString(mProtocolManager.getPacketOne().isThatcham()) + comma
-                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_LEFT).toString() + comma
-                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_MIDDLE).toString() + comma
-                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_RIGHT).toString() + comma
-                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_TRUNK).toString() + comma
-                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_FRONT_LEFT).toString() + comma
-                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_FRONT_RIGHT).toString() + comma
-                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_REAR_LEFT).toString() + comma
-                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_REAR_RIGHT).toString() + comma
-                + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_BACK).toString() + comma + beepInt + comma
-                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_LEFT) + comma
-                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_MIDDLE) + comma
-                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_RIGHT) + comma
-                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_TRUNK) + comma
-                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_FRONT_LEFT) + comma
-                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_FRONT_RIGHT) + comma
-                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_REAR_LEFT) + comma
-                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_REAR_RIGHT) + comma
-                + connectedCar.getMultiTrx().getCurrentAntennaId(NUMBER_TRX_BACK) + comma;
-        appendTimestampToLog(log);
     }
 
     /**

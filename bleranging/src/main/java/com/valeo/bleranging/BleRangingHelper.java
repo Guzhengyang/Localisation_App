@@ -165,13 +165,15 @@ public class BleRangingHelper {
     private final Runnable updateCarLocalizationRunnable = new Runnable() {
         @Override
         public void run() {
-            // update ble trame
-            mAlgoManager.tryMachineLearningStrategies(connectedCar);
-            // update car localization img
-            updateCarLocalization(connectedCar.getMultiPrediction().getPredictionPosition(mAlgoManager.isSmartphoneInPocket()),
-                    connectedCar.getMultiPrediction().getPredictionProximity(),
-                    connectedCar.getMultiPrediction().getPredictionCoord(),
-                    connectedCar.getMultiPrediction().getDist2Car());
+            if (connectedCar != null) {
+                // update ble trame
+                mAlgoManager.tryMachineLearningStrategies(connectedCar);
+                // update car localization img
+                updateCarLocalization(connectedCar.getMultiPrediction().getPredictionPosition(mAlgoManager.isSmartphoneInPocket()),
+                        connectedCar.getMultiPrediction().getPredictionProximity(),
+                        connectedCar.getMultiPrediction().getPredictionCoord(),
+                        connectedCar.getMultiPrediction().getDist2Car());
+            }
             mMainHandler.postDelayed(this, 405);
         }
     };
