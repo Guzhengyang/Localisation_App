@@ -22,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.valeo.bleranging.listeners.MeasureListener;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.SoundUtils;
@@ -34,7 +33,7 @@ import com.valeo.psa.R;
  */
 
 @RequiresApi(api = Build.VERSION_CODES.M)
-public class MeasureFragment extends Fragment implements MeasureListener {
+public class MeasureFragment extends Fragment {
     private EditText measurement_index;
     private MeasureFragmentActionListener mListener;
     private Button start_measurement;
