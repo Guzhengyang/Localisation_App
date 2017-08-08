@@ -512,23 +512,11 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     }
 
     @Override
-    public void incrementCounter(String counterValue) {
-        mBleRangingHelper.incrementCounter(counterValue);
-    }
-
-    @Override
-    public void cancelCounter() {
-        mBleRangingHelper.cancelCounter();
-    }
-
-    @Override
-    public void enableCounter() {
-        mBleRangingHelper.enableCounter();
-    }
-
-    @Override
-    public String printCounter() {
-        return mBleRangingHelper.getCounter();
+    public byte getMeasureCounterByte() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return measureFragment.getMeasureCounterByte();
+        }
+        return 0;
     }
 
     @Override

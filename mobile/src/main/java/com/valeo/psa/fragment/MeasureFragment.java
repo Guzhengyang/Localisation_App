@@ -63,6 +63,8 @@ public class MeasureFragment extends Fragment {
             mFlashEnabled = enabled;
         }
     };
+    private byte counterByte = 0;
+    private byte savedCounterByte = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -99,27 +101,27 @@ public class MeasureFragment extends Fragment {
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (mListener != null && isAdded()) {
+                        if (isAdded()) {
                             start_measurement.setEnabled(false);
                             measurement_index.setEnabled(false);
                             start_measurement.setText(R.string.measuring);
                             start_measurement.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
                             if (measurement_index.getText().toString().equals("0")) {
-                                mListener.incrementCounter("0");
-                                measurement_index.setText(mListener.printCounter());
+                                incrementCounter("0");
+                                measurement_index.setText(getCounter());
                             }
-                            mListener.enableCounter();
+                            enableCounter();
                         }
                         mMainHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                if (mListener != null && isAdded()) {
+                                if (isAdded()) {
                                     SoundUtils.makeNoise(getActivity(), mMainHandler, ToneGenerator.TONE_CDMA_ALERT_NETWORK_LITE, 100);
-                                    mListener.incrementCounter(measurement_index.getText().toString());
-                                    measurement_index.setText(mListener.printCounter());
+                                    incrementCounter(measurement_index.getText().toString());
+                                    measurement_index.setText(getCounter());
                                     start_measurement.setText(R.string.start_measure);
                                     start_measurement.setBackgroundColor(getResources().getColor(android.R.color.holo_green_light));
-                                    mListener.cancelCounter();
+                                    cancelCounter();
                                     start_measurement.setEnabled(true);
                                     measurement_index.setEnabled(true);
                                 }
@@ -260,13 +262,26 @@ public class MeasureFragment extends Fragment {
         return false;
     }
 
+    private void incrementCounter(String counterValue) {
+        savedCounterByte = (byte) (Byte.valueOf(counterValue) + 1);
+    }
+
+    private void cancelCounter() {
+        counterByte = 0;
+    }
+
+    private void enableCounter() {
+        counterByte = savedCounterByte;
+    }
+
+    private String getCounter() {
+        return String.valueOf(savedCounterByte);
+    }
+
+    public byte getMeasureCounterByte() {
+        return savedCounterByte;
+    }
+
     public interface MeasureFragmentActionListener {
-        void incrementCounter(String counterValue);
-
-        void cancelCounter();
-
-        void enableCounter();
-
-        String printCounter();
     }
 }

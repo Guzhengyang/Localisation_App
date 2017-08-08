@@ -178,8 +178,6 @@ public class BleRangingHelper {
         }
     };
     //    private int reconnectionCounter = 0;
-    private byte counterByte = 0;
-    private byte savedCounterByte = 0;
     private int beepInt = 0;
     private boolean alreadyStopped = false;
     private boolean isLoggable = true;
@@ -219,7 +217,7 @@ public class BleRangingHelper {
         @Override
         public void run() {
             if (isLoggable) {
-                LogFileUtils.appendRssiLogs(connectedCar, mAlgoManager, newLockStatus, counterByte,
+                LogFileUtils.appendRssiLogs(connectedCar, mAlgoManager, newLockStatus, bleRangingListener.getMeasureCounterByte(),
                         mProtocolManager, beepInt);
                 beepInt = 0;
             }
@@ -938,22 +936,6 @@ public class BleRangingHelper {
         } else {
             PSALogs.e("setSmartphoneOffset", "connectedCar is NULL");
         }
-    }
-
-    public void incrementCounter(String counterValue) {
-        savedCounterByte = (byte) (Byte.valueOf(counterValue) + 1);
-    }
-
-    public void cancelCounter() {
-        counterByte = 0;
-    }
-
-    public void enableCounter() {
-        counterByte = savedCounterByte;
-    }
-
-    public String getCounter() {
-        return String.valueOf(savedCounterByte);
     }
 
     public void setNewThreshold(double value) {

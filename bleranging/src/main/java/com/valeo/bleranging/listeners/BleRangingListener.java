@@ -6,6 +6,7 @@ package com.valeo.bleranging.listeners;
 public interface BleRangingListener {
     void showSnackBar(String message);
 
+    byte getMeasureCounterByte();
     void updateCarDoorStatus(boolean lockStatus);
     void updateBLEStatus();
     void askBleOn();
