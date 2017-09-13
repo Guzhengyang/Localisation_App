@@ -45,7 +45,7 @@ import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
  */
 
 public class PacketOne {
-    private static final int MAX_BLE_TRAME_BYTE = 13;
+    private static final int MAX_BLE_TRAME_BYTE = 6; //13
     private static final int MAC_ADDRESS_SIZE = 6;
     private static PacketOne instance;
     private int packetOneCounter = 0;
@@ -87,14 +87,14 @@ public class PacketOne {
         payload[2] = (0x01);
         payload[3] = getPayloadThirdByte();
         if (connectedCar != null) {
-            payload[4] = getPayloadFourthByte(isRKE, connectedCar.getMultiPrediction().getPredictionPosition(mAlgoManager.isSmartphoneInPocket()));
-            payload[5] = getPayloadFifthByte(isRKE, connectedCar.getMultiPrediction().getPredictionPosition(mAlgoManager.isSmartphoneInPocket()));
+            payload[4] = getPayloadFourthByte(isRKE, connectedCar.getMultiPrediction().getPredictionZone(mAlgoManager.isSmartphoneInPocket()));
+            payload[5] = getPayloadFifthByte(isRKE, connectedCar.getMultiPrediction().getPredictionZone(mAlgoManager.isSmartphoneInPocket()));
         }
-        payload[6] = getPayloadSixthByte();
-        PSALogs.d("currentTrx", String.format("%02X ", payload[6]));
-        if (!isAutoMode) {
-            System.arraycopy(getPayloadSevenToTwelveByte(connectedCar.getRegPlate()), 0, payload, 7, 6);
-        }
+//        payload[6] = getPayloadSixthByte();
+//        PSALogs.d("currentTrx", String.format("%02X ", payload[6]));
+//        if (!isAutoMode) {
+//            System.arraycopy(getPayloadSevenToTwelveByte(connectedCar.getRegPlate()), 0, payload, 7, 6);
+//        }
         packetOneCounter++;
         if (packetOneCounter > 65534) { // packetOneCounter > FF FE
             packetOneCounter = 0;

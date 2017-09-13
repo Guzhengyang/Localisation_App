@@ -22,8 +22,8 @@
         <item>"L_R"        </item>
         <item>"L_M_R"        </item>
         <item>"L_M_R_T"        </item>
-        <item>"Fl_Fr_M_T_Rl_Rr"</item>
-        <item>"Fl_Fr_L_M_R_T_Rl_Rr"</item>
+        <item>"M_T_Fl_Fr_Rl_Rr"</item>
+        <item>"L_M_R_T_Fl_Fr_Rl_Rr"</item>
     </string-array>
     <string-array name="iconFile">
         <item>car_2_a</item>

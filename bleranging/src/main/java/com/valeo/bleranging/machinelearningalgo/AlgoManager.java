@@ -305,7 +305,7 @@ public class AlgoManager implements SensorEventListener {
         mProtocolManager.getPacketOne().setIsWelcomeRequested(false);
         //TODO Replace SdkPreferencesHelper.getInstance().getComSimulationEnabled() by CallReceiver.smartphoneComIsActivated after demo
         if (connectedCar != null) {
-            lastPrediction = connectedCar.getMultiPrediction().getPredictionPosition(smartphoneIsInPocket);
+            lastPrediction = connectedCar.getMultiPrediction().getPredictionZone(smartphoneIsInPocket);
             switch (lastPrediction) {
                 case PREDICTION_INSIDE:
                     isInStartArea = true;
@@ -352,7 +352,7 @@ public class AlgoManager implements SensorEventListener {
                     PSALogs.d("prediction", "No rangingPredictionInt !");
                     break;
             }
-            isInWelcomeArea = rearmWelcome.get() && connectedCar.getMultiPrediction().getPredictionProximity().equals(PREDICTION_FAR);
+            isInWelcomeArea = rearmWelcome.get() && connectedCar.getMultiPrediction().getPredictionRP().equals(PREDICTION_FAR);
             if (isInWelcomeArea) {
                 isWelcomeAllowed = true;
                 rearmWelcome.set(false);
@@ -363,7 +363,7 @@ public class AlgoManager implements SensorEventListener {
                 mProtocolManager.getPacketOne().setIsWelcomeRequested(isWelcomeAllowed);
             }
             setIsThatcham(isInLockArea, isInUnlockArea, isInStartArea);
-            if (connectedCar.getMultiPrediction().getPredictionProximity().equalsIgnoreCase(PREDICTION_NEAR)) {
+            if (connectedCar.getMultiPrediction().getPredictionRP().equalsIgnoreCase(PREDICTION_NEAR)) {
                 mProtocolManager.getPacketOne().setInRemoteParkingArea(true);
             } else {
                 mProtocolManager.getPacketOne().setInRemoteParkingArea(false);

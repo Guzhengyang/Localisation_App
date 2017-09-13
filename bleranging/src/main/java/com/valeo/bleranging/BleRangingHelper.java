@@ -113,7 +113,6 @@ public class BleRangingHelper {
             bytesToSend = mProtocolManager.getPacketOne().getPacketOnePayload(mAlgoManager, connectedCar);
             lock.writeLock().unlock();
             lock.readLock().lock();
-            PSALogs.d("NIH", "sendPackets isLinked:" + mBluetoothManager.isLinked());
             mBluetoothManager.sendPackets(bytesToSend, bytesReceived,
                     mProtocolManager.getPacketTwo().getPacketTwoPayload(connectedCar.getMultiPrediction().getStandardClasses(),
                             connectedCar.getMultiPrediction().getStandardDistribution()),
@@ -139,7 +138,7 @@ public class BleRangingHelper {
                     PSALogs.d("init2", "setRssiForRangingPrediction is NULL\n");
                 }
             }
-            mMainHandler.postDelayed(this, 105);
+            mMainHandler.postDelayed(this, 100);
         }
     };
     private final Runnable calculateCoordPrediction = new Runnable() {
@@ -149,7 +148,7 @@ public class BleRangingHelper {
             if (connectedCar != null) {
                 connectedCar.getMultiPrediction().calculatePredictionCoord();
             }
-            mMainHandler.postDelayed(this, 105);
+            mMainHandler.postDelayed(this, 100);
         }
     };
     private final Runnable calculateZonePrediction = new Runnable() {
@@ -159,7 +158,7 @@ public class BleRangingHelper {
             if (connectedCar != null) {
                 connectedCar.getMultiPrediction().calculatePredictionZone();
             }
-            mMainHandler.postDelayed(this, 405);
+            mMainHandler.postDelayed(this, 400);
         }
     };
     private final Runnable updateCarLocalizationRunnable = new Runnable() {
@@ -169,18 +168,42 @@ public class BleRangingHelper {
                 // update ble trame
                 mAlgoManager.tryMachineLearningStrategies(connectedCar);
                 // update car localization img
-                updateCarLocalization(connectedCar.getMultiPrediction().getPredictionPosition(mAlgoManager.isSmartphoneInPocket()),
-                        connectedCar.getMultiPrediction().getPredictionProximity(),
+                updateCarLocalization(connectedCar.getMultiPrediction().getPredictionZone(mAlgoManager.isSmartphoneInPocket()),
+                        connectedCar.getMultiPrediction().getPredictionRP(),
                         connectedCar.getMultiPrediction().getPredictionCoord(),
                         connectedCar.getMultiPrediction().getDist2Car());
             }
-            mMainHandler.postDelayed(this, 405);
+            mMainHandler.postDelayed(this, 400);
         }
     };
     //    private int reconnectionCounter = 0;
     private int beepInt = 0;
+    private final Runnable beepRunner = new Runnable() {
+        @Override
+        public void run() {
+            long delayedTime = 500;
+            if (SdkPreferencesHelper.getInstance().getUserSpeedEnabled()) {
+                beepInt = 1;
+                makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_LOW_SS, 100);
+                // interval time between each beep sound in milliseconds
+                delayedTime = Math.round(((SdkPreferencesHelper.getInstance().getOneStepSize() / 100.0f) / (SdkPreferencesHelper.getInstance().getWantedSpeed() / 3.6)) * 1000);
+            }
+            mMainHandler.postDelayed(this, delayedTime);
+        }
+    };
     private boolean alreadyStopped = false;
     private boolean isLoggable = true;
+    private final Runnable logRunner = new Runnable() {
+        @Override
+        public void run() {
+            if (isLoggable) {
+                LogFileUtils.appendRssiLogs(connectedCar, mAlgoManager, newLockStatus, bleRangingListener.getMeasureCounterByte(),
+                        mProtocolManager, beepInt);
+                beepInt = 0;
+            }
+            mMainHandler.postDelayed(this, 100);
+        }
+    };
     private boolean dataReceived = false;
     private final Runnable printRunner = new Runnable() {
         @Override
@@ -195,35 +218,7 @@ public class BleRangingHelper {
             lock.readLock().unlock();
             debugListener.printDebugInfo(spannedString);
             bleRangingListener.updateBLEStatus();
-            mMainHandler.postDelayed(this, 105);
-        }
-    };
-    private final Runnable beepRunner = new Runnable() {
-        @Override
-        public void run() {
-            long delayedTime = 500;
-            if (SdkPreferencesHelper.getInstance().getUserSpeedEnabled()) {
-                beepInt = 1;
-                makeNoise(mContext, mMainHandler, ToneGenerator.TONE_CDMA_LOW_SS, 100);
-                // interval time between each beep sound in milliseconds
-                delayedTime = Math.round(((SdkPreferencesHelper.getInstance().getOneStepSize() / 100.0f) / (SdkPreferencesHelper.getInstance().getWantedSpeed() / 3.6)) * 1000);
-            }
-            if (isFullyConnected()) {
-                mMainHandler.postDelayed(this, delayedTime);
-            }
-        }
-    };
-    private final Runnable logRunner = new Runnable() {
-        @Override
-        public void run() {
-            if (isLoggable) {
-                LogFileUtils.appendRssiLogs(connectedCar, mAlgoManager, newLockStatus, bleRangingListener.getMeasureCounterByte(),
-                        mProtocolManager, beepInt);
-                beepInt = 0;
-            }
-            if (isFullyConnected()) {
-                mMainHandler.postDelayed(this, 105);
-            }
+            mMainHandler.postDelayed(this, 100);
         }
     };
     private final Runnable checkNewPacketsRunner = new Runnable() {
@@ -497,7 +492,6 @@ public class BleRangingHelper {
                     PSALogs.d("init2", "readPredictionsRawFiles\n");
                     if (connectedCar != null) {
                         connectedCar.getMultiPrediction().readPredictionsRawFiles(mContext);
-                        mMainHandler.post(setRssiForRangingPrediction);
                     } else {
                         mMainHandler.postDelayed(this, 500);
                     }
@@ -506,7 +500,10 @@ public class BleRangingHelper {
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (connectedCar != null && connectedCar.isInitialized()) {
+                    if (connectedCar == null ||
+                            connectedCar.getMultiTrx().getRssiForRangingPrediction() == null) {
+                        mMainHandler.postDelayed(this, 500);
+                    } else if (connectedCar != null && connectedCar.isInitialized()) {
                         PSALogs.d("init2", "initPredictions\n");
                         connectedCar.initPredictions();
                         startRunners();
@@ -618,7 +615,7 @@ public class BleRangingHelper {
         isLoggable = false;
     }
 
-    private void stopRunners() {
+    private synchronized void stopRunners() {
         if (mMainHandler != null) {
             PSALogs.d("NIH", "stopRunners");
             mMainHandler.removeCallbacks(printRunner);
@@ -635,11 +632,12 @@ public class BleRangingHelper {
         }
     }
 
-    private void startRunners() {
+    private synchronized void startRunners() {
         if (mMainHandler != null && canStartRunner) {
             PSALogs.d("NIH", "startRunners");
             mMainHandler.post(printRunner);
             mMainHandler.post(logRunner);
+            mMainHandler.post(setRssiForRangingPrediction);
             mMainHandler.post(calculateZonePrediction);
             mMainHandler.post(calculateCoordPrediction);
             mMainHandler.post(updateCarLocalizationRunnable);
@@ -651,7 +649,7 @@ public class BleRangingHelper {
     /**
      * Suspend scan, stop all loops, reinit all variables, then resume scan to be able to reconnect
      */
-    public void restartConnection() {
+    public synchronized void restartConnection() {
         if (!mBluetoothManager.isConnecting()) {
             PSALogs.d("NIH", "restartConnection");
             stopRunners();
@@ -699,7 +697,6 @@ public class BleRangingHelper {
      * @param centralScanResponse the centralScanResponse received
      */
     private void catchCentralScanResponse(final BluetoothDevice device, CentralScanResponse centralScanResponse) {
-        PSALogs.d("NIH", "catchCentralScanResponse isFirstConnection:" + isFirstConnection);
         if (device != null && centralScanResponse != null) {
             if (isFirstConnection) {
                 if (device.getAddress().equals(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())) {
@@ -713,7 +710,6 @@ public class BleRangingHelper {
                         connect();
                     } else {
                         PSALogs.w("NIH", "already trying to connect \nisTryingToConnect:" + isTryingToConnect + " isFullyConnected:" + isFullyConnected() + " isConnecting:" + mBluetoothManager.isConnecting());
-//                        bleRangingListener.showSnackBar("Already trying to connect to " + device.getAddress());
                     }
                 } else {
                     PSALogs.w("NIH", "BEACON " + device.getAddress());

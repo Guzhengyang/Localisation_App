@@ -12,8 +12,8 @@ public class CheckUtils {
         return modelWrapper.getResponseDomainValues()[calculatedPrediction].equals(expectedPrediction);
     }
 
-    public static boolean compareDistribution(double[] distribution,
-                                              int temp_prediction, double threshold_prob) {
+    public static boolean compareProb(double[] distribution,
+                                      int temp_prediction, double threshold_prob) {
         return distribution != null && distribution[temp_prediction] > threshold_prob;
     }
 

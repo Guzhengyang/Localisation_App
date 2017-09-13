@@ -127,7 +127,6 @@ public class JsonUtils {
             if (carTypeString.compareTo(searchedKey) == 0) {
                 data = new String[3];
                 data[0] = carTypeString;
-                PSALogs.d("json", "getConnectedCarJsonContent car_type_string = " + carTypeString);
                 data[1] = connectedCar.getAsJsonPrimitive("car_type_code").getAsString();
                 PSALogs.d("json", "getConnectedCarJsonContent car_type_code = " + data[1]);
                 data[2] = connectedCar.getAsJsonPrimitive("total_beacon").getAsString();
@@ -147,7 +146,6 @@ public class JsonUtils {
             if (trx_code.compareTo(searchedKey) == 0) {
                 data = new String[4];
                 data[0] = trx_code;
-                PSALogs.d("json", "getTrxJsonContent trx_code = " + trx_code);
                 data[1] = trx.getAsJsonPrimitive("trx_name").getAsString();
                 data[2] = trx.getAsJsonPrimitive("trx_number").getAsString();
                 data[3] = trx.getAsJsonPrimitive("row_data_key_set_title").getAsString();
@@ -207,19 +205,13 @@ public class JsonUtils {
                     && (predictionType.compareTo(expectedPredictionType) == 0)
                     && (expectedMini == isMini)
                     && (expectedThatchamOrientation.compareTo(isThatchamOriented) == 0)) {
-                data = new String[6];
+                data = new String[5];
                 data[0] = carTypeString;
-                PSALogs.d("json", "getPredictionZoneJsonContent car_type_string = " + carTypeString);
                 data[1] = predictionType;
-                PSALogs.d("json", "getPredictionZoneJsonContent prediction_type = " + predictionType);
                 data[2] = String.valueOf(isMini);
-                PSALogs.d("json", "getPredictionZoneJsonContent is_mini = " + isMini);
                 data[3] = isThatchamOriented;
-                PSALogs.d("json", "getPredictionZoneJsonContent is_thatcham_oriented = " + isThatchamOriented);
-                data[4] = predictionZone.getAsJsonPrimitive("row_data_key_set_string").getAsString();
-                PSALogs.d("json", "getPredictionZoneJsonContent row_data_key_set_string = " + data[4]);
-                data[5] = predictionZone.getAsJsonPrimitive("model_file_name").getAsString();
-                PSALogs.d("json", "getPredictionZoneJsonContent model_file_name = " + data[5]);
+                data[4] = predictionZone.getAsJsonPrimitive("model_file_name").getAsString();
+                PSALogs.d("json", "getPredictionZoneJsonContent model_file_name = " + data[4]);
                 break;
             }
         }
@@ -240,15 +232,12 @@ public class JsonUtils {
             JsonObject predictionZone = mJsonPredictionCoordArray.get(i).getAsJsonObject();
             String carTypeString = predictionZone.getAsJsonPrimitive("car_type_string").getAsString();
             if (carTypeString.compareTo(searchedKey) == 0) {
-                data = new String[4];
+                data = new String[3];
                 data[0] = carTypeString;
-                PSALogs.d("json", "getPredictionZoneJsonContent car_type_string = " + carTypeString);
-                data[1] = predictionZone.getAsJsonPrimitive("row_data_key_set_string").getAsString();
-                PSALogs.d("json", "getPredictionZoneJsonContent row_data_key_set_string = " + data[1]);
-                data[2] = predictionZone.getAsJsonPrimitive("model_file_name_X").getAsString();
-                PSALogs.d("json", "getPredictionZoneJsonContent model_file_name_X = " + data[2]);
-                data[3] = predictionZone.getAsJsonPrimitive("model_file_name_Y").getAsString();
-                PSALogs.d("json", "getPredictionZoneJsonContent model_file_name_Y = " + data[3]);
+                data[1] = predictionZone.getAsJsonPrimitive("model_file_name_X").getAsString();
+                PSALogs.d("json", "getPredictionZoneJsonContent model_file_name_X = " + data[1]);
+                data[2] = predictionZone.getAsJsonPrimitive("model_file_name_Y").getAsString();
+                PSALogs.d("json", "getPredictionZoneJsonContent model_file_name_Y = " + data[2]);
                 break;
             }
         }

@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         showHideFragment(testFragment); // hide testFragment
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getSupportFragmentManager().beginTransaction().add(R.id.measure_rl, measureFragment).commit();
-            showHideFragment(measureFragment); // hide measureFragment
+//            showHideFragment(measureFragment); // hide measureFragment
         }
         getSupportFragmentManager().beginTransaction().add(R.id.accuracy_rl, accuracyFragment).commit();
         showHideFragment(accuracyFragment); // hide accuracyFragment

@@ -10,7 +10,6 @@ import java.util.Locale;
 
 import hex.genmodel.easy.prediction.RegressionModelPrediction;
 
-import static com.valeo.bleranging.utils.CalculUtils.correctRssiUnilateral;
 import static com.valeo.bleranging.utils.CalculUtils.getAverage;
 
 /**
@@ -59,7 +58,8 @@ public class PredictionCoord extends BasePrediction {
         if (this.rssi_offset != null) {
             for (int index = 0; index < rssi.length; index++) {
                 this.rssi_offset[index] = rssi[index] - offset;
-                this.modified_rssi[index] = correctRssiUnilateral(this.modified_rssi[index], rssi_offset[index]);
+//                this.modified_rssi[index] = correctRssiUnilateral(this.modified_rssi[index], rssi_offset[index]);
+                this.modified_rssi[index] = this.rssi_offset[index];// don't use unilateral limiter
                 if (rssiHistoric.get(index).size() == MAX_HISTORIC_SIZE) {
                     rssiHistoric.get(index).remove(0);
                 }

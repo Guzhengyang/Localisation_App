@@ -4,7 +4,6 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +13,9 @@ import hex.genmodel.easy.prediction.BinomialModelPrediction;
 import hex.genmodel.easy.prediction.MultinomialModelPrediction;
 
 import static com.valeo.bleranging.persistence.Constants.PASSIVE_ENTRY_ORIENTED;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_ACCESS;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_BACK;
-import static com.valeo.bleranging.persistence.Constants.PREDICTION_FAR;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_FRONT;
-import static com.valeo.bleranging.persistence.Constants.PREDICTION_INSIDE;
-import static com.valeo.bleranging.persistence.Constants.PREDICTION_INTERNAL;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_LEFT;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_LOCK;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_RIGHT;
@@ -27,8 +24,8 @@ import static com.valeo.bleranging.persistence.Constants.THATCHAM_ORIENTED;
 import static com.valeo.bleranging.utils.CalculUtils.correctRssiUnilateral;
 import static com.valeo.bleranging.utils.CalculUtils.most;
 import static com.valeo.bleranging.utils.CalculUtils.rssi2dist;
-import static com.valeo.bleranging.utils.CheckUtils.compareDistribution;
 import static com.valeo.bleranging.utils.CheckUtils.comparePrediction;
+import static com.valeo.bleranging.utils.CheckUtils.compareProb;
 
 /**
  * Created by l-avaratha on 12/01/2017
@@ -71,11 +68,6 @@ public class PredictionZone extends BasePrediction {
         constructRowData(this.modified_rssi);
     }
 
-    public void initTest(double[] rssi) {
-        this.modified_rssi = new double[rssi.length];
-        this.distribution = new double[modelWrappers.get(0).getResponseDomainValues().length];
-    }
-
     public void setRssi(double rssi[], int offset) {
         if (this.rssi_offset != null) {
             for (int index = 0; index < rssi.length; index++) {
@@ -87,7 +79,10 @@ public class PredictionZone extends BasePrediction {
                     }
                     // Add unlock hysteresis to all the trx
                     if (this.modelWrappers.get(0).getResponseDomainValues()[prediction_old].equals(PREDICTION_LEFT) |
-                            this.modelWrappers.get(0).getResponseDomainValues()[prediction_old].equals(PREDICTION_RIGHT)) {
+                            this.modelWrappers.get(0).getResponseDomainValues()[prediction_old].equals(PREDICTION_RIGHT) |
+                            this.modelWrappers.get(0).getResponseDomainValues()[prediction_old].equals(PREDICTION_FRONT) |
+                            this.modelWrappers.get(0).getResponseDomainValues()[prediction_old].equals(PREDICTION_BACK) |
+                            this.modelWrappers.get(0).getResponseDomainValues()[prediction_old].equals(PREDICTION_ACCESS)) {
                         rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
                     }
                 }
@@ -126,24 +121,6 @@ public class PredictionZone extends BasePrediction {
         }
     }
 
-    public void predictTest() {
-        try {
-            if (binomial) {
-                final BinomialModelPrediction modelPrediction = modelWrappers.get(0).predictBinomial(rowData);
-                label = modelPrediction.label;
-                prediction_old = modelPrediction.labelIndex;
-                distribution = modelPrediction.classProbabilities;
-            } else {
-                final MultinomialModelPrediction modelPrediction = modelWrappers.get(0).predictMultinomial(rowData);
-                label = modelPrediction.label;
-                prediction_old = modelPrediction.labelIndex;
-                distribution = modelPrediction.classProbabilities;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     //    4, 6, 8 beacons prediction
     public void calculatePredictionStandard(double threshold_prob, double threshold_prob_lock2unlock, double threshold_prob_unlock2lock, String strategy) {
         if (checkOldPrediction()) {
@@ -155,7 +132,7 @@ public class PredictionZone extends BasePrediction {
                         || comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_BACK)
                         || comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_FRONT)) {
                     if (comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_LOCK)
-                            && compareDistribution(distribution, temp_prediction, threshold_prob_lock2unlock)) {
+                            && compareProb(distribution, temp_prediction, threshold_prob_lock2unlock)) {
                         prediction_old = temp_prediction;
                         return;
                     }
@@ -166,12 +143,12 @@ public class PredictionZone extends BasePrediction {
                         || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_BACK)
                         || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_FRONT)) {
                     if (comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_LOCK)
-                            && compareDistribution(distribution, temp_prediction, threshold_prob_unlock2lock)) {
+                            && compareProb(distribution, temp_prediction, threshold_prob_unlock2lock)) {
                         prediction_old = temp_prediction;
                         return;
                     }
                 }
-                if (compareDistribution(distribution, temp_prediction, threshold_prob)) {
+                if (compareProb(distribution, temp_prediction, threshold_prob)) {
                     prediction_old = temp_prediction;
                     return;
                 }
@@ -182,12 +159,12 @@ public class PredictionZone extends BasePrediction {
                         || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_BACK)
                         || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_FRONT)) {
                     if (comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_LOCK)
-                            && compareDistribution(distribution, temp_prediction, threshold_prob_unlock2lock)) {
+                            && compareProb(distribution, temp_prediction, threshold_prob_unlock2lock)) {
                         prediction_old = temp_prediction;
                         return;
                     }
                 }
-                if (compareDistribution(distribution, temp_prediction, threshold_prob)) {
+                if (compareProb(distribution, temp_prediction, threshold_prob)) {
                     prediction_old = temp_prediction;
                     return;
                 }
@@ -195,55 +172,6 @@ public class PredictionZone extends BasePrediction {
         }
     }
 
-    //    3 beacons prediction
-    public void calculatePredictionDefault(double threshold_prob, double threshold_prob_lock) {
-        if (checkOldPrediction()) {
-            int temp_prediction = most(predictions);
-            if (comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_LEFT)
-                    || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_RIGHT)
-                    || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_BACK)
-                    || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_BACK)) {
-                if (comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_LOCK)
-                        && compareDistribution(distribution, temp_prediction, threshold_prob_lock)) {
-                    prediction_old = temp_prediction;
-                    return;
-                }
-            }
-            if (compareDistribution(distribution, temp_prediction, threshold_prob)) {
-                prediction_old = temp_prediction;
-                return;
-            }
-        }
-    }
-
-    public void calculatePredictionStart(double threshold_prob) {
-        if (checkOldPrediction()) {
-            int temp_prediction = most(predictions);
-//            cover internal space
-            if (comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_INSIDE) ||
-                    comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_INTERNAL)) {
-                prediction_old = temp_prediction;
-                return;
-            }
-            if (compareDistribution(distribution, temp_prediction, threshold_prob)) {
-                prediction_old = temp_prediction;
-            }
-        }
-    }
-
-    public void calculatePredictionRP(double threshold_prob) {
-        if (checkOldPrediction()) {
-            int temp_prediction = most(predictions);
-//            reduce false positive
-            if (comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_FAR)) {
-                prediction_old = temp_prediction;
-                return;
-            }
-            if (compareDistribution(distribution, temp_prediction, threshold_prob)) {
-                prediction_old = temp_prediction;
-            }
-        }
-    }
 
     private boolean checkOldPrediction() {
         if (prediction_old == -1) {
@@ -251,14 +179,6 @@ public class PredictionZone extends BasePrediction {
             return false;
         }
         return true;
-    }
-
-    public void calculatePredictionTest() {
-        if (compareDistribution(distribution, 0, thresholdROC)) {
-            prediction_old = 0;
-        } else {
-            prediction_old = 1;
-        }
     }
 
     public String getPrediction() {
@@ -296,24 +216,6 @@ public class PredictionZone extends BasePrediction {
             sb.append("\n");
             return sb.toString();
         }
-    }
-
-    public String printDebugTest(String title) {
-        sb.setLength(0);
-        if (distribution == null || modified_rssi == null) {
-            return "";
-        }
-        PSALogs.d("debug", prediction_old + " " + thresholdROC);
-        sb.append(String.format(Locale.FRANCE, "%1$s %2$s ", title, getPrediction())).append("\n");
-        for (double arssi : modified_rssi) {
-            sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
-        }
-        sb.append("\n");
-        for (int i = 0; i < distribution.length; i++) {
-            sb.append(modelWrappers.get(0).getResponseDomainValues()[i]).append(": ").append(String.format(Locale.FRANCE, "%.2f", distribution[i])).append(" \n");
-        }
-        sb.append("\n");
-        return sb.toString();
     }
 
     public double[] getDistribution() {

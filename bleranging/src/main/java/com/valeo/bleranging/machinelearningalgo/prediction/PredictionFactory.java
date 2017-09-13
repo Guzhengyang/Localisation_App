@@ -25,7 +25,7 @@ public class PredictionFactory {
         getStoredData(mContext);
         final String[] predictionData = getPredictionCoordJsonContent(carType);
         if (predictionData != null) {
-            return new PredictionCoord(mContext, predictionData[2], predictionData[3], createRowDataList(predictionData[1]));
+            return new PredictionCoord(mContext, predictionData[1], predictionData[2], createRowDataList(predictionData[0]));
         }
         return null;
     }
@@ -43,7 +43,7 @@ public class PredictionFactory {
         getStoredData(mContext);
         final String[] predictionData = getPredictionZoneJsonContent(carType, predictionType, miniPrediction, strategy);
         if (predictionData != null) {
-            return new PredictionZone(mContext, predictionData[5], createRowDataList(predictionData[4]), predictionType);
+            return new PredictionZone(mContext, predictionData[4], createRowDataList(predictionData[0]), predictionData[1]);
         }
         return null;
     }

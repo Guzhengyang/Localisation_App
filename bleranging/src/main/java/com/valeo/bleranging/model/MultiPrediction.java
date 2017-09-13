@@ -40,7 +40,7 @@ import static com.valeo.bleranging.utils.CalculUtils.initMatrix;
  */
 
 public class MultiPrediction {
-    private static final double THRESHOLD_DIST = 0.25;
+    private static final double THRESHOLD_DIST = 0.1;
     private final LinkedHashMap<String, BasePrediction> predictionLinkedHMap;
 
     public MultiPrediction(LinkedHashMap<String, BasePrediction> predictionLinkedHMap) {
@@ -90,7 +90,6 @@ public class MultiPrediction {
      */
     public boolean isInitialized() {
         for (String predictionType : predictionLinkedHMap.keySet()) {
-            PSALogs.d("read", "isInitialized : " + predictionType);
             if (isInitialized(predictionType)) {
                 return true;
             }
@@ -134,7 +133,7 @@ public class MultiPrediction {
             case TYPE_8_A:
                 switch (predictionType) {
                     case PREDICTION_STD:
-                        return N_VOTE_SHORT;
+                        return N_VOTE_LONG;
                     case PREDICTION_RP:
                         return N_VOTE_LONG;
                     default:
@@ -235,7 +234,7 @@ public class MultiPrediction {
      *
      * @return the position prediction
      */
-    public String getPredictionPosition(boolean smartphoneIsInPocket) {
+    public String getPredictionZone(boolean smartphoneIsInPocket) {
         if (SdkPreferencesHelper.getInstance().getComSimulationEnabled() && smartphoneIsInPocket) {
             if (isInitialized(PREDICTION_EAR)) {
                 return ((PredictionZone) predictionLinkedHMap.get(PREDICTION_EAR)).getPrediction();
@@ -272,7 +271,7 @@ public class MultiPrediction {
      *
      * @return the proximity prediction
      */
-    public String getPredictionProximity() {
+    public String getPredictionRP() {
         if (isInitialized(PREDICTION_RP)) {
             return ((PredictionZone) predictionLinkedHMap.get(PREDICTION_RP)).getPrediction();
         }
