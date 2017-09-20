@@ -25,7 +25,7 @@ public class ConnectedCarFactory {
         getStoredData(mContext);
         String[] carData = getConnectedCarJsonContent(carName);
         if (carData != null && carData.length >= 3) {
-            return new ConnectedCar(mContext, createTrxList(carData[0], Integer.valueOf(carData[2])),
+            return new ConnectedCar(createTrxList(carData[0], Integer.valueOf(carData[2])),
                     new LinkedHashMap<String, BasePrediction>());
         }
         return null;

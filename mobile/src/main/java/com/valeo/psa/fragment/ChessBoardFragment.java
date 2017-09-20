@@ -116,13 +116,17 @@ public class ChessBoardFragment extends Fragment implements ChessBoardListener {
 
     @Override
     public void applyNewDrawable() {
-        chessboard.setBackground(drawChessBoard());
+        if (isAdded()) {
+            chessboard.setBackground(drawChessBoard());
+        }
     }
 
     @Override
     public void updateChessboard(final List<PointF> points, final List<Double> dists) {
-        if (points != null && dists != null) {
-            chessboard.setImageBitmap(placeUserOnChessBoard(points, dists));
+        if (isAdded()) {
+            if (points != null && dists != null) {
+                chessboard.setImageBitmap(placeUserOnChessBoard(points, dists));
+            }
         }
     }
 

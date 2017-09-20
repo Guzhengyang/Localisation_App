@@ -1,7 +1,5 @@
 package com.valeo.bleranging.model.connectedcar;
 
-import android.content.Context;
-
 import com.valeo.bleranging.machinelearningalgo.prediction.BasePrediction;
 import com.valeo.bleranging.model.MultiPrediction;
 import com.valeo.bleranging.model.MultiTrx;
@@ -18,12 +16,10 @@ import static com.valeo.bleranging.utils.CheckUtils.checkForRssiNonNull;
 public class ConnectedCar {
     private final MultiTrx mMultiTrx;
     private final MultiPrediction mMultiPrediction;
-    private final Context mContext;
     private String regPlate;
 
-    ConnectedCar(final Context context, final LinkedHashMap<Integer, Trx> trxLinked,
+    ConnectedCar(final LinkedHashMap<Integer, Trx> trxLinked,
                  LinkedHashMap<String, BasePrediction> predictionLinked) {
-        this.mContext = context;
         this.mMultiTrx = new MultiTrx(trxLinked);
         this.mMultiPrediction = new MultiPrediction(predictionLinked);
     }
