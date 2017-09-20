@@ -3,44 +3,40 @@ package com.valeo.bleranging.machinelearningalgo.prediction;
 import android.content.Context;
 import android.util.SparseArray;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
 import hex.genmodel.easy.prediction.RegressionModelPrediction;
-
-import static com.valeo.bleranging.utils.CalculUtils.getAverage;
 
 /**
  * Created by l-avaratha on 12/01/2017
  */
 
 public class PredictionCoord extends BasePrediction {
-    public static final int INDEX_KALMAN = 0;
-    public static final int INDEX_THRESHOLD = 1;
-    public static final int INDEX_RAW = 2;
-    public static final int INDEX_MAX = 3;
-    private static final int MAX_HISTORIC_SIZE = 5;// rssi history size
-    private final LinkedHashMap<Integer, List<Double>> rssiHistoric;// rssi saved to calculate the average
+    public static final int INDEX_KALMAN = 0; // use kalman filter
+    public static final int INDEX_THRESHOLD = 1; // use threshold filter
+    public static final int INDEX_RAW = 2; // use no filter
+    public static final int INDEX_MAX = 3; // number of comparison result
     private final SparseArray<Coord> coords; // regression prediction result
 
     public PredictionCoord(Context context, String modelClassNameX, String modelClassNameY, List<String> rowDataKeySet) {
         super(context, modelClassNameX, modelClassNameY, rowDataKeySet);
-        this.rssiHistoric = new LinkedHashMap<>();
         this.coords = new SparseArray<>();
     }
 
+    /***
+     *  initialization
+     * @param rssi raw rssi vector
+     * @param offset smartphone offset value
+     */
     public void init(double[] rssi, int offset) {
         this.rssi_offset = new double[rssi.length];
-        this.modified_rssi = new double[rssi.length];
+        this.rssi_modified = new double[rssi.length];
         for (int i = 0; i < rssi.length; i++) {
             this.rssi_offset[i] = rssi[i] - offset;
-            this.modified_rssi[i] = rssi_offset[i];
-            rssiHistoric.put(i, new ArrayList<Double>());
-            rssiHistoric.get(i).add(this.modified_rssi[i]);
+            this.rssi_modified[i] = rssi_offset[i];
         }
-        constructRowData(this.modified_rssi);
+        constructRowData(this.rssi_modified);
         for (int i = 0; i < INDEX_MAX; i++) { // doo not use getCoordsSize() because it's empty
             coords.put(i, new Coord());
             try {
@@ -54,25 +50,25 @@ public class PredictionCoord extends BasePrediction {
         }
     }
 
+    /***
+     * update rowData object for ML prediction
+     * @param rssi raw rssi vector
+     * @param offset
+     */
     public void setRssi(double rssi[], int offset) {
         if (this.rssi_offset != null) {
             for (int index = 0; index < rssi.length; index++) {
                 this.rssi_offset[index] = rssi[index] - offset;
-//                this.modified_rssi[index] = correctRssiUnilateral(this.modified_rssi[index], rssi_offset[index]);
-                this.modified_rssi[index] = this.rssi_offset[index];// don't use unilateral limiter
-                if (rssiHistoric.get(index).size() == MAX_HISTORIC_SIZE) {
-                    rssiHistoric.get(index).remove(0);
-                }
-                rssiHistoric.get(index).add(this.modified_rssi[index]);
+                this.rssi_modified[index] = this.rssi_offset[index]; // don't use unilateral limiter
             }
-            double[] rssiAverage = new double[rssi.length];
-            for (int i = 0; i < rssi.length; i++) {
-                rssiAverage[i] = getAverage(rssiHistoric.get(i));
-            }
-            constructRowData(this.modified_rssi);
+            constructRowData(this.rssi_modified);
         }
     }
 
+    /***
+     * get coord prediction results
+     * @return coord
+     */
     public Coord getMLCoord() {
         Coord coordML = null;
         try {
@@ -87,6 +83,11 @@ public class PredictionCoord extends BasePrediction {
         return coordML;
     }
 
+    /***
+     * get coord results after different filter(kalman, threshold, no filtering)
+     * @param index
+     * @return
+     */
     public Coord getPredictionCoord(final int index) {
         if (index < coords.size()) {
             return coords.get(index);
