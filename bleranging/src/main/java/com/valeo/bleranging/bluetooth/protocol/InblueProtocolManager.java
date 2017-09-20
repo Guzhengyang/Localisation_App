@@ -11,12 +11,36 @@ import com.valeo.bleranging.model.Antenna;
  */
 public class InblueProtocolManager {
 
-    public InblueProtocolManager(Context context) {
+    /**
+     * Single helper instance.
+     */
+    private static InblueProtocolManager sSingleInstance = null;
+
+    /**
+     * Private constructor.
+     */
+    private InblueProtocolManager(final Context context) {
         PacketOne.initializePacketOne(context);
         PacketTwo.initializePacketTwo();
         PacketThree.initializePacketThree();
         PacketFour.initializePacketFour();
         PacketLog.initializePacketLog();
+    }
+
+    /**
+     * Initialize the helper instance.
+     */
+    public static void initializeInstance(final Context context) {
+        if (sSingleInstance == null) {
+            sSingleInstance = new InblueProtocolManager(context);
+        }
+    }
+
+    /**
+     * @return the single helper instance.
+     */
+    public static InblueProtocolManager getInstance() {
+        return sSingleInstance;
     }
 
     /**

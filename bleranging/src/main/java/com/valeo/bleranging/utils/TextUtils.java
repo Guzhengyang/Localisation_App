@@ -177,6 +177,8 @@ public class TextUtils {
                 spannableStringBuilder.append(String.valueOf(SdkPreferencesHelper.getInstance().getCarRssi(trx.getTrxNumber()))).append("\n");
             }
             spannableStringBuilder.append("-------------------------------------------------------------------------\n");
+            spannableStringBuilder.append(connectedCar.getMultiPrediction().printDebug());
+            spannableStringBuilder.append("-------------------------------------------------------------------------\n");
         }
         return spannableStringBuilder;
     }

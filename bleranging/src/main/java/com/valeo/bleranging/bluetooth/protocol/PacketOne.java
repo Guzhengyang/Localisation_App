@@ -2,18 +2,16 @@ package com.valeo.bleranging.bluetooth.protocol;
 
 import android.content.Context;
 
-import com.valeo.bleranging.machinelearningalgo.AlgoManager;
+import com.valeo.bleranging.managers.CommandManager;
+import com.valeo.bleranging.managers.SensorsManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.JsonUtils;
-import com.valeo.bleranging.utils.PSALogs;
-import com.valeo.bleranging.utils.TextUtils;
 
 import static com.valeo.bleranging.persistence.Constants.BASE_1;
 import static com.valeo.bleranging.persistence.Constants.BASE_2;
 import static com.valeo.bleranging.persistence.Constants.BASE_3;
 import static com.valeo.bleranging.persistence.Constants.BASE_4;
-import static com.valeo.bleranging.persistence.Constants.NUMBER_MAX_TRX;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_ACCESS;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_BACK;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_EXTERNAL;
@@ -76,19 +74,19 @@ public class PacketOne {
     /**
      * Construct the packet One to send
      *
-     * @param mAlgoManager the algoManager
+     * @param connectedCar the connected car
      * @return the packet one payload containing six bytes
      */
-    public byte[] getPacketOnePayload(final AlgoManager mAlgoManager, final ConnectedCar connectedCar) {
-        boolean isRKE = mAlgoManager.getIsRKE();
+    public byte[] getPacketOnePayload(final ConnectedCar connectedCar) {
+        boolean isRKE = CommandManager.getInstance().getIsRKE();
         byte[] payload = new byte[MAX_BLE_TRAME_BYTE];
         payload[0] = (byte) ((packetOneCounter >> 8) & 0xFF);
         payload[1] = (byte) (packetOneCounter & 0xFF);
         payload[2] = (0x01);
         payload[3] = getPayloadThirdByte();
         if (connectedCar != null) {
-            payload[4] = getPayloadFourthByte(isRKE, connectedCar.getMultiPrediction().getPredictionZone(mAlgoManager.isSmartphoneInPocket()));
-            payload[5] = getPayloadFifthByte(isRKE, connectedCar.getMultiPrediction().getPredictionZone(mAlgoManager.isSmartphoneInPocket()));
+            payload[4] = getPayloadFourthByte(isRKE, connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket()));
+            payload[5] = getPayloadFifthByte(isRKE, connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket()));
         }
 //        payload[6] = getPayloadSixthByte();
 //        PSALogs.d("currentTrx", String.format("%02X ", payload[6]));
@@ -266,33 +264,32 @@ public class PacketOne {
         return payloadFive;
     }
 
-    private byte getPayloadSixthByte() {
-        currentTrx++;
-        if (isAutoMode) {
-            return (byte) 0x20;
-        } else if (currentTrx < NUMBER_MAX_TRX) {
-            return (byte) currentTrx;
-        } else {
-            isAutoMode = true;
-            return (byte) 0xF0;
-        }
-    }
-
-    private byte[] getPayloadSevenToTwelveByte(final String regPlate) {
-        byte[] payloadSevenToTwelve = new byte[MAC_ADDRESS_SIZE];
-        //TODO get regPlate here
-        String address = JsonUtils.getMacAddress(regPlate, String.valueOf(currentTrx));
-        if (currentTrx >= NUMBER_MAX_TRX) {
-            payloadSevenToTwelve[0] = (byte) 0xF0;
-        } else {
-            String[] split = address.split(":");
-            for (int i = 0; i < split.length; i++) {
-                payloadSevenToTwelve[i] = TextUtils.fromHexString(split[i])[0];
-            }
-        }
-        PSALogs.d("currentTrx", currentTrx + " " + TextUtils.printAddressBytes(payloadSevenToTwelve) + " !");
-        return payloadSevenToTwelve;
-    }
+//    private byte getPayloadSixthByte() {
+//        currentTrx++;
+//        if (isAutoMode) {
+//            return (byte) 0x20;
+//        } else if (currentTrx < NUMBER_MAX_TRX) {
+//            return (byte) currentTrx;
+//        } else {
+//            isAutoMode = true;
+//            return (byte) 0xF0;
+//        }
+//    }
+//
+//    private byte[] getPayloadSevenToTwelveByte(final String regPlate) {
+//        byte[] payloadSevenToTwelve = new byte[MAC_ADDRESS_SIZE];
+//        String address = JsonUtils.getMacAddress(regPlate, String.valueOf(currentTrx));
+//        if (currentTrx >= NUMBER_MAX_TRX) {
+//            payloadSevenToTwelve[0] = (byte) 0xF0;
+//        } else {
+//            String[] split = address.split(":");
+//            for (int i = 0; i < split.length; i++) {
+//                payloadSevenToTwelve[i] = TextUtils.fromHexString(split[i])[0];
+//            }
+//        }
+//        PSALogs.d("currentTrx", currentTrx + " " + TextUtils.printAddressBytes(payloadSevenToTwelve) + " !");
+//        return payloadSevenToTwelve;
+//    }
 
     public void restartPacketOneCounter() {
         this.packetOneCounter = 0;

@@ -28,8 +28,8 @@ import android.widget.Toast;
 import com.trncic.library.DottedProgressBar;
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.listeners.BleRangingListener;
+import com.valeo.bleranging.managers.LogFileManager;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.LogFileUtils;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 import com.valeo.psa.fragment.AccuracyFragment;
@@ -407,25 +407,9 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     @Override
     protected void onResume() {
         super.onResume();
+        LogFileManager.initializeInstance();
         if (mBleRangingHelper != null && !mBleRangingHelper.isCloseAppCalled()) {
-            if (LogFileUtils.createLogFile(this)) {
-                LogFileUtils.writeFirstColumnSettings();
-                String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
-                LogFileUtils.appendSettingLogs(connectedCarType,
-                        SdkPreferencesHelper.getInstance().getConnectedCarBase(),
-                        SdkPreferencesHelper.getInstance().getTrxAddressConnectable(),
-                        SdkPreferencesHelper.getInstance().getTrxAddressConnectableRemoteControl(),
-                        SdkPreferencesHelper.getInstance().getTrxAddressConnectablePC(), SdkPreferencesHelper.getInstance().getTrxAddress(1),
-                        SdkPreferencesHelper.getInstance().getTrxAddress(2), SdkPreferencesHelper.getInstance().getTrxAddress(3),
-                        SdkPreferencesHelper.getInstance().getTrxAddress(4), SdkPreferencesHelper.getInstance().getTrxAddress(5),
-                        SdkPreferencesHelper.getInstance().getTrxAddress(6), SdkPreferencesHelper.getInstance().getTrxAddress(7),
-                        SdkPreferencesHelper.getInstance().getTrxAddress(8), SdkPreferencesHelper.getInstance().getTrxAddress(9),
-                        SdkPreferencesHelper.getInstance().getRssiLogNumber(),
-                        SdkPreferencesHelper.getInstance().getCryptoPreAuthTimeout(),
-                        SdkPreferencesHelper.getInstance().getCryptoActionTimeout(),
-                        SdkPreferencesHelper.getInstance().getWantedSpeed(), SdkPreferencesHelper.getInstance().getOneStepSize());
-                LogFileUtils.writeFirstColumnLogs();
-            }
+            LogFileManager.getInstance().onResume(this);
             PSALogs.d("init2", "initializeConnectedCar\n");
             initializeConnectedCar();
             mBleRangingHelper.setRegPlate(mainFragment.getRegPlate());

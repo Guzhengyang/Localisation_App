@@ -1,11 +1,11 @@
-package com.valeo.bleranging.utils;
+package com.valeo.bleranging.managers;
 
 import android.content.Context;
 
 import com.valeo.bleranging.bluetooth.protocol.InblueProtocolManager;
-import com.valeo.bleranging.machinelearningalgo.AlgoManager;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.utils.PSALogs;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,7 +30,7 @@ import static com.valeo.bleranging.persistence.Constants.RSSI_DIR;
 /**
  * Created by l-avaratha on 08/06/2016
  */
-public class LogFileUtils {
+public class LogFileManager {
     private final static String FILENAME_TIMESTAMP_FORMAT = "yyyy-MM-dd_kk";
     private final static String RSSI_TIMESTAMP_FORMAT = "HH:mm:ss:SSS";
     private final static SimpleDateFormat sdfRssi = new SimpleDateFormat(RSSI_TIMESTAMP_FORMAT, Locale.FRANCE);
@@ -40,11 +40,38 @@ public class LogFileUtils {
     private static File logFile = null;
 
     /**
+     * Single helper instance.
+     */
+    private static LogFileManager sSingleInstance = null;
+
+    /**
+     * Private constructor.
+     */
+    private LogFileManager() {
+    }
+
+    /**
+     * Initialize the helper instance.
+     */
+    public static void initializeInstance() {
+        if (sSingleInstance == null) {
+            sSingleInstance = new LogFileManager();
+        }
+    }
+
+    /**
+     * @return the single helper instance.
+     */
+    public static LogFileManager getInstance() {
+        return sSingleInstance;
+    }
+
+    /**
      * Convert a boolean to a string value
      * @param toConvert the boolean to convert
      * @return 1 if toCovert is true, 0 if toCovert is false
      */
-    private static String booleanToString(boolean toConvert) {
+    private String booleanToString(boolean toConvert) {
         if (toConvert) {
             return "1";
         } else {
@@ -52,7 +79,7 @@ public class LogFileUtils {
         }
     }
 
-    private static void writeWithBufferedWriter(String text) {
+    private void writeWithBufferedWriter(String text) {
         if (logFile != null) {
             BufferedWriter buf = null;
             try {
@@ -77,9 +104,7 @@ public class LogFileUtils {
      * Create the string to write in the log file and add it
      * @param lockStatus true if the car is locked, false otherwise
      */
-    public static void appendRssiLogs(final ConnectedCar connectedCar, final AlgoManager mAlgoManager,
-                                      boolean lockStatus, byte counterByte,
-                                      final InblueProtocolManager mProtocolManager, int beepInt) {
+    public void appendRssiLogs(final ConnectedCar connectedCar, boolean lockStatus, byte counterByte, int beepInt) {
         if (connectedCar != null) {
             final String comma = ";";
             String log = connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_LEFT) + comma +
@@ -91,72 +116,72 @@ public class LogFileUtils {
                     connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_REAR_LEFT) + comma +
                     connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_REAR_RIGHT) + comma +
                     connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_BACK) + comma +
-                    mAlgoManager.getOrientation()[0] + comma + mAlgoManager.getOrientation()[1] + comma + mAlgoManager.getOrientation()[2] + comma +
-                    mAlgoManager.getGravity()[0] + comma + mAlgoManager.getGravity()[1] + comma + mAlgoManager.getGravity()[2] + comma +
-                    mAlgoManager.getGeomagnetic()[0] + comma + mAlgoManager.getGeomagnetic()[1] + comma + mAlgoManager.getGeomagnetic()[2] + comma +
-                    mAlgoManager.getAcceleration() + comma +
+                    SensorsManager.getInstance().getOrientation()[0] + comma + SensorsManager.getInstance().getOrientation()[1] + comma + SensorsManager.getInstance().getOrientation()[2] + comma +
+                    SensorsManager.getInstance().getGravity()[0] + comma + SensorsManager.getInstance().getGravity()[1] + comma + SensorsManager.getInstance().getGravity()[2] + comma +
+                    SensorsManager.getInstance().getGeomagnetic()[0] + comma + SensorsManager.getInstance().getGeomagnetic()[1] + comma + SensorsManager.getInstance().getGeomagnetic()[2] + comma +
+                    SensorsManager.getInstance().getAcceleration() + comma +
                     booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_LEFT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_MIDDLE)) + comma +
                     booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_RIGHT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_TRUNK)) + comma +
                     booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_FRONT_LEFT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_FRONT_RIGHT)) + comma +
                     booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_REAR_LEFT)) + comma + booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_REAR_RIGHT)) + comma +
                     booleanToString(connectedCar.getMultiTrx().isActive(NUMBER_TRX_BACK)) + comma +
-                    booleanToString(mAlgoManager.isSmartphoneInPocket()) + comma +
-                    booleanToString(mAlgoManager.areLockActionsAvailable()) + comma;
+                    booleanToString(SensorsManager.getInstance().isSmartphoneInPocket()) + comma +
+                    booleanToString(CommandManager.getInstance().getAreLockActionsAvailable()) + comma;
             if (lockStatus) {
                 log += "5" + comma;
             } else {
                 log += "4" + comma;
             }
-            if (mAlgoManager.getRearmLock()) {
+            if (CommandManager.getInstance().getRearmLock()) {
                 log += "7" + comma;
             } else {
                 log += "6" + comma;
             }
-            if (mAlgoManager.getRearmUnlock()) {
+            if (CommandManager.getInstance().getRearmUnlock()) {
                 log += "9" + comma;
             } else {
                 log += "8" + comma;
             }
-            log += booleanToString(mAlgoManager.getRearmWelcome()) + comma + mProtocolManager.getPacketLog().getWelcomeByte() + comma;
-            if (mProtocolManager.getPacketLog().getLockByte() == 1) {
+            log += booleanToString(CommandManager.getInstance().getRearmWelcome()) + comma + InblueProtocolManager.getInstance().getPacketLog().getWelcomeByte() + comma;
+            if (InblueProtocolManager.getInstance().getPacketLog().getLockByte() == 1) {
                 log += "3" + comma;
             } else {
                 log += "2" + comma;
             }
-            log += mProtocolManager.getPacketLog().getStartByte() + comma;
-            if (mProtocolManager.getPacketLog().getLeftAreaByte() == 1) {
+            log += InblueProtocolManager.getInstance().getPacketLog().getStartByte() + comma;
+            if (InblueProtocolManager.getInstance().getPacketLog().getLeftAreaByte() == 1) {
                 log += "11" + comma;
             } else {
                 log += "10" + comma;
             }
-            if (mProtocolManager.getPacketLog().getRightAreaByte() == 1) {
+            if (InblueProtocolManager.getInstance().getPacketLog().getRightAreaByte() == 1) {
                 log += "12" + comma;
             } else {
                 log += "10" + comma;
             }
-            if (mProtocolManager.getPacketLog().getBackAreaByte() == 1) {
+            if (InblueProtocolManager.getInstance().getPacketLog().getBackAreaByte() == 1) {
                 log += "13" + comma;
             } else {
                 log += "10" + comma;
             }
-            if (mProtocolManager.getPacketLog().getWalkAwayByte() == 1) {
+            if (InblueProtocolManager.getInstance().getPacketLog().getWalkAwayByte() == 1) {
                 log += "15" + comma;
             } else {
                 log += "14" + comma;
             }
-            if (mProtocolManager.getPacketLog().getApproachByte() == 1) {
+            if (InblueProtocolManager.getInstance().getPacketLog().getApproachByte() == 1) {
                 log += "16" + comma;
             } else {
                 log += "14" + comma;
             }
-            log += mProtocolManager.getPacketLog().getLeftTurnByte() + comma + mProtocolManager.getPacketLog().getRightTurnByte() + comma
-                    + mProtocolManager.getPacketLog().getApproachSideByte() + comma + mProtocolManager.getPacketLog().getApproachRoadByte() + comma
-                    + mProtocolManager.getPacketLog().getRecordByte() + comma + counterByte + comma
-                    + connectedCar.getMultiPrediction().getPredictionZone(mAlgoManager.isSmartphoneInPocket()) + comma
-                    + booleanToString(mProtocolManager.getPacketOne().isLockedFromTrx()) + comma
-                    + booleanToString(mProtocolManager.getPacketOne().isLockedToSend()) + comma
-                    + booleanToString(mProtocolManager.getPacketOne().isStartRequested()) + comma
-                    + booleanToString(mProtocolManager.getPacketOne().isThatcham()) + comma
+            log += InblueProtocolManager.getInstance().getPacketLog().getLeftTurnByte() + comma + InblueProtocolManager.getInstance().getPacketLog().getRightTurnByte() + comma
+                    + InblueProtocolManager.getInstance().getPacketLog().getApproachSideByte() + comma + InblueProtocolManager.getInstance().getPacketLog().getApproachRoadByte() + comma
+                    + InblueProtocolManager.getInstance().getPacketLog().getRecordByte() + comma + counterByte + comma
+                    + connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket()) + comma
+                    + booleanToString(InblueProtocolManager.getInstance().getPacketOne().isLockedFromTrx()) + comma
+                    + booleanToString(InblueProtocolManager.getInstance().getPacketOne().isLockedToSend()) + comma
+                    + booleanToString(InblueProtocolManager.getInstance().getPacketOne().isStartRequested()) + comma
+                    + booleanToString(InblueProtocolManager.getInstance().getPacketOne().isThatcham()) + comma
                     + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_LEFT).toString() + comma
                     + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_MIDDLE).toString() + comma
                     + connectedCar.getMultiTrx().getCurrentBLEChannel(NUMBER_TRX_RIGHT).toString() + comma
@@ -201,14 +226,14 @@ public class LogFileUtils {
      * @param wantedSpeed the wanted speed for the test procedure
      * @param stepSize the step size for the test procedure
      */
-    public static void appendSettingLogs(String carType, String carBase,
-                                         String addressConnectable, String addressConnectableRemote, String addressConnectablePC,
-                                         String addressFrontLeft, String addressFrontRight,
-                                         String addressLeft, String addressMiddle, String addressRight, String addressTrunk,
-                                         String addressRearLeft, String addressBack, String addressRearRight,
-                                         int logNumber,
-                                         float preAuthTimeout, float actionTimeout,
-                                         float wantedSpeed, int stepSize) {
+    private void appendSettingLogs(String carType, String carBase,
+                                   String addressConnectable, String addressConnectableRemote, String addressConnectablePC,
+                                   String addressFrontLeft, String addressFrontRight,
+                                   String addressLeft, String addressMiddle, String addressRight, String addressTrunk,
+                                   String addressRearLeft, String addressBack, String addressRearRight,
+                                   int logNumber,
+                                   float preAuthTimeout, float actionTimeout,
+                                   float wantedSpeed, int stepSize) {
         final String comma = ";";
         String log = carType + comma + carBase + comma
                 + addressConnectable + comma + addressConnectableRemote + comma
@@ -225,7 +250,7 @@ public class LogFileUtils {
     /**
      * Function used to debug and write logs into a file.
      */
-    private static void appendTimestampToLog(String text) {
+    private void appendTimestampToLog(String text) {
         String timestamp = sdfRssi.format(new Date());
         writeWithBufferedWriter(timestamp + ";" + text);
     }
@@ -233,7 +258,7 @@ public class LogFileUtils {
     /**
      * Create two directories to register the settings and all rssi values
      */
-    private static boolean createDirectories(Context mContext) {
+    private boolean createDirectories(Context mContext) {
         return createLogsDir(mContext) && createConfigDir(mContext);
     }
 
@@ -241,7 +266,7 @@ public class LogFileUtils {
      * Create a log file to register the settings and all rssi values
      * @return true if the file exist or is succesfully created, false otherwise
      */
-    public static boolean createLogFile(Context mContext) {
+    private boolean createLogFile(Context mContext) {
         if (createDirectories(mContext)) {
             String timestampLog = sdfFilename.format(new Date());
             SdkPreferencesHelper.getInstance().setLogFileName(LOG_FILE_PREFIX
@@ -273,7 +298,7 @@ public class LogFileUtils {
     /**
      * Write in the log file a line with the settings column names
      */
-    public static void writeFirstColumnSettings() {
+    private void writeFirstColumnSettings() {
         //Write 1st row with column names
         //BufferedWriter for performance, true to set append to file flag
         String colNames = "TIMESTAMP;carType;carBase;addressConnectable;"
@@ -288,7 +313,7 @@ public class LogFileUtils {
     /**
      * Write in the log file a line with the rssi affiliated parameters column names
      */
-    public static void writeFirstColumnLogs() {
+    private void writeFirstColumnLogs() {
         //Write 1st row with column names
         //BufferedWriter for performance, true to set append to file flag
         String colNames = "TIMESTAMP;"
@@ -317,7 +342,7 @@ public class LogFileUtils {
         writeWithBufferedWriter(colNames);
     }
 
-    public static boolean createDir(File dirPath, String dirName) {
+    public boolean createDir(File dirPath, String dirName) {
         File dir = new File(dirPath, dirName);
         //if the folder doesn't exist
         if (!dir.exists()) {
@@ -332,11 +357,32 @@ public class LogFileUtils {
         return true;
     }
 
-    private static boolean createLogsDir(Context mContext) {
+    private boolean createLogsDir(Context mContext) {
         return createDir(mContext.getExternalCacheDir(), RSSI_DIR);
     }
 
-    private static boolean createConfigDir(Context mContext) {
+    private boolean createConfigDir(Context mContext) {
         return createDir(mContext.getExternalCacheDir(), CONFIG_DIR);
+    }
+
+    public void onResume(final Context context) {
+        if (createLogFile(context)) {
+            writeFirstColumnSettings();
+            String connectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
+            appendSettingLogs(connectedCarType,
+                    SdkPreferencesHelper.getInstance().getConnectedCarBase(),
+                    SdkPreferencesHelper.getInstance().getTrxAddressConnectable(),
+                    SdkPreferencesHelper.getInstance().getTrxAddressConnectableRemoteControl(),
+                    SdkPreferencesHelper.getInstance().getTrxAddressConnectablePC(), SdkPreferencesHelper.getInstance().getTrxAddress(1),
+                    SdkPreferencesHelper.getInstance().getTrxAddress(2), SdkPreferencesHelper.getInstance().getTrxAddress(3),
+                    SdkPreferencesHelper.getInstance().getTrxAddress(4), SdkPreferencesHelper.getInstance().getTrxAddress(5),
+                    SdkPreferencesHelper.getInstance().getTrxAddress(6), SdkPreferencesHelper.getInstance().getTrxAddress(7),
+                    SdkPreferencesHelper.getInstance().getTrxAddress(8), SdkPreferencesHelper.getInstance().getTrxAddress(9),
+                    SdkPreferencesHelper.getInstance().getRssiLogNumber(),
+                    SdkPreferencesHelper.getInstance().getCryptoPreAuthTimeout(),
+                    SdkPreferencesHelper.getInstance().getCryptoActionTimeout(),
+                    SdkPreferencesHelper.getInstance().getWantedSpeed(), SdkPreferencesHelper.getInstance().getOneStepSize());
+            writeFirstColumnLogs();
+        }
     }
 }

@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.graphics.PointF;
 import android.media.ToneGenerator;
 import android.os.Build;
-import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,13 +27,14 @@ import com.valeo.bleranging.listeners.ChessBoardListener;
 import com.valeo.bleranging.listeners.DebugListener;
 import com.valeo.bleranging.listeners.SpinnerListener;
 import com.valeo.bleranging.listeners.TestListener;
-import com.valeo.bleranging.machinelearningalgo.AlgoManager;
+import com.valeo.bleranging.managers.CommandManager;
+import com.valeo.bleranging.managers.LogFileManager;
+import com.valeo.bleranging.managers.SensorsManager;
 import com.valeo.bleranging.model.Antenna;
 import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.JsonUtils;
-import com.valeo.bleranging.utils.LogFileUtils;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.bleranging.utils.TextUtils;
 
@@ -53,7 +53,6 @@ import static com.valeo.bleranging.persistence.Constants.PREDICTIONS;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_THATCHAM;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_WELCOME;
 import static com.valeo.bleranging.persistence.Constants.REQUEST_PERMISSION_ALL;
-import static com.valeo.bleranging.persistence.Constants.RKE_USE_TIMEOUT;
 import static com.valeo.bleranging.persistence.Constants.RSSI_DIR;
 import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
 import static com.valeo.bleranging.utils.TextUtils.createFirstFooterDebugData;
@@ -64,9 +63,7 @@ import static com.valeo.bleranging.utils.TextUtils.createHeaderDebugData;
  */
 public class BleRangingHelper {
     private final Context mContext;
-    private final AlgoManager mAlgoManager;
     private final BluetoothManagement mBluetoothManager;
-    private final InblueProtocolManager mProtocolManager;
     private final BleRangingListener bleRangingListener;
     private final ChessBoardListener chessBoardListener;
     private final DebugListener debugListener;
@@ -76,14 +73,6 @@ public class BleRangingHelper {
     private final Handler mMainHandler;
     private final Handler mHandlerTimeOut;
     private final Handler mHandlerCryptoTimeOut;
-    private final Runnable toggleOnIsRKEAvailable = new Runnable() {
-        @Override
-        public void run() {
-            PSALogs.d("performLock", "before isRKEAvailable =" + mAlgoManager.isRKEAvailable());
-            mAlgoManager.setIsRKEAvailable(true);
-            PSALogs.d("performLock", "after isRKEAvailable =" + mAlgoManager.isRKEAvailable());
-        }
-    };
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private boolean checkNewPacketOnlyOneLaunch = true;
     private boolean isRestartAuthorized = true;
@@ -110,17 +99,17 @@ public class BleRangingHelper {
         @Override
         public void run() {
             lock.writeLock().lock();
-            bytesToSend = mProtocolManager.getPacketOne().getPacketOnePayload(mAlgoManager, connectedCar);
+            bytesToSend = InblueProtocolManager.getInstance().getPacketOne().getPacketOnePayload(connectedCar);
             lock.writeLock().unlock();
             lock.readLock().lock();
             mBluetoothManager.sendPackets(bytesToSend, bytesReceived,
-                    mProtocolManager.getPacketTwo().getPacketTwoPayload(connectedCar.getMultiPrediction().getStandardClasses(),
+                    InblueProtocolManager.getInstance().getPacketTwo().getPacketTwoPayload(connectedCar.getMultiPrediction().getStandardClasses(),
                             connectedCar.getMultiPrediction().getStandardDistribution()),
-                    mProtocolManager.getPacketThree().getPacketThreePayload(connectedCar.getMultiPrediction().getStandardRssi()),
-                    mProtocolManager.getPacketFour().getPacketFourPayload(connectedCar.getMultiPrediction().getPredictionCoord(), connectedCar.getMultiPrediction().getDist2Car()));
+                    InblueProtocolManager.getInstance().getPacketThree().getPacketThreePayload(connectedCar.getMultiPrediction().getStandardRssi()),
+                    InblueProtocolManager.getInstance().getPacketFour().getPacketFourPayload(connectedCar.getMultiPrediction().getPredictionCoord(), connectedCar.getMultiPrediction().getDist2Car()));
             lock.readLock().unlock();
-            if (mAlgoManager.getIsRKE()) {
-                mAlgoManager.setIsRKE(false);
+            if (CommandManager.getInstance().getIsRKE()) {
+                CommandManager.getInstance().setIsRKE(false);
             }
             if (mBluetoothManager.isLinked()) {
                 mMainHandler.postDelayed(this, 200);
@@ -166,9 +155,9 @@ public class BleRangingHelper {
         public void run() {
             if (connectedCar != null) {
                 // update ble trame
-                mAlgoManager.tryMachineLearningStrategies(connectedCar);
+                CommandManager.getInstance().tryMachineLearningStrategies(mContext, connectedCar);
                 // update car localization img
-                updateCarLocalization(connectedCar.getMultiPrediction().getPredictionZone(mAlgoManager.isSmartphoneInPocket()),
+                updateCarLocalization(connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket()),
                         connectedCar.getMultiPrediction().getPredictionRP(),
                         connectedCar.getMultiPrediction().getPredictionCoord(),
                         connectedCar.getMultiPrediction().getDist2Car());
@@ -197,8 +186,8 @@ public class BleRangingHelper {
         @Override
         public void run() {
             if (isLoggable) {
-                LogFileUtils.appendRssiLogs(connectedCar, mAlgoManager, newLockStatus, bleRangingListener.getMeasureCounterByte(),
-                        mProtocolManager, beepInt);
+                LogFileManager.getInstance().appendRssiLogs(connectedCar, newLockStatus,
+                        bleRangingListener.getMeasureCounterByte(), beepInt);
                 beepInt = 0;
             }
             mMainHandler.postDelayed(this, 100);
@@ -214,7 +203,7 @@ public class BleRangingHelper {
                             createHeaderDebugData(bytesToSend, bytesReceived,
                                     isFullyConnected()),
                             createFirstFooterDebugData(connectedCar),
-                            mAlgoManager.createDebugData(connectedCar));
+                            SensorsManager.getInstance().createSensorsDebugData());
             lock.readLock().unlock();
             debugListener.printDebugInfo(spannedString);
             bleRangingListener.updateBLEStatus();
@@ -277,7 +266,7 @@ public class BleRangingHelper {
                 if (oldLockStatus != newLockStatus) {
                     bleRangingListener.updateCarDoorStatus(newLockStatus);
                 }
-                mProtocolManager.getPacketOne().setIsLockedFromTrx(newLockStatus);
+                InblueProtocolManager.getInstance().getPacketOne().setIsLockedFromTrx(newLockStatus);
                 runFirstConnection(newLockStatus);
                 bleRangingListener.updateBLEStatus();
                 if (checkNewPacketOnlyOneLaunch) {
@@ -329,9 +318,10 @@ public class BleRangingHelper {
         this.debugListener = debugListener;
         this.spinnerListener = accuracyListener;
         this.testListener = testListener;
-        this.mProtocolManager = new InblueProtocolManager(context);
+        InblueProtocolManager.initializeInstance(context);
         this.mMainHandler = new Handler(Looper.getMainLooper());
-        this.mAlgoManager = new AlgoManager(mContext, bleRangingListener, mProtocolManager, mMainHandler);
+        SensorsManager.initializeInstance(mContext, bleRangingListener);
+        CommandManager.initializeInstance(mContext, bleRangingListener);
         this.mHandlerTimeOut = new Handler();
         this.mHandlerCryptoTimeOut = new Handler();
         mBluetoothManager.addBluetoothManagementListener(new BluetoothManagementListener() {
@@ -440,30 +430,6 @@ public class BleRangingHelper {
     }
 
     /**
-     * Perform a RKE lock or unlock action
-     *
-     * @param lockCar true to send a lock action, false to send an unlock action
-     */
-    public void performRKELockAction(final boolean lockCar) {
-        PSALogs.d("performLock", "isRKEAvailable =" + mAlgoManager.isRKEAvailable() +
-                ", Fco =" + isFullyConnected() +
-                ", lockActionAvailable =" + mAlgoManager.areLockActionsAvailable());
-        if (isRKEButtonClickable()) {
-            mAlgoManager.setIsRKEAvailable(false);
-            mHandlerCryptoTimeOut.postDelayed(toggleOnIsRKEAvailable, RKE_USE_TIMEOUT);
-            // Send command several times in case it got lost
-            new CountDownTimer(200, 50) {
-                public void onTick(long millisUntilFinished) {
-                    mAlgoManager.performLockWithCryptoTimeout(true, lockCar);
-                }
-
-                public void onFinish() {
-                }
-            }.start();
-        }
-    }
-
-    /**
      * Initialize the connected car.
      * Call this method in onResume.
      */
@@ -532,12 +498,12 @@ public class BleRangingHelper {
             } else {
                 mMainHandler.post(updateCarLocalizationRunnable);
             }
-            mProtocolManager.getPacketOne().setIsStartRequested(isStartRequested);
+            InblueProtocolManager.getInstance().getPacketOne().setIsStartRequested(isStartRequested);
         }
     }
 
     public boolean isStartRequested() {
-        return mProtocolManager.getPacketOne().isStartRequested();
+        return InblueProtocolManager.getInstance().getPacketOne().isStartRequested();
     }
 
     /**
@@ -558,19 +524,6 @@ public class BleRangingHelper {
         return isTryingToConnect || mBluetoothManager.isConnecting();
     }
 
-    /**
-     * Verify if the user can click on rke button by checking if the action can succeed
-     *
-     * @return true if the rke button is ready, false otherwise
-     */
-    public boolean isRKEButtonClickable() {
-        PSALogs.d("DragDrop", "isFullyConnected() " + isFullyConnected());
-        PSALogs.d("DragDrop", "mAlgoManager.isRKEAvailable() " + mAlgoManager.isRKEAvailable());
-        PSALogs.d("DragDrop", "mAlgoManager.areLockActionsAvailable() " + mAlgoManager.areLockActionsAvailable());
-        return isFullyConnected() && mAlgoManager.isRKEAvailable()
-                && mAlgoManager.areLockActionsAvailable();
-    }
-
     public boolean isCloseAppCalled() {
         return isCloseAppCalled;
     }
@@ -583,7 +536,7 @@ public class BleRangingHelper {
         PSALogs.d("NIH", "closeApp()");
         isCloseAppCalled = true;
         try {
-            if (LogFileUtils.createDir(Environment.getExternalStorageDirectory(), RSSI_DIR)) {
+            if (LogFileManager.getInstance().createDir(Environment.getExternalStorageDirectory(), RSSI_DIR)) {
                 if (mContext.getExternalCacheDir() != null) {
                     TextUtils.copyFile(mContext.getExternalCacheDir().getAbsolutePath()
                                     + SdkPreferencesHelper.getInstance().getLogFileName(),
@@ -596,7 +549,7 @@ public class BleRangingHelper {
         }
         // on settings changes, increase the file number used for logs files name
         SdkPreferencesHelper.getInstance().setRssiLogNumber(SdkPreferencesHelper.getInstance().getRssiLogNumber() + 1);
-        mAlgoManager.closeApp();
+        CommandManager.getInstance().closeApp(mContext);
         stopRunners();
         mBluetoothManager.stopLeScan();
         if (mBluetoothManager.isLinked() && !mBluetoothManager.isConnecting()) {
@@ -663,8 +616,8 @@ public class BleRangingHelper {
     }
 
     private void resetParams() {
-        mProtocolManager.getPacketOne().restartPacketOneCounter();
-        mAlgoManager.setRearmWelcome(true);
+        InblueProtocolManager.getInstance().getPacketOne().restartPacketOneCounter();
+        CommandManager.getInstance().setRearmWelcome(true);
         dataReceived = false;
         isFirstConnection = true;
         checkNewPacketOnlyOneLaunch = true;
@@ -745,7 +698,7 @@ public class BleRangingHelper {
         if (device != null && beaconScanResponse != null && connectedCar != null) {
             int trxNumber = JsonUtils.getTrxNumber(connectedCar.getRegPlate(), device.getAddress());
             if (trxNumber != -1) {
-                final Antenna.BLEChannel receivedBleChannel = mProtocolManager.getCurrentChannel(beaconScanResponse);
+                final Antenna.BLEChannel receivedBleChannel = InblueProtocolManager.getInstance().getCurrentChannel(beaconScanResponse);
                 if (SdkPreferencesHelper.getInstance().isChannelLimited()) {
                     if (alreadyStopped) {
                         PSALogs.d("bleChannel2 ", "not 37, do not parse scanResponse");
@@ -795,7 +748,7 @@ public class BleRangingHelper {
                 }
                 if (advertisedData != null && advertisedData.length > 0) {
                     PSALogs.d("NIH", "BLE_ADDRESS_LOGGER= " + TextUtils.printBleBytes(advertisedData));
-                    mProtocolManager.getPacketLog().getAdvertisedBytes(advertisedData);
+                    InblueProtocolManager.getInstance().getPacketLog().getAdvertisedBytes(advertisedData);
                 } else {
                     PSALogs.d("NIH", "newConnectable coz advertising is null " + device.getAddress());
                 }
@@ -812,11 +765,11 @@ public class BleRangingHelper {
             debugListener.darkenArea(elementPred);
         }
         //THATCHAM
-        if (mProtocolManager.getPacketOne().isThatcham()) {
+        if (InblueProtocolManager.getInstance().getPacketOne().isThatcham()) {
             debugListener.lightUpArea(PREDICTION_THATCHAM);
         }
         // WELCOME
-        if (mAlgoManager.isInWelcomeArea()) {
+        if (CommandManager.getInstance().isInWelcomeArea()) {
             debugListener.lightUpArea(PREDICTION_WELCOME);
         }
         if (predictionPosition != null && !predictionPosition.isEmpty()) {
@@ -841,8 +794,8 @@ public class BleRangingHelper {
             isFirstConnection = false;
             PSALogs.w(" rssiHistorics", "*********************************** runFirstConnection ************************************************");
             bleRangingListener.updateCarDoorStatus(newLockStatus);
-            mProtocolManager.getPacketOne().setIsLockedToSend(newLockStatus);
-            mAlgoManager.setLastCommandFromTrx(newLockStatus);
+            InblueProtocolManager.getInstance().getPacketOne().setIsLockedToSend(newLockStatus);
+            CommandManager.getInstance().setLastCommandFromTrx(newLockStatus);
         }
     }
 
@@ -867,7 +820,7 @@ public class BleRangingHelper {
 
     private void enableSecurityWal() {
         String connectedCarBase = SdkPreferencesHelper.getInstance().getConnectedCarBase();
-        mProtocolManager.getPacketOne().setCarBase(connectedCarBase);
+        InblueProtocolManager.getInstance().getPacketOne().setCarBase(connectedCarBase);
         if (connectedCarBase.equalsIgnoreCase(BASE_2)
                 || connectedCarBase.equalsIgnoreCase(BASE_3)) {
             SdkPreferencesHelper.getInstance().setSecurityWALEnabled(true);
@@ -902,13 +855,13 @@ public class BleRangingHelper {
     }
 
     public void calculateAccuracy() {
-        mAlgoManager.enableAccuracyMeasure(true);
+        CommandManager.getInstance().enableAccuracyMeasure(true);
     }
 
     public Integer getCalculatedAccuracy(String zone) {
-        mAlgoManager.enableAccuracyMeasure(false);
-        int result = mAlgoManager.getSelectedAccuracy(zone);
-        mAlgoManager.clearAccuracyCounter();
+        CommandManager.getInstance().enableAccuracyMeasure(false);
+        int result = CommandManager.getInstance().getSelectedAccuracy(zone);
+        CommandManager.getInstance().clearAccuracyCounter();
         return result;
     }
 
@@ -920,7 +873,7 @@ public class BleRangingHelper {
     }
 
     public boolean isSmartphoneFrozen() {
-        return mAlgoManager.isSmartphoneFrozen();
+        return SensorsManager.getInstance().isSmartphoneFrozen();
     }
 
     public void setSmartphoneOffset() {
@@ -940,5 +893,13 @@ public class BleRangingHelper {
 
     public void setRegPlate(final String regPlate) {
         connectedCar.setRegPlate(regPlate);
+    }
+
+    public boolean isRKEButtonClickable() {
+        return CommandManager.getInstance().isRKEButtonClickable(isFullyConnected());
+    }
+
+    public void performRKELockAction(boolean b) {
+        CommandManager.getInstance().performRKELockAction(b, isFullyConnected());
     }
 }
