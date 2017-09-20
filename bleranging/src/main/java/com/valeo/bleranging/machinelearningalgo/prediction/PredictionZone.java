@@ -32,15 +32,14 @@ import static com.valeo.bleranging.utils.CheckUtils.compareProb;
  */
 
 public class PredictionZone extends BasePrediction {
-    private final List<Integer> predictions = new ArrayList<>();// Machine learning prediction history list
-    private final String predictionType;// standard prediction or rp prediction
+    private final List<Integer> predictions = new ArrayList<>(); // ML prediction history list
+    private final String predictionType; // standard prediction or rp prediction
     private final StringBuilder sb = new StringBuilder();
-    private double[] distribution;// prob for each Machine learning class
-    private double[] distance;// distance converted using path loss propagation
-    private String label;// prediction result string
-    private int INDEX_LOCK;// find the index of lock zone
-    private int prediction_old = -1;// old prediction result index
-    private double thresholdROC = 0.5;
+    private double[] distribution; // prob for each Machine learning class
+    private double[] distance; // converted distance using path loss propagation
+    private String label; // prediction result
+    private int prediction_old = -1; // old prediction result index
+    private double thresholdROC = 0.5; // prob threshold for binary classification
 
     public PredictionZone(Context context, String modelClassName,
                           List<String> rowDataKeySet, String predictionType) {
@@ -48,26 +47,29 @@ public class PredictionZone extends BasePrediction {
         this.predictionType = predictionType;
     }
 
+    /***
+     *  initialization
+     * @param rssi raw rssi vector
+     * @param offset smartphone offset value
+     */
     public void init(double[] rssi, int offset) {
         this.rssi_offset = new double[rssi.length];
         this.distance = new double[rssi.length];
-        this.modified_rssi = new double[rssi.length];
+        this.rssi_modified = new double[rssi.length];
         this.distribution = new double[modelWrappers.get(0).getResponseDomainValues().length];
-        // find index of lock
-        for (int i = 0; i < modelWrappers.get(0).getResponseDomainValues().length; i++) {
-            if (modelWrappers.get(0).getResponseDomainValues()[i].equalsIgnoreCase(PREDICTION_LOCK)) {
-                INDEX_LOCK = i;
-                break;
-            }
-        }
         for (int i = 0; i < rssi.length; i++) {
             this.rssi_offset[i] = rssi[i] - offset;
-            this.modified_rssi[i] = rssi_offset[i];
-            this.distance[i] = rssi2dist(this.modified_rssi[i]);
+            this.rssi_modified[i] = rssi_offset[i];
+            this.distance[i] = rssi2dist(this.rssi_modified[i]);
         }
-        constructRowData(this.modified_rssi);
+        constructRowData(this.rssi_modified);
     }
 
+    /***
+     * update rowData object for ML prediction
+     * @param rssi raw rssi vector
+     * @param offset
+     */
     public void setRssi(double rssi[], int offset) {
         if (this.rssi_offset != null) {
             for (int index = 0; index < rssi.length; index++) {
@@ -86,13 +88,17 @@ public class PredictionZone extends BasePrediction {
                         rssi_offset[index] += SdkPreferencesHelper.getInstance().getOffsetHysteresisUnlock();
                     }
                 }
-                this.modified_rssi[index] = correctRssiUnilateral(this.modified_rssi[index], rssi_offset[index]);
-                distance[index] = rssi2dist(this.modified_rssi[index]);
+                this.rssi_modified[index] = correctRssiUnilateral(this.rssi_modified[index], rssi_offset[index]);
+                distance[index] = rssi2dist(this.rssi_modified[index]);
             }
-            constructRowData(this.modified_rssi);
+            constructRowData(this.rssi_modified);
         }
     }
 
+    /***
+     * predict result using ML model and rowData sample vector
+     * @param nVote number of results kept in the history list
+     */
     public void predict(int nVote) {
         int result = 0;
         try {
@@ -121,12 +127,18 @@ public class PredictionZone extends BasePrediction {
         }
     }
 
-    //    4, 6, 8 beacons prediction
-    public void calculatePredictionStandard(double threshold_prob, double threshold_prob_lock2unlock, double threshold_prob_unlock2lock, String strategy) {
+    /***
+     * update prediction result
+     * @param threshold_prob prob for the change of zone by default
+     * @param threshold_prob_lock2unlock prob for changing from lock zone to unlock zone
+     * @param threshold_prob_unlock2lock prob for changing from unlock zone to lock zone
+     * @param strategy passive entry oriented(normal) or thatcham oriented
+     */
+    public void calculatePrediction(double threshold_prob, double threshold_prob_lock2unlock, double threshold_prob_unlock2lock, String strategy) {
         if (checkOldPrediction()) {
             int temp_prediction = most(predictions);
             if (strategy.equals(THATCHAM_ORIENTED)) {
-//                lock --> left, right, front, back
+                // lock zone--> unlock zone
                 if (comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_LEFT)
                         || comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_RIGHT)
                         || comparePrediction(modelWrappers.get(0), temp_prediction, PREDICTION_BACK)
@@ -137,7 +149,7 @@ public class PredictionZone extends BasePrediction {
                         return;
                     }
                 }
-//                left, right, front, back --> lock
+                // unlock zone --> lock zone
                 if (comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_LEFT)
                         || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_RIGHT)
                         || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_BACK)
@@ -148,12 +160,13 @@ public class PredictionZone extends BasePrediction {
                         return;
                     }
                 }
+                // other change of zone
                 if (compareProb(distribution, temp_prediction, threshold_prob)) {
                     prediction_old = temp_prediction;
                     return;
                 }
             } else if (strategy.equals(PASSIVE_ENTRY_ORIENTED)) {
-//                left, right, front, back --> lock
+                // unlock zone --> lock zone
                 if (comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_LEFT)
                         || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_RIGHT)
                         || comparePrediction(modelWrappers.get(0), prediction_old, PREDICTION_BACK)
@@ -164,6 +177,7 @@ public class PredictionZone extends BasePrediction {
                         return;
                     }
                 }
+                // other change of zone
                 if (compareProb(distribution, temp_prediction, threshold_prob)) {
                     prediction_old = temp_prediction;
                     return;
@@ -172,7 +186,10 @@ public class PredictionZone extends BasePrediction {
         }
     }
 
-
+    /***
+     * whether in first prediction
+     * @return
+     */
     private boolean checkOldPrediction() {
         if (prediction_old == -1) {
             prediction_old = most(predictions);
@@ -181,6 +198,10 @@ public class PredictionZone extends BasePrediction {
         return true;
     }
 
+    /***
+     * get corresponding string result of prediction
+     * @return
+     */
     public String getPrediction() {
         if (prediction_old != -1) {
             return modelWrappers.get(0).getResponseDomainValues()[prediction_old];
@@ -192,7 +213,7 @@ public class PredictionZone extends BasePrediction {
         sb.setLength(0);
         if (distance == null) {
             return "";
-        } else if (modified_rssi == null) {
+        } else if (rssi_modified == null) {
             return "";
         } else if (distribution == null) {
             return "";
@@ -202,7 +223,7 @@ public class PredictionZone extends BasePrediction {
             return "";
         } else {
             sb.append(String.format(Locale.FRANCE, "%1$s %2$s ", predictionType, getPrediction())).append("\n");
-            for (double arssi : modified_rssi) {
+            for (double arssi : rssi_modified) {
                 sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
             }
             sb.append("\n");
@@ -226,6 +247,10 @@ public class PredictionZone extends BasePrediction {
         this.thresholdROC = threshold;
     }
 
+    /***
+     * get all the string results of ML
+     * @return
+     */
     public String[] getClasses() {
         if (modelWrappers.get(0) != null) {
             return modelWrappers.get(0).getResponseDomainValues();

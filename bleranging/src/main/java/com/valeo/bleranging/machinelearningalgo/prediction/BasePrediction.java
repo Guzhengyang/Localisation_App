@@ -18,15 +18,22 @@ import hex.genmodel.easy.RowData;
  */
 
 public class BasePrediction {
-    final List<EasyPredictModelWrapper> modelWrappers = new ArrayList<>();
-    final RowData rowData;
-    final Context mContext;
-    private final List<String> rowDataKeySet;
-    double[] rssi_offset; //    rssi after adding smartphone offset
-    double[] modified_rssi; //    rssi used for algo entry
-    boolean binomial; // whether the model is binomial
-    private boolean arePredictRawFileRead = false;
 
+    final Context mContext;
+    final List<EasyPredictModelWrapper> modelWrappers = new ArrayList<>(); // ML model list
+    final RowData rowData; // sample vector for ML model
+    private final List<String> rowDataKeySet; // name list for sample vector
+    double[] rssi_offset; // rssi after adding smartphone offset
+    double[] rssi_modified; // rssi used for algo entry
+    boolean binomial; // whether the model is binomial
+    private boolean arePredictRawFileRead = false; // whether the ML model files are read
+
+    /***
+     * used for zone prediction
+     * @param context
+     * @param modelClassName java model class name
+     * @param rowDataKeySet
+     */
     BasePrediction(Context context, String modelClassName, List<String> rowDataKeySet) {
         this.mContext = context;
         this.rowDataKeySet = rowDataKeySet;
@@ -34,6 +41,13 @@ public class BasePrediction {
         new AsyncPredictionInit().execute(modelClassName);
     }
 
+    /***
+     * used for coord prediction
+     * @param context
+     * @param modelClassNameX java model class name for coord_x
+     * @param modelClassNameY java model class name for coord_y
+     * @param rowDataKeySet
+     */
     BasePrediction(Context context, String modelClassNameX, String modelClassNameY, List<String> rowDataKeySet) {
         this.mContext = context;
         this.rowDataKeySet = rowDataKeySet;
@@ -41,6 +55,10 @@ public class BasePrediction {
         new AsyncPredictionInit().execute(modelClassNameX, modelClassNameY);
     }
 
+    /***
+     * update rowData object for ML prediction
+     * @param rssi modified rssi vector
+     */
     void constructRowData(double[] rssi) {
         if (rssi == null) {
             return;
@@ -59,13 +77,16 @@ public class BasePrediction {
     }
 
     public double[] getModifiedRssi() {
-        return modified_rssi;
+        return rssi_modified;
     }
 
     public boolean isPredictRawFileRead() {
         return arePredictRawFileRead;
     }
 
+    /***
+     * read ML model
+     */
     private class AsyncPredictionInit extends AsyncTask<String, Void, Void> {
         private String message = "";
 

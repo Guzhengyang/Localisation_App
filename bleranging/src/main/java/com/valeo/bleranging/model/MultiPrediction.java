@@ -163,7 +163,7 @@ public class MultiPrediction {
         for (String predictionType : predictionLinkedHMap.keySet()) {
             if (isInitialized(predictionType)) {
                 if (predictionLinkedHMap.get(predictionType) instanceof PredictionZone) {
-                    ((PredictionZone) predictionLinkedHMap.get(predictionType)).calculatePredictionStandard(SdkPreferencesHelper.getInstance().getThresholdProbStandard(),
+                    ((PredictionZone) predictionLinkedHMap.get(predictionType)).calculatePrediction(SdkPreferencesHelper.getInstance().getThresholdProbStandard(),
                             THRESHOLD_PROB_LOCK2UNLOCK, THRESHOLD_PROB_UNLOCK2LOCK, SdkPreferencesHelper.getInstance().getOpeningStrategy());
                 }
             }

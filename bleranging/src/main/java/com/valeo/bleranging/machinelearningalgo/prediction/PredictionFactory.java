@@ -17,7 +17,7 @@ public class PredictionFactory {
 
     /***
      *
-     * @param mContext the context
+     * @param mContext
      * @return Coordinate Prediction
      */
     public static PredictionCoord getPredictionCoord(Context mContext) {
@@ -32,7 +32,7 @@ public class PredictionFactory {
 
     /***
      *
-     * @param mContext the context
+     * @param mContext
      * @param predictionType  standard prediction for zones(left, right, lock, start, ...) and rp prediction(near or far)
      * @return a PredictionZone
      */
