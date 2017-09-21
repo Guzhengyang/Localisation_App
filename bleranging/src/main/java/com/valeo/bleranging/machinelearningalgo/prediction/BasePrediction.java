@@ -18,8 +18,6 @@ import hex.genmodel.easy.RowData;
  */
 
 public class BasePrediction {
-
-    final Context mContext;
     final List<EasyPredictModelWrapper> modelWrappers = new ArrayList<>(); // ML model list
     final RowData rowData; // sample vector for ML model
     private final List<String> rowDataKeySet; // name list for sample vector
@@ -35,10 +33,9 @@ public class BasePrediction {
      * @param rowDataKeySet
      */
     BasePrediction(Context context, String modelClassName, List<String> rowDataKeySet) {
-        this.mContext = context;
         this.rowDataKeySet = rowDataKeySet;
         this.rowData = new RowData();
-        new AsyncPredictionInit().execute(modelClassName);
+        new AsyncPredictionInit(context).execute(modelClassName);
     }
 
     /***
@@ -49,10 +46,9 @@ public class BasePrediction {
      * @param rowDataKeySet
      */
     BasePrediction(Context context, String modelClassNameX, String modelClassNameY, List<String> rowDataKeySet) {
-        this.mContext = context;
         this.rowDataKeySet = rowDataKeySet;
         this.rowData = new RowData();
-        new AsyncPredictionInit().execute(modelClassNameX, modelClassNameY);
+        new AsyncPredictionInit(context).execute(modelClassNameX, modelClassNameY);
     }
 
     /***
@@ -88,7 +84,12 @@ public class BasePrediction {
      * read ML model
      */
     private class AsyncPredictionInit extends AsyncTask<String, Void, Void> {
+        private final Context context;
         private String message = "";
+
+        public AsyncPredictionInit(Context context) {
+            this.context = context;
+        }
 
         @Override
         protected Void doInBackground(String... elements) {
@@ -115,7 +116,7 @@ public class BasePrediction {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (!arePredictRawFileRead) {
-                Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
             }
         }
     }

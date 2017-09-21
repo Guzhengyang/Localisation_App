@@ -5,8 +5,8 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
+import com.valeo.bleranging.model.ConnectedCar;
 import com.valeo.bleranging.model.Trx;
-import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 
 import java.io.FileInputStream;

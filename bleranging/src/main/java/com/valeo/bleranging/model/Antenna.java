@@ -58,6 +58,11 @@ public class Antenna {
         hasReceivedRssi.set(isRssiReceived);
     }
 
+    /**
+     * Get antenna id
+     *
+     * @return the antenna id
+     */
     int getAntennaId() {
         return antennaId;
     }
@@ -71,6 +76,11 @@ public class Antenna {
         return currentOriginalRssi;
     }
 
+    /**
+     * Get the current ble channel
+     *
+     * @return the current ble channel
+     */
     Antenna.BLEChannel getCurrentBLEChannel() {
         return bleChannel;
     }
@@ -86,6 +96,9 @@ public class Antenna {
                 '}';
     }
 
+    /**
+     * The antenna advertising channel
+     */
     public enum BLEChannel {
         BLE_CHANNEL_37, BLE_CHANNEL_38, BLE_CHANNEL_39, UNKNOWN
     }

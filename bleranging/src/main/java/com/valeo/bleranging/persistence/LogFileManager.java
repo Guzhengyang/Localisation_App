@@ -1,10 +1,11 @@
-package com.valeo.bleranging.managers;
+package com.valeo.bleranging.persistence;
 
 import android.content.Context;
 
 import com.valeo.bleranging.bluetooth.protocol.InblueProtocolManager;
-import com.valeo.bleranging.model.connectedcar.ConnectedCar;
-import com.valeo.bleranging.persistence.SdkPreferencesHelper;
+import com.valeo.bleranging.managers.CommandManager;
+import com.valeo.bleranging.managers.SensorsManager;
+import com.valeo.bleranging.model.ConnectedCar;
 import com.valeo.bleranging.utils.PSALogs;
 
 import java.io.BufferedWriter;

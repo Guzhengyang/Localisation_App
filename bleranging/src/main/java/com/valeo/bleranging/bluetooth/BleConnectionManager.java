@@ -1,4 +1,4 @@
-package com.valeo.bleranging.managers;
+package com.valeo.bleranging.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -6,15 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 
-import com.valeo.bleranging.bluetooth.BluetoothManagement;
-import com.valeo.bleranging.bluetooth.BluetoothManagementListener;
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
 import com.valeo.bleranging.bluetooth.protocol.InblueProtocolManager;
 import com.valeo.bleranging.bluetooth.scanresponse.BeaconScanResponse;
 import com.valeo.bleranging.bluetooth.scanresponse.CentralScanResponse;
 import com.valeo.bleranging.listeners.BleRangingListener;
+import com.valeo.bleranging.managers.CommandManager;
+import com.valeo.bleranging.managers.RunnerManager;
 import com.valeo.bleranging.model.Antenna;
-import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.JsonUtils;
 import com.valeo.bleranging.utils.PSALogs;
@@ -33,26 +32,64 @@ import static com.valeo.bleranging.BleRangingHelper.connectedCar;
 
 public class BleConnectionManager {
     /**
-     * Single helper instance.
+     * Single manager instance.
      */
     private static BleConnectionManager sSingleInstance = null;
+    /**
+     * Lock to assure that we do not read the bytes received when they are modified by the new ones
+     */
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    /**
+     * Last byte packet to compare with the new one and check if we are still connected
+     */
     private final byte[] lastPacketIdNumber = new byte[2];
+    /**
+     * Ble manager
+     */
     private final BluetoothManagement mBluetoothManager;
+    /**
+     * ble listener to update ble status, car door status or remote connection status
+     */
     private final BleRangingListener bleRangingListener;
+    /**
+     * Trying to connect handler
+     */
     private final Handler mHandlerTimeOut = new Handler();
+    /**
+     * Simulates crypto delay handler
+     */
     private final Handler mHandlerCryptoTimeOut = new Handler();
+    /**
+     * Handler to send packet, check them, and stop if not channel 37 ble scan
+     */
     private final Handler mMainHandler = new Handler();
+    /**
+     * Allows only one launch of packet checker runnable
+     */
     private boolean checkNewPacketOnlyOneLaunch = true;
+    /**
+     * Allows a connection restart if they is not one already in progress
+     */
     private boolean isRestartAuthorized = true;
+    /**
+     * Bytes to send to the car
+     */
     private byte[] bytesToSend;
+    /**
+     * Bytes received from the car trx
+     */
     private byte[] bytesReceived;
-    final Runnable sendPacketRunner = new Runnable() {
+    /**
+     * Runnable to create a packet and send it to the car
+     */
+    public final Runnable sendPacketRunner = new Runnable() {
         @Override
         public void run() {
+            // Get the write lock and create packet one payload to send
             lock.writeLock().lock();
             bytesToSend = InblueProtocolManager.getInstance().getPacketOne().getPacketOnePayload(connectedCar);
             lock.writeLock().unlock();
+            // Get the read lock and send the packets
             lock.readLock().lock();
             mBluetoothManager.sendPackets(bytesToSend, bytesReceived,
                     InblueProtocolManager.getInstance().getPacketTwo().getPacketTwoPayload(connectedCar.getMultiPrediction().getStandardClasses(),
@@ -60,16 +97,27 @@ public class BleConnectionManager {
                     InblueProtocolManager.getInstance().getPacketThree().getPacketThreePayload(connectedCar.getMultiPrediction().getStandardRssi()),
                     InblueProtocolManager.getInstance().getPacketFour().getPacketFourPayload(connectedCar.getMultiPrediction().getPredictionCoord(), connectedCar.getMultiPrediction().getDist2Car()));
             lock.readLock().unlock();
+            // Reset the byte isRKE from packet if it was on
             if (CommandManager.getInstance().getIsRKE()) {
                 CommandManager.getInstance().setIsRKE(false);
             }
+            // Restart the loop if the connection is made, even if nothing has yet been received
             if (mBluetoothManager.isLinked()) {
                 mMainHandler.postDelayed(this, 200);
             }
         }
     };
+    /**
+     * The lock status sent by the car
+     */
     private boolean newLockStatus;
+    /**
+     * Avoid multiple simultaneous connection try
+     */
     private boolean isTryingToConnect = false;
+    /**
+     * Runnable that reset the simultaneous connection try lock
+     */
     private final Runnable mManageIsTryingToConnectTimer = new Runnable() {
         @Override
         public void run() {
@@ -77,9 +125,19 @@ public class BleConnectionManager {
             isTryingToConnect = false;
         }
     };
+    /**
+     * Flag that represent if bytes have been received
+     */
     private boolean dataReceived = false;
+    /**
+     * Boolean that avoid multiple runFirstConnection call
+     */
     private boolean isFirstConnection = true;
-    final Runnable checkNewPacketsRunner = new Runnable() {
+    /**
+     * Runner that check if the connection is still going on (if packet are different from the last one)
+     * and stop it if they are not
+     */
+    public final Runnable checkNewPacketsRunner = new Runnable() {
         @Override
         public void run() {
             if (bytesReceived != null) {
@@ -96,6 +154,7 @@ public class BleConnectionManager {
                     PSALogs.i("restartConnection", "received FF packet have not changed in a second");
                     restartConnection();
                 } else {
+                    // Different packet, save it to compare with next one
                     lastPacketIdNumber[0] = bytesReceived[0];
                     lastPacketIdNumber[1] = bytesReceived[1];
                     lock.readLock().unlock();
@@ -115,6 +174,11 @@ public class BleConnectionManager {
      * ACTION_GATT_CHARACTERISTIC_SUBSCRIBED: subscribe to GATT characteristic.
      * ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
      * or notification operations.
+     * ACTION_GATT_DISCONNECTED: Update ble status to not connected, restart scan to initiate new connection
+     * ACTION_GATT_CONNECTION_LOSS: Update ble status to not connected, restart scan to initiate new connection
+     * ACTION_GATT_SERVICES_FAILED: Update ble status to not connected, restart scan to initiate new connection
+     * ACTION_GATT_SERVICES_DISCOVERED: update ble status
+     * ACTION_GATT_CONNECTED: start scan after connection success
      */
     private final BroadcastReceiver mTrxUpdateReceiver = new BroadcastReceiver() {
         @Override
@@ -129,7 +193,7 @@ public class BleConnectionManager {
                     dataReceived = true;
                     lock.readLock().lock();
                     newLockStatus = (bytesReceived[5] & 0x01) != 0;
-                    saveCarData(connectedCar);
+                    saveCarData();
                     lock.readLock().unlock();
                 }
                 if (oldLockStatus != newLockStatus) {
@@ -175,6 +239,9 @@ public class BleConnectionManager {
             }
         }
     };
+    /**
+     * Ignore ble trame if they are not from channel 37
+     */
     private boolean alreadyStopped = false;
 
     /**
@@ -192,7 +259,7 @@ public class BleConnectionManager {
                 executorService.execute(new Runnable() {
                     @Override
                     public void run() {
-                        catchCentralScanResponse(device, centralScanResponse, connectedCar);
+                        catchCentralScanResponse(device, centralScanResponse);
                     }
                 });
             }
@@ -204,8 +271,7 @@ public class BleConnectionManager {
                 executorService.execute(new Runnable() {
                     @Override
                     public void run() {
-                        catchBeaconScanResponse(device, rssi, beaconScanResponse,
-                                advertisedData, connectedCar);
+                        catchBeaconScanResponse(device, rssi, beaconScanResponse, advertisedData);
                     }
                 });
             }
@@ -215,7 +281,7 @@ public class BleConnectionManager {
     }
 
     /**
-     * Initialize the helper instance.
+     * Initialize the manager instance.
      */
     public static void initializeInstance(Context context, BleRangingListener bleRangingListener) {
         if (sSingleInstance == null) {
@@ -224,7 +290,7 @@ public class BleConnectionManager {
     }
 
     /**
-     * @return the single helper instance.
+     * @return the single manager instance.
      */
     public static BleConnectionManager getInstance() {
         return sSingleInstance;
@@ -246,6 +312,9 @@ public class BleConnectionManager {
         }
     }
 
+    /**
+     * Reinit all variables to be able to connect like the first time
+     */
     private void resetParams() {
         InblueProtocolManager.getInstance().getPacketOne().restartPacketOneCounter();
         CommandManager.getInstance().setRearmWelcome(true);
@@ -273,7 +342,10 @@ public class BleConnectionManager {
         }
     }
 
-    private void saveCarData(final ConnectedCar connectedCar) {
+    /**
+     * Save the address and rssi sent by the car on first connection
+     */
+    private void saveCarData() {
         if (bytesReceived.length >= 7) {
             final int infoType = bytesReceived[6] & 0xF0;
             final int receivedTrxNumber = bytesReceived[6] & 0x0F;
@@ -337,7 +409,7 @@ public class BleConnectionManager {
     }
 
     /**
-     * Relaunch the ble scan
+     * Stops the ble scan then start it again
      */
     public void relaunchScan() {
         mBluetoothManager.stopLeScan();
@@ -363,14 +435,13 @@ public class BleConnectionManager {
     }
 
     /**
-     * Connect to central trx
+     * Get trx advertise, then connect to it, or kill current connection and restart connection
      *
      * @param device              the trx that send the centralScanResponse
      * @param centralScanResponse the centralScanResponse received
      */
     private void catchCentralScanResponse(final BluetoothDevice device,
-                                          CentralScanResponse centralScanResponse,
-                                          final ConnectedCar connectedCar) {
+                                          CentralScanResponse centralScanResponse) {
         if (device != null && centralScanResponse != null) {
             if (isFirstConnection) {
                 if (device.getAddress().equals(SdkPreferencesHelper.getInstance().getTrxAddressConnectable())) {
@@ -416,8 +487,7 @@ public class BleConnectionManager {
      * @param beaconScanResponse the beaconScanResponse received
      */
     private void catchBeaconScanResponse(final BluetoothDevice device, int rssi,
-                                         BeaconScanResponse beaconScanResponse,
-                                         byte[] advertisedData, final ConnectedCar connectedCar) {
+                                         BeaconScanResponse beaconScanResponse, byte[] advertisedData) {
         if (device != null && beaconScanResponse != null && connectedCar != null) {
             int trxNumber = JsonUtils.getTrxNumber(connectedCar.getRegPlate(), device.getAddress());
             if (trxNumber != -1) {
@@ -479,30 +549,63 @@ public class BleConnectionManager {
         }
     }
 
-    byte[] getBytesToSend() {
+    /**
+     * Get the bytes to send to the car
+     *
+     * @return the tab of byte to send
+     */
+    public byte[] getBytesToSend() {
         return bytesToSend;
     }
 
-    byte[] getBytesReceived() {
+    /**
+     * Get the bytes received from the car
+     *
+     * @return the received tab of byte
+     */
+    public byte[] getBytesReceived() {
         return bytesReceived;
     }
 
+    /**
+     * Get the byte tab read/write lock
+     *
+     * @return the byte tabs lock
+     */
     public ReentrantReadWriteLock getLock() {
         return lock;
     }
 
+    /**
+     * Get the car lock status
+     *
+     * @return the car lock status
+     */
     public boolean getLockStatus() {
         return newLockStatus;
     }
 
+    /**
+     * Toggle bluetooth
+     *
+     * @param enable turn on bluetooth if true, turn off otherwise
+     */
     public void toggleBluetooth(boolean enable) {
         mBluetoothManager.setBluetooth(enable);
     }
 
+    /**
+     * Check if bluetooth is enabled
+     *
+     * @return true if it is enabled, false otherwise
+     */
     public boolean isBluetoothEnabled() {
         return mBluetoothManager.isBluetoothEnabled();
     }
 
+    /**
+     * Stop the ble scan and disconnect from the car
+     */
     public void closeApp() {
         mBluetoothManager.stopLeScan();
         if (mBluetoothManager.isLinked() && !mBluetoothManager.isConnecting()) {

@@ -1,4 +1,4 @@
-package com.valeo.bleranging.managers;
+package com.valeo.bleranging.machinelearningalgo;
 
 import android.os.Handler;
 
@@ -12,11 +12,17 @@ import static com.valeo.bleranging.BleRangingHelper.connectedCar;
 
 public class MachineLearningManager {
     /**
-     * Single helper instance.
+     * Single manager instance.
      */
     private static MachineLearningManager sSingleInstance = null;
+    /**
+     * Handler to loop the runnable
+     */
     private final Handler mMainHandler = new Handler();
-    final Runnable setRssiForRangingPrediction = new Runnable() {
+    /**
+     * Collect rssi from the trx and fill the machine learning tabs
+     */
+    public final Runnable setRssiForRangingPrediction = new Runnable() {
         @Override
         public void run() {
             if (connectedCar != null) {
@@ -30,7 +36,10 @@ public class MachineLearningManager {
             mMainHandler.postDelayed(this, 100);
         }
     };
-    final Runnable calculateCoordPrediction = new Runnable() {
+    /**
+     * Calculate a coord prediction with the stocked rssi
+     */
+    public final Runnable calculateCoordPrediction = new Runnable() {
         @Override
         public void run() {
             PSALogs.d("ml_info", "calculateCoordPrediction");
@@ -40,7 +49,10 @@ public class MachineLearningManager {
             mMainHandler.postDelayed(this, 100);
         }
     };
-    final Runnable calculateZonePrediction = new Runnable() {
+    /**
+     * Calculate a zone prediction with the stocked rssi
+     */
+    public final Runnable calculateZonePrediction = new Runnable() {
         @Override
         public void run() {
             PSALogs.d("ml_info", "calculateZonePrediction");
@@ -58,7 +70,7 @@ public class MachineLearningManager {
     }
 
     /**
-     * Initialize the helper instance.
+     * Initialize the manager instance.
      */
     public static void initializeInstance() {
         if (sSingleInstance == null) {
@@ -67,7 +79,7 @@ public class MachineLearningManager {
     }
 
     /**
-     * @return the single helper instance.
+     * @return the single manager instance.
      */
     public static MachineLearningManager getInstance() {
         return sSingleInstance;

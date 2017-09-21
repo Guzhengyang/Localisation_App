@@ -107,6 +107,12 @@ public class PredictionCoord extends BasePrediction {
         return stringBuilder.toString();
     }
 
+    /**
+     * Get a serie name
+     *
+     * @param index the serie index
+     * @return the name of the serie
+     */
     private String getSerieName(final int index) {
         switch (index) {
             case 0:
@@ -120,6 +126,11 @@ public class PredictionCoord extends BasePrediction {
         }
     }
 
+    /**
+     * Get the coord tab size
+     *
+     * @return the size of the coord tab
+     */
     public int getCoordsSize() {
         return coords.size();
     }

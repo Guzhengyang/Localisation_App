@@ -33,6 +33,7 @@ import static com.valeo.bleranging.utils.CheckUtils.compareProb;
 
 public class PredictionZone extends BasePrediction {
     private final List<Integer> predictions = new ArrayList<>(); // ML prediction history list
+    private final Context mContext;
     private final String predictionType; // standard prediction or rp prediction
     private final StringBuilder sb = new StringBuilder();
     private double[] distribution; // prob for each Machine learning class
@@ -44,6 +45,7 @@ public class PredictionZone extends BasePrediction {
     public PredictionZone(Context context, String modelClassName,
                           List<String> rowDataKeySet, String predictionType) {
         super(context, modelClassName, rowDataKeySet);
+        this.mContext = context;
         this.predictionType = predictionType;
     }
 

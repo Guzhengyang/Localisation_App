@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.valeo.bleranging.managers.CommandManager;
 import com.valeo.bleranging.managers.SensorsManager;
-import com.valeo.bleranging.model.connectedcar.ConnectedCar;
+import com.valeo.bleranging.model.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.JsonUtils;
 

@@ -3,7 +3,10 @@ package com.valeo.bleranging.managers;
 import android.media.ToneGenerator;
 import android.os.Handler;
 
+import com.valeo.bleranging.bluetooth.BleConnectionManager;
 import com.valeo.bleranging.listeners.BleRangingListener;
+import com.valeo.bleranging.machinelearningalgo.MachineLearningManager;
+import com.valeo.bleranging.persistence.LogFileManager;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 
@@ -21,8 +24,17 @@ public class RunnerManager {
     private static RunnerManager sSingleInstance = null;
     private final BleRangingListener bleRangingListener;
     private final Handler mMainHandler = new Handler();
+    /**
+     * Boolean to avoid several runner launches
+     */
     private boolean canStartRunner = true;
+    /**
+     * An integer to make a log beep sound
+     */
     private int beepInt = 0;
+    /**
+     * Set the beepInt to 1 every delayedTime
+     */
     private final Runnable beepRunner = new Runnable() {
         @Override
         public void run() {
@@ -36,7 +48,13 @@ public class RunnerManager {
             mMainHandler.postDelayed(this, delayedTime);
         }
     };
+    /**
+     * Avoid logging on app close
+     */
     private boolean isLoggable = true;
+    /**
+     * Log rssi value and set beepInt to 0
+     */
     private final Runnable logRunner = new Runnable() {
         @Override
         public void run() {
@@ -77,6 +95,9 @@ public class RunnerManager {
         return sSingleInstance;
     }
 
+    /**
+     * Stops the runners and allows them to start again
+     */
     public synchronized void stopRunners() {
         PSALogs.d("NIH", "stopRunners");
         mMainHandler.removeCallbacks(logRunner);
@@ -92,7 +113,10 @@ public class RunnerManager {
         canStartRunner = true;
     }
 
-    synchronized void startRunners() {
+    /**
+     * Starts the runners and prevents them from start again
+     */
+    public synchronized void startRunners() {
         if (canStartRunner) {
             PSALogs.d("NIH", "startRunners");
             mMainHandler.post(logRunner);
@@ -106,6 +130,11 @@ public class RunnerManager {
         }
     }
 
+    /**
+     * Set if the log is activate
+     *
+     * @param isLoggable true to activate, false otherwise
+     */
     public void setIsLoggable(boolean isLoggable) {
         this.isLoggable = isLoggable;
     }

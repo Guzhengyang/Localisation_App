@@ -7,18 +7,19 @@ import android.os.Looper;
 import android.text.SpannedString;
 import android.widget.Toast;
 
+import com.valeo.bleranging.bluetooth.BleConnectionManager;
 import com.valeo.bleranging.bluetooth.protocol.InblueProtocolManager;
 import com.valeo.bleranging.listeners.ChessBoardListener;
 import com.valeo.bleranging.listeners.DebugListener;
 import com.valeo.bleranging.listeners.SpinnerListener;
 import com.valeo.bleranging.listeners.TestListener;
-import com.valeo.bleranging.model.connectedcar.ConnectedCarFactory;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.List;
 
 import static com.valeo.bleranging.BleRangingHelper.connectedCar;
+import static com.valeo.bleranging.model.ConnectedCar.getConnectedCar;
 import static com.valeo.bleranging.persistence.Constants.BASE_2;
 import static com.valeo.bleranging.persistence.Constants.BASE_3;
 import static com.valeo.bleranging.persistence.Constants.PREDICTIONS;
@@ -46,7 +47,7 @@ public class UiManager {
         public void run() {
             if (connectedCar != null) {
                 // update ble trame
-                CommandManager.getInstance().tryMachineLearningStrategies(connectedCar);
+                CommandManager.getInstance().tryMachineLearningStrategies();
                 // update car localization img
                 updateCarLocalization(connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket()),
                         connectedCar.getMultiPrediction().getPredictionRP(),
@@ -196,7 +197,7 @@ public class UiManager {
         lastOpeningOrientation = SdkPreferencesHelper.getInstance().getOpeningStrategy();
         lastPrintRooftop = SdkPreferencesHelper.getInstance().isPrintRooftopEnabled();
         lastMiniPredictionUsed = SdkPreferencesHelper.getInstance().isMiniPredictionUsed();
-        connectedCar = ConnectedCarFactory.getConnectedCar(context, lastConnectedCarType);
+        connectedCar = getConnectedCar(context, lastConnectedCarType);
         if (connectedCar == null) {
             mMainHandler.post(new Runnable() {
                 @Override

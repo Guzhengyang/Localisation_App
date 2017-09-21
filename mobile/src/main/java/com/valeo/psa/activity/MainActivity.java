@@ -28,7 +28,7 @@ import android.widget.Toast;
 import com.trncic.library.DottedProgressBar;
 import com.valeo.bleranging.BleRangingHelper;
 import com.valeo.bleranging.listeners.BleRangingListener;
-import com.valeo.bleranging.managers.LogFileManager;
+import com.valeo.bleranging.persistence.LogFileManager;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;

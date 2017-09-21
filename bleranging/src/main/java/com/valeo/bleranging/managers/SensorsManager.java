@@ -167,11 +167,11 @@ public class SensorsManager implements SensorEventListener {
         return mGravity;
     }
 
-    float[] getGeomagnetic() {
+    public float[] getGeomagnetic() {
         return mGeomagnetic;
     }
 
-    double getAcceleration() {
+    public double getAcceleration() {
         return deltaLinAcc;
     }
 

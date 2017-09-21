@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
 import com.valeo.bleranging.bluetooth.protocol.InblueProtocolManager;
 import com.valeo.bleranging.listeners.BleRangingListener;
-import com.valeo.bleranging.model.connectedcar.ConnectedCar;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 
@@ -20,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.valeo.bleranging.BleRangingHelper.connectedCar;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_ACCESS;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_BACK;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_EXTERNAL;
@@ -50,6 +50,9 @@ import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
  */
 
 public final class CommandManager {
+    /**
+     * Delay before lock action are available again
+     */
     private final static int LOCK_STATUS_CHANGED_TIMEOUT = 5000;
     /**
      * Single helper instance.
@@ -57,17 +60,30 @@ public final class CommandManager {
     private static CommandManager sSingleInstance = null;
     private final BleRangingListener bleRangingListener;
     private final Handler mMainHandler = new Handler();
+    /**
+     * Lock action availability timer handler
+     */
     private final Handler mLockStatusChangedHandler = new Handler();
+    /**
+     * Boolean used to prevent multiple thatcham time out
+     */
     private final AtomicBoolean thatchamIsChanging = new AtomicBoolean(false);
+    /**
+     * False the boolean when thatcham has timed out
+     */
     private final Runnable mHasThatchamChanged = new Runnable() {
         @Override
         public void run() {
             thatchamIsChanging.set(false);
         }
     };
-    /* Avoid multiple click on rke buttons */
+    /**
+     * Avoid multiple click on rke buttons
+     */
     private final AtomicBoolean isRKEAvailable = new AtomicBoolean(true);
-    /* Avoid concurrent lock action from rke and strategy loop */
+    /**
+     * Avoid concurrent lock action from rke and strategy loop
+     */
     private final AtomicBoolean areLockActionsAvailable = new AtomicBoolean(true);
     /**
      * Create a handler to detect if the vehicle can do a unlock
@@ -78,15 +94,45 @@ public final class CommandManager {
             areLockActionsAvailable.set(true);
         }
     };
+    /**
+     * Previous thatcham value
+     */
     private final AtomicBoolean lastThatcham = new AtomicBoolean(false);
+    /**
+     * Allows/disable welcome action
+     */
     private final AtomicBoolean rearmWelcome = new AtomicBoolean(true);
+    /**
+     * Allows/disable lock action
+     */
     private final AtomicBoolean rearmLock = new AtomicBoolean(true);
+    /**
+     * Allows/disable unlock action
+     */
     private final AtomicBoolean rearmUnlock = new AtomicBoolean(true);
+    /**
+     * Command source of origin, passive entry or rke
+     */
     private final AtomicBoolean isRKE = new AtomicBoolean(false);
+    /**
+     * Handler to manager lock time out
+     */
     private final Handler mHandlerLockTimeOut = new Handler();
+    /**
+     * Handler to manage crypto time out
+     */
     private final Handler mHandlerCryptoTimeOut = new Handler();
+    /**
+     * Handler to manage thatcham time out
+     */
     private final Handler mHandlerThatchamTimeOut = new Handler();
+    /**
+     * Hash map to calculate the prediction accuracy
+     */
     private final HashMap<String, Integer> accuracyCounterHMap = new HashMap<>();
+    /**
+     * Runnable to set back on rke availability
+     */
     private final Runnable toggleOnIsRKEAvailable = new Runnable() {
         @Override
         public void run() {
@@ -192,6 +238,11 @@ public final class CommandManager {
         return sSingleInstance;
     }
 
+    /**
+     * Unregister the data broadcastReceiver and cancel pending lock status timer
+     *
+     * @param context the context
+     */
     public void closeApp(final Context context) {
         context.unregisterReceiver(mDataReceiver);
         if (mLockStatusChangedHandler != null) {
@@ -201,8 +252,8 @@ public final class CommandManager {
 
     /**
      * Perform a RKE lock or unlock action
-     *
      * @param lockCar true to send a lock action, false to send an unlock action
+     * @param isFullyConnected true if connected, false otherwise
      */
     public void performRKELockAction(final boolean lockCar, final boolean isFullyConnected) {
         if (isRKEButtonClickable(isFullyConnected)) {
@@ -223,6 +274,7 @@ public final class CommandManager {
     /**
      * Verify if the user can click on rke button by checking if the action can succeed
      *
+     * @param isFullyConnected true if connected, false otherwise
      * @return true if the rke button is ready, false otherwise
      */
     public boolean isRKEButtonClickable(boolean isFullyConnected) {
@@ -230,6 +282,12 @@ public final class CommandManager {
                 && areLockActionsAvailable.get();
     }
 
+    /**
+     * Perform a lock action with a crypto timeout
+     *
+     * @param isRKEAction the action source, ture if RKE, false otherwise
+     * @param lockCar     true to lock the car, false to unlock
+     */
     private void performLockWithCryptoTimeout(final boolean isRKEAction, final boolean lockCar) {
         mHandlerCryptoTimeOut.postDelayed(new Runnable() {
             @Override
@@ -276,7 +334,7 @@ public final class CommandManager {
     /**
      * Try all strategy based on machine learning
      */
-    void tryMachineLearningStrategies(ConnectedCar connectedCar) {
+    void tryMachineLearningStrategies() {
         PSALogs.d("mlinfo", "tryMachineLearningStrategies");
         boolean isWelcomeAllowed = false;
         // Cancel previous requested actions
@@ -286,7 +344,9 @@ public final class CommandManager {
         InblueProtocolManager.getInstance().getPacketOne().setIsStartRequested(false);
         InblueProtocolManager.getInstance().getPacketOne().setIsWelcomeRequested(false);
         if (connectedCar != null) {
+            // get a zone prediction
             lastPrediction = connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket());
+            // Based on this prediction, create the correct ble packet to send
             switch (lastPrediction) {
                 case PREDICTION_INSIDE:
                     isInStartArea = true;
@@ -333,6 +393,7 @@ public final class CommandManager {
                     PSALogs.d("prediction", "No rangingPredictionInt !");
                     break;
             }
+            // check if welcome if available
             isInWelcomeArea = rearmWelcome.get() && connectedCar.getMultiPrediction().getPredictionRP().equals(PREDICTION_FAR);
             if (isInWelcomeArea) {
                 isWelcomeAllowed = true;
@@ -342,12 +403,15 @@ public final class CommandManager {
             if (InblueProtocolManager.getInstance().getPacketOne().isWelcomeRequested() != isWelcomeAllowed) {
                 InblueProtocolManager.getInstance().getPacketOne().setIsWelcomeRequested(isWelcomeAllowed);
             }
+            // check if thatcham is valid
             setIsThatcham(isInLockArea, isInUnlockArea, isInStartArea);
+            // check if remote parking is valid
             if (connectedCar.getMultiPrediction().getPredictionRP().equalsIgnoreCase(PREDICTION_NEAR)) {
                 InblueProtocolManager.getInstance().getPacketOne().setInRemoteParkingArea(true);
             } else {
                 InblueProtocolManager.getInstance().getPacketOne().setInRemoteParkingArea(false);
             }
+            // increment prediction occurence to latter calculate accuracy
             if (accuracyMeasureEnabled) {
                 if (accuracyCounterHMap.get(lastPrediction) == null) {
                     PSALogs.d("accuracy", lastPrediction + " was null");
@@ -363,6 +427,9 @@ public final class CommandManager {
         }
     }
 
+    /**
+     * Activate thatcham validity time out
+     */
     private void launchThatchamValidityTimeOut() {
         InblueProtocolManager.getInstance().getPacketOne().setThatcham(true);
         if (thatchamIsChanging.get()) {
@@ -375,6 +442,12 @@ public final class CommandManager {
                 (long) (SdkPreferencesHelper.getInstance().getThatchamTimeout() * 1000));
     }
 
+    /**
+     * Check if we are thatcham by looking at the current zone
+     * @param isInLockArea true if in lock area, false otherwise
+     * @param isInUnlockArea true if in unlock area, false otherwise
+     * @param isInStartArea true if in start area, false otherwise
+     */
     private void setIsThatcham(boolean isInLockArea, boolean isInUnlockArea, boolean isInStartArea) {
         if (isInLockArea || isInStartArea || !isInUnlockArea) {
             if (!thatchamIsChanging.get()) { // if thatcham is not changing
@@ -385,6 +458,10 @@ public final class CommandManager {
         }
     }
 
+    /**
+     * Allow lock/unlock action by setting rearms based on your zone, and current lock status
+     * @param newVehicleLockStatus true if lock, false if unlock
+     */
     private void manageRearms(final boolean newVehicleLockStatus) {
         if (InblueProtocolManager.getInstance().getPacketOne().isThatcham()) {
             if (newVehicleLockStatus) { // if has just lock, rearm lock and desarm unlock
@@ -405,19 +482,33 @@ public final class CommandManager {
         }
     }
 
+    /**
+     * Toggle accuracy measure
+     * @param enable true to turn on, false to turn off
+     */
     public void enableAccuracyMeasure(boolean enable) {
         accuracyMeasureEnabled = enable;
     }
 
+    /**
+     * Clear the accuracy hash map
+     */
     public void clearAccuracyCounter() {
         accuracyCounterHMap.clear();
     }
 
+    /**
+     * Calculate the accuracy of a selected zone
+     * @param selectedAccuracyZone the zone selected
+     * @return the accuracy of the zone selected
+     */
     public int getSelectedAccuracy(String selectedAccuracyZone) {
         float total = 0.0f;
+        // calculate the total accuracy
         for (Integer totalCounter : accuracyCounterHMap.values()) {
             total += totalCounter;
         }
+        // if not null, calculate the accuracy of the zone over all zones
         if (accuracyCounterHMap.get(selectedAccuracyZone) != null && total != 0) {
             return (int) ((accuracyCounterHMap.get(selectedAccuracyZone) / (1.0 * total)) * 100);
         } else {
@@ -426,39 +517,82 @@ public final class CommandManager {
         }
     }
 
-    boolean getAreLockActionsAvailable() {
+    /**
+     * Get the availability of lock actions
+     *
+     * @return true if available, false otherwise
+     */
+    public boolean getAreLockActionsAvailable() {
         return areLockActionsAvailable.get();
     }
 
-    boolean getRearmWelcome() {
+    /**
+     * Get the welcome rearm value
+     *
+     * @return true if welcome can be displayed, false otherwise
+     */
+    public boolean getRearmWelcome() {
         return rearmWelcome.get();
     }
 
-    void setRearmWelcome(boolean rearmWelcome) {
+    /**
+     * Set the welcome rearm value
+     *
+     * @param rearmWelcome true to rearm welcome, false otherwise
+     */
+    public void setRearmWelcome(boolean rearmWelcome) {
         this.rearmWelcome.set(rearmWelcome);
     }
 
-    boolean getRearmLock() {
+    /**
+     * Get the lock rearm value
+     *
+     * @return true if lock can be displayed, false otherwise
+     */
+    public boolean getRearmLock() {
         return rearmLock.get();
     }
 
-    boolean getRearmUnlock() {
+    /**
+     * Get the unlock rearm value
+     *
+     * @return true if unlock can be displayed, false otherwise
+     */
+    public boolean getRearmUnlock() {
         return rearmUnlock.get();
     }
 
+    /**
+     * Check if in welcome area
+     * @return true if in welcome area, false otherwise
+     */
     boolean isInWelcomeArea() {
         return isInWelcomeArea;
     }
 
+    /**
+     * Check if the command was rke or not
+     * @return true if it was RKE, false otherwise
+     */
     public boolean getIsRKE() {
         return isRKE.get();
     }
 
-    void setIsRKE(boolean isRKE) {
+    /**
+     * Set the isRke value
+     *
+     * @param isRKE true to make it rke, false otherwise
+     */
+    public void setIsRKE(boolean isRKE) {
         this.isRKE.set(isRKE);
     }
 
-    void setLastCommandFromTrx(boolean lastCommandFromTrx) {
+    /**
+     * Save the last command/ lock status from car
+     *
+     * @param lastCommandFromTrx true if lock command, false if unlock command
+     */
+    public void setLastCommandFromTrx(boolean lastCommandFromTrx) {
         this.lastCommandFromTrx = lastCommandFromTrx;
     }
 }
