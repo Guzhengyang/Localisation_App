@@ -319,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
 
     @Override
     public void initializeConnectedCar() {
-        mBleRangingHelper.initializeConnectedCar();
+        mBleRangingHelper.initializeConnectedCar(MainActivity.this);
     }
 
     @Override
@@ -392,7 +392,7 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     public void onBackPressed() {
         super.onBackPressed();
         mainFragment.setAdapterLastPosition();
-        mBleRangingHelper.closeApp();
+        mBleRangingHelper.closeApp(MainActivity.this);
     }
 
     @Override

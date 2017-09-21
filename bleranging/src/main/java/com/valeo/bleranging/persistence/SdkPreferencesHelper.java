@@ -457,5 +457,9 @@ public final class SdkPreferencesHelper {
         editor.commit();
     }
 
+    public Context getmApplicationContext() {
+        return mApplicationContext;
+    }
+
     // endregion
 }

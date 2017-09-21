@@ -30,7 +30,6 @@ public class SensorsManager implements SensorEventListener {
      */
     private static SensorsManager sSingleInstance = null;
     private final BleRangingListener bleRangingListener;
-    private final Context mContext;
     private final Handler mIsFrozenTimeOutHandler;
     private final ArrayList<Double> lAccHistoric;
     private final float R[] = new float[9];
@@ -75,7 +74,6 @@ public class SensorsManager implements SensorEventListener {
      * Private constructor.
      */
     private SensorsManager(final Context context, final BleRangingListener bleRangingListener) {
-        this.mContext = context;
         this.bleRangingListener = bleRangingListener;
         this.mIsFrozenTimeOutHandler = new Handler();
         this.lAccHistoric = new ArrayList<>();
@@ -106,16 +104,16 @@ public class SensorsManager implements SensorEventListener {
         return sSingleInstance;
     }
 
-    public SpannableStringBuilder createSensorsDebugData() {
+    SpannableStringBuilder createSensorsDebugData() {
         final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         spannableStringBuilder.append(String.format(Locale.FRANCE, "%.3f %.3f %.3f\n", orientation[0], orientation[1], orientation[2]));
         spannableStringBuilder.append(String.format(Locale.FRANCE, "%.3f\n", deltaLinAcc));
         return spannableStringBuilder;
     }
 
-    public void closeApp() {
-        mContext.unregisterReceiver(callReceiver);
-        mContext.unregisterReceiver(bleStateReceiver);
+    public void closeApp(final Context context) {
+        context.unregisterReceiver(callReceiver);
+        context.unregisterReceiver(bleStateReceiver);
     }
 
     @Override
@@ -169,11 +167,11 @@ public class SensorsManager implements SensorEventListener {
         return mGravity;
     }
 
-    public float[] getGeomagnetic() {
+    float[] getGeomagnetic() {
         return mGeomagnetic;
     }
 
-    public double getAcceleration() {
+    double getAcceleration() {
         return deltaLinAcc;
     }
 

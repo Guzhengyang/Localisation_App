@@ -276,7 +276,7 @@ public final class CommandManager {
     /**
      * Try all strategy based on machine learning
      */
-    public void tryMachineLearningStrategies(Context context, ConnectedCar connectedCar) {
+    void tryMachineLearningStrategies(ConnectedCar connectedCar) {
         PSALogs.d("mlinfo", "tryMachineLearningStrategies");
         boolean isWelcomeAllowed = false;
         // Cancel previous requested actions
@@ -337,7 +337,6 @@ public final class CommandManager {
             if (isInWelcomeArea) {
                 isWelcomeAllowed = true;
                 rearmWelcome.set(false);
-                makeNoise(context, mMainHandler, ToneGenerator.TONE_SUP_CONFIRM, 300);
                 bleRangingListener.doWelcome();
             }
             if (InblueProtocolManager.getInstance().getPacketOne().isWelcomeRequested() != isWelcomeAllowed) {
@@ -435,7 +434,7 @@ public final class CommandManager {
         return rearmWelcome.get();
     }
 
-    public void setRearmWelcome(boolean rearmWelcome) {
+    void setRearmWelcome(boolean rearmWelcome) {
         this.rearmWelcome.set(rearmWelcome);
     }
 
@@ -447,7 +446,7 @@ public final class CommandManager {
         return rearmUnlock.get();
     }
 
-    public boolean isInWelcomeArea() {
+    boolean isInWelcomeArea() {
         return isInWelcomeArea;
     }
 
@@ -455,11 +454,11 @@ public final class CommandManager {
         return isRKE.get();
     }
 
-    public void setIsRKE(boolean isRKE) {
+    void setIsRKE(boolean isRKE) {
         this.isRKE.set(isRKE);
     }
 
-    public void setLastCommandFromTrx(boolean lastCommandFromTrx) {
+    void setLastCommandFromTrx(boolean lastCommandFromTrx) {
         this.lastCommandFromTrx = lastCommandFromTrx;
     }
 }
