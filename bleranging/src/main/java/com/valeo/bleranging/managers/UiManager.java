@@ -112,6 +112,10 @@ public class UiManager {
 
     /**
      * Update the mini map with our location around the car
+     * @param predictionPosition the zone prediction
+     * @param predictionProximity the zone remote parking prediction
+     * @param coords the lists of new coords
+     * @param dists the lists of new distances
      */
     private void updateCarLocalization(String predictionPosition,
                                        String predictionProximity, List<PointF> coords, List<Double> dists) {
@@ -141,6 +145,7 @@ public class UiManager {
     /**
      * Initialize the connected car.
      * Call this method in onResume.
+     * @param context the context
      */
     public void initializeConnectedCar(final Context context) {
         if (!lastConnectedCarType.equalsIgnoreCase(SdkPreferencesHelper.getInstance().getConnectedCarType())
@@ -160,37 +165,40 @@ public class UiManager {
         enableSecurityWal();
         debugListener.updateCarDrawable(BleConnectionManager.getInstance().getLockStatus());
         chessBoardListener.applyNewDrawable();
-        if (mMainHandler != null) {
-            mMainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    PSALogs.d("init2", "readPredictionsRawFiles\n");
-                    if (connectedCar != null) {
-                        connectedCar.getMultiPrediction().readPredictionsRawFiles(context);
-                    } else {
-                        mMainHandler.postDelayed(this, 500);
-                    }
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                PSALogs.d("init2", "readPredictionsRawFiles\n");
+                if (connectedCar != null) {
+                    connectedCar.getMultiPrediction().readPredictionsRawFiles(context);
+                } else {
+                    mMainHandler.postDelayed(this, 500);
                 }
-            });
-            mMainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (connectedCar == null ||
-                            connectedCar.getMultiTrx().getRssiForRangingPrediction() == null) {
-                        mMainHandler.postDelayed(this, 500);
-                    } else if (connectedCar != null && connectedCar.isInitialized()) {
-                        PSALogs.d("init2", "initPredictions\n");
-                        connectedCar.initPredictions();
-                        RunnerManager.getInstance().startRunners();
-                        spinnerListener.updateAccuracySpinner();
-                    } else {
-                        mMainHandler.postDelayed(this, 500);
-                    }
+            }
+        });
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (connectedCar == null ||
+                        connectedCar.getMultiTrx().getRssiForRangingPrediction() == null) {
+                    mMainHandler.postDelayed(this, 500);
+                } else if (connectedCar != null && connectedCar.isInitialized()) {
+                    PSALogs.d("init2", "initPredictions\n");
+                    connectedCar.initPredictions();
+                    RunnerManager.getInstance().startRunners();
+                    spinnerListener.updateAccuracySpinner();
+                } else {
+                    mMainHandler.postDelayed(this, 500);
                 }
-            });
-        }
+            }
+        });
     }
 
+    /**
+     * Create a connected car
+     *
+     * @param context the context
+     */
     private void createConnectedCar(final Context context) {
         connectedCar = null;
         lastConnectedCarType = SdkPreferencesHelper.getInstance().getConnectedCarType();
@@ -210,6 +218,9 @@ public class UiManager {
         PSALogs.d("init2", "createConnectedCar\n");
     }
 
+    /**
+     * Enable security walk away locking
+     */
     private void enableSecurityWal() {
         String connectedCarBase = SdkPreferencesHelper.getInstance().getConnectedCarBase();
         InblueProtocolManager.getInstance().getPacketOne().setCarBase(connectedCarBase);

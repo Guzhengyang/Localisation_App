@@ -5,7 +5,6 @@ import android.content.Context;
 import com.valeo.bleranging.bluetooth.protocol.InblueProtocolManager;
 import com.valeo.bleranging.managers.CommandManager;
 import com.valeo.bleranging.managers.SensorsManager;
-import com.valeo.bleranging.model.ConnectedCar;
 import com.valeo.bleranging.utils.PSALogs;
 
 import java.io.BufferedWriter;
@@ -16,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.valeo.bleranging.BleRangingHelper.connectedCar;
 import static com.valeo.bleranging.persistence.Constants.CONFIG_DIR;
 import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_BACK;
 import static com.valeo.bleranging.persistence.Constants.NUMBER_TRX_FRONT_LEFT;
@@ -80,6 +80,11 @@ public class LogFileManager {
         }
     }
 
+    /**
+     * Write log in file
+     *
+     * @param text the text to save
+     */
     private void writeWithBufferedWriter(String text) {
         if (logFile != null) {
             BufferedWriter buf = null;
@@ -104,8 +109,10 @@ public class LogFileManager {
     /**
      * Create the string to write in the log file and add it
      * @param lockStatus true if the car is locked, false otherwise
+     * @param counterByte the counter byte
+     * @param beepInt the beep int
      */
-    public void appendRssiLogs(final ConnectedCar connectedCar, boolean lockStatus, byte counterByte, int beepInt) {
+    public void appendRssiLogs(boolean lockStatus, byte counterByte, int beepInt) {
         if (connectedCar != null) {
             final String comma = ";";
             String log = connectedCar.getMultiTrx().getCurrentOriginalRssi(NUMBER_TRX_LEFT) + comma +
@@ -250,6 +257,7 @@ public class LogFileManager {
 
     /**
      * Function used to debug and write logs into a file.
+     * @param text the text to append to the timestamp
      */
     private void appendTimestampToLog(String text) {
         String timestamp = sdfRssi.format(new Date());
@@ -258,6 +266,7 @@ public class LogFileManager {
 
     /**
      * Create two directories to register the settings and all rssi values
+     * @param mContext the context
      */
     private boolean createDirectories(Context mContext) {
         return createLogsDir(mContext) && createConfigDir(mContext);
@@ -265,6 +274,7 @@ public class LogFileManager {
 
     /**
      * Create a log file to register the settings and all rssi values
+     * @param mContext the context
      * @return true if the file exist or is succesfully created, false otherwise
      */
     private boolean createLogFile(Context mContext) {
@@ -343,6 +353,12 @@ public class LogFileManager {
         writeWithBufferedWriter(colNames);
     }
 
+    /**
+     * Create a directory
+     * @param dirPath the directory path
+     * @param dirName the directory name
+     * @return true if the directory exists or is created successfully, false otherwise
+     */
     public boolean createDir(File dirPath, String dirName) {
         File dir = new File(dirPath, dirName);
         //if the folder doesn't exist
@@ -358,14 +374,28 @@ public class LogFileManager {
         return true;
     }
 
+    /**
+     * Create a log directory
+     * @param mContext the context
+     * @return a log directory
+     */
     private boolean createLogsDir(Context mContext) {
         return createDir(mContext.getExternalCacheDir(), RSSI_DIR);
     }
 
+    /**
+     * Create a config directory
+     * @param mContext the context
+     * @return a config directory
+     */
     private boolean createConfigDir(Context mContext) {
         return createDir(mContext.getExternalCacheDir(), CONFIG_DIR);
     }
 
+    /**
+     * Create the file and save the settings and column in it
+     * @param context the context
+     */
     public void onResume(final Context context) {
         if (createLogFile(context)) {
             writeFirstColumnSettings();

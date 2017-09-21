@@ -96,16 +96,26 @@ public class BleRangingHelper {
         }
     }
 
+    /**
+     * Get start requested status from ble packet
+     *
+     * @return true if start is requested, false otherwise
+     */
     public boolean isStartRequested() {
         return InblueProtocolManager.getInstance().getPacketOne().isStartRequested();
     }
 
+    /**
+     * Get the close app called status
+     * @return true if close app has been called, false otherwise
+     */
     public boolean isCloseAppCalled() {
         return isCloseAppCalled;
     }
 
     /**
      * Call this method before closing the app.
+     * @param context the context
      * It unregister listeners and removeCallbacks and close cleanly all connections.
      */
     public void closeApp(final Context context) {
@@ -160,10 +170,18 @@ public class BleRangingHelper {
         return true;
     }
 
+    /**
+     * Calculate the accuracy of a prediction
+     */
     public void calculateAccuracy() {
         CommandManager.getInstance().enableAccuracyMeasure(true);
     }
 
+    /**
+     * Get the previously calculated accuracy of a zone
+     * @param zone the zone accuracy to test
+     * @return the accuracy of the zone
+     */
     public Integer getCalculatedAccuracy(String zone) {
         CommandManager.getInstance().enableAccuracyMeasure(false);
         int result = CommandManager.getInstance().getSelectedAccuracy(zone);
@@ -171,6 +189,10 @@ public class BleRangingHelper {
         return result;
     }
 
+    /**
+     * Get the zones to display and select for accuracy calculation
+     * @return the list of zone available or null
+     */
     public String[] getStandardClasses() {
         if (connectedCar != null) {
             return connectedCar.getMultiPrediction().getStandardClasses();
@@ -178,10 +200,17 @@ public class BleRangingHelper {
         return null;
     }
 
+    /**
+     * Get the phone movement
+     * @return true if the smartphone is lay down, false if it is moving
+     */
     public boolean isSmartphoneFrozen() {
         return SensorsManager.getInstance().isSmartphoneFrozen();
     }
 
+    /**
+     * Set the phone offset
+     */
     public void setSmartphoneOffset() {
         if (connectedCar != null) {
             SdkPreferencesHelper.getInstance().setOffsetSmartphone(
@@ -193,38 +222,77 @@ public class BleRangingHelper {
         }
     }
 
+    /**
+     * Set a new threshold
+     * @param value the new threshold
+     */
     public void setNewThreshold(double value) {
         connectedCar.getMultiPrediction().calculatePredictionTest(value);
     }
 
+    /**
+     * Set the connected car registration plate
+     * @param regPlate the connected car registration plate
+     */
     public void setRegPlate(final String regPlate) {
         connectedCar.setRegPlate(regPlate);
     }
 
+    /**
+     * Verify if the user can click on rke button by checking if the action can succeed
+     *
+     * @return true if the rke button is ready, false otherwise
+     */
     public boolean isRKEButtonClickable() {
         return CommandManager.getInstance().isRKEButtonClickable(BleConnectionManager.getInstance().isFullyConnected());
     }
 
-    public void performRKELockAction(boolean b) {
-        CommandManager.getInstance().performRKELockAction(b, BleConnectionManager.getInstance().isFullyConnected());
+    /**
+     * Perform a RKE lock or unlock action
+     *
+     * @param lockCar true to send a lock action, false to send an unlock action
+     */
+    public void performRKELockAction(boolean lockCar) {
+        CommandManager.getInstance().performRKELockAction(lockCar, BleConnectionManager.getInstance().isFullyConnected());
     }
 
+    /**
+     * Initialize the connected car.
+     * Call this method in onResume.
+     * @param context the context
+     */
     public void initializeConnectedCar(final Context context) {
         UiManager.getInstance().initializeConnectedCar(context);
     }
 
+    /**
+     * Suspend scan, stop all loops, reinit all variables, then resume scan to be able to reconnect
+     */
     public void restartConnection() {
         BleConnectionManager.getInstance().restartConnection();
     }
 
+    /**
+     * Get the connection status between the smartphone and the car
+     *
+     * @return true if the smartphone is connected to the car, false otherwise
+     */
     public boolean isFullyConnected() {
         return BleConnectionManager.getInstance().isFullyConnected();
     }
 
+    /**
+     * Get the connection status between the smartphone and the car
+     *
+     * @return true if the smartphone is connecting to the car, false otherwise
+     */
     public boolean isConnecting() {
         return BleConnectionManager.getInstance().isConnecting();
     }
 
+    /**
+     * Stops the ble scan then start it again
+     */
     public void relaunchScan() {
         BleConnectionManager.getInstance().relaunchScan();
     }

@@ -19,12 +19,23 @@ public class Trx {
     private Antenna currentAntenna;
     private int carRssi = -1;
 
+    /**
+     * Constructor
+     *
+     * @param trxNumber the trx id number
+     * @param trxName   the trx name
+     */
     public Trx(int trxNumber, String trxName) {
         this.trxNumber = trxNumber;
         this.trxName = trxName;
         this.antennaList = createAntennaList();
     }
 
+    /**
+     * Create an antenna list
+     *
+     * @return a list of antenna
+     */
     private List<Antenna> createAntennaList() {
         final List<Antenna> antennaTmpList = new ArrayList<>();
         antennaTmpList.add(new Antenna(trxNumber, ANTENNA_NULL));
@@ -65,11 +76,12 @@ public class Trx {
 
     /**
      * Save the received rssi in the antenna historic
-     * @param rssi the rssi of the packet received
+     *
+     * @param rssi           the rssi of the packet received
      * @param isRssiReceived true if the rssi has been received, false otherwise
      */
-    public void saveRssi(int rssi, boolean isRssiReceived,
-                         byte antennaId, Antenna.BLEChannel bleChannel) {
+    void saveRssi(int rssi, boolean isRssiReceived,
+                  byte antennaId, Antenna.BLEChannel bleChannel) {
         if (antennaList != null) {
             final Antenna tmpAntenna = getAntennaById(antennaId);
             if (tmpAntenna != null) {
@@ -86,9 +98,10 @@ public class Trx {
 
     /**
      * Save the car rssi and ble channel
+     *
      * @param rssi the rssi to save
      */
-    public void saveCarRssi(final int rssi) {
+    void saveCarRssi(final int rssi) {
         PSALogs.d("currentTrx", "carRssi " + carRssi);
         this.carRssi = rssi;
     }
@@ -98,7 +111,7 @@ public class Trx {
      *
      * @return the antenna id, or 0
      */
-    public int getAntennaId() {
+    int getAntennaId() {
         if (currentAntenna != null) {
             return currentAntenna.getAntennaId();
         }
@@ -107,9 +120,10 @@ public class Trx {
 
     /**
      * Get the current original rssi
+     *
      * @return the current original rssi value, or 0
      */
-    public int getCurrentOriginalRssi() {
+    int getCurrentOriginalRssi() {
         if (currentAntenna != null) {
             return currentAntenna.getCurrentOriginalRssi();
         }
@@ -118,9 +132,10 @@ public class Trx {
 
     /**
      * Get the current ble channel
+     *
      * @return the current ble channel, or ble channel unknown
      */
-    public Antenna.BLEChannel getCurrentBLEChannel() {
+    Antenna.BLEChannel getCurrentBLEChannel() {
         if (currentAntenna != null) {
             return currentAntenna.getCurrentBLEChannel();
         }
@@ -139,11 +154,11 @@ public class Trx {
         return carRssi;
     }
 
-    public String getTrxAddress() {
+    String getTrxAddress() {
         return trxAddress;
     }
 
-    public void setTrxAddress(String trxAddress) {
+    void setTrxAddress(String trxAddress) {
         PSALogs.d("currentTrx", "trxAddress " + trxAddress);
         this.trxAddress = trxAddress;
     }

@@ -90,6 +90,8 @@ public class SensorsManager implements SensorEventListener {
 
     /**
      * Initialize the helper instance.
+     * @param context the context
+     * @param bleRangingListener the ble ranging listener
      */
     public static void initializeInstance(final Context context, final BleRangingListener bleRangingListener) {
         if (sSingleInstance == null) {
@@ -104,6 +106,11 @@ public class SensorsManager implements SensorEventListener {
         return sSingleInstance;
     }
 
+    /**
+     * Get sensors debug data
+     *
+     * @return a spannableStringBuilder with sensors debug data
+     */
     SpannableStringBuilder createSensorsDebugData() {
         final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         spannableStringBuilder.append(String.format(Locale.FRANCE, "%.3f %.3f %.3f\n", orientation[0], orientation[1], orientation[2]));
@@ -111,11 +118,19 @@ public class SensorsManager implements SensorEventListener {
         return spannableStringBuilder;
     }
 
+    /**
+     * Unregister broadcast receivers
+     * @param context the context
+     */
     public void closeApp(final Context context) {
         context.unregisterReceiver(callReceiver);
         context.unregisterReceiver(bleStateReceiver);
     }
 
+    /**
+     * Get the accelerometer, magnetic field and pocket sensors data
+     * @param event the event that gives sensors data
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
@@ -159,26 +174,50 @@ public class SensorsManager implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
+    /**
+     * Get smartphone orientation
+     * @return the coord of smartphone orientation
+     */
     public float[] getOrientation() {
         return orientation;
     }
 
+    /**
+     * Get gravity
+     * @return the gravity measured by the phone
+     */
     public float[] getGravity() {
         return mGravity;
     }
 
+    /**
+     * Get magnetic field
+     * @return the coord of magnetic field measured by the phone
+     */
     public float[] getGeomagnetic() {
         return mGeomagnetic;
     }
 
+    /**
+     * Get linear acceleration
+     * @return the acceleration measured by the phone
+     */
     public double getAcceleration() {
         return deltaLinAcc;
     }
 
+    /**
+     * Get the phone movement
+     * @return true if the smartphone is lay down, false if it is moving
+     */
     public boolean isSmartphoneFrozen() {
         return smartphoneIsFrozen;
     }
 
+    /**
+     * Get the phone position in the pocket
+     * @return true if it is in the pocket, false otherwise
+     */
     public boolean isSmartphoneInPocket() {
         return smartphoneIsInPocket;
     }

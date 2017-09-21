@@ -10,7 +10,6 @@ import com.valeo.bleranging.persistence.LogFileManager;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 
-import static com.valeo.bleranging.BleRangingHelper.connectedCar;
 import static com.valeo.bleranging.utils.SoundUtils.makeNoise;
 
 /**
@@ -59,7 +58,7 @@ public class RunnerManager {
         @Override
         public void run() {
             if (isLoggable) {
-                LogFileManager.getInstance().appendRssiLogs(connectedCar,
+                LogFileManager.getInstance().appendRssiLogs(
                         BleConnectionManager.getInstance().getLockStatus(),
                         bleRangingListener.getMeasureCounterByte(), beepInt);
                 beepInt = 0;

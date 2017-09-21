@@ -12,10 +12,21 @@ import static com.valeo.bleranging.utils.CheckUtils.checkForRssiNonNull;
  */
 
 public class MultiTrx {
+    /**
+     * The list of enabled trx
+     */
     private final LinkedHashMap<Integer, Trx> trxLinkedHMap;
+    /**
+     * All the trx rssi
+     */
     private double[] mRssiTab;
 
-    public MultiTrx(LinkedHashMap<Integer, Trx> trxLinkedHMap) {
+    /**
+     * Constructor
+     *
+     * @param trxLinkedHMap the trx list
+     */
+    MultiTrx(LinkedHashMap<Integer, Trx> trxLinkedHMap) {
         this.trxLinkedHMap = trxLinkedHMap;
     }
 
@@ -71,6 +82,11 @@ public class MultiTrx {
         }
     }
 
+    /**
+     * Get the trx, with id trxNumber, current ble channel
+     * @param trxNumber the trx id number
+     * @return the current ble channel or UNKNOWN
+     */
     public Antenna.BLEChannel getCurrentBLEChannel(final int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getCurrentBLEChannel();
@@ -79,6 +95,11 @@ public class MultiTrx {
         }
     }
 
+    /**
+     * Get the trx, with id trxNumber, current rssi
+     * @param trxNumber the trx id number
+     * @return the current rssi or 2
+     */
     public int getCurrentOriginalRssi(final int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getCurrentOriginalRssi();
@@ -87,6 +108,11 @@ public class MultiTrx {
         }
     }
 
+    /**
+     * Get the trx, with id trxNumber, current antenna id
+     * @param trxNumber the trx id number
+     * @return the current antenna id or 0
+     */
     public int getCurrentAntennaId(final int trxNumber) {
         if (trxLinkedHMap.get(trxNumber) != null) {
             return trxLinkedHMap.get(trxNumber).getAntennaId();
@@ -117,14 +143,28 @@ public class MultiTrx {
         return checkForRssiNonNull(this.mRssiTab);
     }
 
+    /**
+     * Check if the trx with trx id number is active
+     * @param trxNumber the trx id number
+     * @return true if the trx is active, false otherwise
+     */
     public boolean isActive(final int trxNumber) {
         return trxLinkedHMap.get(trxNumber) != null && trxLinkedHMap.get(trxNumber).isActive();
     }
 
-    public double[] getRssiTab() {
+    /**
+     * Get the rssi tab
+     *
+     * @return the rssi tab
+     */
+    double[] getRssiTab() {
         return mRssiTab;
     }
 
+    /**
+     * Get the trx list
+     * @return the list of trx
+     */
     public LinkedHashMap<Integer, Trx> getTrxLinkedHMap() {
         return trxLinkedHMap;
     }
