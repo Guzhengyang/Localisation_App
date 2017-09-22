@@ -121,7 +121,7 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/frame_layout_vehicule_locked"
+        android:id="@+id/frame_layout_vehicle_locked"
         android:layout_width="90dp"
         android:layout_height="90dp"
         android:layout_marginEnd="28dp"
@@ -145,10 +145,10 @@
             android:scaleType="fitCenter"
             android:src="@mipmap/slider_button"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@id/frame_layout_vehicule_locked"
-            app:layout_constraintEnd_toEndOf="@id/frame_layout_vehicule_locked"
-            app:layout_constraintStart_toStartOf="@id/frame_layout_vehicule_locked"
-            app:layout_constraintTop_toTopOf="@id/frame_layout_vehicule_locked" />
+            app:layout_constraintBottom_toBottomOf="@id/frame_layout_vehicle_locked"
+            app:layout_constraintEnd_toEndOf="@id/frame_layout_vehicle_locked"
+            app:layout_constraintStart_toStartOf="@id/frame_layout_vehicle_locked"
+            app:layout_constraintTop_toTopOf="@id/frame_layout_vehicle_locked" />
 
         <ImageView
             android:id="@+id/vehicle_locked"
@@ -163,7 +163,7 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/frame_layout_vehicule_unlocked"
+        android:id="@+id/frame_layout_vehicle_unlocked"
         android:layout_width="90dp"
         android:layout_height="90dp"
         android:layout_marginStart="28dp"
@@ -187,10 +187,10 @@
             android:scaleType="fitCenter"
             android:src="@mipmap/slider_button"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@id/frame_layout_vehicule_unlocked"
-            app:layout_constraintEnd_toEndOf="@id/frame_layout_vehicule_unlocked"
-            app:layout_constraintStart_toStartOf="@id/frame_layout_vehicule_unlocked"
-            app:layout_constraintTop_toTopOf="@id/frame_layout_vehicule_unlocked" />
+            app:layout_constraintBottom_toBottomOf="@id/frame_layout_vehicle_unlocked"
+            app:layout_constraintEnd_toEndOf="@id/frame_layout_vehicle_unlocked"
+            app:layout_constraintStart_toStartOf="@id/frame_layout_vehicle_unlocked"
+            app:layout_constraintTop_toTopOf="@id/frame_layout_vehicle_unlocked" />
 
         <ImageView
             android:id="@+id/vehicle_unlocked"

@@ -200,7 +200,7 @@ public class MeasureFragment extends Fragment {
 
     private synchronized void ensureHandler() {
         if (mHandler == null) {
-            HandlerThread thread = new HandlerThread("TorchRessources", Process.THREAD_PRIORITY_BACKGROUND);
+            HandlerThread thread = new HandlerThread("TorchResources", Process.THREAD_PRIORITY_BACKGROUND);
             thread.start();
             mHandler = new Handler(thread.getLooper());
             PSALogs.d("camera", "handler created");

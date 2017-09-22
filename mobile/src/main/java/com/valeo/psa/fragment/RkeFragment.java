@@ -157,9 +157,9 @@ public class RkeFragment extends Fragment {
         circle_selector_driver_s_door_unlocked = (ImageButton) rootView.findViewById(R.id.circle_selector_driver_s_door_unlocked);
         circle_selector_locked = (ImageButton) rootView.findViewById(R.id.circle_selector_locked);
         circle_selector_unlocked = (ImageButton) rootView.findViewById(R.id.circle_selector_unlocked);
-        frame_vehicle_locked = (FrameLayout) rootView.findViewById(R.id.frame_layout_vehicule_locked);
+        frame_vehicle_locked = (FrameLayout) rootView.findViewById(R.id.frame_layout_vehicle_locked);
         frame_driver_s_door_unlocked = (FrameLayout) rootView.findViewById(R.id.frame_layout_driver_s_door_unlocked);
-        frame_vehicle_unlocked = (FrameLayout) rootView.findViewById(R.id.frame_layout_vehicule_unlocked);
+        frame_vehicle_unlocked = (FrameLayout) rootView.findViewById(R.id.frame_layout_vehicle_unlocked);
         vehicle_locked = (ImageView) rootView.findViewById(R.id.vehicle_locked);
         driver_s_door_unlocked = (ImageView) rootView.findViewById(R.id.driver_s_door_unlocked);
         vehicle_unlocked = (ImageView) rootView.findViewById(R.id.vehicle_unlocked);
@@ -372,7 +372,7 @@ public class RkeFragment extends Fragment {
                 case DragEvent.ACTION_DROP:
                     PSALogs.d("DragDrop", "ACTION_DROP " + view.getId());
                     final View dragView = (View) dragEvent.getLocalState();
-                    if (!updateAfterDragStops) { // if no auto relock happened
+                    if (!updateAfterDragStops) { // if no auto re lock happened
                         if (dragView != null) {
                             if (containsDraggable) {
                                 PSALogs.d("DragDrop", "INSIDE dragView = " + dragView.toString());
@@ -382,7 +382,7 @@ public class RkeFragment extends Fragment {
                                 dragView.setVisibility(View.VISIBLE);
                             }
                         }
-                    } else { // Ignore command if user was dragging and auto relock happened
+                    } else { // Ignore command if user was dragging and auto re lock happened
                         PSALogs.d("DragDrop", "ACTION_DROP updateCarDoorStatus");
                         updateAfterDragStops = false;
                         isDragging = false;
