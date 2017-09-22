@@ -21,9 +21,9 @@ import static com.valeo.bleranging.persistence.Constants.PREDICTION_LOCK;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_RIGHT;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_UNKNOWN;
 import static com.valeo.bleranging.persistence.Constants.THATCHAM_ORIENTED;
-import static com.valeo.bleranging.utils.CalculUtils.correctRssiUnilateral;
-import static com.valeo.bleranging.utils.CalculUtils.most;
-import static com.valeo.bleranging.utils.CalculUtils.rssi2dist;
+import static com.valeo.bleranging.utils.CalculusUtils.correctRssiUnilateral;
+import static com.valeo.bleranging.utils.CalculusUtils.most;
+import static com.valeo.bleranging.utils.CalculusUtils.rssi2dist;
 import static com.valeo.bleranging.utils.CheckUtils.comparePrediction;
 import static com.valeo.bleranging.utils.CheckUtils.compareProb;
 
@@ -70,7 +70,7 @@ public class PredictionZone extends BasePrediction {
     /***
      * update rowData object for ML prediction
      * @param rssi raw rssi vector
-     * @param offset
+     * @param offset the smartphone offset
      */
     public void setRssi(double rssi[], int offset) {
         if (this.rssi_offset != null) {
@@ -190,7 +190,7 @@ public class PredictionZone extends BasePrediction {
 
     /***
      * whether in first prediction
-     * @return
+     * @return true if prediction_old has changed, false if it was not yet initialized
      */
     private boolean checkOldPrediction() {
         if (prediction_old == -1) {
@@ -202,7 +202,7 @@ public class PredictionZone extends BasePrediction {
 
     /***
      * get corresponding string result of prediction
-     * @return
+     * @return the zone prediction or UNKNOWN
      */
     public String getPrediction() {
         if (prediction_old != -1) {
@@ -225,12 +225,12 @@ public class PredictionZone extends BasePrediction {
             return "";
         } else {
             sb.append(String.format(Locale.FRANCE, "%1$s %2$s ", predictionType, getPrediction())).append("\n");
-            for (double arssi : rssi_modified) {
-                sb.append(String.format(Locale.FRANCE, "%d", (int) arssi)).append("      ");
+            for (double elementRssi : rssi_modified) {
+                sb.append(String.format(Locale.FRANCE, "%d", (int) elementRssi)).append("      ");
             }
             sb.append("\n");
-            for (double adistance : distance) {
-                sb.append(String.format(Locale.FRANCE, "%.2f", adistance)).append("   ");
+            for (double elementDistance : distance) {
+                sb.append(String.format(Locale.FRANCE, "%.2f", elementDistance)).append("   ");
             }
             sb.append("\n");
             for (int i = 0; i < distribution.length; i++) {
@@ -251,7 +251,7 @@ public class PredictionZone extends BasePrediction {
 
     /***
      * get all the string results of ML
-     * @return
+     * @return the list of possible zone prediction or null
      */
     public String[] getClasses() {
         if (modelWrappers.get(0) != null) {

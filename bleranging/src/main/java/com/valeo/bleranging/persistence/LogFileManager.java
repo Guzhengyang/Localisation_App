@@ -275,7 +275,7 @@ public class LogFileManager {
     /**
      * Create a log file to register the settings and all rssi values
      * @param mContext the context
-     * @return true if the file exist or is succesfully created, false otherwise
+     * @return true if the file exist or is successfully created, false otherwise
      */
     private boolean createLogFile(Context mContext) {
         if (createDirectories(mContext)) {

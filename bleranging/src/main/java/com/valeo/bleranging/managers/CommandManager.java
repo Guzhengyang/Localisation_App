@@ -285,7 +285,7 @@ public final class CommandManager {
     /**
      * Perform a lock action with a crypto timeout
      *
-     * @param isRKEAction the action source, ture if RKE, false otherwise
+     * @param isRKEAction the action source, true if RKE, false otherwise
      * @param lockCar     true to lock the car, false to unlock
      */
     private void performLockWithCryptoTimeout(final boolean isRKEAction, final boolean lockCar) {
@@ -335,7 +335,7 @@ public final class CommandManager {
      * Try all strategy based on machine learning
      */
     void tryMachineLearningStrategies() {
-        PSALogs.d("mlinfo", "tryMachineLearningStrategies");
+        PSALogs.d("ml_info", "tryMachineLearningStrategies");
         boolean isWelcomeAllowed = false;
         // Cancel previous requested actions
         boolean isInStartArea = false;
@@ -411,7 +411,7 @@ public final class CommandManager {
             } else {
                 InblueProtocolManager.getInstance().getPacketOne().setInRemoteParkingArea(false);
             }
-            // increment prediction occurence to latter calculate accuracy
+            // increment prediction occurrence to latter calculate accuracy
             if (accuracyMeasureEnabled) {
                 if (accuracyCounterHMap.get(lastPrediction) == null) {
                     PSALogs.d("accuracy", lastPrediction + " was null");

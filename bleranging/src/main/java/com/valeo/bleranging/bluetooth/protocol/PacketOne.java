@@ -43,7 +43,7 @@ import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
  */
 
 public class PacketOne {
-    private static final int MAX_BLE_TRAME_BYTE = 6; //13
+    private static final int MAX_BLE_PACKET_BYTE = 6; //13
     private static final int MAC_ADDRESS_SIZE = 6;
     private static PacketOne instance;
     private int packetOneCounter = 0;
@@ -79,7 +79,7 @@ public class PacketOne {
      */
     public byte[] getPacketOnePayload(final ConnectedCar connectedCar) {
         boolean isRKE = CommandManager.getInstance().getIsRKE();
-        byte[] payload = new byte[MAX_BLE_TRAME_BYTE];
+        byte[] payload = new byte[MAX_BLE_PACKET_BYTE];
         payload[0] = (byte) ((packetOneCounter >> 8) & 0xFF);
         payload[1] = (byte) (packetOneCounter & 0xFF);
         payload[2] = (0x01);

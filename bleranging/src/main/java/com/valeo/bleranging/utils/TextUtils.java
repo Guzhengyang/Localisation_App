@@ -33,9 +33,7 @@ public class TextUtils {
         final byte result[] = new byte[encoded.length() / 2];
         final char enc[] = encoded.toCharArray();
         for (int i = 0; i < enc.length; i += 2) {
-            StringBuilder curr = new StringBuilder(2);
-            curr.append(enc[i]).append(enc[i + 1]);
-            result[i / 2] = (byte) Integer.parseInt(curr.toString(), 16);
+            result[i / 2] = (byte) Integer.parseInt(String.valueOf(enc[i]) + enc[i + 1], 16);
         }
         return result;
     }

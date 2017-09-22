@@ -240,7 +240,7 @@ public class BleConnectionManager {
         }
     };
     /**
-     * Ignore ble trame if they are not from channel 37
+     * Ignore ble packet if they are not from channel 37
      */
     private boolean alreadyStopped = false;
 

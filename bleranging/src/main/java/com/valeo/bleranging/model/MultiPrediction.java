@@ -9,7 +9,7 @@ import com.valeo.bleranging.machinelearningalgo.prediction.PredictionCoord;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionFactory;
 import com.valeo.bleranging.machinelearningalgo.prediction.PredictionZone;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.CalculUtils;
+import com.valeo.bleranging.utils.CalculusUtils;
 import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import static com.valeo.bleranging.persistence.Constants.TYPE_2_A;
 import static com.valeo.bleranging.persistence.Constants.TYPE_2_B;
 import static com.valeo.bleranging.persistence.Constants.TYPE_4_B;
 import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
-import static com.valeo.bleranging.utils.CalculUtils.initMatrix;
+import static com.valeo.bleranging.utils.CalculusUtils.initMatrix;
 
 /**
  * Created by l-avaratha on 12/07/2017
@@ -109,13 +109,13 @@ public class MultiPrediction {
      */
     public void setRssi(double[] rssiTab) {
         for (String predictionType : predictionLinkedHMap.keySet()) {
-            final int nVote = getNvote(predictionType);
+            final int nVote = getNVote(predictionType);
             setRssi(predictionType, rssiTab,
                     SdkPreferencesHelper.getInstance().getOffsetSmartphone(), nVote);
         }
     }
 
-    private int getNvote(String predictionType) {
+    private int getNVote(String predictionType) {
         switch (SdkPreferencesHelper.getInstance().getConnectedCarType()) {
             case TYPE_2_A:
                 return N_VOTE_LONG;
@@ -183,13 +183,13 @@ public class MultiPrediction {
                         for (int i = 0; i < predictionCoord.getCoordsSize(); i++) {
                             if (predictionCoord.getPredictionCoord(i) != null) {
                                 if (i == INDEX_KALMAN) {
-                                    CalculUtils.correctCoordKalman(predictionCoord.getPredictionCoord(i), mlCoord);
+                                    CalculusUtils.correctCoordKalman(predictionCoord.getPredictionCoord(i), mlCoord);
                                 } else if (i == INDEX_THRESHOLD) {
-                                    CalculUtils.correctCoordThreshold(predictionCoord.getPredictionCoord(i), mlCoord, THRESHOLD_DIST);
+                                    CalculusUtils.correctCoordThreshold(predictionCoord.getPredictionCoord(i), mlCoord, THRESHOLD_DIST);
                                 } else if (i == INDEX_RAW) {
                                     predictionCoord.getPredictionCoord(i).setCoord(mlCoord);
                                 }
-                                CalculUtils.correctBoundry(predictionCoord.getPredictionCoord(i));
+                                CalculusUtils.correctBoundary(predictionCoord.getPredictionCoord(i));
                             }
                         }
                     }
@@ -315,7 +315,7 @@ public class MultiPrediction {
                     if (doubleList == null) {
                         doubleList = new ArrayList<>();
                     }
-                    doubleList.add(CalculUtils.calculateDist2Car(coordFinal.getCoord_x(), coordFinal.getCoord_y()));
+                    doubleList.add(CalculusUtils.calculateDist2Car(coordFinal.getCoord_x(), coordFinal.getCoord_y()));
                 }
             }
         }

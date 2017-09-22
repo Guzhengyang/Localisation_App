@@ -35,7 +35,7 @@ import java.util.Arrays;
  * - Handle BT devices list
  * - Handle notification action
  */
-public class BluetoothManagement {
+class BluetoothManagement {
     private static final int MESSAGE_COMMAND_SENT_SUCCESS = 27;
     private static final String TAG = BluetoothManagement.class.getSimpleName();
     private static final int BEACON_SCAN_RESPONSE_LENGTH = 62;

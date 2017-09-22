@@ -16,7 +16,7 @@ public class PredictionCoord extends BasePrediction {
     public static final int INDEX_KALMAN = 0; // use kalman filter
     public static final int INDEX_THRESHOLD = 1; // use threshold filter
     public static final int INDEX_RAW = 2; // use no filter
-    public static final int INDEX_MAX = 3; // number of comparison result
+    private static final int INDEX_MAX = 3; // number of comparison result
     private final SparseArray<Coord> coords; // regression prediction result
 
     public PredictionCoord(Context context, String modelClassNameX, String modelClassNameY, List<String> rowDataKeySet) {
@@ -53,7 +53,7 @@ public class PredictionCoord extends BasePrediction {
     /***
      * update rowData object for ML prediction
      * @param rssi raw rssi vector
-     * @param offset
+     * @param offset the smartphone offset
      */
     public void setRssi(double rssi[], int offset) {
         if (this.rssi_offset != null) {
@@ -85,8 +85,8 @@ public class PredictionCoord extends BasePrediction {
 
     /***
      * get coord results after different filter(kalman, threshold, no filtering)
-     * @param index
-     * @return
+     * @param index the index of the filter applied
+     * @return the coord of the serie with the selected filter or null
      */
     public Coord getPredictionCoord(final int index) {
         if (index < coords.size()) {

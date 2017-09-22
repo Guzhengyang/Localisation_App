@@ -38,16 +38,16 @@ public class PacketTwo {
         byte[] payload = new byte[8];
         if (distribution != null && classes != null) {
             for (int payloadIndex = 0; payloadIndex < classes.length; payloadIndex++) {
-                payload[payloadIndex] = getPayloadProba(encodeClasses(classes[payloadIndex]), distribution[payloadIndex]);
+                payload[payloadIndex] = getPayloadProbability(encodeClasses(classes[payloadIndex]), distribution[payloadIndex]);
             }
         }
         return payload;
     }
 
-    private byte getPayloadProba(byte classes, double proba) {
+    private byte getPayloadProbability(byte classes, double probability) {
         byte payloadProb = classes;
         payloadProb = (byte) (payloadProb << 4);
-        payloadProb |= ((byte) (proba * 10) & 0x0F);
+        payloadProb |= ((byte) (probability * 10) & 0x0F);
         return payloadProb;
     }
 

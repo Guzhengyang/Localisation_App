@@ -12,7 +12,7 @@ import java.util.Map;
  * Created by l-avaratha on 30/06/2017
  */
 
-public class CalculUtils {
+public class CalculusUtils {
     private static final double THRESHOLD_RSSI_AWAY = 1;
     private static final int MAX_X = 11;
     private static final int MAX_Y = 10;
@@ -33,7 +33,7 @@ public class CalculUtils {
         R = new SimpleMatrix(SimpleMatrix.identity(H.numRows()));
     }
 
-    public static void correctBoundry(final Coord coord) {
+    public static void correctBoundary(final Coord coord) {
         if (coord.getCoord_x() > MAX_X) {
             coord.setCoord_x(MAX_X);
         } else if (coord.getCoord_x() < 0) {

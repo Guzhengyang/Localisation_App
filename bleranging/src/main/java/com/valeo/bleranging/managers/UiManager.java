@@ -46,7 +46,7 @@ public class UiManager {
         @Override
         public void run() {
             if (connectedCar != null) {
-                // update ble trame
+                // update ble packet
                 CommandManager.getInstance().tryMachineLearningStrategies();
                 // update car localization img
                 updateCarLocalization(connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket()),
@@ -119,8 +119,8 @@ public class UiManager {
      */
     private void updateCarLocalization(String predictionPosition,
                                        String predictionProximity, List<PointF> coords, List<Double> dists) {
-        for (String elementPred : PREDICTIONS) {
-            debugListener.darkenArea(elementPred);
+        for (String elementPrediction : PREDICTIONS) {
+            debugListener.darkenArea(elementPrediction);
         }
         //THATCHAM
         if (InblueProtocolManager.getInstance().getPacketOne().isThatcham()) {

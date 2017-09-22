@@ -11,7 +11,7 @@ import java.util.EventListener;
  * @author Francis Delaunay
  * @version 1.5
  */
-public interface BluetoothManagementListener extends EventListener {
+interface BluetoothManagementListener extends EventListener {
     void onCentralScanResponseCatch(BluetoothDevice device, CentralScanResponse centralScanResponse);
 
     void onBeaconScanResponseCatch(BluetoothDevice device, int rssi, BeaconScanResponse beaconScanResponse, byte[] advertisedData);

@@ -24,11 +24,11 @@ public class PacketFour {
         return instance;
     }
 
-    public byte[] getPacketFourPayload(List<PointF> predictionCoords, List<Double> distances) {
+    public byte[] getPacketFourPayload(List<PointF> predictionCoord, List<Double> distances) {
         byte[] payloadSix = new byte[3];
-        if (predictionCoords != null && predictionCoords.size() > 0 && predictionCoords.get(0) != null) {
-            payloadSix[0] = (byte) (predictionCoords.get(0).x * 10);
-            payloadSix[1] = (byte) (predictionCoords.get(0).y * 10);
+        if (predictionCoord != null && predictionCoord.size() > 0 && predictionCoord.get(0) != null) {
+            payloadSix[0] = (byte) (predictionCoord.get(0).x * 10);
+            payloadSix[1] = (byte) (predictionCoord.get(0).y * 10);
         }
         if (distances != null && distances.size() > 0 && distances.get(0) != null) {
             payloadSix[2] = (byte) (distances.get(0) * 10);

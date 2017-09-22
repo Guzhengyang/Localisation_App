@@ -28,9 +28,9 @@ public class BasePrediction {
 
     /***
      * used for zone prediction
-     * @param context
+     * @param context the context
      * @param modelClassName java model class name
-     * @param rowDataKeySet
+     * @param rowDataKeySet the key set list of row data
      */
     BasePrediction(Context context, String modelClassName, List<String> rowDataKeySet) {
         this.rowDataKeySet = rowDataKeySet;
@@ -40,10 +40,10 @@ public class BasePrediction {
 
     /***
      * used for coord prediction
-     * @param context
+     * @param context the context
      * @param modelClassNameX java model class name for coord_x
      * @param modelClassNameY java model class name for coord_y
-     * @param rowDataKeySet
+     * @param rowDataKeySet the key set list of row data
      */
     BasePrediction(Context context, String modelClassNameX, String modelClassNameY, List<String> rowDataKeySet) {
         this.rowDataKeySet = rowDataKeySet;

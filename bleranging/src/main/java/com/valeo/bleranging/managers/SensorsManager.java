@@ -14,7 +14,7 @@ import android.text.SpannableStringBuilder;
 
 import com.valeo.bleranging.listeners.BleRangingListener;
 import com.valeo.bleranging.persistence.SdkPreferencesHelper;
-import com.valeo.bleranging.utils.CalculUtils;
+import com.valeo.bleranging.utils.CalculusUtils;
 import com.valeo.bleranging.utils.CallReceiver;
 
 import java.util.ArrayList;
@@ -142,9 +142,9 @@ public class SensorsManager implements SensorEventListener {
             if (lAccHistoric.size() == SdkPreferencesHelper.getInstance().getLinAccSize()) {
                 lAccHistoric.remove(0);
             }
-            double currentLinAcc = CalculUtils.getQuadratiqueSum(event.values[0], event.values[1], event.values[2]);
+            double currentLinAcc = CalculusUtils.getQuadratiqueSum(event.values[0], event.values[1], event.values[2]);
             lAccHistoric.add(currentLinAcc);
-            double averageLinAcc = CalculUtils.getAverage(lAccHistoric);
+            double averageLinAcc = CalculusUtils.getAverage(lAccHistoric);
             deltaLinAcc = Math.abs(currentLinAcc - averageLinAcc);
             if (deltaLinAcc < SdkPreferencesHelper.getInstance().getFrozenThreshold()) {
                 if (!isFrozenRunnableAlreadyLaunched) {
