@@ -123,8 +123,12 @@ public class SensorsManager implements SensorEventListener {
      * @param context the context
      */
     public void closeApp(final Context context) {
-        context.unregisterReceiver(callReceiver);
-        context.unregisterReceiver(bleStateReceiver);
+        try {
+            context.unregisterReceiver(callReceiver);
+            context.unregisterReceiver(bleStateReceiver);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

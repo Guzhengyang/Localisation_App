@@ -244,7 +244,11 @@ public final class CommandManager {
      * @param context the context
      */
     public void closeApp(final Context context) {
-        context.unregisterReceiver(mDataReceiver);
+        try {
+            context.unregisterReceiver(mDataReceiver);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
         if (mLockStatusChangedHandler != null) {
             mLockStatusChangedHandler.removeCallbacks(mManageIsLockStatusChangedPeriodicTimer);
         }

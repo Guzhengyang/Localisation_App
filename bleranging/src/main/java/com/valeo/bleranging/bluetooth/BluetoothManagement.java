@@ -165,7 +165,11 @@ class BluetoothManagement {
                 e.printStackTrace();
             } finally {
                 if (isReceiverRegistered) {
-                    mContext.unregisterReceiver(mTrxUpdateReceiver);
+                    try {
+                        mContext.unregisterReceiver(mTrxUpdateReceiver);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     isReceiverRegistered = false;
                 }
             }
