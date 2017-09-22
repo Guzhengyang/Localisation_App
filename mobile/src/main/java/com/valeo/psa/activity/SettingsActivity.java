@@ -370,15 +370,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 address_connectable_pc.setText(address_connectable_pc.getSummary().toString());
             }
             address_connectable_remote_control.setText(address_connectable_remote_control.getSummary().toString());
-            address_front_left.setText(address_front_left.getSummary().toString());
-            address_front_right.setText(address_front_right.getSummary().toString());
-            address_left.setText(address_left.getSummary().toString());
-            address_middle.setText(address_middle.getSummary().toString());
-            address_right.setText(address_right.getSummary().toString());
-            address_trunk.setText(address_trunk.getSummary().toString());
-            address_rear_left.setText(address_rear_left.getSummary().toString());
-            address_back.setText(address_back.getSummary().toString());
-            address_rear_right.setText(address_rear_right.getSummary().toString());
+            try {
+                address_front_left.setText(address_front_left.getSummary().toString());
+                address_front_right.setText(address_front_right.getSummary().toString());
+                address_left.setText(address_left.getSummary().toString());
+                address_middle.setText(address_middle.getSummary().toString());
+                address_right.setText(address_right.getSummary().toString());
+                address_trunk.setText(address_trunk.getSummary().toString());
+                address_rear_left.setText(address_rear_left.getSummary().toString());
+                address_back.setText(address_back.getSummary().toString());
+                address_rear_right.setText(address_rear_right.getSummary().toString());
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
         }
 
         // Bind the summaries of EditText/List/Dialog/Ringtone preferences
