@@ -124,28 +124,30 @@ public class AccuracyFragment extends Fragment implements SpinnerListener {
 
     @Override
     public void updateAccuracySpinner() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                PSALogs.d("accuracy", "updateAccuracySpinner & selectedAccuracyZone = " + selectedAccuracyZone);
-                if (accuracy_spinner != null && accuracy_spinner_classes != null
-                        && accuracy_spinner_adapter != null) {
-                    if (mListener.getStandardClasses() != null) {
-                        accuracy_spinner_classes.clear();
-                        accuracy_zone_result.setText("");
-                        accuracy_zone_result.setVisibility(View.INVISIBLE);
-                        accuracy_spinner_classes.addAll(
-                                Arrays.asList(mListener.getStandardClasses()));
-                        accuracy_spinner_adapter.notifyDataSetChanged();
-                        accuracy_spinner.setSelection(0);
-                        selectedAccuracyZone = accuracy_spinner_classes.get(0);
-                        PSALogs.d("accuracy", "list changed !");
-                    } else {
-                        PSALogs.d("accuracy", "mBleRangingHelper.getStandardClasses is NULL");
+        if (isAdded()) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    PSALogs.d("accuracy", "updateAccuracySpinner & selectedAccuracyZone = " + selectedAccuracyZone);
+                    if (accuracy_spinner != null && accuracy_spinner_classes != null
+                            && accuracy_spinner_adapter != null) {
+                        if (mListener.getStandardClasses() != null) {
+                            accuracy_spinner_classes.clear();
+                            accuracy_zone_result.setText("");
+                            accuracy_zone_result.setVisibility(View.INVISIBLE);
+                            accuracy_spinner_classes.addAll(
+                                    Arrays.asList(mListener.getStandardClasses()));
+                            accuracy_spinner_adapter.notifyDataSetChanged();
+                            accuracy_spinner.setSelection(0);
+                            selectedAccuracyZone = accuracy_spinner_classes.get(0);
+                            PSALogs.d("accuracy", "list changed !");
+                        } else {
+                            PSALogs.d("accuracy", "mBleRangingHelper.getStandardClasses is NULL");
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     public interface AccuracyFragmentActionListener {
