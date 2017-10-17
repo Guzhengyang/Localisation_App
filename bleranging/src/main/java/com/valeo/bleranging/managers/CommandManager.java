@@ -256,7 +256,8 @@ public final class CommandManager {
 
     /**
      * Perform a RKE lock or unlock action
-     * @param lockCar true to send a lock action, false to send an unlock action
+     *
+     * @param lockCar          true to send a lock action, false to send an unlock action
      * @param isFullyConnected true if connected, false otherwise
      */
     public void performRKELockAction(final boolean lockCar, final boolean isFullyConnected) {
@@ -351,6 +352,7 @@ public final class CommandManager {
             // get a zone prediction
             lastPrediction = connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket());
             // Based on this prediction, create the correct ble packet to send
+            //TODO  zone results given by coord prediction: connectedCar.getMultiPrediction().getPredictionCoord2zone()
             switch (lastPrediction) {
                 case PREDICTION_INSIDE:
                     isInStartArea = true;
@@ -448,9 +450,10 @@ public final class CommandManager {
 
     /**
      * Check if we are thatcham by looking at the current zone
-     * @param isInLockArea true if in lock area, false otherwise
+     *
+     * @param isInLockArea   true if in lock area, false otherwise
      * @param isInUnlockArea true if in unlock area, false otherwise
-     * @param isInStartArea true if in start area, false otherwise
+     * @param isInStartArea  true if in start area, false otherwise
      */
     private void setIsThatcham(boolean isInLockArea, boolean isInUnlockArea, boolean isInStartArea) {
         if (isInLockArea || isInStartArea || !isInUnlockArea) {
@@ -464,6 +467,7 @@ public final class CommandManager {
 
     /**
      * Allow lock/unlock action by setting rearms based on your zone, and current lock status
+     *
      * @param newVehicleLockStatus true if lock, false if unlock
      */
     private void manageRearms(final boolean newVehicleLockStatus) {
@@ -488,6 +492,7 @@ public final class CommandManager {
 
     /**
      * Toggle accuracy measure
+     *
      * @param enable true to turn on, false to turn off
      */
     public void enableAccuracyMeasure(boolean enable) {
@@ -503,6 +508,7 @@ public final class CommandManager {
 
     /**
      * Calculate the accuracy of a selected zone
+     *
      * @param selectedAccuracyZone the zone selected
      * @return the accuracy of the zone selected
      */
@@ -568,6 +574,7 @@ public final class CommandManager {
 
     /**
      * Check if in welcome area
+     *
      * @return true if in welcome area, false otherwise
      */
     boolean isInWelcomeArea() {
@@ -576,6 +583,7 @@ public final class CommandManager {
 
     /**
      * Check if the command was rke or not
+     *
      * @return true if it was RKE, false otherwise
      */
     public boolean getIsRKE() {

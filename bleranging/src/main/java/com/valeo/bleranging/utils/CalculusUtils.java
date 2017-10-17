@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_ACCESS;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_EXTERNAL;
+import static com.valeo.bleranging.persistence.Constants.PREDICTION_INTERNAL;
+
 /**
  * Created by l-avaratha on 30/06/2017
  */
@@ -25,7 +29,7 @@ public class CalculusUtils {
     public static void initMatrix() {
         X = new SimpleMatrix(new double[][]{{0}, {0}, {0}, {0}});
         P = new SimpleMatrix(SimpleMatrix.identity(X.numRows()));
-        double dt = 0.105;
+        double dt = 0.1;
         F = new SimpleMatrix(new double[][]{{1, dt, 0, 0}, {0, 1, 0, 1}, {0, 0, 1, dt}, {0, 0, 0, 1}});
         G = new SimpleMatrix(new double[][]{{dt * dt / 2, 0}, {dt, 0}, {0, dt * dt / 2}, {0, dt}});
         H = new SimpleMatrix(new double[][]{{1, 0, 0, 0}, {0, 0, 1, 0}});
@@ -43,13 +47,6 @@ public class CalculusUtils {
             coord.setCoord_y(MAX_Y);
         } else if (coord.getCoord_y() < 0) {
             coord.setCoord_y(0);
-        }
-        if (coord.getCoord_x() > X1 &
-                coord.getCoord_x() < X2 &
-                coord.getCoord_y() > Y1 &
-                coord.getCoord_y() > Y2) {
-            coord.setCoord_x(MAX_X / 2.0);
-            coord.setCoord_y(MAX_Y / 2.0);
         }
     }
 
@@ -87,6 +84,18 @@ public class CalculusUtils {
         }
         return dist2car;
     }
+
+    public static String coord2zone(double coord_x, double coord_y, double threshold_unlock_lock) {
+        double dist2car = calculateDist2Car(coord_x, coord_y);
+        if (dist2car == -1) {
+            return PREDICTION_INTERNAL;
+        } else if (dist2car < threshold_unlock_lock) {
+            return PREDICTION_ACCESS;
+        } else {
+            return PREDICTION_EXTERNAL;
+        }
+    }
+
 
     public static void correctCoordThreshold(final Coord coord, final Coord coordNew, final double threshold_dist) {
         double deltaX = coordNew.getCoord_x() - coord.getCoord_x();
