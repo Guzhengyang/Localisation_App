@@ -483,8 +483,6 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
             }
         }
         setActivityTitle();
-
-        getSupportFragmentManager().beginTransaction().remove(chessboardFragment).commit();
     }
 
     @Override
