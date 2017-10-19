@@ -29,9 +29,11 @@ import com.valeo.psa.R;
 
 
 /**
- * Created by l-avaratha on 09/03/2017
+ * It's dubious it's doing anything useful for the code.
+ * This part contains the "Register RSSI for the square" thing, with two buttons to start measuring or start the phone's flashlight.
+ *
+ * It's not even sure Start Measure does something. Read quickly, it seems to just increase the counter, so probably some "test UI" that was kept around for shows.
  */
-
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class MeasureFragment extends Fragment {
     private EditText measurement_index;

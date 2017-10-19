@@ -50,7 +50,14 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by l-avaratha on 09/03/2017
+ * A weird fragment. It encompasses the upper and lower parts.
+ * The upper part begins with the "connected/disconnected" Bluetooth status, and stop with the Model + License plate text.
+ *
+ * The car picture in the middle is actually a selector, though without any arrow or something, good luck finding it.
+ * It's also rather hard to use and not very accurate, and to top it off, Z mentioned that it's pretty much useless anyway.
+ *
+ * The lower part deals with the three "draggable" buttons, and they, of course, seem to not be used for anything.
+ * Despite that, they are no only still in the code, but also visible. Probably for show than anything else.
  */
 public class MainFragment extends Fragment implements MyRecyclerAdapter.OnStartDragListener,
         MyRecyclerAdapter.OnIconLongPressedListener, View.OnTouchListener {
@@ -82,15 +89,19 @@ public class MainFragment extends Fragment implements MyRecyclerAdapter.OnStartD
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
         View rootView = inflater.inflate(R.layout.main_fragment, container, false);
         setView(rootView);
+
         main_appbar.setExpanded(false, false);
+
         try {
             romanTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "HelveticaNeueLTStd-Ex.otf");
             lightTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "HelveticaNeueLTStd-Lt.otf");
         } catch (Exception e) {
             PSALogs.e(TAG, "Font not loaded !");
         }
+
         setOnClickListeners();
         setRecyclerView();
         ble_status.setTypeface(romanTypeFace, Typeface.NORMAL);

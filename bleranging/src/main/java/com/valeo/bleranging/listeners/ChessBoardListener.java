@@ -5,7 +5,7 @@ import android.graphics.PointF;
 import java.util.List;
 
 /**
- * Created by l-avaratha on 19/07/2016
+ * Gateway between the BLE and the chessboard, sending data to it and updating it when needed.
  */
 public interface ChessBoardListener {
     void applyNewDrawable();

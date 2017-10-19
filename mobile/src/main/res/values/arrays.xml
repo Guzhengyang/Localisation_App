@@ -37,6 +37,14 @@
         <item>Thatcham oriented</item>
         <item>Passive Entry oriented</item>
     </string-array>
+
+    <string-array name="trame_send_to_car_list_preference">
+        <item>Zone (Forest)</item>
+        <item>Coord (Neural Network)</item>
+        <item>Zone and Coord</item>
+        <item>Zone or Coord</item>
+    </string-array>
+
     <string-array name="base_list_preference">
         <item>Lock: PSU &amp; Unlock: PSU</item>
         <item>Lock: WAL &amp; Unlock: PSU</item>

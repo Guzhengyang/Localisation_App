@@ -32,7 +32,7 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/test_title_tv"
         app:layout_constraintEnd_toStartOf="@+id/start_test"
         app:layout_constraintStart_toEndOf="@id/test_title_tv"
-        tools:layout_editor_absoluteX="69dp" />
+        tools:layout_editor_absoluteX="42dp" />
 
     <Button
         android:id="@+id/start_test"
@@ -44,7 +44,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toEndOf="@id/test_index"
-        tools:layout_editor_absoluteX="306dp" />
+        tools:layout_editor_absoluteX="0dp" />
 
     <ImageView
         android:id="@+id/result_test"

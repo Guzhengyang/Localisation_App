@@ -51,7 +51,8 @@ import static com.valeo.bleranging.persistence.Constants.TYPE_7_A;
 import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
 
 /**
- * Created by l-avaratha on 09/03/2017
+ * The secondary "chessboard", the smaller one with the red/black zones and the "car" in green in the middle.
+ * Also displays the data used by the algorithm.
  */
 public class DebugFragment extends Fragment implements DebugListener {
     private ImageView signalReceived;
@@ -344,5 +345,4 @@ public class DebugFragment extends Fragment implements DebugListener {
             return ContextCompat.getDrawable(getActivity(), isOpenChoice);
         }
     }
-
 }

@@ -23,9 +23,10 @@ import static com.valeo.bleranging.persistence.Constants.PREDICTION_LOCK;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_UNKNOWN;
 
 /**
- * Created by l-avaratha on 09/03/2017
+ * Obsolete fragment launching then displaying the results of a test.
+ * It might have been replaced by automatic connexion and the chessboards displays.
+ * Since it's actually hidden by default, it's most likely useless now.
  */
-
 public class TestFragment extends Fragment implements TestListener {
     private EditText test_index;
     private TestFragmentActionListener mListener;

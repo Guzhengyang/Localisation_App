@@ -22,6 +22,16 @@
             android:entryValues="@array/opening_orientation_entryvalues_list_preference"
             android:key="@string/opening_orientation_type_pref_name"
             android:title="@string/pref_opening_orientation_title" />
+        <ListPreference
+            android:dialogTitle="@string/pref_select_trame_send_to_car_title"
+            android:entries="@array/trame_send_to_car_list_preference"
+            android:entryValues="@array/trame_send_to_car_list_preference"
+            android:key="@string/trame_send_to_car_type_pref_name"
+            android:title="@string/pref_select_trame_send_to_car_title" />
+        <EditTextPreference
+            android:inputType="numberSigned"
+            android:key="@string/threshold_unlock_lock_pref_name"
+            android:title="@string/pref_threshold_unlock_lock" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:enabled="false"

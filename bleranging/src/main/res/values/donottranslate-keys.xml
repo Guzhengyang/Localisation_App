@@ -24,6 +24,8 @@
     <string name="connected_car_type_pref_name">"com.inblue.PREFERENCE_CONNECTED_CAR_TYPE"</string>
     <string name="connected_car_base_pref_name">"com.inblue.PREFERENCE_CONNECTED_CAR_BASE"</string>
     <string name="opening_orientation_type_pref_name">"com.inblue.PREFERENCE_OPENING_ORIENTATION_TYPE"</string>
+    <string name="trame_send_to_car_type_pref_name">"com.inblue.PREFERENCE_TRAME_TO_SEND_TYPE"</string>
+    <string name="threshold_unlock_lock_pref_name">"com.inblue.PREFERENCE_THRESHOLD_UNLOCK_LOCK"</string>
     <string name="selected_algo_pref_name">"com.inblue.PREFERENCE_SELECTED_ALGO"</string>
     <string name="machine_learning_model_pref_name">"com.inblue.PREFERENCE_ML_MODEL"</string>
     <string name="is_indoor_enabled_pref_name">"com.inblue.PREFERENCE_IS_INDOOR_ENABLED"</string>

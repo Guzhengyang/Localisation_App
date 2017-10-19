@@ -28,7 +28,12 @@ import static android.view.DragEvent.ACTION_DRAG_LOCATION;
 import static com.valeo.bleranging.persistence.Constants.RKE_USE_TIMEOUT;
 
 /**
- * Created by l-avaratha on 09/03/2017
+ * Placed below the license plate of the current vehicle, the RkeFragment shows the status of the doors (locked/opened) and display the four buttons.
+ * Those allow to open/close the vehicle, driver door or all doors, or start up/stop the vehicle.
+ * Like apparently everything in this project, though, we seem to have a ton of unused/hided elements here as well...
+ *
+ * As far as I can tell, it's supposed to allow the user to drag and change the position of the icons. Why it's in a BLE research project is impossible for me to understand.
+ * It also seems that it's actually not working AND the commands are disabled. In other words, unless I'm completely mistaken, this does absolutely nothing except showing text and icons.
  */
 public class RkeFragment extends Fragment {
     private final Handler mHandler = new Handler();
@@ -53,32 +58,6 @@ public class RkeFragment extends Fragment {
     private ImageView start_button_second_wave;
     private CarDoorStatus carDoorStatus;
     private RkeFragmentActionListener mListener;
-    private final View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                PSALogs.d("DragDrop", "ACTION_DOWN");
-                if (mListener != null && mListener.isRKEButtonClickable()) {
-                    PSALogs.d("DragDrop", "isRKEButtonClickable = " + mListener.isRKEButtonClickable() + " before startDrag");
-                    final ClipData dragData = ClipData.newPlainText((CharSequence) view.getTag(), (CharSequence) view.getTag());
-                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        PSALogs.d("DragDrop", "startDragAndDrop");
-                        view.startDragAndDrop(dragData, shadowBuilder, view, 0);
-                    } else {
-                        PSALogs.d("DragDrop", "startDrag");
-                        view.startDrag(dragData, shadowBuilder, view, 0);
-                    }
-                    view.setVisibility(View.INVISIBLE);
-                } else {
-                    PSALogs.d("DragDrop", "isRKEButtonClickable is FALSE before startDrag");
-                }
-                return true;
-            } else {
-                return false;
-            }
-        }
-    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -92,6 +71,63 @@ public class RkeFragment extends Fragment {
         car_door_status.setTypeface(lightTypeFace, Typeface.NORMAL);
         return rootView;
     }
+
+    /**
+     * Find all view by their id
+     */
+    private void setView(View rootView) {
+        // Vehicle locked/unlocked
+        car_door_status = (TextView) rootView.findViewById(R.id.car_door_status);
+        // Most likely not used, since it's set at Invisible by default and nothing forces it out of it
+        circle_selector_driver_s_door_unlocked = (ImageButton) rootView.findViewById(R.id.circle_selector_driver_s_door_unlocked);
+        // Same for this one
+        circle_selector_locked = (ImageButton) rootView.findViewById(R.id.circle_selector_locked);
+        // Ditto
+        circle_selector_unlocked = (ImageButton) rootView.findViewById(R.id.circle_selector_unlocked);
+
+        // The next
+        frame_vehicle_locked = (FrameLayout) rootView.findViewById(R.id.frame_layout_vehicle_locked);
+        frame_driver_s_door_unlocked = (FrameLayout) rootView.findViewById(R.id.frame_layout_driver_s_door_unlocked);
+        frame_vehicle_unlocked = (FrameLayout) rootView.findViewById(R.id.frame_layout_vehicle_unlocked);
+        vehicle_locked = (ImageView) rootView.findViewById(R.id.vehicle_locked);
+        driver_s_door_unlocked = (ImageView) rootView.findViewById(R.id.driver_s_door_unlocked);
+        vehicle_unlocked = (ImageView) rootView.findViewById(R.id.vehicle_unlocked);
+        start_button = (ImageButton) rootView.findViewById(R.id.start_button);
+        start_button_first_wave = (ImageView) rootView.findViewById(R.id.start_button_first_wave);
+        start_button_second_wave = (ImageView) rootView.findViewById(R.id.start_button_second_wave);
+        rke_loading_progress_bar = (TextView) rootView.findViewById(R.id.rke_loading_progress_bar);
+    }
+
+    private final View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                PSALogs.d("DragDrop", "ACTION_DOWN");
+
+                if (mListener != null && mListener.isRKEButtonClickable()) {
+                    PSALogs.d("DragDrop", "isRKEButtonClickable = " + mListener.isRKEButtonClickable() + " before startDrag");
+                    final ClipData dragData = ClipData.newPlainText((CharSequence) view.getTag(), (CharSequence) view.getTag());
+                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+
+                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        PSALogs.d("DragDrop", "startDragAndDrop");
+                        view.startDragAndDrop(dragData, shadowBuilder, view, 0);
+                    } else {
+                        PSALogs.d("DragDrop", "startDrag");
+                        view.startDrag(dragData, shadowBuilder, view, 0);
+                    }
+
+                    view.setVisibility(View.INVISIBLE);
+                } else {
+                    PSALogs.d("DragDrop", "isRKEButtonClickable is FALSE before startDrag");
+                }
+
+                return true;
+            } else {
+                return false;
+            }
+        }
+    };
 
     private void setOnTouchListeners() {
         circle_selector_locked.setOnTouchListener(mOnTouchListener);
@@ -147,26 +183,6 @@ public class RkeFragment extends Fragment {
         if (mContext instanceof Activity) {
             mListener = (RkeFragmentActionListener) mContext;
         }
-    }
-
-    /**
-     * Find all view by their id
-     */
-    private void setView(View rootView) {
-        car_door_status = (TextView) rootView.findViewById(R.id.car_door_status);
-        circle_selector_driver_s_door_unlocked = (ImageButton) rootView.findViewById(R.id.circle_selector_driver_s_door_unlocked);
-        circle_selector_locked = (ImageButton) rootView.findViewById(R.id.circle_selector_locked);
-        circle_selector_unlocked = (ImageButton) rootView.findViewById(R.id.circle_selector_unlocked);
-        frame_vehicle_locked = (FrameLayout) rootView.findViewById(R.id.frame_layout_vehicle_locked);
-        frame_driver_s_door_unlocked = (FrameLayout) rootView.findViewById(R.id.frame_layout_driver_s_door_unlocked);
-        frame_vehicle_unlocked = (FrameLayout) rootView.findViewById(R.id.frame_layout_vehicle_unlocked);
-        vehicle_locked = (ImageView) rootView.findViewById(R.id.vehicle_locked);
-        driver_s_door_unlocked = (ImageView) rootView.findViewById(R.id.driver_s_door_unlocked);
-        vehicle_unlocked = (ImageView) rootView.findViewById(R.id.vehicle_unlocked);
-        start_button = (ImageButton) rootView.findViewById(R.id.start_button);
-        start_button_first_wave = (ImageView) rootView.findViewById(R.id.start_button_first_wave);
-        start_button_second_wave = (ImageView) rootView.findViewById(R.id.start_button_second_wave);
-        rke_loading_progress_bar = (TextView) rootView.findViewById(R.id.rke_loading_progress_bar);
     }
 
     @Override

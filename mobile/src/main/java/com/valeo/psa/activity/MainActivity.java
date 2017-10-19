@@ -53,6 +53,13 @@ import static com.valeo.bleranging.persistence.Constants.BASE_4;
 import static com.valeo.bleranging.persistence.Constants.REQUEST_PERMISSION_ALL;
 import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
 
+/**
+ * Despite being the MainActivity, it seems it's pretty much used to initiate a bunch of fragments.
+ * The content of the main screen is more on the MainFragment, the Activity is there as a Controller rather than a view&controller.
+ * It initiates the fragments and serves as the gateway to the BLE part of the project, with the implementation of all the "listeners".
+ *
+ * Note that the "listeners" are in reality just Interfaces that allow the BLE section to control the Android part, it has nothing to do with listeners.
+ */
 public class MainActivity extends AppCompatActivity implements BleRangingListener,
         RkeFragment.RkeFragmentActionListener, AccuracyFragment.AccuracyFragmentActionListener,
         StartFragment.StartFragmentActionListener, MainFragment.MainFragmentActionListener,
@@ -77,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     private Typeface lightTypeFace;
     private BleRangingHelper mBleRangingHelper;
     private boolean showMenu = true;
+
     //    private KeyguardManager mKeyguardManager;
 
     //    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -115,6 +123,29 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         }
     }
 
+    /**
+     * Initialize the fragments displayed on the main screen of the application.
+     * There is actually seven different fragments, and a "bonus" one:
+     * - MainFragment: It shows the car picture, the BLE status (connected/disconnect) and the model/license plate, but also the three "buttons" after Start Flash and the Tips
+     * It plays a secondary role since the car picture can be scrolled horizontally to change the model. Problem is, even Z does not see any use for that, and the widget itself
+     * has some problems linked to it... for example, when it refuses to scroll, blocking the rest of the screen.
+     * - rkeFragment: Display the status of the vehicle (locked/unlocked) and the three icons and start button.
+     * A lot of drag code in here, but does not seem to work. And to top it off, the commands are apparently disabled, so it's probably doing nothing.
+     * - chessboardFragment: The red/green/black bunch of tiles, used to display the position of the user around the vehicle.
+     * - debugFragment: Behind that simple (and once again very misleading) name, we have the secondary "chessboard", with the car + beacons and the zones around.
+     * It's what's actually used for the "final product". The first algorithm (Forest ?) used this, while the Neural Network seems to use the main chessboard.
+     * It also display the whole data that goes with it.
+     * - testFragment: Seems like a simple display for the result of a test. Unused probably because it was replaced by the chessboards.
+     * Hidden by default, yet still there.
+     * - measureFragment: The part beginning with "Register RSSI for the square n°", including the two buttons "Start measure" and "Start flash".
+     * Not sure it's doing anything. Might be some work that never go into used, which is yet again annoying to see it's still around.
+     * - accuracyFragment: Does not seems to play a role at all. It displays the "Register RSSI" and two green buttons, but it's either a debug help, or plain useless.
+     * Must check the "register RSSI" part, but the flashlight button sounds like a waste of space.
+     * Hidden by default, but not removed. Maybe because "not deleting code since it might be useful later", despite the whole, y'a know, Git.
+     * - NfcFragment: The "tips" at the bottom of the screen. Looks like a half-attempt to implement some NFC, and it's probably outdated by now.
+     * - startFragment: Seems to be used to start the whole shebang, but it's hidden by default
+     * Most likely not used anymore, but still around for no adequately explored reason.
+     */
     private void setFragments() {
         mainFragment = new MainFragment();
         rkeFragment = new RkeFragment();
@@ -204,6 +235,14 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         }
     }
 
+    /**
+     * Deals with the result of the BLE permission being asked to the user.
+     * If they agreed, we force the Bluetooth ON and retry to scan the perimeter for cars.
+     * If they refused, we display a quick warning about the Bluetooth being necessary for the app to work.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -240,6 +279,12 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         close_all_windows_title.setTypeface(lightTypeFace, Typeface.NORMAL);
     }
 
+    /**
+     * What is says on the tin. If the fragment was visible, hide it. If not, show it.
+     * It's used mainly to keep useless code in the project by hiding now-unused parts while they are still implemented.
+     * As anyone would guess, it's TERRIBLE practice.
+     * @param fragment The fragment to hide or show
+     */
     private void showHideFragment(final Fragment fragment) {
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -264,7 +309,8 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     }
 
     /**
-     * Switch between toolbar's (normal and new toolbar mode)
+     * Switch between toolbar's (normal and new toolbar mode).
+     * The point of it eludes me for now. Why keeping two toolbars? The only point is to show a title and the options!
      *
      * @param mainToNewToolBar boolean to determine which toolbar to inflate
      * @param resId            the resource id of the new toolbar to show or hide
@@ -312,6 +358,10 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         }
     }
 
+    /**
+     * From now on, the next functions are all implemented from the interfaces.
+     * They'll be called when the BLE section need the app to do something.
+     */
     @Override
     public void restartConnection() {
         mBleRangingHelper.restartConnection();
@@ -356,6 +406,9 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
         });
     }
 
+    /**
+     * Called from the BLE part. No idea what it really does for now.
+     */
     @Override
     public void doWelcome() {
         Intent actionIntent = new Intent(this, MainActivity.class);
@@ -405,6 +458,11 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     }
 
     @Override
+    protected  void onStop() {
+        super.onStop();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         LogFileManager.initializeInstance();
@@ -425,6 +483,8 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
             }
         }
         setActivityTitle();
+
+        getSupportFragmentManager().beginTransaction().remove(chessboardFragment).commit();
     }
 
     @Override

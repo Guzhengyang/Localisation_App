@@ -15,6 +15,11 @@ public class Constants {
     public final static int N_VOTE_SHORT = 3;
     public final static double THRESHOLD_PROB_UNLOCK2LOCK = 0.5;
     public final static double THRESHOLD_PROB_LOCK2UNLOCK = 0.9;
+    public final static String FOREST = "Zone (Forest)";
+    public final static String NEURAL_NETWORK = "Coord (Neural Network)";
+    public final static String FOREST_AND_NN = "Zone and Coord";
+    public final static String FOREST_OR_NN = "Zone or Coord";
+    public final static int THRESHOLD_UNLOCK_LOCK = 2;
     public final static String BASE_1 = "Base_1";
     public final static String BASE_2 = "Base_2";
     public final static String BASE_3 = "Base_3";

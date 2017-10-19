@@ -17,7 +17,10 @@ import com.valeo.bleranging.utils.PSALogs;
 import com.valeo.psa.R;
 
 /**
- * Created by l-avaratha on 09/03/2017
+ * A random NFC part thrown in a Bluetooth research project.
+ * Might be a "can you try to code something using NFC please?" type, leading to this, but there is so little done...
+ * Been a while since I worked on NFC, but it seems that's just initializing a NFC Adapter, and if it works, it displays some text and an image.
+ * In other words, it serves no purpose at all.
  */
 public class NfcFragment extends Fragment {
     private TextView tips;

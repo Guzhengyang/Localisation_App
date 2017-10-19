@@ -31,7 +31,12 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by l-avaratha on 21/03/2017
+ * Below the vehicle commands awaits a very colorful place.
+ * This class generates the whole chessboard-like area used to display the location of the user around the car.
+ * Red tiles are the "too far" zone, while the green tiles serves as the "near enough" area. If you're in the green, the phone will send a command automatically to unlock the vehicle.
+ * The black tiles are obviously representing the vehicle itself.
+ *
+ * This fragment also display the three lines of data below the chessboard. Those are the values returned by the different algorithms used in the detection... I suppose.
  */
 public class ChessBoardFragment extends Fragment implements ChessBoardListener {
     private static final int MAX_POSITIONS = 5;

@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import com.valeo.bleranging.R;
 
 import static com.valeo.bleranging.persistence.Constants.BASE_1;
+import static com.valeo.bleranging.persistence.Constants.FOREST;
+import static com.valeo.bleranging.persistence.Constants.THRESHOLD_UNLOCK_LOCK;
 import static com.valeo.bleranging.persistence.Constants.THATCHAM_ORIENTED;
 import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
 
@@ -93,6 +95,14 @@ public final class SdkPreferencesHelper {
         return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.opening_orientation_type_pref_name), THATCHAM_ORIENTED);
     }
 
+    public String getTrameSendToCar() {
+        return readString(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.trame_send_to_car_type_pref_name), FOREST);
+    }
+
+    public int getThresholdUnlockLock() {
+        return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.threshold_unlock_lock_pref_name), THRESHOLD_UNLOCK_LOCK);
+    }
+
     public Boolean getComSimulationEnabled() {
         return readBoolean(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.com_simulation_enabled_pref_name), false);
     }
@@ -139,6 +149,10 @@ public final class SdkPreferencesHelper {
 
     public int getThresholdLock() {
         return readInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.threshold_lock_pref_name), THRESHOLD_LOCK);
+    }
+
+    public void setThresholdUnlockLock(int value) {
+        saveInt(SAVED_CC_GENERIC_OPTION, mApplicationContext.getString(R.string.threshold_lock_pref_name), value);
     }
 
     public int getOffsetHysteresisLock() {

@@ -8,6 +8,7 @@ import android.media.ToneGenerator;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.valeo.bleranging.bluetooth.bleservices.BluetoothLeService;
 import com.valeo.bleranging.bluetooth.protocol.InblueProtocolManager;
@@ -16,10 +17,14 @@ import com.valeo.bleranging.persistence.SdkPreferencesHelper;
 import com.valeo.bleranging.utils.PSALogs;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.valeo.bleranging.BleRangingHelper.connectedCar;
+import static com.valeo.bleranging.persistence.Constants.FOREST_AND_NN;
+import static com.valeo.bleranging.persistence.Constants.FOREST_OR_NN;
+import static com.valeo.bleranging.persistence.Constants.NEURAL_NETWORK;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_ACCESS;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_BACK;
 import static com.valeo.bleranging.persistence.Constants.PREDICTION_EXTERNAL;
@@ -349,26 +354,73 @@ public final class CommandManager {
         InblueProtocolManager.getInstance().getPacketOne().setIsStartRequested(false);
         InblueProtocolManager.getInstance().getPacketOne().setIsWelcomeRequested(false);
         if (connectedCar != null) {
+
+            List<String> coordPredictions = connectedCar.getMultiPrediction().getPredictionCoord2zone();
             // get a zone prediction
-            lastPrediction = connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket());
+            switch(SdkPreferencesHelper.getInstance().getTrameSendToCar()) {
+                case NEURAL_NETWORK:
+                    // getPredictionCoord2zone returns the prediction for all three points at the same time
+                    // We can choose the point we want to follow with the get (0/1/2)
+                    if(coordPredictions != null) {
+                        if (coordPredictions.size() > 0)
+                            lastPrediction = coordPredictions.get(1);
+                    } else
+                        lastPrediction = PREDICTION_UNKNOWN;
+                    break;
+                case FOREST_AND_NN:
+                    // In this case, we must use a verity table to determine the answer we keep
+                    if(coordPredictions != null) {
+                        if(coordPredictions.size() > 0) {
+                            lastPrediction = new TruthTable().truthTable(1,
+                                    connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket()),
+                                    connectedCar.getMultiPrediction().getPredictionCoord2zone().get(1));
+                        }
+                    } else
+                        lastPrediction = connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket());
+                    break;
+                case FOREST_OR_NN:
+                    // Same thing. Verity table, different than the one for the AND option
+                    if(coordPredictions != null) {
+                        if (coordPredictions.size() > 0) {
+                            lastPrediction = new TruthTable().truthTable(2,
+                                    connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket()),
+                                    connectedCar.getMultiPrediction().getPredictionCoord2zone().get(1));
+                        }
+                    } else
+                        lastPrediction = connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket());
+                    break;
+                default: // FOREST
+                    lastPrediction = connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket());
+            }
+
+            // The second algorithm (Coord/Neural Network) being no very effective at the Internal prediction, we use the Zone/Forest result instead
+            if(isInternal(connectedCar.getMultiPrediction().getPredictionZone(SensorsManager.getInstance().isSmartphoneInPocket()))) {
+                lastPrediction = PREDICTION_INTERNAL;
+            }
+
             // Based on this prediction, create the correct ble packet to send
-            //TODO  zone results given by coord prediction: connectedCar.getMultiPrediction().getPredictionCoord2zone()
             switch (lastPrediction) {
+                // To be confirmed
+
+                // In the car?
                 case PREDICTION_INSIDE:
                     isInStartArea = true;
                     if (!InblueProtocolManager.getInstance().getPacketOne().isStartRequested()) {
                         InblueProtocolManager.getInstance().getPacketOne().setIsStartRequested(true);
                     }
                     break;
+                // Outside of the car?
                 case PREDICTION_OUTSIDE:
                     break;
                 case PREDICTION_LOCK:
+                // Outside of the limit? Understand: too far from the car/in the lock zone
                 case PREDICTION_EXTERNAL:
                     isInLockArea = true;
                     if (areLockActionsAvailable.get() && rearmLock.get() && SdkPreferencesHelper.getInstance().getSecurityWALEnabled()) {
                         performLockWithCryptoTimeout(false, true);
                     }
                     break;
+                // Inside the limit? Understand: close to the car, so launch the whole system?
                 case PREDICTION_INTERNAL:
                 case PREDICTION_START:
                 case PREDICTION_START_FL:
@@ -381,6 +433,7 @@ public final class CommandManager {
                         InblueProtocolManager.getInstance().getPacketOne().setIsStartRequested(true);
                     }
                     break;
+                // Close to the car, in the "unlock zone" limits?
                 case PREDICTION_ACCESS:
                 case PREDICTION_BACK:
                 case PREDICTION_RIGHT:
@@ -391,6 +444,7 @@ public final class CommandManager {
                         performLockWithCryptoTimeout(false, false);
                     }
                     break;
+                // When a code says "unknown", you can tell it's a fail case.
                 case PREDICTION_UNKNOWN:
                 case PREDICTION_ROOF:
                 case PREDICTION_WELCOME:
@@ -606,5 +660,26 @@ public final class CommandManager {
      */
     public void setLastCommandFromTrx(boolean lastCommandFromTrx) {
         this.lastCommandFromTrx = lastCommandFromTrx;
+    }
+
+    /**
+     * Used to know if the prediction from Coord (Neural Network) is the INTERNAL prediction or not.
+     * It's mainly because the Coord Algorithm returns a bunch of values, while the Zone one (the most accurate) only returns INTERNAL.
+     * @param prediction The current prediction
+     * @return True if it's internal, false otherwise
+     */
+    private boolean isInternal(String prediction) {
+        switch(prediction) {
+            case PREDICTION_INTERNAL:
+            case PREDICTION_START:
+            case PREDICTION_START_FL:
+            case PREDICTION_START_FR:
+            case PREDICTION_START_RL:
+            case PREDICTION_START_RR:
+            case PREDICTION_TRUNK:
+                return true;
+            default:
+                return false;
+        }
     }
 }

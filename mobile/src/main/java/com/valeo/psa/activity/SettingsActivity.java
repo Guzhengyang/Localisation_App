@@ -37,8 +37,9 @@ import java.util.List;
 import static com.valeo.bleranging.persistence.Constants.BASE_3;
 import static com.valeo.bleranging.persistence.Constants.CONFIG_DIR;
 import static com.valeo.bleranging.persistence.Constants.THATCHAM_ORIENTED;
+import static com.valeo.bleranging.persistence.Constants.THRESHOLD_UNLOCK_LOCK;
 import static com.valeo.bleranging.persistence.Constants.TYPE_8_A;
-
+import static com.valeo.bleranging.persistence.Constants.FOREST;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -145,6 +146,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public static class PSASettingsFragment extends PreferenceFragment {
         private ListPreference connected_car_type;
         private ListPreference connected_car_base;
+        private ListPreference trame_send_type;
+        private EditTextPreference threshold_unlock_lock;
         private CheckBoxPreference user_speed_enabled;
         private EditTextPreference wanted_speed;
         private EditTextPreference one_step_size;
@@ -169,6 +172,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void setViews() {
             connected_car_type = ((ListPreference) findPreference(getString(R.string.connected_car_type_pref_name)));
             connected_car_base = ((ListPreference) findPreference(getString(R.string.connected_car_base_pref_name)));
+            trame_send_type = ((ListPreference) findPreference(getString(R.string.trame_send_to_car_type_pref_name)));
+            threshold_unlock_lock = ((EditTextPreference) findPreference(getString(R.string.threshold_unlock_lock_pref_name)));
             user_speed_enabled = ((CheckBoxPreference) findPreference(getString(R.string.user_speed_enabled_pref_name)));
             wanted_speed = ((EditTextPreference) findPreference(getString(R.string.wanted_speed_pref_name)));
             one_step_size = ((EditTextPreference) findPreference(getString(R.string.one_step_size_pref_name)));
@@ -186,6 +191,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void bindSummaries() {
             bindPreferenceSummaryToValue(connected_car_type, TYPE_8_A);
             bindPreferenceSummaryToValue(connected_car_base, BASE_3);
+            bindPreferenceSummaryToValue(trame_send_type, FOREST);
+            bindPreferenceSummaryToValue(threshold_unlock_lock, String.valueOf(THRESHOLD_UNLOCK_LOCK));
             user_speed_enabled.setSummary(R.string.pref_user_speed_enabled_summary);
             bindPreferenceSummaryToValue(wanted_speed, String.valueOf(SdkPreferencesHelper.WANTED_SPEED));
             bindPreferenceSummaryToValue(one_step_size, String.valueOf(SdkPreferencesHelper.ONE_STEP_SIZE));
@@ -429,6 +436,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private static final int PICK_IMPORT_GENERAL_FILE_RESULT_CODE = 92164;
         private ListPreference connected_car_type;
         private ListPreference connected_car_base;
+        private ListPreference trame_send_type;
+        private EditTextPreference threshold_unlock_lock;
         private ListPreference opening_orientation_type;
         private CheckBoxPreference com_simulation_enabled;
         private CheckBoxPreference is_channel_limited;
@@ -557,6 +566,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void setViews() {
             connected_car_type = ((ListPreference) findPreference(getString(R.string.connected_car_type_pref_name)));
             connected_car_base = ((ListPreference) findPreference(getString(R.string.connected_car_base_pref_name)));
+            trame_send_type = ((ListPreference) findPreference(getString(R.string.trame_send_to_car_type_pref_name)));
+            threshold_unlock_lock = ((EditTextPreference) findPreference(getString(R.string.threshold_unlock_lock_pref_name)));
             opening_orientation_type = ((ListPreference) findPreference(getString(R.string.opening_orientation_type_pref_name)));
             com_simulation_enabled = ((CheckBoxPreference) findPreference(getString(R.string.com_simulation_enabled_pref_name)));
             is_channel_limited = ((CheckBoxPreference) findPreference(getString(R.string.is_channel_limited_pref_name)));
@@ -630,6 +641,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void bindSummaries() {
             bindPreferenceSummaryToValue(connected_car_type, TYPE_8_A);
             bindPreferenceSummaryToValue(connected_car_base, BASE_3);
+            bindPreferenceSummaryToValue(trame_send_type, FOREST);
+            bindPreferenceSummaryToValue(threshold_unlock_lock, String.valueOf(THRESHOLD_UNLOCK_LOCK));
             bindPreferenceSummaryToValue(opening_orientation_type, THATCHAM_ORIENTED);
             com_simulation_enabled.setSummary(R.string.pref_com_simulation_enabled_summary);
             is_channel_limited.setSummary(R.string.pref_is_channel_limited_summary);

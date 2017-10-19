@@ -41,7 +41,6 @@ import static com.valeo.bleranging.utils.CalculusUtils.initMatrix;
 
 public class MultiPrediction {
     private static final double THRESHOLD_DIST = 0.1;
-    private static final double THRESHOLD_UNLOCK_LOCK = 2;
     private final LinkedHashMap<String, BasePrediction> predictionLinkedHMap;
 
     public MultiPrediction(LinkedHashMap<String, BasePrediction> predictionLinkedHMap) {
@@ -276,7 +275,7 @@ public class MultiPrediction {
                     if (zoneList == null) {
                         zoneList = new ArrayList<>();
                     }
-                    zoneList.add(CalculusUtils.coord2zone(coordFinal.getCoord_x(), coordFinal.getCoord_y(), THRESHOLD_UNLOCK_LOCK));
+                    zoneList.add(CalculusUtils.coord2zone(coordFinal.getCoord_x(), coordFinal.getCoord_y(), SdkPreferencesHelper.getInstance().getThresholdUnlockLock()));
                 }
             }
         }
