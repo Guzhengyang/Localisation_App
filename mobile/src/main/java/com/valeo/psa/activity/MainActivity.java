@@ -443,9 +443,9 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        mainFragment.setAdapterLastPosition();
-        mBleRangingHelper.closeApp(MainActivity.this);
+        // Used to prevent the app to be destroyed
+        // If it is, then it... badly recharges itself
+        moveTaskToBack(true);
     }
 
     @Override
@@ -458,8 +458,10 @@ public class MainActivity extends AppCompatActivity implements BleRangingListene
     }
 
     @Override
-    protected  void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
+        mainFragment.setAdapterLastPosition();
+        mBleRangingHelper.closeApp(MainActivity.this);
     }
 
     @Override
